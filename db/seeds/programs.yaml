@@ -1,0 +1,22 @@
+- name: ACAB
+  status: active
+  logo_url: https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR13PQayoNrwUz-ePSUYh-GOZopQWHbKanahQ&s
+  description: All cats. All of them.
+- name: For Profit
+  status: closed
+  logo_url: https://adamnostalgia.wordpress.com/wp-content/uploads/2020/06/vlcsnap-00967.jpg
+  description: Make it rain, make it rain.
+- name: Labor Organizing
+  status: active
+  logo_url: https://images.squarespace-cdn.com/content/v1/5b326cdbcef3721b026f758f/1535116575388-CXFBRLLJAKH3QXHOY9LW/breadandroseslogoblack.png
+  description: You don't need your boss, your boss needs you.
+- name: Shits & Giggles
+  status: active
+  logo_url: https://images.uncyclomedia.co/uncyclopedia/en/2/27/Hankey_flush.gif
+  description: Miscellaneous, programming as a hobby projects.
+- name: Social Justice
+  status: active
+  logo_url: https://upload.wikimedia.org/wikipedia/commons/4/48/Queer_anarchism_flag.svg
+  description: |
+    We are not to simply bandage the wounds of victims beneath the wheels of
+    injustice, we are to drive a spoke into the wheel itself.

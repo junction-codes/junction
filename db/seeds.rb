@@ -7,3 +7,12 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
+
+if Rails.env.development?
+  YAML.load_file(Rails.root.join('db', 'seeds', 'programs.yaml'), symbolize_names: true).each do |program|
+    next if Program.find_by(name: program[:name])
+
+    Rails.logger.info "Creating #{program[:name]}"
+    Program.create(program)
+  end
+end
