@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_29_044254) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_29_203511) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -43,6 +43,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_29_044254) do
     t.index ["program_id"], name: "index_projects_on_program_id"
   end
 
+  create_table "service_dependencies", force: :cascade do |t|
+    t.bigint "service_id", null: false
+    t.bigint "dependency_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["dependency_id"], name: "index_service_dependencies_on_dependency_id"
+    t.index ["service_id"], name: "index_service_dependencies_on_service_id"
+  end
+
   create_table "services", force: :cascade do |t|
     t.string "name"
     t.text "description"
@@ -57,5 +66,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_29_044254) do
   add_foreign_key "project_services", "projects"
   add_foreign_key "project_services", "services"
   add_foreign_key "projects", "programs"
+  add_foreign_key "service_dependencies", "services"
+  add_foreign_key "service_dependencies", "services", column: "dependency_id"
   add_foreign_key "services", "programs"
 end

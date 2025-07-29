@@ -1,0 +1,10 @@
+- name: Keystone Copwatch
+  status: active
+  program: ACAB
+  image_url: https://static.wixstatic.com/media/9faa72_5827578c8ae64b098756bec01667ad50~mv2.png
+  description: Pennsylvania law enforcement accountability project.
+- name: DevPortal
+  status: active
+  program: Shits & Giggles
+  image_url: https://e7.pngegg.com/pngimages/782/228/png-clipart-ruby-on-rails-rubygems-amazon-dynamodb-ruby-text-logo-thumbnail.png
+  description: A developer portal built on Rails and inspired by Backstage.
