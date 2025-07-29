@@ -18,3 +18,7 @@ pin "lodash.isplainobject", integrity: "sha384-N9NxhUbRvkOsXtszYa5UBn9IUaGgLK9Ww
 pin "lodash.merge", integrity: "sha384-veVSTvJPToM1mANchIzy2EXHZx0xYzeGQ0doyMmWp3xwGa92SQ9ipPpT3aAnjKEq" # @4.6.2
 pin "postcss-selector-parser", integrity: "sha384-Wdha+jbIuna5YHaf7rQcgTHkxtgL7jy3a6Ydh56hjXrR9j4iQsjuTbMF8flwXwXL" # @6.0.10
 pin "util-deprecate", integrity: "sha384-LGPtINfsK3RkAM2O5TxILNi1l4ENjenU++6OcyzpVtpn6yCzbnDzERfaUJ0T8Yz8" # @1.0.2
+pin "@floating-ui/dom", to: "@floating-ui--dom.js", integrity: "sha384-QtKrqoaH0pvMdYsUYVRC1MZg2TS28+wmeDSVtD29P1sRFsuFMd0Yqy01bFocTJ1M" # @1.7.2
+pin "@floating-ui/core", to: "@floating-ui--core.js", integrity: "sha384-sr+R01yGEy9uXFA4tWWvsH3DaDmWnvg3qh2dHPX5DGSYfB3+WT2zUeXL4VmYoWlr" # @1.7.2
+pin "@floating-ui/utils", to: "@floating-ui--utils.js", integrity: "sha384-YHMZqI1vOxDtAu+DSKoEPDSOhJ2C/qkFOPooXCsDJyh3n9iR7gaSM1/lzs8J+o53" # @0.2.10
+pin "@floating-ui/utils/dom", to: "@floating-ui--utils--dom.js", integrity: "sha384-P1G0uHQ68ba3Re985YUwlurK7VObVgrW07agFafxb0vIcSf0xOwuxsR/oR/dfCgp" # @0.2.10

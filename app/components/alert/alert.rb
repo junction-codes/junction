@@ -25,9 +25,10 @@ module Components
 
     def alert_icon
       icon = case @variant.to_sym
-             when :warning then "triangle-alert"
+             when :alert then "circle-x"
+             when :destructive then "trash-2"
              when :success then "circle-check"
-             when :destructive then "circle-x"
+             when :warning then "triangle-alert"
              else "info"
              end
 

@@ -27,13 +27,19 @@ module Components
 
         # Form actions.
         div(class: "flex items-center justify-end gap-x-4 pt-4") do
-          render Link.new(href: (@program.id.nil? ? programs_path : program_path(@program)), class: "text-sm font-semibold leading-6") { "Cancel" }
+          render Link.new(href: cancel_path, class: "text-sm font-semibold leading-6") { "Cancel" }
           render Button.new(type: "submit", variant: :primary, data: { form_target: "submit" }) do
             icon("save", class: "w-4 h-4 mr-2")
             plain "Save Changes"
           end
         end
       end
+    end
+
+    private
+
+    def cancel_path
+      @program.id.nil? ? programs_path : program_path(@program)
     end
   end
 end

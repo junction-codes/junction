@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_27_203550) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_28_225759) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -22,4 +22,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_27_203550) do
     t.datetime "updated_at", null: false
     t.string "logo_url"
   end
+
+  create_table "projects", force: :cascade do |t|
+    t.string "name"
+    t.text "description"
+    t.string "status"
+    t.string "image_url"
+    t.bigint "program_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["program_id"], name: "index_projects_on_program_id"
+  end
+
+  add_foreign_key "projects", "programs"
 end

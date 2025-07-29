@@ -9,7 +9,7 @@ module Components
            icon("menu", class: "w-6 h-6")
           end
 
-          h1(class: "text-xl font-semibold text-gray-800 dark:text-white") { "Civic-Tech Portal" }
+          h1(class: "text-xl font-semibold text-gray-800 dark:text-white") { t('app.title') }
         end
 
         # Search bar.

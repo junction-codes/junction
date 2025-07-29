@@ -53,10 +53,7 @@ class ProgramsController < ApplicationController
   def destroy
     @program.destroy!
 
-    respond_to do |format|
-      format.html { redirect_to programs_path, status: :see_other, destructive: "Program was successfully destroyed." }
-      format.json { head :no_content }
-    end
+    redirect_to programs_path, status: :see_other, destructive: "Program was successfully destroyed."
   end
 
   private

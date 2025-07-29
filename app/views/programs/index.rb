@@ -11,7 +11,7 @@ class Views::Programs::Index < Views::Base
         # Page header.
         div(class: "flex justify-between items-center mb-6") do
           h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { "Programs" }
-          a(href: new_program_path, class: "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background bg-blue-600 text-white hover:bg-blue-700 h-10 py-2 px-4") do
+          Link(variant: :primary, href: new_program_path) do
             "New Program"
           end
         end
