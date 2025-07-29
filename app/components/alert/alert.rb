@@ -25,8 +25,7 @@ module Components
 
     def alert_icon
       icon = case @variant.to_sym
-             when :alert then "circle-x"
-             when :destructive then "trash-2"
+             when :alert then "circle-minus"
              when :success then "circle-check"
              when :warning then "triangle-alert"
              else "info"
@@ -50,25 +49,25 @@ module Components
 
     def colors
       case @variant.to_sym
+      when :alert
+        "ring-destructive/20 bg-destructive/10 text-destructive [&>svg]:text-destructive/80"
+      when :success
+        "ring-success/20 bg-success/30 text-success [&>svg]:text-success/80"
       when :warning
         "ring-warning/20 bg-warning/5 text-warning [&>svg]:text-warning/80"
-      when :success
-        "ring-success/20 bg-success/5 text-success [&>svg]:text-success/80"
-      when :destructive
-        "ring-destructive/20 bg-destructive/5 text-destructive-background [&>svg]:text-destructive/80"
       else
-        "ring-border bg-blue-900/20 text-foreground [&>svg]:opacity-80"
+        "ring-blue-900/20 bg-blue-900/20 text-foreground [&>svg]:opacity-80"
       end
     end
 
     def title
       title = case @variant.to_sym
-              when :warning
-                "Warning"
+              when :alert
+                "Alert"
               when :success
                 "Success"
-              when :destructive
-                "Destroyed"
+              when :warning
+                "Warning"
               else
                 "Notice"
               end

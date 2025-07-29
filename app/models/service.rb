@@ -1,4 +1,4 @@
-class Project < ApplicationRecord
+class Service < ApplicationRecord
   attribute :status, :string, default: "active"
 
   validates :description, presence: true
@@ -8,5 +8,5 @@ class Project < ApplicationRecord
 
   belongs_to :program
   has_many :project_services, dependent: :destroy
-  has_many :services, through: :project_services
+  has_many :projects, through: :project_services
 end

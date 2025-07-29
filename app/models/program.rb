@@ -10,15 +10,5 @@ class Program < ApplicationRecord
   validates :logo_url, allow_blank: true, format: URI::DEFAULT_PARSER.make_regexp(%w[http https])
 
   has_many :projects
-
-  def services
-    [
-      ActiveSupport::OrderedOptions.new.tap do |o|
-        o.name = 'Service 1'
-        o.status = 'active'
-        o.id = 1
-        o.description = 'This is the first service.'
-      end
-    ]
-  end
+  has_many :services
 end

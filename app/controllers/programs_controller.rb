@@ -36,6 +36,7 @@ class ProgramsController < ApplicationController
     if @program.save
       redirect_to @program, success: "Program was successfully created."
     else
+      flash.now[:alert] = "There were errors creating the program."
       render Views::Programs::New.new(program: @program), status: :unprocessable_entity
     end
   end
@@ -45,6 +46,7 @@ class ProgramsController < ApplicationController
     if @program.update(program_params)
       redirect_to @program, success: "Program was successfully updated."
     else
+      flash.now[:alert] = "There were errors updating the program."
       render Views::Programs::Edit.new(program: @program), status: :unprocessable_entity
     end
   end
@@ -53,15 +55,16 @@ class ProgramsController < ApplicationController
   def destroy
     @program.destroy!
 
-    redirect_to programs_path, status: :see_other, destructive: "Program was successfully destroyed."
+    redirect_to programs_path, status: :see_other, alert: "Program was successfully destroyed."
   end
 
   private
-    def set_program
-      @program = Program.find(params.expect(:id))
-    end
 
-    def program_params
-      params.expect(program: [ :name, :description, :logo_url, :status ])
-    end
+  def set_program
+    @program = Program.find(params.expect(:id))
+  end
+
+  def program_params
+    params.expect(program: [ :name, :description, :logo_url, :status ])
+  end
 end

@@ -52,8 +52,8 @@ class Views::Programs::Show < Views::Base
 
   def program_stats
     div(class: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6") do
-      render Components::StatCard.new(title: "Total Projects", value: 2, icon: "kanban")
-      render Components::StatCard.new(title: "Total Services", value: 7, icon: "server")
+      render Components::StatCard.new(title: "Total Projects", value: @program.projects.count, icon: "kanban")
+      render Components::StatCard.new(title: "Total Services", value: @program.services.count, icon: "server")
       render Components::StatCard.new(title: "Monthly Cost", value: "$1,250", icon: "dollar-sign")
       render Components::StatCard.new(title: "Active Incidents", value: "1", icon: "siren", status: :warning)
     end
@@ -80,7 +80,7 @@ class Views::Programs::Show < Views::Base
                   render Components::Badge.new(variant: project.status.to_sym) { project.status.capitalize }
                 end
                 td(class: "px-6 py-4 whitespace-nowrap text-right text-sm font-medium") do
-                  a(href: "/projects/#{project.id}", class: "text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300") { "View" }
+                  a(href: "#{project_path(project)}", class: "text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300") { "View" }
                 end
               end
             end
@@ -111,7 +111,7 @@ class Views::Programs::Show < Views::Base
                   render Components::Badge.new(variant: service.status.to_sym) { service.status.capitalize }
                 end
                 td(class: "px-6 py-4 whitespace-nowrap text-right text-sm font-medium") do
-                  a(href: "/services/#{service.id}", class: "text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300") { "View" }
+                  a(href: "#{service_path(service)}", class: "text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300") { "View" }
                 end
               end
             end

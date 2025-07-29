@@ -36,6 +36,7 @@ class ProjectsController < ApplicationController
     if @project.save
       redirect_to @project, success: "Project was successfully created."
     else
+      flash.now[:alert] = "There were errors creating the project."
       render Views::Projects::New.new(project: @project), status: :unprocessable_entity
     end
   end
@@ -45,6 +46,7 @@ class ProjectsController < ApplicationController
     if @project.update(project_params)
       redirect_to @project, success: "Project was successfully updated."
     else
+      flash.now[:alert] = "There were errors updating the project."
       render Views::Projects::Edit.new(project: @project), status: :unprocessable_entity
     end
   end
@@ -53,7 +55,7 @@ class ProjectsController < ApplicationController
   def destroy
     @project.destroy!
 
-    redirect_to projects_path, status: :see_other, destructive: "Project was successfully destroyed."
+    redirect_to projects_path, status: :see_other, alert: "Project was successfully destroyed."
   end
 
   private

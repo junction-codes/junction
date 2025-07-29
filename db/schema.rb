@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_28_225759) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_29_044254) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -21,6 +21,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_28_225759) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "logo_url"
+  end
+
+  create_table "project_services", force: :cascade do |t|
+    t.bigint "project_id", null: false
+    t.bigint "service_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["project_id"], name: "index_project_services_on_project_id"
+    t.index ["service_id"], name: "index_project_services_on_service_id"
   end
 
   create_table "projects", force: :cascade do |t|
@@ -34,5 +43,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_28_225759) do
     t.index ["program_id"], name: "index_projects_on_program_id"
   end
 
+  create_table "services", force: :cascade do |t|
+    t.string "name"
+    t.text "description"
+    t.string "status"
+    t.bigint "program_id", null: false
+    t.string "image_url"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["program_id"], name: "index_services_on_program_id"
+  end
+
+  add_foreign_key "project_services", "projects"
+  add_foreign_key "project_services", "services"
   add_foreign_key "projects", "programs"
+  add_foreign_key "services", "programs"
 end

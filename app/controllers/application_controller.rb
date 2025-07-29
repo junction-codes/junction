@@ -5,5 +5,5 @@ class ApplicationController < ActionController::Base
   # We're using Phlex, so we don't need ActionView to render layouts.
   layout false
 
-  add_flash_types :destructive, :success
+  add_flash_types :success
 end
