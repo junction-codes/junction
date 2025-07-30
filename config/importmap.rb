@@ -5,20 +5,21 @@ pin "@hotwired/turbo-rails", to: "turbo.min.js"
 pin "@hotwired/stimulus", to: "stimulus.min.js"
 pin "@hotwired/stimulus-loading", to: "stimulus-loading.js"
 pin_all_from "app/javascript/controllers", under: "controllers"
-pin "tw-animate-css", integrity: "sha384-Jb1jRNz7RTZaBZ/36mLdcxKYLtxKnA3dLxARRf1WZa81rTmcjuUMudxpy8FxNssE" # @1.3.6
-pin "@tailwindcss/forms", to: "@tailwindcss--forms.js", integrity: "sha384-KQX36O7wdYuD3nnpc7j5bFfnO1hZZmbG00Bd8g9mARvIg+QiP6YuizfA3r0E7aK7" # @0.5.10
-pin "mini-svg-data-uri", integrity: "sha384-WGcyge/fDeaekKTUlNhxNMWDxeL6nFvm5jintGX3CvEk31+L/L6nIz3DBf3iscib" # @1.4.4
-pin "tailwindcss/colors", to: "tailwindcss--colors.js", integrity: "sha384-4jNFdTlW7wPEVT8Wk+V1ZRsdEyKJ4VHCmqN/ar0l8sG1ASp4uiy3ByY3XLJcuNG4" # @4.1.11
-pin "tailwindcss/defaultTheme", to: "tailwindcss--defaultTheme.js", integrity: "sha384-0xlrnryJWOep0PgJ3FCU44WX5qfXXtbvTrFHvt8aNO1/uqp335nORHPrOZx8pIfz" # @4.1.11
-pin "tailwindcss/plugin", to: "tailwindcss--plugin.js", integrity: "sha384-5YzdB8gWHuusdzASFt7sF7ogXJgjTFmV/XH8BLZV4a91EHXVCXIfqVs21xCyt45f" # @4.1.11
-pin "@tailwindcss/typography", to: "@tailwindcss--typography.js", integrity: "sha384-zaWB8TorQa8b50p5yDQCHeSelJbR+vN9eB6wW3qKVe55zai1yZYtx7CHUoRLBZxu" # @0.5.16
-pin "cssesc", integrity: "sha384-tQRjICxphgw+j3EuD+TkKJjMLtg+v6ePj40L+wU2wH2jMyA1VT6cjizFvWWy2LuM" # @3.0.0
-pin "lodash.castarray", integrity: "sha384-m0SXVlmRAY1mE8L0eqxPdP85dT147pcFu3usA0iEKZMaH5byZmWL8R69glRx5h9u" # @4.4.0
-pin "lodash.isplainobject", integrity: "sha384-N9NxhUbRvkOsXtszYa5UBn9IUaGgLK9Wwb9L7ADGHgl7lWVBF4s5fseQhEeEtshz" # @4.0.6
-pin "lodash.merge", integrity: "sha384-veVSTvJPToM1mANchIzy2EXHZx0xYzeGQ0doyMmWp3xwGa92SQ9ipPpT3aAnjKEq" # @4.6.2
-pin "postcss-selector-parser", integrity: "sha384-Wdha+jbIuna5YHaf7rQcgTHkxtgL7jy3a6Ydh56hjXrR9j4iQsjuTbMF8flwXwXL" # @6.0.10
-pin "util-deprecate", integrity: "sha384-LGPtINfsK3RkAM2O5TxILNi1l4ENjenU++6OcyzpVtpn6yCzbnDzERfaUJ0T8Yz8" # @1.0.2
-pin "@floating-ui/dom", to: "@floating-ui--dom.js", integrity: "sha384-QtKrqoaH0pvMdYsUYVRC1MZg2TS28+wmeDSVtD29P1sRFsuFMd0Yqy01bFocTJ1M" # @1.7.2
-pin "@floating-ui/core", to: "@floating-ui--core.js", integrity: "sha384-sr+R01yGEy9uXFA4tWWvsH3DaDmWnvg3qh2dHPX5DGSYfB3+WT2zUeXL4VmYoWlr" # @1.7.2
-pin "@floating-ui/utils", to: "@floating-ui--utils.js", integrity: "sha384-YHMZqI1vOxDtAu+DSKoEPDSOhJ2C/qkFOPooXCsDJyh3n9iR7gaSM1/lzs8J+o53" # @0.2.10
-pin "@floating-ui/utils/dom", to: "@floating-ui--utils--dom.js", integrity: "sha384-P1G0uHQ68ba3Re985YUwlurK7VObVgrW07agFafxb0vIcSf0xOwuxsR/oR/dfCgp" # @0.2.10
+pin "tw-animate-css"
+pin "@tailwindcss/forms", to: "@tailwindcss--forms.js"
+pin "mini-svg-data-uri"
+pin "tailwindcss/colors", to: "tailwindcss--colors.js"
+pin "tailwindcss/defaultTheme", to: "tailwindcss--defaultTheme.js"
+pin "tailwindcss/plugin", to: "tailwindcss--plugin.js"
+pin "@tailwindcss/typography", to: "@tailwindcss--typography.js"
+pin "cssesc"
+pin "lodash.castarray"
+pin "lodash.isplainobject"
+pin "lodash.merge"
+pin "postcss-selector-parser"
+pin "util-deprecate"
+pin "@floating-ui/dom", to: "@floating-ui--dom.js"
+pin "@floating-ui/core", to: "@floating-ui--core.js"
+pin "@floating-ui/utils", to: "@floating-ui--utils.js"
+pin "@floating-ui/utils/dom", to: "@floating-ui--utils--dom.js"
+pin "cytoscape"

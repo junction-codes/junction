@@ -25,7 +25,8 @@ module Components
           button(class: "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white") { icon("bell", class: "w-6 h-6") }
           div(class: "relative") do
             button(class: "flex items-center space-x-2") do
-              img(src: "https://github.com/mdo.png", alt: "User Avatar", class: "w-8 h-8 rounded-full")
+              # img(src: "https://github.com/mdo.png", alt: "User Avatar", class: "w-8 h-8 rounded-full")
+              icon("circle-user-round", class: "w-8 h-8 text-gray-500 dark:text-gray-400")
               span(class: "text-gray-800 dark:text-white") { "DevOps Engineer" }
             end
           end

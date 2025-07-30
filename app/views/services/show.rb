@@ -103,15 +103,20 @@ class Views::Services::Show < Views::Base
         Tabs(default_value: "account") do
           TabsList do
             TabsTrigger(value: "dependencies") { "Dependencies" }
-            TabsTrigger(value: "reverse") { "Reverse Dependencies" }
+            TabsTrigger(value: "dependents") { "Dependents" }
+            TabsTrigger(value: "graph") { "Graph" }
           end
 
           TabsContent(value: "dependencies", class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
               dependencies_table
           end
 
-          TabsContent(value: "reverse", class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
+          TabsContent(value: "dependents", class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
             dependents_table
+          end
+
+          TabsContent(value: "graph", class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
+            dependency_graph
           end
         end
     end
@@ -164,6 +169,16 @@ class Views::Services::Show < Views::Base
               a(href: service_path(service), class: "text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300") { "View" }
             end
           end
+        end
+      end
+    end
+  end
+
+  def dependency_graph
+    div do
+      div(class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden p-5") do
+        div(data_controller: "graph", data_graph_url_value: dependency_graph_service_path(@service)) do
+          div(data_graph_target: "container", class: "w-full h-60")
         end
       end
     end

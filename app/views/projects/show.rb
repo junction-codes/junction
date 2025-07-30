@@ -10,12 +10,22 @@ class Views::Projects::Show < Views::Base
       div(class: "p-6 space-y-8") do
         project_header
         project_stats
-        services_table
+        dependencies_section
       end
     end
   end
 
   private
+
+  def dependency_graph
+    div do
+      div(class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden p-5") do
+        div(data_controller: "graph", data_graph_url_value: dependency_graph_project_path(@project)) do
+          div(data_graph_target: "container", class: "w-full h-60")
+        end
+      end
+    end
+  end
 
   def project_header
     div(class: "flex justify-between items-start") do
@@ -66,30 +76,45 @@ class Views::Projects::Show < Views::Base
     end
   end
 
-  def services_table
+  def dependencies_section
     div do
-      h3(class: "text-xl font-semibold text-gray-800 dark:text-white mb-4") { "Services" }
-      div(class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
-        table(class: "min-w-full divide-y divide-gray-200 dark:divide-gray-700") do
-          thead(class: "bg-gray-50 dark:bg-gray-700") do
-            tr do
-              th(scope: "col", class: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider") { "Service Name" }
-              th(scope: "col", class: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider") { "Status" }
-              th(scope: "col", class: "relative px-6 py-3") { span(class: "sr-only") { "View" } }
-            end
-          end
+      h3(class: "text-xl font-semibold text-gray-800 dark:text-white mb-4") { "Dependencies" }
+      Tabs(default_value: "account") do
+        TabsList do
+          TabsTrigger(value: "services") { "Services" }
+          TabsTrigger(value: "graph") { "Graph" }
+        end
 
-          tbody(class: "bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700") do
-            @project.services.each do |service|
-              tr(class: "hover:bg-gray-50 dark:hover:bg-gray-700/50") do
-                td(class: "px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white") { service.name }
-                td(class: "px-6 py-4 whitespace-nowrap") do
-                  render Components::Badge.new(variant: service.status.to_sym) { service.status.capitalize }
-                end
-                td(class: "px-6 py-4 whitespace-nowrap text-right text-sm font-medium") do
-                  a(href: "/services/#{service.id}", class: "text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300") { "View" }
-                end
-              end
+        TabsContent(value: "services", class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
+          services_table
+        end
+
+        TabsContent(value: "graph", class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
+          dependency_graph
+        end
+      end
+    end
+  end
+
+  def services_table
+    table(class: "min-w-full divide-y divide-gray-200 dark:divide-gray-700") do
+      thead(class: "bg-gray-50 dark:bg-gray-700") do
+        tr do
+          th(scope: "col", class: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider") { "Service Name" }
+          th(scope: "col", class: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider") { "Status" }
+          th(scope: "col", class: "relative px-6 py-3") { span(class: "sr-only") { "View" } }
+        end
+      end
+
+      tbody(class: "bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700") do
+        @project.services.each do |service|
+          tr(class: "hover:bg-gray-50 dark:hover:bg-gray-700/50") do
+            td(class: "px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white") { service.name }
+            td(class: "px-6 py-4 whitespace-nowrap") do
+              render Components::Badge.new(variant: service.status.to_sym) { service.status.capitalize }
+            end
+            td(class: "px-6 py-4 whitespace-nowrap text-right text-sm font-medium") do
+              a(href: "/services/#{service.id}", class: "text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300") { "View" }
             end
           end
         end

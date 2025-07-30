@@ -1,5 +1,5 @@
 class ServicesController < ApplicationController
-  before_action :set_service, only: %i[ show edit update destroy ]
+  before_action :set_service, only: %i[ show edit update destroy dependency_graph ]
 
   # GET /services
   def index
@@ -55,7 +55,39 @@ class ServicesController < ApplicationController
   def destroy
     @service.destroy!
 
-    redirect_to projects_path, status: :see_other, alert: "Service was successfully destroyed."
+    redirect_to services_path, status: :see_other, alert: "Service was successfully destroyed."
+  end
+
+  # GET /projects/:id/dependency_graph
+  #
+  # @todo Break this up into smaller methods for better readability.
+  def dependency_graph
+    # Start with our service, it's dependencies, dependents, and their
+    # associated projects.
+    all_related_services = ([@service] + @service.dependencies + @service.dependents).uniq
+    projects = Project.joins(:services).where(services: { id: all_related_services.map(&:id) }).distinct
+
+    nodes = all_related_services.map do |s|
+      { id: s.id, label: s.name, type: :service }
+    end
+
+    nodes += projects.map do |p|
+      { id: "project_#{p.id}", label: p.name, type: :project }
+    end
+
+    # Create edges for service-to-service dependencies.
+    edges = []
+    @service.dependencies.each { |dep| edges << { source: @service.id, target: dep.id } }
+    @service.dependents.each { |dep| edges << { source: dep.id, target: @service.id } }
+
+    # Create edges from services to their associated projects.
+    all_related_services.each do |s|
+      s.project_ids.each do |project_id|
+        edges << { target: s.id, source: "project_#{project_id}" }
+      end
+    end
+
+    render json: { nodes: nodes, edges: edges, current_node_id: @service.id }
   end
 
   private

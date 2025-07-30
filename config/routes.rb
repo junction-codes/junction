@@ -1,7 +1,13 @@
 Rails.application.routes.draw do
   resources :programs
-  resources :projects
-  resources :services
+
+  resources :projects do
+    get :dependency_graph, on: :member
+  end
+
+  resources :services do
+    get :dependency_graph, on: :member
+  end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
