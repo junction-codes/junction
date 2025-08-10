@@ -1,48 +1,48 @@
 require "test_helper"
 
-class ServicesControllerTest < ActionDispatch::IntegrationTest
+class ComponentsControllerTest < ActionDispatch::IntegrationTest
   setup do
-    @service = services(:one)
+    @component = components(:one)
   end
 
   test "should get index" do
-    get services_url
+    get components_url
     assert_response :success
   end
 
   test "should get new" do
-    get new_service_url
+    get new_component_url
     assert_response :success
   end
 
-  test "should create service" do
-    assert_difference("Service.count") do
-      post services_url, params: { service: { description: @service.description, image_url: @service.image_url, name: @service.name, program_id: @service.program_id, status: @service.status } }
+  test "should create component" do
+    assert_difference("Component.count") do
+      post components_url, params: { component: { description: @component.description, image_url: @component.image_url, name: @component.name, domain_id: @component.domain_id, status: @component.status } }
     end
 
-    assert_redirected_to service_url(Service.last)
+    assert_redirected_to component_url(Component.last)
   end
 
-  test "should show service" do
-    get service_url(@service)
+  test "should show component" do
+    get component_url(@component)
     assert_response :success
   end
 
   test "should get edit" do
-    get edit_service_url(@service)
+    get edit_component_url(@component)
     assert_response :success
   end
 
-  test "should update service" do
-    patch service_url(@service), params: { service: { description: @service.description, image_url: @service.image_url, name: @service.name, program_id: @service.program_id, status: @service.status } }
-    assert_redirected_to service_url(@service)
+  test "should update component" do
+    patch component_url(@component), params: { component: { description: @component.description, image_url: @component.image_url, name: @component.name, domain_id: @component.domain_id, status: @component.status } }
+    assert_redirected_to component_url(@component)
   end
 
-  test "should destroy service" do
-    assert_difference("Service.count", -1) do
-      delete service_url(@service)
+  test "should destroy component" do
+    assert_difference("Component.count", -1) do
+      delete component_url(@component)
     end
 
-    assert_redirected_to services_url
+    assert_redirected_to components_url
   end
 end

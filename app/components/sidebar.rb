@@ -9,9 +9,9 @@ module Components
       ) do
         nav(class: "flex-1 px-2 py-4 space-y-2") do
           sidebar_link(href: "#", icon: "house", title: "Dashboard")
-          sidebar_link(href: "#{programs_path}", icon: "briefcase", title: "Programs")
-          sidebar_link(href: "#{projects_path}", icon: "kanban", title: "Projects")
-          sidebar_link(href: "#{services_path}", icon: "server", title: "Services")
+          sidebar_link(href: "#{domains_path}", icon: "briefcase", title: "Domains")
+          sidebar_link(href: "#{systems_path}", icon: "network", title: "Systems")
+          sidebar_link(href: "#{components_path}", icon: "server", title: "Components")
           sidebar_link(href: "#", icon: "book-open", title: "TechDocs")
           sidebar_link(href: "#", icon: "dollar-sign", title: "Cost Explorer")
         end

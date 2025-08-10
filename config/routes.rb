@@ -1,11 +1,11 @@
 Rails.application.routes.draw do
-  resources :programs
+  resources :domains
 
-  resources :projects do
+  resources :systems do
     get :dependency_graph, on: :member
   end
 
-  resources :services do
+  resources :components do
     get :dependency_graph, on: :member
   end
 
@@ -18,5 +18,5 @@ Rails.application.routes.draw do
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   # Defines the root path route ("/")
-  # root "posts#index"
+  root "domains#index"
 end

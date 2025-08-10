@@ -1,45 +1,45 @@
 require "application_system_test_case"
 
-class ProgramsTest < ApplicationSystemTestCase
+class DomainsTest < ApplicationSystemTestCase
   setup do
-    @program = programs(:one)
+    @domain = domains(:one)
   end
 
   test "visiting the index" do
-    visit programs_url
-    assert_selector "h1", text: "Programs"
+    visit domains_url
+    assert_selector "h1", text: "Domains"
   end
 
-  test "should create program" do
-    visit programs_url
-    click_on "New program"
+  test "should create domain" do
+    visit domains_url
+    click_on "New domain"
 
-    fill_in "Description", with: @program.description
-    fill_in "Name", with: @program.name
-    fill_in "Status", with: @program.status
-    click_on "Create Program"
+    fill_in "Description", with: @domain.description
+    fill_in "Name", with: @domain.name
+    fill_in "Status", with: @domain.status
+    click_on "Create Domain"
 
-    assert_text "Program was successfully created"
+    assert_text "Domain was successfully created"
     click_on "Back"
   end
 
-  test "should update Program" do
-    visit program_url(@program)
-    click_on "Edit this program", match: :first
+  test "should update Domain" do
+    visit domain_url(@domain)
+    click_on "Edit this domain", match: :first
 
-    fill_in "Description", with: @program.description
-    fill_in "Name", with: @program.name
-    fill_in "Status", with: @program.status
-    click_on "Update Program"
+    fill_in "Description", with: @domain.description
+    fill_in "Name", with: @domain.name
+    fill_in "Status", with: @domain.status
+    click_on "Update Domain"
 
-    assert_text "Program was successfully updated"
+    assert_text "Domain was successfully updated"
     click_on "Back"
   end
 
-  test "should destroy Program" do
-    visit program_url(@program)
-    accept_confirm { click_on "Destroy this program", match: :first }
+  test "should destroy Domain" do
+    visit domain_url(@domain)
+    accept_confirm { click_on "Destroy this domain", match: :first }
 
-    assert_text "Program was successfully destroyed"
+    assert_text "Domain was successfully destroyed"
   end
 end

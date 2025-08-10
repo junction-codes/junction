@@ -1,6 +1,6 @@
 require "test_helper"
 
-class ComponentDependencyTest < ActiveSupport::TestCase
+class SystemComponentTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end

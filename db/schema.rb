@@ -14,59 +14,61 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_29_203511) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
-  create_table "programs", force: :cascade do |t|
-    t.string "name"
-    t.text "description"
-    t.string "status"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "logo_url"
-  end
-
-  create_table "project_services", force: :cascade do |t|
-    t.bigint "project_id", null: false
-    t.bigint "service_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["project_id"], name: "index_project_services_on_project_id"
-    t.index ["service_id"], name: "index_project_services_on_service_id"
-  end
-
-  create_table "projects", force: :cascade do |t|
-    t.string "name"
-    t.text "description"
-    t.string "status"
-    t.string "image_url"
-    t.bigint "program_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["program_id"], name: "index_projects_on_program_id"
-  end
-
-  create_table "service_dependencies", force: :cascade do |t|
-    t.bigint "service_id", null: false
+  create_table "component_dependencies", force: :cascade do |t|
+    t.bigint "component_id", null: false
     t.bigint "dependency_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["dependency_id"], name: "index_service_dependencies_on_dependency_id"
-    t.index ["service_id"], name: "index_service_dependencies_on_service_id"
+    t.index ["component_id"], name: "index_component_dependencies_on_component_id"
+    t.index ["dependency_id"], name: "index_component_dependencies_on_dependency_id"
   end
 
-  create_table "services", force: :cascade do |t|
+  create_table "components", force: :cascade do |t|
     t.string "name"
     t.text "description"
     t.string "status"
-    t.bigint "program_id", null: false
+    t.string "component_type"
+    t.string "repository_url"
+    t.bigint "domain_id", null: false
     t.string "image_url"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["program_id"], name: "index_services_on_program_id"
+    t.index ["domain_id"], name: "index_components_on_domain_id"
   end
 
-  add_foreign_key "project_services", "projects"
-  add_foreign_key "project_services", "services"
-  add_foreign_key "projects", "programs"
-  add_foreign_key "service_dependencies", "services"
-  add_foreign_key "service_dependencies", "services", column: "dependency_id"
-  add_foreign_key "services", "programs"
+  create_table "domains", force: :cascade do |t|
+    t.string "name"
+    t.text "description"
+    t.string "status"
+    t.string "image_url"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "system_components", force: :cascade do |t|
+    t.bigint "system_id", null: false
+    t.bigint "component_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["component_id"], name: "index_system_components_on_component_id"
+    t.index ["system_id"], name: "index_system_components_on_system_id"
+  end
+
+  create_table "systems", force: :cascade do |t|
+    t.string "name"
+    t.text "description"
+    t.string "status"
+    t.string "image_url"
+    t.bigint "domain_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["domain_id"], name: "index_systems_on_domain_id"
+  end
+
+  add_foreign_key "component_dependencies", "components"
+  add_foreign_key "component_dependencies", "components", column: "dependency_id"
+  add_foreign_key "components", "domains"
+  add_foreign_key "system_components", "components"
+  add_foreign_key "system_components", "systems"
+  add_foreign_key "systems", "domains"
 end

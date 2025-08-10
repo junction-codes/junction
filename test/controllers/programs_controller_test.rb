@@ -1,48 +1,48 @@
 require "test_helper"
 
-class ProgramsControllerTest < ActionDispatch::IntegrationTest
+class DomainsControllerTest < ActionDispatch::IntegrationTest
   setup do
-    @program = programs(:one)
+    @domain = domains(:one)
   end
 
   test "should get index" do
-    get programs_url
+    get domains_url
     assert_response :success
   end
 
   test "should get new" do
-    get new_program_url
+    get new_domain_url
     assert_response :success
   end
 
-  test "should create program" do
-    assert_difference("Program.count") do
-      post programs_url, params: { program: { description: @program.description, name: @program.name, status: @program.status } }
+  test "should create domain" do
+    assert_difference("Domain.count") do
+      post domains_url, params: { domain: { description: @domain.description, name: @domain.name, status: @domain.status } }
     end
 
-    assert_redirected_to program_url(Program.last)
+    assert_redirected_to domain_url(Domain.last)
   end
 
-  test "should show program" do
-    get program_url(@program)
+  test "should show domain" do
+    get domain_url(@domain)
     assert_response :success
   end
 
   test "should get edit" do
-    get edit_program_url(@program)
+    get edit_domain_url(@domain)
     assert_response :success
   end
 
-  test "should update program" do
-    patch program_url(@program), params: { program: { description: @program.description, name: @program.name, status: @program.status } }
-    assert_redirected_to program_url(@program)
+  test "should update domain" do
+    patch domain_url(@domain), params: { domain: { description: @domain.description, name: @domain.name, status: @domain.status } }
+    assert_redirected_to domain_url(@domain)
   end
 
-  test "should destroy program" do
-    assert_difference("Program.count", -1) do
-      delete program_url(@program)
+  test "should destroy domain" do
+    assert_difference("Domain.count", -1) do
+      delete domain_url(@domain)
     end
 
-    assert_redirected_to programs_url
+    assert_redirected_to domains_url
   end
 end

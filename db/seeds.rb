@@ -9,39 +9,39 @@
 #   end
 
 if Rails.env.development?
-  YAML.load_file(Rails.root.join('db', 'seeds', 'programs.yaml'), symbolize_names: true).each do |program|
-    next if Program.find_by(name: program[:name])
+  YAML.load_file(Rails.root.join('db', 'seeds', 'domains.yaml'), symbolize_names: true).each do |domain|
+    next if Domain.find_by(name: domain[:name])
 
-    Rails.logger.info "Creating program #{program[:name]}"
-    Program.create(program)
+    Rails.logger.info "Creating domain #{domain[:name]}"
+    Domain.create(domain)
   end
 
-  YAML.load_file(Rails.root.join('db', 'seeds', 'projects.yaml'), symbolize_names: true).each do |project|
-    next if Project.find_by(name: project[:name])
+  YAML.load_file(Rails.root.join('db', 'seeds', 'systems.yaml'), symbolize_names: true).each do |system|
+    next if System.find_by(name: system[:name])
 
-    Rails.logger.info "Creating project #{project[:name]}"
-    project[:program] = Program.find_by(name: project[:program]) if project[:program].present?
-    Project.create(project)
+    Rails.logger.info "Creating system #{system[:name]}"
+    system[:domain] = Domain.find_by(name: system[:domain]) if system[:domain].present?
+    System.create(system)
   end
 
-  YAML.load_file(Rails.root.join('db', 'seeds', 'services.yaml'), symbolize_names: true).each do |service|
-    next if Project.find_by(name: service[:name])
+  YAML.load_file(Rails.root.join('db', 'seeds', 'components.yaml'), symbolize_names: true).each do |component|
+    next if System.find_by(name: component[:name])
 
-    Rails.logger.info "Creating service #{service[:name]}"
-    service[:program] = Program.find_by(name: service[:program]) if service[:program].present?
+    Rails.logger.info "Creating component #{component[:name]}"
+    component[:domain] = Domain.find_by(name: component[:domain]) if component[:domain].present?
 
-    # service[:projects].map! do |project|
-    #   Project.find_by(name: project)
-    # end if service[:projects].present?
-    service.fetch(:projects, []).map! do |project|
-      Project.find_by(name: project)
+    # component[:systems].map! do |system|
+    #   System.find_by(name: system)
+    # end if component[:systems].present?
+    component.fetch(:systems, []).map! do |system|
+      System.find_by(name: system)
     end
 
-    service.fetch(:dependencies, []).map! do |dependency|
-      Service.find_by(name: dependency)
+    component.fetch(:dependencies, []).map! do |dependency|
+      Component.find_by(name: dependency)
     end
 
-    pp(service)
-    Service.create(service)
+    pp(component)
+    Component.create(component)
   end
 end

@@ -1,49 +1,49 @@
 require "application_system_test_case"
 
-class ServicesTest < ApplicationSystemTestCase
+class ComponentsTest < ApplicationSystemTestCase
   setup do
-    @service = services(:one)
+    @component = components(:one)
   end
 
   test "visiting the index" do
-    visit services_url
-    assert_selector "h1", text: "Services"
+    visit components_url
+    assert_selector "h1", text: "Components"
   end
 
-  test "should create service" do
-    visit services_url
-    click_on "New service"
+  test "should create component" do
+    visit components_url
+    click_on "New component"
 
-    fill_in "Description", with: @service.description
-    fill_in "Image url", with: @service.image_url
-    fill_in "Name", with: @service.name
-    fill_in "Program", with: @service.program_id
-    fill_in "Status", with: @service.status
-    click_on "Create Service"
+    fill_in "Description", with: @component.description
+    fill_in "Image url", with: @component.image_url
+    fill_in "Name", with: @component.name
+    fill_in "Domain", with: @component.domain_id
+    fill_in "Status", with: @component.status
+    click_on "Create Component"
 
-    assert_text "Service was successfully created"
+    assert_text "Component was successfully created"
     click_on "Back"
   end
 
-  test "should update Service" do
-    visit service_url(@service)
-    click_on "Edit this service", match: :first
+  test "should update Component" do
+    visit component_url(@component)
+    click_on "Edit this component", match: :first
 
-    fill_in "Description", with: @service.description
-    fill_in "Image url", with: @service.image_url
-    fill_in "Name", with: @service.name
-    fill_in "Program", with: @service.program_id
-    fill_in "Status", with: @service.status
-    click_on "Update Service"
+    fill_in "Description", with: @component.description
+    fill_in "Image url", with: @component.image_url
+    fill_in "Name", with: @component.name
+    fill_in "Domain", with: @component.domain_id
+    fill_in "Status", with: @component.status
+    click_on "Update Component"
 
-    assert_text "Service was successfully updated"
+    assert_text "Component was successfully updated"
     click_on "Back"
   end
 
-  test "should destroy Service" do
-    visit service_url(@service)
-    accept_confirm { click_on "Destroy this service", match: :first }
+  test "should destroy Component" do
+    visit component_url(@component)
+    accept_confirm { click_on "Destroy this component", match: :first }
 
-    assert_text "Service was successfully destroyed"
+    assert_text "Component was successfully destroyed"
   end
 end

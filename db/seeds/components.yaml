@@ -1,0 +1,29 @@
+- name: Keystone Copwatch Database
+  status: active
+  type: database
+  domain: ACAB
+  description: |
+    PostgreSQL database for Keystone Copwatch, storing user data, reports, and
+    other relevant information.
+- name: Keystone Copwatch Website
+  status: active
+  type: web
+  domain: ACAB
+  systems:
+    - Keystone Copwatch
+  dependencies:
+    - Keystone Copwatch Database
+  description: |
+    Main website for Keystone Copwatch, providing resources and information on
+    police accountability.
+- name: Keystone Copwatch Worker
+  status: active
+  type: worker
+  domain: ACAB
+  systems:
+    - Keystone Copwatch
+  dependencies:
+    - Keystone Copwatch Database
+  description: |
+    Background worker for Keystone Copwatch, handling tasks such as data
+    processing and notifications.
