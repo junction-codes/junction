@@ -12,6 +12,7 @@ module Components
           sidebar_link(href: "#{domains_path}", icon: "briefcase", title: "Domains")
           sidebar_link(href: "#{systems_path}", icon: "network", title: "Systems")
           sidebar_link(href: "#{components_path}", icon: "server", title: "Components")
+          sidebar_link(href: "#{deployments_path}", icon: "rocket", title: "Deployments")
           sidebar_link(href: "#", icon: "book-open", title: "TechDocs")
           sidebar_link(href: "#", icon: "dollar-sign", title: "Cost Explorer")
         end

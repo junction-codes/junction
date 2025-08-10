@@ -9,6 +9,7 @@ class Component < ApplicationRecord
   validates :image_url, allow_blank: true, format: URI::DEFAULT_PARSER.make_regexp(%w[http https])
 
   belongs_to :domain
+  has_many :deployments, dependent: :destroy
   has_many :system_components, dependent: :destroy
   has_many :systems, through: :system_components
 

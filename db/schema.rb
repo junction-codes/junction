@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_29_203511) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_10_223901) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -34,6 +34,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_29_203511) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["domain_id"], name: "index_components_on_domain_id"
+  end
+
+  create_table "deployments", force: :cascade do |t|
+    t.string "environment"
+    t.string "platform"
+    t.string "location_identifier"
+    t.bigint "component_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["component_id"], name: "index_deployments_on_component_id"
   end
 
   create_table "domains", force: :cascade do |t|
@@ -68,6 +78,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_29_203511) do
   add_foreign_key "component_dependencies", "components"
   add_foreign_key "component_dependencies", "components", column: "dependency_id"
   add_foreign_key "components", "domains"
+  add_foreign_key "deployments", "components"
   add_foreign_key "system_components", "components"
   add_foreign_key "system_components", "systems"
   add_foreign_key "systems", "domains"
