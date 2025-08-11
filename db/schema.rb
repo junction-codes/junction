@@ -26,7 +26,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_10_223901) do
   create_table "components", force: :cascade do |t|
     t.string "name"
     t.text "description"
-    t.string "status"
+    t.string "lifecycle"
     t.string "component_type"
     t.string "repository_url"
     t.bigint "domain_id", null: false

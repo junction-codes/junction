@@ -1,11 +1,11 @@
 class Component < ApplicationRecord
-  attribute :status, :string, default: "active"
+  attribute :lifecycle, :string, default: "experimental"
   alias_attribute :type, :component_type
 
   validates :component_type, presence: true
   validates :description, presence: true
   validates :name, presence: true, uniqueness: true
-  validates :status, presence: true, inclusion: { in: %w[active closed] }
+  validates :lifecycle, presence: true, inclusion: { in: CatalogOptions.lifecycles.keys }
   validates :image_url, allow_blank: true, format: URI::DEFAULT_PARSER.make_regexp(%w[http https])
 
   belongs_to :domain

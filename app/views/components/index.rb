@@ -32,7 +32,7 @@ class Views::Components::Index < Views::Base
       header.row do |row|
         row.head { "Component Name" }
         row.head { "Domain" }
-        row.head { "Status" }
+        row.head { "Lifecycle" }
         row.head(class: "relative") do
           span(class: "sr-only") { "View" }
         end
@@ -71,7 +71,7 @@ class Views::Components::Index < Views::Base
           end
 
           row.cell do
-            render Components::Badge.new(variant: component.status&.to_sym) { component.status&.capitalize }
+            render Components::Badge.new(variant: component.lifecycle&.to_sym) { component.lifecycle&.capitalize }
           end
 
           row.cell(class: "text-right text-sm font-medium") do

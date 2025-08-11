@@ -3,7 +3,7 @@ class CreateComponents < ActiveRecord::Migration[8.0]
     create_table :components do |t|
       t.string :name
       t.text :description
-      t.string :status
+      t.string :lifecycle
       t.string :component_type
       t.string :repository_url
       t.references :domain, null: false, foreign_key: true

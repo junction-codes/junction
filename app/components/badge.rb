@@ -41,7 +41,10 @@ module Components
 
     COLOR_ALIASES = {
       active: :green,
-      closed: :neutral
+      closed: :neutral,
+      experimental: :outline,
+      production: :success,
+      deprecated: :destructive
     }.freeze
 
     def initialize(variant: :primary, size: :md, **args)

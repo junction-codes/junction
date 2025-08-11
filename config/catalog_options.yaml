@@ -1,0 +1,71 @@
+lifecycles:
+  experimental:
+    name: 'Experimental'
+    icon: 'flask-conical'
+    description: 'This component is experimental and should not be used in production.'
+  production:
+    name: 'Production'
+    icon: 'badge-check'
+    description: 'This component is stable and used in production.'
+  deprecated:
+    name: 'Deprecated'
+    icon: 'archive'
+    description: 'This component is deprecated and will be removed in the future.'
+
+kinds:
+  api:
+    name: 'API'
+    icon: 'waypoints'
+  database:
+    name: 'Database'
+    icon: 'database'
+  web:
+    name: 'Web Service'
+    icon: 'globe'
+  worker:
+    name: 'Worker'
+    icon: 'cog'
+
+environments:
+  sandbox:
+    id: 'sandbox'
+    name: 'Sandbox'
+    icon: 'codesandbox'
+    description: 'For exploration and development of proof-of-concepts.'
+  development:
+    id: 'development'
+    name: 'Development'
+    icon: 'code'
+    description: 'For local development and testing.'
+  testing:
+    id: 'testing'
+    name: 'Testing'
+    icon: 'test-tube-diagonal'
+    description: 'Testing environment.'
+  qa:
+    id: 'qa'
+    name: 'QA'
+    icon: 'tablet-smartphone'
+    description: 'Quality assurance environment.'
+  staging:
+    id: 'staging'
+    name: 'Staging'
+    icon: 'shield-alert'
+    description: 'Pre-production environment for final validation.'
+  production:
+    id: 'production'
+    name: 'Production'
+    icon: 'cloud'
+    description: 'Live environment serving end-users.'
+
+platforms:
+  aws:
+    id: 'aws'
+    name: 'Amazon Web Services'
+    icon: 'boxicons:aws:logos'
+    description: 'Deployed on Amazon Web Services.'
+  aptible:
+    id: 'aptible'
+    name: 'Aptible'
+    icon: 'cloud'
+    description: 'Deployed on the Aptible PaaS.'

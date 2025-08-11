@@ -20,10 +20,8 @@ module Components
           end
 
           card.content(class: "space-y-4") do
-            # TODO: Make this a select field with predefined options.
-            render TextField.new(f, :environment, "Environment", required: true)
-            # TODO: Make this a select field with predefined options.
-            render TextField.new(f, :platform, "Platform", required: true)
+            render RichSelectField.new(f, :environment, "Environment", required: true, options: CatalogOptions.environments)
+            render RichSelectField.new(f, :platform, "Platform", required: true, options: CatalogOptions.platforms)
 
             render ReferenceField.new(f, :component_id, "Component", required: true,
                                    options: @components, value: @deployment.component, icon: "server",

@@ -1,12 +1,12 @@
 - name: Keystone Copwatch Database
-  status: active
+  lifecycle: experimental
   type: database
   domain: ACAB
   description: |
     PostgreSQL database for Keystone Copwatch, storing user data, reports, and
     other relevant information.
 - name: Keystone Copwatch Website
-  status: active
+  lifecycle: experimental
   type: web
   domain: ACAB
   systems:
@@ -17,7 +17,7 @@
     Main website for Keystone Copwatch, providing resources and information on
     police accountability.
 - name: Keystone Copwatch Worker
-  status: active
+  lifecycle: experimental
   type: worker
   domain: ACAB
   systems:

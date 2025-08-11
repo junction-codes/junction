@@ -136,7 +136,7 @@ class Views::Components::Show < Views::Base
       thead(class: "bg-gray-50 dark:bg-gray-700") do
         tr do
           th(scope: "col", class: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider") { "Component Name" }
-          th(scope: "col", class: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider") { "Status" }
+          th(scope: "col", class: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider") { "Lifecycle" }
           th(scope: "col", class: "relative px-6 py-3") { span(class: "sr-only") { "View" } }
         end
       end
@@ -146,7 +146,7 @@ class Views::Components::Show < Views::Base
           tr(class: "hover:bg-gray-50 dark:hover:bg-gray-700/50") do
             td(class: "px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white") { component.name }
             td(class: "px-6 py-4 whitespace-nowrap") do
-              render Components::Badge.new(variant: component.status.to_sym) { component.status.capitalize }
+              render Components::Badge.new(variant: component.lifecycle&.to_sym) { component.lifecycle&.capitalize }
             end
             td(class: "px-6 py-4 whitespace-nowrap text-right text-sm font-medium") do
               a(href: component_path(component), class: "text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300") { "View" }

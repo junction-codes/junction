@@ -21,15 +21,14 @@ module Components
 
           card.content(class: "space-y-4") do
             render TextField.new(f, :name, "Component Name", required: true)
-            render TextField.new(f, :status, "Component Status", required: true)
-            # TODO: Make this a select field with predefined options.
-            render TextField.new(f, :type, "Component Type", required: true)
-            render TextField.new(f, :repository_url, "Repository URL")
+            render RichSelectField.new(f, :type, "Type", required: true, options: CatalogOptions.kinds)
+            render RichSelectField.new(f, :lifecycle, "Lifecycle", required: true, options: CatalogOptions.lifecycles)
 
             render ReferenceField.new(f, :domain_id, "Domain", required: true,
                                    options: @domains.order(:name), value: @component.domain,
                                    help_text: "Assign this component to an existing domain.")
 
+            render TextField.new(f, :repository_url, "Repository URL")
             render TextAreaField.new(f, :description, "Description", required: true, help_text: "A brief summary of the component's goals.")
           end
         end
