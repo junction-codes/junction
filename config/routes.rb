@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
   resources :deployments
   resources :domains
+  resources :groups
 
   resources :systems do
     get :dependency_graph, on: :member

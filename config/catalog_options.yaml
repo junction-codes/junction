@@ -1,3 +1,17 @@
+group_types:
+  business_unit:
+    name: Business Unit
+    icon: building
+    description: A division within the organization responsible for specific business functions.
+  product_area:
+    name: Product Area
+    icon: box
+    description: A specific area of focus within the product portfolio.
+  team:
+    name: Team
+    icon: users-round
+    description: A group of people working together on a project.
+
 lifecycles:
   experimental:
     name: 'Experimental'

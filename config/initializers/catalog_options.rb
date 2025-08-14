@@ -13,6 +13,10 @@ module CatalogOptions
     options[:environments]
   end
 
+  def self.group_types
+    options[:group_types]
+  end
+
   def self.kinds
     options[:kinds]
   end
