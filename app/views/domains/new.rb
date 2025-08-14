@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 class Views::Domains::New < Views::Base
-  def initialize(domain:)
+  def initialize(domain:, owners:)
     @domain = domain
+    @owners = owners
   end
 
   def view_template
@@ -20,7 +21,7 @@ class Views::Domains::New < Views::Base
       end
 
       main(class: "mt-6 max-w-2xl mx-auto") do
-        render Components::DomainForm.new(domain: @domain)
+        render Components::DomainForm.new(domain: @domain, owners: @owners)
       end
     end
   end

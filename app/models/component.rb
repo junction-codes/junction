@@ -9,6 +9,7 @@ class Component < ApplicationRecord
   validates :image_url, allow_blank: true, format: URI::DEFAULT_PARSER.make_regexp(%w[http https])
 
   belongs_to :domain
+  belongs_to :owner, class_name: "Group", optional: true
   has_many :deployments, dependent: :destroy
   has_many :system_components, dependent: :destroy
   has_many :systems, through: :system_components
@@ -20,4 +21,8 @@ class Component < ApplicationRecord
   # Components that depend on THIS component.
   has_many :inverse_component_dependencies, class_name: 'ComponentDependency', foreign_key: 'dependency_id', dependent: :destroy
   has_many :dependents, through: :inverse_component_dependencies, source: :component
+
+  def icon
+    CatalogOptions.kinds[type]&.[](:icon) || "server"
+  end
 end

@@ -35,7 +35,14 @@ class Views::Domains::Show < Views::Base
           p(class: "mt-1 text-md text-gray-600 dark:text-gray-400 max-w-2xl") { @domain.description }
           div(class: "mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400") do
             span(class: "font-semibold mr-2") { "Owner:" }
-            span { plain "NO OWNER" }
+
+            if @domain.owner.present?
+              span do
+                Link(href: group_path(@domain.owner), class: 'p-0 inline') { @domain.owner.name }
+              end
+            else
+              span { plain "NO OWNER" }
+            end
           end
         end
       end

@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 class Views::Components::Edit < Views::Base
-  def initialize(component:)
+  def initialize(component:, owners:)
     @component = component
+    @owners = owners
   end
 
   def view_template
@@ -20,7 +21,7 @@ class Views::Components::Edit < Views::Base
 
       div(class: "grid grid-cols-1 lg:grid-cols-3 gap-8") do
         main(class: "lg:col-span-2") do
-          render Components::ComponentForm.new(component: @component)
+          render Components::ComponentForm.new(component: @component, owners: @owners)
         end
 
         aside(class: "space-y-6") do

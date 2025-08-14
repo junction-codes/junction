@@ -51,7 +51,7 @@ class Views::Components::Index < Views::Base
                 img(src: component.image_url, alt: "#{component.name} logo", class: "h-12 w-12 rounded-md object-cover flex-shrink-0")
               else
                 div(class: "h-12 w-12 rounded-md bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0") do
-                  icon("network", class: "h-6 w-6 text-gray-500")
+                  icon(component.icon, class: "h-6 w-6 text-gray-500")
                 end
               end
 

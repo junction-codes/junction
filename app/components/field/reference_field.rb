@@ -2,7 +2,7 @@
 
 module Components
   class ReferenceField < Base
-    def initialize(form, method, label, options: [], help_text: nil, icon: "briefcase", required: false, value: nil, **user_attrs)
+    def initialize(form, method, label, options: [], help_text: nil, icon: "disc-2", required: false, value: nil, **user_attrs)
       @form = form
       @method = method
       @label = label
@@ -35,7 +35,7 @@ module Components
 
             SelectContent(outlet_id: @form.field_id(@method)) do
               @options.each do |record|
-                render SelectItem.new(value: record.id) do
+                render SelectItem.new(value: record.id, selected: @value.present? && @value.id == record.id) do
                   item_content(record)
                 end
               end

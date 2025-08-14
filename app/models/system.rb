@@ -7,6 +7,7 @@ class System < ApplicationRecord
   validates :image_url, allow_blank: true, format: URI::DEFAULT_PARSER.make_regexp(%w[http https])
 
   belongs_to :domain
+  belongs_to :owner, class_name: "Group", optional: true
   has_many :system_components, dependent: :destroy
   has_many :components, through: :system_components
 end

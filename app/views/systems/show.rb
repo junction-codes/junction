@@ -45,7 +45,14 @@ class Views::Systems::Show < Views::Base
           p(class: "mt-1 text-md text-gray-600 dark:text-gray-400 max-w-2xl") { @system.description }
           div(class: "mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400") do
             span(class: "font-semibold mr-2") { "Owner:" }
-            span { plain "NO OWNER" }
+
+            if @system.owner.present?
+              span do
+                Link(href: group_path(@system.owner), class: 'p-0 inline') { @system.owner.name }
+              end
+            else
+              span { plain "NO OWNER" }
+            end
           end
         end
 

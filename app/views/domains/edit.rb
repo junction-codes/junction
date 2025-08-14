@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 class Views::Domains::Edit < Views::Base
-  def initialize(domain:)
+  def initialize(domain:, owners:)
     @domain = domain
+    @owners = owners
   end
 
   def view_template
@@ -22,7 +23,7 @@ class Views::Domains::Edit < Views::Base
       # Two-column layout for form and sidebar.
       div(class: "grid grid-cols-1 lg:grid-cols-3 gap-8") do
         main(class: "lg:col-span-2") do
-          render Components::DomainForm.new(domain: @domain)
+          render Components::DomainForm.new(domain: @domain, owners: @owners)
         end
 
         aside(class: "space-y-6") do

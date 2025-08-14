@@ -52,7 +52,7 @@ class Views::Groups::Index < Views::Base
                 img(src: group.image_url, alt: "#{group.name} logo", class: "h-12 w-12 rounded-md object-cover flex-shrink-0")
               else
                 div(class: "h-12 w-12 rounded-md bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0") do
-                  icon("users-round", class: "h-6 w-6 text-gray-500")
+                  icon(group.icon, class: "h-6 w-6 text-gray-500")
                 end
               end
 

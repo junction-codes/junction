@@ -35,7 +35,7 @@ module Components
 
             SelectContent(outlet_id: @form.field_id(@method)) do
               @options.each do |id, option|
-                render SelectItem.new(value: id) do
+                render SelectItem.new(value: id, selected: value.present? && value == id) do
                   item_content(option)
                 end
               end

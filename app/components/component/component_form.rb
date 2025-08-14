@@ -5,9 +5,10 @@ module Components
     include Phlex::Rails::Helpers::FormWith
     include Phlex::Rails::Helpers::OptionsForSelect
 
-    def initialize(component:, domains: Domain.order(:name))
+    def initialize(component:, domains: Domain.order(:name), owners: Group.order(:name))
       @component = component
       @domains = domains
+      @owners = owners
     end
 
     def view_template
@@ -25,8 +26,12 @@ module Components
             render RichSelectField.new(f, :lifecycle, "Lifecycle", required: true, options: CatalogOptions.lifecycles)
 
             render ReferenceField.new(f, :domain_id, "Domain", required: true,
-                                   options: @domains.order(:name), value: @component.domain,
+                                   options: @domains, value: @component.domain, icon: "briefcase",
                                    help_text: "Assign this component to an existing domain.")
+
+            render ReferenceField.new(f, :owner_id, "Owner", icon: "users-round",
+                                      options: @owners, value: @component.owner,
+                                      help_text: "Assign an owner for this component.")
 
             render TextField.new(f, :repository_url, "Repository URL")
             render TextAreaField.new(f, :description, "Description", required: true, help_text: "A brief summary of the component's goals.")

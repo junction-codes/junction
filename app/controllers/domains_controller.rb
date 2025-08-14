@@ -19,6 +19,7 @@ class DomainsController < ApplicationController
   def new
     render Views::Domains::New.new(
       domain: Domain.new,
+      owners: Group.order(:name)
     )
   end
 
@@ -26,6 +27,7 @@ class DomainsController < ApplicationController
   def edit
     render Views::Domains::Edit.new(
       domain: @domain,
+      owners: Group.order(:name)
     )
   end
 
@@ -37,7 +39,7 @@ class DomainsController < ApplicationController
       redirect_to @domain, success: "Domain was successfully created."
     else
       flash.now[:alert] = "There were errors creating the domain."
-      render Views::Domains::New.new(domain: @domain), status: :unprocessable_entity
+      render Views::Domains::New.new(domain: @domain, owners: @owners), status: :unprocessable_entity
     end
   end
 
@@ -47,7 +49,7 @@ class DomainsController < ApplicationController
       redirect_to @domain, success: "Domain was successfully updated."
     else
       flash.now[:alert] = "There were errors updating the domain."
-      render Views::Domains::Edit.new(domain: @domain), status: :unprocessable_entity
+      render Views::Domains::Edit.new(domain: @domain, owners: Group.order(:name)), status: :unprocessable_entity
     end
   end
 
@@ -65,6 +67,6 @@ class DomainsController < ApplicationController
   end
 
   def domain_params
-    params.expect(domain: [ :name, :description, :image_url, :status ])
+    params.expect(domain: [ :name, :description, :image_url, :status, :owner_id ])
   end
 end

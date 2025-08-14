@@ -19,6 +19,7 @@ class ComponentsController < ApplicationController
   def new
     render Views::Components::New.new(
       component: Component.new,
+      owners: Group.order(:name)
     )
   end
 
@@ -26,6 +27,7 @@ class ComponentsController < ApplicationController
   def edit
     render Views::Components::Edit.new(
       component: @component,
+      owners: Group.order(:name)
     )
   end
 
@@ -37,7 +39,7 @@ class ComponentsController < ApplicationController
       redirect_to @component, success: "Component was successfully created."
     else
       flash.now[:alert] = "There were errors creating the component."
-      render Views::Components::New.new(component: @component), status: :unprocessable_entity
+      render Views::Components::New.new(component: @component, owners: @owners), status: :unprocessable_entity
     end
   end
 
@@ -47,7 +49,7 @@ class ComponentsController < ApplicationController
       redirect_to @component, success: "Component was successfully updated."
     else
       flash.now[:alert] = "There were errors updating the component."
-      render Views::Components::Edit.new(component: @component), status: :unprocessable_entity
+      render Views::Components::Edit.new(component: @component, owners: @owners), status: :unprocessable_entity
     end
   end
 
@@ -97,6 +99,6 @@ class ComponentsController < ApplicationController
   end
 
   def component_params
-    params.expect(component: [ :name, :description, :repository_url, :lifecycle, :type, :domain_id, :image_url ])
+    params.expect(component: [ :name, :description, :repository_url, :lifecycle, :type, :domain_id, :image_url, :owner_id ])
   end
 end

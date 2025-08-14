@@ -2,8 +2,9 @@
 
 module Components
   class SelectItem < Base
-    def initialize(value: nil, **attrs)
+    def initialize(value: nil, selected: false, **attrs)
       @value = value
+      @selected = selected
       super(**attrs)
     end
 
@@ -45,7 +46,9 @@ module Components
         },
         data_value: @value,
         data_orientation: "vertical",
-        aria_selected: "false"
+        aria: {
+          selected: @selected ? "true" : "false"
+        }
       }
     end
   end

@@ -35,11 +35,6 @@ class Views::Groups::Show < Views::Base
           p(class: "mt-1 text-md text-gray-600 dark:text-gray-400 max-w-2xl") do
             Link(href: "mailto:#{@group.email}", class: "p-0 inline") { @group.email }
           end if @group.email.present?
-
-          div(class: "mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400") do
-            span(class: "font-semibold mr-2") { "Owner:" }
-            span { plain "NO OWNER" }
-          end
         end
 
         div do

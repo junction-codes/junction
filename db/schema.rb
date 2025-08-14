@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_14_000559) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_14_013543) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -33,7 +33,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_14_000559) do
     t.string "image_url"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "owner_id"
     t.index ["domain_id"], name: "index_components_on_domain_id"
+    t.index ["owner_id"], name: "index_components_on_owner_id"
   end
 
   create_table "deployments", force: :cascade do |t|
@@ -53,6 +55,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_14_000559) do
     t.string "image_url"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "owner_id"
+    t.index ["owner_id"], name: "index_domains_on_owner_id"
   end
 
   create_table "groups", force: :cascade do |t|
@@ -84,15 +88,20 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_14_000559) do
     t.bigint "domain_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "owner_id"
     t.index ["domain_id"], name: "index_systems_on_domain_id"
+    t.index ["owner_id"], name: "index_systems_on_owner_id"
   end
 
   add_foreign_key "component_dependencies", "components"
   add_foreign_key "component_dependencies", "components", column: "dependency_id"
   add_foreign_key "components", "domains"
+  add_foreign_key "components", "groups", column: "owner_id"
   add_foreign_key "deployments", "components"
+  add_foreign_key "domains", "groups", column: "owner_id"
   add_foreign_key "groups", "groups", column: "parent_id"
   add_foreign_key "system_components", "components"
   add_foreign_key "system_components", "systems"
   add_foreign_key "systems", "domains"
+  add_foreign_key "systems", "groups", column: "owner_id"
 end

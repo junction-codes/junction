@@ -5,9 +5,10 @@ module Components
     include Phlex::Rails::Helpers::FormWith
     include Phlex::Rails::Helpers::OptionsForSelect
 
-    def initialize(system:, domains: Domain.order(:name))
+    def initialize(system:, domains: Domain.order(:name), owners: Group.order(:name))
       @system = system
       @domains = domains
+      @owners = owners
     end
 
     def view_template
@@ -24,8 +25,12 @@ module Components
             render TextField.new(f, :status, "System Status", required: true)
 
             render ReferenceField.new(f, :domain_id, "Domain", required: true,
-                                   options: @domains.order(:name), value: @system.domain,
+                                   options: @domains, value: @system.domain, icon: "briefcase",
                                    help_text: "Assign this system to an existing domain.")
+
+            render ReferenceField.new(f, :owner_id, "Owner", icon: "users-round",
+                                      options: @owners, value: @system.owner,
+                                      help_text: "Assign an owner for this system.")
 
             render TextAreaField.new(f, :description, "Description", required: true, help_text: "A brief summary of the system's goals.")
           end

@@ -22,7 +22,7 @@ module Components
             render TextField.new(f, :name, "Group Name", required: true)
             render RichSelectField.new(f, :type, "Type", required: true, options: CatalogOptions.group_types)
 
-            render ReferenceField.new(f, :parent_id, "Parent", required: false, icon: "user-round",
+            render ReferenceField.new(f, :parent_id, "Parent", required: false, icon: "users-round",
                                       options: @parents, value: @group.parent,
                                       help_text: "Select a parent for this group.")
 

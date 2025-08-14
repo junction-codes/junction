@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 class Views::Systems::New < Views::Base
-  def initialize(system:)
+  def initialize(system:, owners:)
     @system = system
+    @owners = owners
   end
 
   def view_template
@@ -19,7 +20,7 @@ class Views::Systems::New < Views::Base
       end
 
       main(class: "mt-6 max-w-2xl mx-auto") do
-        render Components::SystemForm.new(system: @system)
+        render Components::SystemForm.new(system: @system, owners: @owners)
       end
     end
   end
