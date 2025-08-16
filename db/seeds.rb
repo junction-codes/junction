@@ -30,9 +30,6 @@ if Rails.env.development?
     Rails.logger.info "Creating component #{component[:name]}"
     component[:domain] = Domain.find_by(name: component[:domain]) if component[:domain].present?
 
-    # component[:systems].map! do |system|
-    #   System.find_by(name: system)
-    # end if component[:systems].present?
     component.fetch(:systems, []).map! do |system|
       System.find_by(name: system)
     end
@@ -41,7 +38,13 @@ if Rails.env.development?
       Component.find_by(name: dependency)
     end
 
-    pp(component)
     Component.create(component)
+  end
+
+  YAML.load_file(Rails.root.join('db', 'seeds', 'users.yaml'), symbolize_names: true).each do |user|
+    next if User.find_by(email_address: user[:email_address])
+
+    Rails.logger.info "Creating user #{user[:display_name]}"
+    User.create(user)
   end
 end

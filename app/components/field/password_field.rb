@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
 module Components
-  class TextAreaField < Base
+  class PasswordField < Base
     def initialize(form, method, label, help_text: nil, required: false, **user_attrs)
       @form = form
       @method = method
       @label = label
       @help_text = help_text
       @required = required
-      @errors = @form.object.errors[@method]
+      @errors = @form.object&.errors&.[](@method) || []
 
       super(**user_attrs)
     end
@@ -21,11 +21,12 @@ module Components
         end
 
         div(class: "mt-2") do
-          @form.text_area @method, **attrs
+          @form.password_field @method, attrs
         end
 
         p(class: "mt-2 text-sm text-gray-500") { @help_text } if @help_text
 
+        # If there are any validation errors, display them below the field
         if @errors.any?
           div(class: "mt-2 text-sm text-red-600 dark:text-red-400", id: "#{@method}_errors") do
             @errors.each do |error|

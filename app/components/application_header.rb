@@ -2,6 +2,12 @@
 
 module Components
   class ApplicationHeader < Base
+    def initialize(**user_attrs)
+      @user = Current.user
+
+      super
+    end
+
     def view_template
       header(class: "bg-white dark:bg-gray-800 shadow-sm p-4 flex justify-between items-center border-b border-gray-200 dark:border-gray-700") do
         div(class: "flex items-center space-x-4") do
@@ -23,12 +29,9 @@ module Components
           render Components::ThemeToggle
 
           button(class: "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white") { icon("bell", class: "w-6 h-6") }
+
           div(class: "relative") do
-            button(class: "flex items-center space-x-2") do
-              # img(src: "https://github.com/mdo.png", alt: "User Avatar", class: "w-8 h-8 rounded-full")
-              icon("circle-user-round", class: "w-8 h-8 text-gray-500 dark:text-gray-400")
-              span(class: "text-gray-800 dark:text-white") { "DevOps Engineer" }
-            end
+            UserMenu(user: @user)
           end
         end
       end

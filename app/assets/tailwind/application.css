@@ -45,6 +45,8 @@
   --sidebar-ring: oklch(0.708 0 0);
 
   /* ruby_ui specific */
+  --alert: oklch(0.577 0.245 27.325);
+  --alert-foreground: hsl(0 0% 100%);
   --warning: hsl(38 92% 50%);
   --warning-foreground: hsl(0 0% 100%);
   --success: hsl(87 100% 37%);
@@ -86,6 +88,8 @@
   --sidebar-ring: oklch(0.439 0 0);
 
   /* ruby_ui specific */
+  --alert: oklch(0.704 0.191 22.22);
+  --alert-foreground: hsl(0 0% 100%);
   --warning: hsl(38 92% 50%);
   --warning-foreground: hsl(0 0% 100%);
   --success: hsl(84 81% 44%);
@@ -131,6 +135,8 @@
   --color-sidebar-ring: var(--sidebar-ring);
 
   /* ruby_ui specific */
+  --color-alert: var(--alert);
+  --color-alert-foreground: var(--alert-foreground);
   --color-warning: var(--warning);
   --color-warning-foreground: var(--warning-foreground);
   --color-success: var(--success);

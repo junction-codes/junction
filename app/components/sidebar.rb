@@ -14,6 +14,7 @@ module Components
           sidebar_link(href: "#{components_path}", icon: "server", title: "Components")
           sidebar_link(href: "#{deployments_path}", icon: "rocket", title: "Deployments")
           sidebar_link(href: "#{groups_path}", icon: "users-round", title: "Groups")
+          sidebar_link(href: "#{users_path}", icon: "user-round", title: "Users")
           sidebar_link(href: "#", icon: "book-open", title: "TechDocs")
           sidebar_link(href: "#", icon: "dollar-sign", title: "Cost Explorer")
         end

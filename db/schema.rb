@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_14_013543) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_14_234451) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -71,6 +71,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_14_013543) do
     t.index ["parent_id"], name: "index_groups_on_parent_id"
   end
 
+  create_table "sessions", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "ip_address"
+    t.string "user_agent"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_sessions_on_user_id"
+  end
+
   create_table "system_components", force: :cascade do |t|
     t.bigint "system_id", null: false
     t.bigint "component_id", null: false
@@ -93,6 +102,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_14_013543) do
     t.index ["owner_id"], name: "index_systems_on_owner_id"
   end
 
+  create_table "users", force: :cascade do |t|
+    t.string "email_address", null: false
+    t.string "password_digest", null: false
+    t.string "display_name", null: false
+    t.string "pronouns"
+    t.string "image_url"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email_address"], name: "index_users_on_email_address", unique: true
+  end
+
   add_foreign_key "component_dependencies", "components"
   add_foreign_key "component_dependencies", "components", column: "dependency_id"
   add_foreign_key "components", "domains"
@@ -100,6 +120,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_14_013543) do
   add_foreign_key "deployments", "components"
   add_foreign_key "domains", "groups", column: "owner_id"
   add_foreign_key "groups", "groups", column: "parent_id"
+  add_foreign_key "sessions", "users"
   add_foreign_key "system_components", "components"
   add_foreign_key "system_components", "systems"
   add_foreign_key "systems", "domains"

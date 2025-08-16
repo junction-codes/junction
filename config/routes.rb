@@ -1,7 +1,10 @@
 Rails.application.routes.draw do
+  resource :session
+  resources :passwords, param: :token
   resources :deployments
   resources :domains
   resources :groups
+  resources :users
 
   resources :systems do
     get :dependency_graph, on: :member
