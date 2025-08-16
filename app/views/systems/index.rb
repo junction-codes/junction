@@ -33,6 +33,7 @@ class Views::Systems::Index < Views::Base
         row.head { "System Name" }
         row.head { "Domain" }
         row.head { "Status" }
+        row.head { "Owner" }
         row.head(class: "relative") do
           span(class: "sr-only") { "View" }
         end
@@ -72,6 +73,12 @@ class Views::Systems::Index < Views::Base
 
           row.cell do
             render Components::Badge.new(variant: system.status&.to_sym) { system.status&.capitalize }
+          end
+
+          row.cell do
+            if system.owner.present?
+              render Link(href: group_path(system.owner)) { system.owner.name }
+            end
           end
 
           row.cell(class: "text-right text-sm font-medium") do

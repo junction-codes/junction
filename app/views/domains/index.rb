@@ -32,12 +32,9 @@ class Views::Domains::Index < Views::Base
   def table_header(table)
     table.header do |header|
       header.row do |row|
-        row.head do
-          "Domain Name"
-        end
-        row.head do
-          "Status"
-        end
+        row.head { "Domain Name" }
+        row.head { "Status" }
+        row.head { "Owner" }
         row.head(class: "relative") do
           span(class: "sr-only") { "View" }
         end
@@ -70,6 +67,12 @@ class Views::Domains::Index < Views::Base
 
           row.cell do
             render Components::Badge.new(variant: domain.status&.to_sym) { domain.status&.capitalize }
+          end
+
+          row.cell do
+            if domain.owner.present?
+              render Link(href: group_path(domain.owner)) { domain.owner.name }
+            end
           end
 
           row.cell(class: "text-right text-sm font-medium") do

@@ -31,6 +31,7 @@ class Views::Deployments::Index < Views::Base
     table.header do |header|
       header.row do |row|
         row.head { "Component" }
+        row.head { "Owner" }
         row.head { "Environment" }
         row.head { "Platform" }
         row.head { "Identifier" }
@@ -48,6 +49,12 @@ class Views::Deployments::Index < Views::Base
           row.cell do
             Link(href: component_path(deployment.component), class: 'ps-0') do
               deployment.component.name
+            end
+          end
+
+          row.cell do
+            if deployment.component.owner.present?
+              render Link(href: group_path(deployment.component.owner)) { deployment.component.owner.name }
             end
           end
 

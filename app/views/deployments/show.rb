@@ -32,7 +32,14 @@ class Views::Deployments::Show < Views::Base
           h2(class: "text-3xl font-bold text-gray-900 dark:text-white") { @deployment.component.name }
           div(class: "mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400") do
             span(class: "font-semibold mr-2") { "Owner:" }
-            span { plain "NO OWNER" }
+
+            if @deployment.component.owner.present?
+              span do
+                Link(href: group_path(@deployment.component.owner), class: 'p-0 inline') { @deployment.component.owner.name }
+              end
+            else
+              span { plain "NO OWNER" }
+            end
           end
 
           div(class: "mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400") do

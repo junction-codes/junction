@@ -33,6 +33,7 @@ class Views::Components::Index < Views::Base
         row.head { "Component Name" }
         row.head { "Domain" }
         row.head { "Lifecycle" }
+        row.head { "Owner" }
         row.head(class: "relative") do
           span(class: "sr-only") { "View" }
         end
@@ -72,6 +73,12 @@ class Views::Components::Index < Views::Base
 
           row.cell do
             render Components::Badge.new(variant: component.lifecycle&.to_sym) { component.lifecycle&.capitalize }
+          end
+
+          row.cell do
+            if component.owner.present?
+              render Link(href: group_path(component.owner)) { component.owner.name }
+            end
           end
 
           row.cell(class: "text-right text-sm font-medium") do
