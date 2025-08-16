@@ -1,0 +1,5 @@
+- name: Admins
+  email: admins@example.com
+  description: Portal administrators with full access to all features.
+  members:
+    - admin@example.com

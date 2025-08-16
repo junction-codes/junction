@@ -47,4 +47,15 @@ if Rails.env.development?
     Rails.logger.info "Creating user #{user[:display_name]}"
     User.create(user)
   end
+
+  YAML.load_file(Rails.root.join('db', 'seeds', 'groups.yaml'), symbolize_names: true).each do |group|
+    next if Group.find_by(name: group[:name])
+
+    Rails.logger.info "Creating user #{group[:name]}"
+    group.fetch(:members, []).map! do |member|
+      User.find_by(email_address: member)
+    end
+
+    Group.create(group)
+  end
 end

@@ -10,8 +10,21 @@ class Group < ApplicationRecord
 
   belongs_to :parent, class_name: 'Group', optional: true
   has_many :children, class_name: 'Group', foreign_key: 'parent_id', dependent: :destroy
+  has_many :group_memberships, dependent: :destroy
+  has_many :members, through: :group_memberships, class_name: "User", source: :user
 
   def icon
     CatalogOptions.group_types[type]&.[](:icon) || "users-round"
+  end
+
+  def self_and_ancestors
+    ancestors = [self]
+    current = self
+    while current.parent
+      ancestors << current.parent
+      current = current.parent
+    end
+
+    ancestors
   end
 end

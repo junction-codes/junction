@@ -50,8 +50,9 @@ class Views::Users::Show < Views::Base
 
   def user_stats
     div(class: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6") do
-      render Components::StatCard.new(title: "Total Systems", value: 1, icon: "network")
-      render Components::StatCard.new(title: "Total Components", value: 2, icon: "server")
+      render Components::StatCard.new(title: "Total Groups", value: @user.group_memberships.count, icon: "users-round")
+      render Components::StatCard.new(title: "Total Systems", value: @user.systems.count, icon: "network")
+      render Components::StatCard.new(title: "Total Components", value: @user.components.count, icon: "server")
     end
   end
 

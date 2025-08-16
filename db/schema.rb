@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_14_234451) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_16_212250) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -57,6 +57,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_14_234451) do
     t.datetime "updated_at", null: false
     t.bigint "owner_id"
     t.index ["owner_id"], name: "index_domains_on_owner_id"
+  end
+
+  create_table "group_memberships", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "group_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["group_id"], name: "index_group_memberships_on_group_id"
+    t.index ["user_id"], name: "index_group_memberships_on_user_id"
   end
 
   create_table "groups", force: :cascade do |t|
@@ -119,6 +128,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_14_234451) do
   add_foreign_key "components", "groups", column: "owner_id"
   add_foreign_key "deployments", "components"
   add_foreign_key "domains", "groups", column: "owner_id"
+  add_foreign_key "group_memberships", "groups"
+  add_foreign_key "group_memberships", "users"
   add_foreign_key "groups", "groups", column: "parent_id"
   add_foreign_key "sessions", "users"
   add_foreign_key "system_components", "components"
