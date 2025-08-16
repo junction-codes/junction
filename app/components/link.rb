@@ -76,6 +76,13 @@ module Components
       ]
     end
 
+    def disabled_classes
+      [
+        "whitespace-nowrap inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring pointer-events-none opacity-50",
+        size_classes
+      ]
+    end
+
     def default_classes
       case @variant
       when :primary then primary_classes
@@ -84,6 +91,7 @@ module Components
       when :destructive then destructive_classes
       when :outline then outline_classes
       when :ghost then ghost_classes
+      when :disabled then disabled_classes
       end
     end
 

@@ -8,15 +8,15 @@ module Components
         class: "bg-white dark:bg-gray-800 flex flex-col transition-all duration-300 w-64"
       ) do
         nav(class: "flex-1 px-2 py-4 space-y-2") do
-          sidebar_link(href: "#", icon: "house", title: "Dashboard")
+          sidebar_link(href: "#", icon: "house", title: "Dashboard", disabled: true)
           sidebar_link(href: "#{domains_path}", icon: "briefcase", title: "Domains")
           sidebar_link(href: "#{systems_path}", icon: "network", title: "Systems")
           sidebar_link(href: "#{components_path}", icon: "server", title: "Components")
           sidebar_link(href: "#{deployments_path}", icon: "rocket", title: "Deployments")
           sidebar_link(href: "#{groups_path}", icon: "users-round", title: "Groups")
           sidebar_link(href: "#{users_path}", icon: "user-round", title: "Users")
-          sidebar_link(href: "#", icon: "book-open", title: "TechDocs")
-          sidebar_link(href: "#", icon: "dollar-sign", title: "Cost Explorer")
+          sidebar_link(href: "#", icon: "book-open", title: "TechDocs", disabled: true)
+          sidebar_link(href: "#", icon: "dollar-sign", title: "Cost Explorer", disabled: true)
         end
 
         footer(class: "p-4 border-t border-gray-200 dark:border-gray-700") do
@@ -27,9 +27,9 @@ module Components
 
     private
 
-    def sidebar_link(href:, icon:, title:)
+    def sidebar_link(href:, icon:, title:, disabled: false)
       div do
-        render Link.new(href: href, title:) do
+        render Link.new(href: href, title:, variant: disabled ? :disabled : :link) do
           span(class: "flex-shrink-0") { icon(icon, class: "w-6 h-6") }
           span(data_sidebar_target: "linkText", class: "ml-4 whitespace-nowrap") { title }
         end
