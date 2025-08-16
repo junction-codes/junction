@@ -8,6 +8,18 @@ module Components
       end
     end
 
+    def item(*, **, &)
+      render DropdownMenuItem.new(*, **, &)
+    end
+
+    def label(*, **, &)
+      render DropdownMenuLabel.new(*, **, &)
+    end
+
+    def separator(*, **, &)
+      render DropdownMenuSeparator.new(*, **, &)
+    end
+
     private
 
     def default_attrs

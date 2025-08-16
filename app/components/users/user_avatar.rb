@@ -10,11 +10,11 @@ module Components
     end
 
     def view_template
-      Avatar(**attrs) do
+      Avatar(**attrs) do |avatar|
         if @user.image_url.present?
-          AvatarImage(src: @user.image_url, alt: @user.display_name)
+          avatar.image(src: @user.image_url, alt: @user.display_name)
         else
-          AvatarFallback { icon("circle-user-round") }
+          avatar.fallback { icon("circle-user-round") }
         end
       end
     end

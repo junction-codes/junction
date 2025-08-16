@@ -11,6 +11,14 @@ module Components
       div(**attrs, &)
     end
 
+    def content(*, **, &)
+      render DropdownMenuContent.new(*, **, &)
+    end
+
+    def trigger(*, **, &)
+      render DropdownMenuTrigger.new(*, **, &)
+    end
+
     private
 
     def default_attrs

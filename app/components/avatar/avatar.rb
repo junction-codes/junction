@@ -20,6 +20,14 @@ module Components
       span(**attrs, &)
     end
 
+    def fallback(*, **, &)
+      render AvatarFallback.new(*, **, &)
+    end
+
+    def image(*, **, &)
+      render AvatarImage.new(*, **, &)
+    end
+
     private
 
     def default_attrs

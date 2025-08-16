@@ -6,6 +6,10 @@ module Components
       div(**attrs, &)
     end
 
+    def button(*, **, &)
+      render Button.new(*, **, &)
+    end
+
     private
 
     def default_attrs

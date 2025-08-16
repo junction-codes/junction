@@ -9,9 +9,9 @@ module Components
     end
 
     def view_template
-      DropdownMenu(options: { placement: 'bottom-end' }) do
-        DropdownMenuTrigger(class: 'w-full') do
-          Button(variant: :ghost, class: "flex items-center space-x-2") do
+      DropdownMenu(options: { placement: 'bottom-end' }) do |menu|
+        menu.trigger(class: 'w-full') do |trigger|
+          trigger.button(variant: :ghost, class: "flex items-center space-x-2") do
             div do
               UserAvatar(user: @user)
             end
@@ -20,15 +20,15 @@ module Components
           end
         end
 
-        DropdownMenuContent do
-          DropdownMenuLabel { "My Account" }
-          DropdownMenuSeparator
-          DropdownMenuItem(href: user_path(@user)) do
+        menu.content do |content|
+          content.label { "My Account" }
+          content.separator
+          content.item(href: user_path(@user)) do
             icon("user-round")
             plain "Profile"
           end
 
-          DropdownMenuItem(href: session_path, data_turbo_method: :delete) do
+          content.item(href: session_path, data_turbo_method: :delete) do
             icon("log-out")
             plain "Logout"
           end
