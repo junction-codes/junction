@@ -13,15 +13,26 @@ require 'rails_helper'
 # sticking to rails and rspec-rails APIs to keep things simple and stable.
 
 RSpec.describe "/components", type: :request do
-  # This should return the minimal set of attributes required to create a valid
-  # Component. As you add validations to Component, be sure to
-  # adjust the attributes here as well.
+  requires_authentication
+
   let(:valid_attributes) {
-    skip("Add a hash of attributes valid for your model")
+    {
+      name: "Test Component",
+      description: "A component for testing purposes",
+      lifecycle: "experimental",
+      type: "api",
+      image_url: "https://example.com/image.png",
+      repository_url: "https://example.com/example/component.git"
+    }
   }
 
   let(:invalid_attributes) {
-    skip("Add a hash of attributes invalid for your model")
+    {
+      lifecycle: "invalid_lifecycle",
+      type: "invalid_type",
+      image_url: "gopher://example.com/image.png",
+      repository_url: "ftp://example.com/example/component.git"
+    }
   }
 
   describe "GET /index" do
@@ -41,11 +52,7 @@ RSpec.describe "/components", type: :request do
   end
 
   describe "GET /new" do
-    requires_authentication
-
     it "renders a successful response" do
-      # post session_url, params: { email_address: users(:one).email_address, password: "password" }
-      # sign_in
       get new_component_url
       expect(response).to be_successful
     end
@@ -90,14 +97,16 @@ RSpec.describe "/components", type: :request do
   describe "PATCH /update" do
     context "with valid parameters" do
       let(:new_attributes) {
-        skip("Add a hash of attributes valid for your model")
+        {
+          lifecycle: "production"
+        }
       }
 
       it "updates the requested component" do
         component = Component.create! valid_attributes
         patch component_url(component), params: { component: new_attributes }
         component.reload
-        skip("Add assertions for updated state")
+        expect(component.lifecycle).to eq("production")
       end
 
       it "redirects to the component" do

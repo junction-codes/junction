@@ -13,15 +13,21 @@ require 'rails_helper'
 # sticking to rails and rspec-rails APIs to keep things simple and stable.
 
 RSpec.describe "/groups", type: :request do
-  # This should return the minimal set of attributes required to create a valid
-  # Group. As you add validations to Group, be sure to
-  # adjust the attributes here as well.
+  requires_authentication
+
   let(:valid_attributes) {
-    skip("Add a hash of attributes valid for your model")
+    {
+      name: "Test Group",
+      description: "A group for testing purposes",
+      type: "team",
+      email: "team@example.com"
+    }
   }
 
   let(:invalid_attributes) {
-    skip("Add a hash of attributes invalid for your model")
+    {
+      email: "invalid-email"
+    }
   }
 
   describe "GET /index" do
@@ -41,8 +47,6 @@ RSpec.describe "/groups", type: :request do
   end
 
   describe "GET /new" do
-    requires_authentication
-
     it "renders a successful response" do
       get new_group_url
       expect(response).to be_successful
@@ -88,14 +92,16 @@ RSpec.describe "/groups", type: :request do
   describe "PATCH /update" do
     context "with valid parameters" do
       let(:new_attributes) {
-        skip("Add a hash of attributes valid for your model")
+        {
+          type: "business_unit"
+        }
       }
 
       it "updates the requested group" do
         group = Group.create! valid_attributes
         patch group_url(group), params: { group: new_attributes }
         group.reload
-        skip("Add assertions for updated state")
+        expect(group.type).to eq("business_unit")
       end
 
       it "redirects to the group" do

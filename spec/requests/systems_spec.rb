@@ -13,15 +13,26 @@ require 'rails_helper'
 # sticking to rails and rspec-rails APIs to keep things simple and stable.
 
 RSpec.describe "/systems", type: :request do
-  # This should return the minimal set of attributes required to create a valid
-  # System. As you add validations to System, be sure to
-  # adjust the attributes here as well.
+  fixtures :domains
+
+  requires_authentication
+
   let(:valid_attributes) {
-    skip("Add a hash of attributes valid for your model")
+    {
+      description: "A description for the test system",
+      domain_id: domains(:one).id,
+      name: "Test System",
+      image_url: "https://example.com/image.png",
+      status: "active"
+    }
   }
 
   let(:invalid_attributes) {
-    skip("Add a hash of attributes invalid for your model")
+    {
+      domain_id: nil,
+      image_url: "invalid_url",
+      status: "invalid_status"
+    }
   }
 
   describe "GET /index" do
@@ -41,8 +52,6 @@ RSpec.describe "/systems", type: :request do
   end
 
   describe "GET /new" do
-    requires_authentication
-
     it "renders a successful response" do
       get new_system_url
       expect(response).to be_successful
@@ -88,14 +97,16 @@ RSpec.describe "/systems", type: :request do
   describe "PATCH /update" do
     context "with valid parameters" do
       let(:new_attributes) {
-        skip("Add a hash of attributes valid for your model")
+        {
+          status: "closed"
+        }
       }
 
       it "updates the requested system" do
         system = System.create! valid_attributes
         patch system_url(system), params: { system: new_attributes }
         system.reload
-        skip("Add assertions for updated state")
+        expect(system.status).to eq("closed")
       end
 
       it "redirects to the system" do

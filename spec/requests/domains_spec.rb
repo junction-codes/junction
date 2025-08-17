@@ -13,15 +13,22 @@ require 'rails_helper'
 # sticking to rails and rspec-rails APIs to keep things simple and stable.
 
 RSpec.describe "/domains", type: :request do
-  # This should return the minimal set of attributes required to create a valid
-  # Domain. As you add validations to Domain, be sure to
-  # adjust the attributes here as well.
+  requires_authentication
+
   let(:valid_attributes) {
-    skip("Add a hash of attributes valid for your model")
+    {
+      description: "A domain for testing purposes",
+      name: "Test Domain",
+      image_url: "https://example.com/image.png",
+      status: "active"
+    }
   }
 
   let(:invalid_attributes) {
-    skip("Add a hash of attributes invalid for your model")
+    {
+      image_url: "invalid_url",
+      status: "invalid_status"
+    }
   }
 
   describe "GET /index" do
@@ -41,8 +48,6 @@ RSpec.describe "/domains", type: :request do
   end
 
   describe "GET /new" do
-    requires_authentication
-
     it "renders a successful response" do
       get new_domain_url
       expect(response).to be_successful
@@ -88,14 +93,16 @@ RSpec.describe "/domains", type: :request do
   describe "PATCH /update" do
     context "with valid parameters" do
       let(:new_attributes) {
-        skip("Add a hash of attributes valid for your model")
+        {
+          status: "closed"
+        }
       }
 
       it "updates the requested domain" do
         domain = Domain.create! valid_attributes
         patch domain_url(domain), params: { domain: new_attributes }
         domain.reload
-        skip("Add assertions for updated state")
+        expect(domain.status).to eq("closed")
       end
 
       it "redirects to the domain" do

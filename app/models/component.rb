@@ -2,7 +2,7 @@ class Component < ApplicationRecord
   attribute :lifecycle, :string, default: "experimental"
   alias_attribute :type, :component_type
 
-  validates :component_type, presence: true
+  validates :component_type, presence: true, inclusion: { in: CatalogOptions.kinds.keys }
   validates :description, presence: true
   validates :name, presence: true, uniqueness: true
   validates :lifecycle, presence: true, inclusion: { in: CatalogOptions.lifecycles.keys }

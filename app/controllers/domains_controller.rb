@@ -39,7 +39,7 @@ class DomainsController < ApplicationController
       redirect_to @domain, success: "Domain was successfully created."
     else
       flash.now[:alert] = "There were errors creating the domain."
-      render Views::Domains::New.new(domain: @domain, owners: @owners), status: :unprocessable_entity
+      render Views::Domains::New.new(domain: @domain, owners: Group.order(:name)), status: :unprocessable_entity
     end
   end
 

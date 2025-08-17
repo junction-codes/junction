@@ -39,7 +39,7 @@ class GroupsController < ApplicationController
       redirect_to @group, success: "Group was successfully created."
     else
       flash.now[:alert] = "There were errors creating the group."
-      render Views::Groups::New.new(group: @group), status: :unprocessable_entity
+      render Views::Groups::New.new(group: @group, parents: Group.order(:name)), status: :unprocessable_entity
     end
   end
 
@@ -49,7 +49,7 @@ class GroupsController < ApplicationController
       redirect_to @group, success: "Group was successfully updated."
     else
       flash.now[:alert] = "There were errors updating the group."
-      render Views::Groups::Edit.new(group: @group), status: :unprocessable_entity
+      render Views::Groups::Edit.new(group: @group, parents: Group.order(:name)), status: :unprocessable_entity
     end
   end
 

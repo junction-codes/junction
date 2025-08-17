@@ -39,7 +39,7 @@ class ComponentsController < ApplicationController
       redirect_to @component, success: "Component was successfully created."
     else
       flash.now[:alert] = "There were errors creating the component."
-      render Views::Components::New.new(component: @component, owners: @owners), status: :unprocessable_entity
+      render Views::Components::New.new(component: @component, owners: Group.order(:name)), status: :unprocessable_entity
     end
   end
 
@@ -49,7 +49,7 @@ class ComponentsController < ApplicationController
       redirect_to @component, success: "Component was successfully updated."
     else
       flash.now[:alert] = "There were errors updating the component."
-      render Views::Components::Edit.new(component: @component, owners: @owners), status: :unprocessable_entity
+      render Views::Components::Edit.new(component: @component, owners: Group.order(:name)), status: :unprocessable_entity
     end
   end
 
