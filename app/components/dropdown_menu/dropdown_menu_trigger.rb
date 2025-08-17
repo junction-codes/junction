@@ -14,7 +14,7 @@ module Components
 
     def default_attrs
       {
-        data: {ruby_ui__dropdown_menu_target: "trigger", action: "click->ruby-ui--dropdown-menu#toggle"},
+        data: { ruby_ui__dropdown_menu_target: "trigger", action: "click->ruby-ui--dropdown-menu#toggle" },
         class: "inline-block"
       }
     end

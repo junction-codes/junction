@@ -24,7 +24,6 @@ RSpec.describe "components/edit", type: :view do
     render
 
     assert_select "form[action=?][method=?]", component_path(component), "post" do
-
       assert_select "input[name=?]", "component[name]"
 
       assert_select "textarea[name=?]", "component[description]"

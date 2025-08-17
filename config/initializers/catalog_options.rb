@@ -4,7 +4,7 @@
 module CatalogOptions
   def self.options
     @options ||= begin
-                   path = Rails.root.join('config', 'catalog_options.yaml')
+                   path = Rails.root.join("config", "catalog_options.yaml")
                    YAML.load_file(path).with_indifferent_access
                  end
   end

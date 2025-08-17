@@ -24,7 +24,6 @@ RSpec.describe "systems/edit", type: :view do
     render
 
     assert_select "form[action=?][method=?]", system_path(system), "post" do
-
       assert_select "input[name=?]", "system[name]"
 
       assert_select "textarea[name=?]", "system[description]"

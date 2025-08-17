@@ -66,7 +66,7 @@ class ComponentsController < ApplicationController
   def dependency_graph
     # Start with our component, it's dependencies, dependents, and their
     # associated systems.
-    all_related_components = ([@component] + @component.dependencies + @component.dependents).uniq
+    all_related_components = ([ @component ] + @component.dependencies + @component.dependents).uniq
     systems = System.joins(:components).where(components: { id: all_related_components.map(&:id) }).distinct
 
     nodes = all_related_components.map do |s|

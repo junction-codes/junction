@@ -9,8 +9,8 @@ module Components
     end
 
     def view_template
-      DropdownMenu(options: { placement: 'bottom-end' }) do |menu|
-        menu.trigger(class: 'w-full') do |trigger|
+      DropdownMenu(options: { placement: "bottom-end" }) do |menu|
+        menu.trigger(class: "w-full") do |trigger|
           trigger.button(variant: :ghost, class: "flex items-center space-x-2") do
             div do
               UserAvatar(user: @user)

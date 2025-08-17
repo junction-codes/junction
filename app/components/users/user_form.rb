@@ -105,8 +105,8 @@ module Components
             render PasswordField.new(form, :password_challenge, "Current Password", required: new?, autocomplete: "current-password")
           end
 
-          render PasswordField.new(form, :password, "New Password", required: new?, autocomplete: "new-password" )
-          render PasswordField.new(form, :password_confirmation, "Confirm Password", required: new?, autocomplete: "new-password" )
+          render PasswordField.new(form, :password, "New Password", required: new?, autocomplete: "new-password")
+          render PasswordField.new(form, :password_confirmation, "Confirm Password", required: new?, autocomplete: "new-password")
         end
       end
     end

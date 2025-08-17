@@ -22,7 +22,6 @@ RSpec.describe "deployments/edit", type: :view do
     render
 
     assert_select "form[action=?][method=?]", deployment_path(deployment), "post" do
-
       assert_select "input[name=?]", "deployment[environment]"
 
       assert_select "input[name=?]", "deployment[platform]"

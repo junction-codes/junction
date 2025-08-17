@@ -32,7 +32,7 @@ module Components
 
     def default_attrs
       {
-        class: ["relative flex shrink-0 overflow-hidden rounded-full", @size_classes]
+        class: [ "relative flex shrink-0 overflow-hidden rounded-full", @size_classes ]
       }
     end
   end

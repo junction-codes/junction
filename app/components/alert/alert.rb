@@ -25,11 +25,11 @@ module Components
 
     def alert_icon
       icon = case @variant.to_sym
-             when :alert then "circle-minus"
-             when :success then "circle-check"
-             when :warning then "triangle-alert"
-             else "info"
-             end
+      when :alert then "circle-minus"
+      when :success then "circle-check"
+      when :warning then "triangle-alert"
+      else "info"
+      end
 
       icon(icon, class: "h-6 w-6")
     end
@@ -62,15 +62,15 @@ module Components
 
     def title
       title = case @variant.to_sym
-              when :alert
+      when :alert
                 "Alert"
-              when :success
+      when :success
                 "Success"
-              when :warning
+      when :warning
                 "Warning"
-              else
+      else
                 "Notice"
-              end
+      end
 
       render AlertTitle { title }
     end
@@ -78,8 +78,8 @@ module Components
     def default_attrs
       base_classes = "backdrop-blur relative w-full ring-1 ring-inset rounded-lg px-4 py-4 text-sm [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:start-4 [&>svg]:top-4 [&>svg~*]:ps-8"
       {
-        class: [base_classes, colors],
-        data: { controller: "alert" },
+        class: [ base_classes, colors ],
+        data: { controller: "alert" }
       }
     end
   end

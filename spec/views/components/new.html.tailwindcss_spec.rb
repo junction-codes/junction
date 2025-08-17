@@ -20,7 +20,6 @@ RSpec.describe "components/new", type: :view do
     render
 
     assert_select "form[action=?][method=?]", components_path, "post" do
-
       assert_select "input[name=?]", "component[name]"
 
       assert_select "textarea[name=?]", "component[description]"

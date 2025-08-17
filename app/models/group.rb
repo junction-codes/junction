@@ -8,8 +8,8 @@ class Group < ApplicationRecord
   validates :name, presence: true, uniqueness: true
   validates :image_url, allow_blank: true, format: URI::DEFAULT_PARSER.make_regexp(%w[http https])
 
-  belongs_to :parent, class_name: 'Group', optional: true
-  has_many :children, class_name: 'Group', foreign_key: 'parent_id', dependent: :destroy
+  belongs_to :parent, class_name: "Group", optional: true
+  has_many :children, class_name: "Group", foreign_key: "parent_id", dependent: :destroy
   has_many :group_memberships, dependent: :destroy
   has_many :members, through: :group_memberships, class_name: "User", source: :user
 
@@ -18,7 +18,7 @@ class Group < ApplicationRecord
   end
 
   def self_and_ancestors
-    ancestors = [self]
+    ancestors = [ self ]
     current = self
     while current.parent
       ancestors << current.parent

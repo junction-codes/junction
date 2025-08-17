@@ -18,7 +18,7 @@ module Components
     end
 
     def view_template
-      template(data: {ruby_ui__dialog_target: "content"}) do
+      template(data: { ruby_ui__dialog_target: "content" }) do
         div(data_controller: "ruby-ui--dialog") do
           backdrop
           div(**attrs) do

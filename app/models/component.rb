@@ -19,7 +19,7 @@ class Component < ApplicationRecord
   has_many :dependencies, through: :component_dependencies, source: :dependency
 
   # Components that depend on THIS component.
-  has_many :inverse_component_dependencies, class_name: 'ComponentDependency', foreign_key: 'dependency_id', dependent: :destroy
+  has_many :inverse_component_dependencies, class_name: "ComponentDependency", foreign_key: "dependency_id", dependent: :destroy
   has_many :dependents, through: :inverse_component_dependencies, source: :component
 
   def icon

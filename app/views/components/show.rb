@@ -40,7 +40,7 @@ class Views::Components::Show < Views::Base
 
             if @component.owner.present?
               span do
-                Link(href: group_path(@component.owner), class: 'p-0 inline') { @component.owner.name }
+                Link(href: group_path(@component.owner), class: "p-0 inline") { @component.owner.name }
               end
             else
               span { plain "NO OWNER" }

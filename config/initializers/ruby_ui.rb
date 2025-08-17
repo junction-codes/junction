@@ -5,7 +5,6 @@ module RubyUI
 end
 
 module Layouts
-
 end
 
 # Allow using RubyUI instead RubyUi

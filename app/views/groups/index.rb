@@ -66,12 +66,12 @@ class Views::Groups::Index < Views::Base
           row.cell { group.group_type&.capitalize }
 
           row.cell do group.email
-            Link(href: "mailto:#{group.email}", class: 'ps-0') { group.email } if group.email.present?
+            Link(href: "mailto:#{group.email}", class: "ps-0") { group.email } if group.email.present?
           end
 
           row.cell do
             if group.parent
-              Link(href: group_path(group.parent), class: 'ps-0') do
+              Link(href: group_path(group.parent), class: "ps-0") do
                 group.parent.name
               end
             end

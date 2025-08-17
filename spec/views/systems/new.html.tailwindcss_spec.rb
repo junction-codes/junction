@@ -20,7 +20,6 @@ RSpec.describe "systems/new", type: :view do
     render
 
     assert_select "form[action=?][method=?]", systems_path, "post" do
-
       assert_select "input[name=?]", "system[name]"
 
       assert_select "textarea[name=?]", "system[description]"

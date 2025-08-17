@@ -38,7 +38,7 @@ class Views::Domains::Show < Views::Base
 
             if @domain.owner.present?
               span do
-                Link(href: group_path(@domain.owner), class: 'p-0 inline') { @domain.owner.name }
+                Link(href: group_path(@domain.owner), class: "p-0 inline") { @domain.owner.name }
               end
             else
               span { plain "NO OWNER" }

@@ -57,7 +57,7 @@ group :development, :test do
   gem "rubocop-rails-omakase", require: false
 
   gem "rspec-rails", "~> 8.0", require: false
-  gem 'simplecov', "~> 0.22", require: false
+  gem "simplecov", "~> 0.22", require: false
 end
 
 group :development do

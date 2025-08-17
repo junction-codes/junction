@@ -35,7 +35,7 @@ class Views::Deployments::Show < Views::Base
 
             if @deployment.component.owner.present?
               span do
-                Link(href: group_path(@deployment.component.owner), class: 'p-0 inline') { @deployment.component.owner.name }
+                Link(href: group_path(@deployment.component.owner), class: "p-0 inline") { @deployment.component.owner.name }
               end
             else
               span { plain "NO OWNER" }

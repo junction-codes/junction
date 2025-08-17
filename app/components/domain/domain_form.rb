@@ -23,7 +23,7 @@ module Components
             render TextField.new(f, :status, "Domain Status", required: true)
             render TextField.new(f, :image_url, "Logo URL", placeholder: "https://example.com/logo.png")
 
-            render ReferenceField.new(f, :owner_id, "Owner",icon: "users-round",
+            render ReferenceField.new(f, :owner_id, "Owner", icon: "users-round",
                                       options: @owners, value: @domain.owner,
                                       help_text: "Assign an owner for this domain.")
 

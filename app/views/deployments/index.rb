@@ -47,7 +47,7 @@ class Views::Deployments::Index < Views::Base
       @deployments.each do |deployment|
         body.row do |row|
           row.cell do
-            Link(href: component_path(deployment.component), class: 'ps-0') do
+            Link(href: component_path(deployment.component), class: "ps-0") do
               deployment.component.name
             end
           end

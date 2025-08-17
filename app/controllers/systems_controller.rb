@@ -82,7 +82,7 @@ class SystemsController < ApplicationController
       # Find dependencies of the current component and add them to the set to be
       # processed, but only if we haven't encountered them before.
       component_to_check.dependencies.each do |dependency|
-        all_edges.add([component_to_check.id, dependency.id])
+        all_edges.add([ component_to_check.id, dependency.id ])
         components_to_process.push(dependency) unless all_components.include?(dependency)
       end
 

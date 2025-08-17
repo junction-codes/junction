@@ -62,7 +62,7 @@ class Views::Users::Index < Views::Base
           end
 
           row.cell do
-            Link(href: "mailto:#{user.email_address}", class: 'ps-0') { user.email_address }
+            Link(href: "mailto:#{user.email_address}", class: "ps-0") { user.email_address }
           end
 
           row.cell(class: "text-right text-sm font-medium") do

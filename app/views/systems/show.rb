@@ -48,7 +48,7 @@ class Views::Systems::Show < Views::Base
 
             if @system.owner.present?
               span do
-                Link(href: group_path(@system.owner), class: 'p-0 inline') { @system.owner.name }
+                Link(href: group_path(@system.owner), class: "p-0 inline") { @system.owner.name }
               end
             else
               span { plain "NO OWNER" }

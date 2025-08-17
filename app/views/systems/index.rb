@@ -65,7 +65,7 @@ class Views::Systems::Index < Views::Base
 
           row.cell do
             if system.domain
-              Link(href: domain_path(system.domain), class: 'ps-0') do
+              Link(href: domain_path(system.domain), class: "ps-0") do
                 system.domain.name
               end
             end
