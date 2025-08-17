@@ -29,7 +29,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_16_212250) do
     t.string "lifecycle"
     t.string "component_type"
     t.string "repository_url"
-    t.bigint "domain_id", null: false
+    t.bigint "domain_id"
     t.string "image_url"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

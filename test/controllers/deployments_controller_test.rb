@@ -3,6 +3,9 @@ require "test_helper"
 class DeploymentsControllerTest < ActionDispatch::IntegrationTest
   setup do
     @deployment = deployments(:one)
+    @user = users(:one)
+
+    # post session_url, params: { email_address: @user.email_address, password: "password" }
   end
 
   test "should get index" do

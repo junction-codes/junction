@@ -1,0 +1,21 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  description: MyText
+  lifecycle: experimental
+  component_type: api
+  repository_url: MyString
+  image_url: https://example.com/image.png
+  domain:
+  owner:
+
+two:
+  name: MyString
+  description: MyText
+  lifecycle: production
+  component_type: worker
+  repository_url: MyString
+  image_url:
+  domain:
+  owner:

@@ -28,8 +28,6 @@
 !/tmp/storage/
 !/tmp/storage/.keep
 
-/public/assets
-
 # Ignore master key for decrypting credentials and more.
 /config/master.key
 
@@ -39,3 +37,6 @@
 # Ignore IDEA project files.
 .idea
 *.iml
+
+/coverage
+/public/assets

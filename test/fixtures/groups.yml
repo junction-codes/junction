@@ -2,6 +2,7 @@
 
 one:
   name: MyString
+  description: MyString
   group_type: MyString
   email: MyString
   image_url: MyString
@@ -9,6 +10,7 @@ one:
 
 two:
   name: MyString
+  description: MyString
   group_type: MyString
   email: MyString
   image_url: MyString

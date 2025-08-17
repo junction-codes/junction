@@ -6,7 +6,7 @@ class CreateComponents < ActiveRecord::Migration[8.0]
       t.string :lifecycle
       t.string :component_type
       t.string :repository_url
-      t.references :domain, null: false, foreign_key: true
+      t.references :domain, foreign_key: true
       t.string :image_url
 
       t.timestamps

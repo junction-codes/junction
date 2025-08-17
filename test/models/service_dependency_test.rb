@@ -1,7 +1,0 @@
-require "test_helper"
-
-class ComponentDependencyTest < ActiveSupport::TestCase
-  # test "the truth" do
-  #   assert true
-  # end
-end
