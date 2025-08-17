@@ -13,7 +13,7 @@ require 'rails_helper'
 # sticking to rails and rspec-rails APIs to keep things simple and stable.
 
 RSpec.describe "/components", type: :request do
-  requires_authentication
+  fixtures :components
 
   let(:valid_attributes) {
     {
@@ -35,109 +35,143 @@ RSpec.describe "/components", type: :request do
     }
   }
 
-  describe "GET /index" do
-    it "renders a successful response" do
-      Component.create! valid_attributes
-      get components_url
-      expect(response).to be_successful
+  context "when the user is not authenticated" do
+    describe "GET /index" do
+      it_behaves_like 'an action that requires authentication', :get, -> { components_path }
+    end
+
+    describe "GET /show" do
+      it_behaves_like 'an action that requires authentication', :get, -> { component_path(components(:one)) }
+    end
+
+    describe "GET /new" do
+      it_behaves_like 'an action that requires authentication', :get, -> { new_component_path }
+    end
+
+    describe "GET /edit" do
+      it_behaves_like 'an action that requires authentication', :get, -> { edit_component_path(components(:one)) }
+    end
+
+    describe "POST /create" do
+      it_behaves_like 'an action that requires authentication', :post, -> { components_path }
+    end
+
+    describe "PATCH /update" do
+      it_behaves_like 'an action that requires authentication', :get, -> { components_path }
+    end
+
+    describe "DELETE /destroy" do
+      it_behaves_like 'an action that requires authentication', :delete, -> { component_path(components(:one)) }
     end
   end
 
-  describe "GET /show" do
-    it "renders a successful response" do
-      component = Component.create! valid_attributes
-      get component_url(component)
-      expect(response).to be_successful
-    end
-  end
+  context "when the user is authenticated" do
+    requires_authentication
 
-  describe "GET /new" do
-    it "renders a successful response" do
-      get new_component_url
-      expect(response).to be_successful
+    describe "GET /index" do
+      it "renders a successful response" do
+        Component.create! valid_attributes
+        get components_url
+        expect(response).to be_successful
+      end
     end
-  end
 
-  describe "GET /edit" do
-    it "renders a successful response" do
-      component = Component.create! valid_attributes
-      get edit_component_url(component)
-      expect(response).to be_successful
+    describe "GET /show" do
+      it "renders a successful response" do
+        component = Component.create! valid_attributes
+        get component_url(component)
+        expect(response).to be_successful
+      end
     end
-  end
 
-  describe "POST /create" do
-    context "with valid parameters" do
-      it "creates a new Component" do
-        expect {
+    describe "GET /new" do
+      it "renders a successful response" do
+        get new_component_url
+        expect(response).to be_successful
+      end
+    end
+
+    describe "GET /edit" do
+      it "renders a successful response" do
+        component = Component.create! valid_attributes
+        get edit_component_url(component)
+        expect(response).to be_successful
+      end
+    end
+
+    describe "POST /create" do
+      context "with valid parameters" do
+        it "creates a new Component" do
+          expect {
+            post components_url, params: { component: valid_attributes }
+          }.to change(Component, :count).by(1)
+        end
+
+        it "redirects to the created component" do
           post components_url, params: { component: valid_attributes }
-        }.to change(Component, :count).by(1)
+          expect(response).to redirect_to(component_url(Component.last))
+        end
       end
 
-      it "redirects to the created component" do
-        post components_url, params: { component: valid_attributes }
-        expect(response).to redirect_to(component_url(Component.last))
-      end
-    end
+      context "with invalid parameters" do
+        it "does not create a new Component" do
+          expect {
+            post components_url, params: { component: invalid_attributes }
+          }.to change(Component, :count).by(0)
+        end
 
-    context "with invalid parameters" do
-      it "does not create a new Component" do
-        expect {
+        it "renders a response with 422 status (i.e. to display the 'new' template)" do
           post components_url, params: { component: invalid_attributes }
-        }.to change(Component, :count).by(0)
-      end
-
-      it "renders a response with 422 status (i.e. to display the 'new' template)" do
-        post components_url, params: { component: invalid_attributes }
-        expect(response).to have_http_status(:unprocessable_content)
+          expect(response).to have_http_status(:unprocessable_content)
+        end
       end
     end
-  end
 
-  describe "PATCH /update" do
-    context "with valid parameters" do
-      let(:new_attributes) {
-        {
-          lifecycle: "production"
+    describe "PATCH /update" do
+      context "with valid parameters" do
+        let(:new_attributes) {
+          {
+            lifecycle: "production"
+          }
         }
-      }
 
-      it "updates the requested component" do
-        component = Component.create! valid_attributes
-        patch component_url(component), params: { component: new_attributes }
-        component.reload
-        expect(component.lifecycle).to eq("production")
+        it "updates the requested component" do
+          component = Component.create! valid_attributes
+          patch component_url(component), params: { component: new_attributes }
+          component.reload
+          expect(component.lifecycle).to eq("production")
+        end
+
+        it "redirects to the component" do
+          component = Component.create! valid_attributes
+          patch component_url(component), params: { component: new_attributes }
+          component.reload
+          expect(response).to redirect_to(component_url(component))
+        end
       end
 
-      it "redirects to the component" do
-        component = Component.create! valid_attributes
-        patch component_url(component), params: { component: new_attributes }
-        component.reload
-        expect(response).to redirect_to(component_url(component))
+      context "with invalid parameters" do
+        it "renders a response with 422 status (i.e. to display the 'edit' template)" do
+          component = Component.create! valid_attributes
+          patch component_url(component), params: { component: invalid_attributes }
+          expect(response).to have_http_status(:unprocessable_content)
+        end
       end
     end
 
-    context "with invalid parameters" do
-      it "renders a response with 422 status (i.e. to display the 'edit' template)" do
+    describe "DELETE /destroy" do
+      it "destroys the requested component" do
         component = Component.create! valid_attributes
-        patch component_url(component), params: { component: invalid_attributes }
-        expect(response).to have_http_status(:unprocessable_content)
+        expect {
+          delete component_url(component)
+        }.to change(Component, :count).by(-1)
       end
-    end
-  end
 
-  describe "DELETE /destroy" do
-    it "destroys the requested component" do
-      component = Component.create! valid_attributes
-      expect {
+      it "redirects to the components list" do
+        component = Component.create! valid_attributes
         delete component_url(component)
-      }.to change(Component, :count).by(-1)
-    end
-
-    it "redirects to the components list" do
-      component = Component.create! valid_attributes
-      delete component_url(component)
-      expect(response).to redirect_to(components_url)
+        expect(response).to redirect_to(components_url)
+      end
     end
   end
 end

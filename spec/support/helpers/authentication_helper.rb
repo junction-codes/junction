@@ -6,6 +6,10 @@ module AuthenticationHelper
     base.fixtures :users
   end
 
+  def random_password
+    Faker::Internet.password(max_length: 72, special_characters: true)
+  end
+
   def sign_in(user:  users(:one), password: "password")
     post session_url, params: { email_address: user.email_address, password: password }
   end

@@ -140,6 +140,13 @@ GEM
     erubi (1.13.1)
     et-orbi (1.2.11)
       tzinfo
+    factory_bot (6.5.5)
+      activesupport (>= 6.1.0)
+    factory_bot_rails (6.5.0)
+      factory_bot (~> 6.5)
+      railties (>= 6.1.0)
+    faker (3.5.2)
+      i18n (>= 1.8.11, < 2)
     fugit (1.11.1)
       et-orbi (~> 1, >= 1.2.11)
       raabro (~> 1.4)
@@ -325,6 +332,8 @@ GEM
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 3.0)
       websocket (~> 1.0)
+    shoulda-matchers (6.5.0)
+      activesupport (>= 5.2.0)
     simplecov (0.22.0)
       docile (~> 1.1)
       simplecov-html (~> 0.11)
@@ -414,6 +423,8 @@ DEPENDENCIES
   brakeman
   capybara
   debug
+  factory_bot_rails (~> 6.5)
+  faker (~> 3.5)
   importmap-rails
   jbuilder
   kamal
@@ -427,6 +438,7 @@ DEPENDENCIES
   rubocop-rails-omakase
   ruby_ui (~> 1.0)
   selenium-webdriver
+  shoulda-matchers (~> 6.5)
   simplecov (~> 0.22)
   solid_cable
   solid_cache

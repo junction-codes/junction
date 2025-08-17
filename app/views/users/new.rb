@@ -20,7 +20,7 @@ class Views::Users::New < Views::Base
       end
 
       main(class: "mt-6 max-w-2xl mx-auto") do
-        render Components::UserForm.new(user: @user, parents: @parents)
+        render Components::UserForm.new(user: @user)
       end
     end
   end
