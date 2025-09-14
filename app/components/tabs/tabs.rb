@@ -11,6 +11,14 @@ module Components
       div(**attrs, &)
     end
 
+    def content(*, **, &)
+      render TabsContent.new(*, **, &)
+    end
+
+    def list(*, **, &)
+      render TabsList.new(*, **, &)
+    end
+
     private
 
     def default_attrs

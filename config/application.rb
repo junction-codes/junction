@@ -6,7 +6,7 @@ require "rails/all"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
-module Devportal
+module RailJunction
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.0
@@ -15,6 +15,8 @@ module Devportal
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.
     config.autoload_lib(ignore: %w[assets tasks])
+
+    config.app = config_for(:app)
 
     # Configuration for the application, engines, and railties goes here.
     #
@@ -26,6 +28,10 @@ module Devportal
 
     config.generators do |g|
       g.test_framework :rspec
+    end
+
+    def icon
+      config_for(:app)&.[](:icon) ||  "train-track"
     end
   end
 end

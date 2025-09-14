@@ -6,6 +6,7 @@ module Components
   class Base < Phlex::HTML
     include Phlex::Rails::Helpers::Routes
     include Phlex::Rails::Helpers::T
+    include Phlex::Rails::Helpers::TurboFrameTag
     include IconHelper
 
     register_output_helper :icon

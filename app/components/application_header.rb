@@ -2,8 +2,8 @@
 
 module Components
   class ApplicationHeader < Base
-    def initialize(**user_attrs)
-      @user = Current.user
+    def initialize(user: Current.user, **user_attrs)
+      @user = user
 
       super
     end
@@ -15,7 +15,10 @@ module Components
            icon("menu", class: "w-6 h-6")
           end
 
-          h1(class: "text-xl font-semibold text-gray-800 dark:text-white") { t("app.title") }
+          h1(class: "text-xl font-semibold text-gray-800 dark:text-white whitespace-nowrap inline-flex items-center justify-center") do
+            icon(Rails.application.icon, class: "h-8 w-8 pe-2")
+            plain t("app.title")
+          end
         end
 
         # Search bar.

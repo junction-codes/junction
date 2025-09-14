@@ -91,7 +91,7 @@ RSpec.describe User, type: :model do
       grandparent = create(:group)
       parent = create(:group, parent: grandparent)
       child = create(:group, parent: parent)
-      user = create(:user, groups: [child])
+      user = create(:user, groups: [ child ])
 
       expect(user.deep_group_ids.map(&:id)).to contain_exactly(child.id, parent.id, grandparent.id)
     end
@@ -102,7 +102,7 @@ RSpec.describe User, type: :model do
       grandparent = create(:group)
       parent = create(:group, parent: grandparent)
       child = create(:group, parent: parent)
-      user = create(:user, groups: [child])
+      user = create(:user, groups: [ child ])
 
       component1 = create(:component, owner: child)
       component2 = create(:component, owner: parent)
@@ -118,7 +118,7 @@ RSpec.describe User, type: :model do
       grandparent = create(:group)
       parent = create(:group, parent: grandparent)
       child = create(:group, parent: parent)
-      user = create(:user, groups: [child])
+      user = create(:user, groups: [ child ])
 
       system1 = create(:system, owner: child)
       system2 = create(:system, owner: parent)

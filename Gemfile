@@ -46,6 +46,9 @@ gem "thruster", require: false
 gem "phlex-rails", "~> 2.3"
 gem "tailwind_merge", "~> 1.3"
 
+# Plugins.
+gem "rail_junction-github", path: "./plugins/rail_junction-github"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"

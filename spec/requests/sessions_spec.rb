@@ -36,16 +36,6 @@ RSpec.describe "/sessions", type: :request do
         expect(flash[:alert]).to eq("Try another email address or password.")
       end
     end
-
-  #   context "when the rate limit is exceeded" do
-  #     it "redirects to the new session path with an alert" do
-  #       11.times do
-  #         post session_url, params: { email_address: "another@example.com", password: "password" }
-  #       end
-  #       expect(response.location).to eq(new_session_url)
-  #       expect(flash[:alert]).to eq("Try again later.")
-  #     end
-  #   end
   end
 
   describe "DELETE /destroy" do

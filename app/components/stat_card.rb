@@ -31,6 +31,12 @@ module Components
 
     def value_color
       case @status
+      when :critical
+        "text-orange-600 dark:text-orange-400"
+      when :danger
+        "text-red-600 dark:text-red-400"
+      when :healthy
+        "text-green-600 dark:text-green-400"
       when :warning
         "text-yellow-600 dark:text-yellow-400"
       else
@@ -40,6 +46,12 @@ module Components
 
     def icon_bg_color
       case @status
+      when :critical
+        "bg-orange-100 dark:bg-orange-900/50"
+      when :danger
+        "bg-red-100 dark:bg-red-900/50"
+      when :healthy
+        "bg-green-100 dark:bg-green-900/50"
       when :warning
         "bg-yellow-100 dark:bg-yellow-900/50"
       else
@@ -49,6 +61,12 @@ module Components
 
     def icon_color
       case @status
+      when :critical
+        "text-orange-600 dark:text-orange-400"
+      when :danger
+        "text-red-600 dark:text-red-400"
+      when :healthy
+        "text-green-600 dark:text-green-400"
       when :warning
         "text-yellow-600 dark:text-yellow-400"
       else

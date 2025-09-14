@@ -6,6 +6,10 @@ module Components
       div(**attrs, &)
     end
 
+    def trigger(*, **, &)
+      render TabsTrigger.new(*, **, &)
+    end
+
     private
 
     def default_attrs

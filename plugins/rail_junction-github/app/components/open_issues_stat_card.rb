@@ -1,0 +1,26 @@
+# frozen_string_literal: true
+
+require_relative "base"
+
+module RailJunction
+  module Github
+    module Components
+      class OpenIssuesStatCard < Base
+        def template
+          render ::Components::StatCard.new(
+            title: "Open Issues",
+            value:,
+            status:,
+            icon: "bug"
+          )
+        end
+
+        private
+
+        def value
+          @value ||= client.issues.count
+        end
+      end
+    end
+  end
+end

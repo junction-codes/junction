@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Views::Components::Show < Views::Base
+  include PluginDispatchHelper
+
   def initialize(component:)
     @component = component
   end
@@ -10,9 +12,7 @@ class Views::Components::Show < Views::Base
       div(class: "p-6 space-y-8") do
         component_header
         component_stats
-        systems_table
-        dependencies_section
-        deployments_table
+        component_tabs
       end
     end
   end
@@ -79,6 +79,43 @@ class Views::Components::Show < Views::Base
     div(class: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6") do
       render Components::StatCard.new(title: "Monthly Cost", value: "$1,250", icon: "dollar-sign")
       render Components::StatCard.new(title: "Active Incidents", value: "1", icon: "siren", status: :warning)
+
+      render_plugin_stat_cards(@component)
+    end
+  end
+
+  def component_tabs
+    render Components::Tabs.new do |tabs|
+      tabs.list do |list|
+        list.trigger(value: "systems") do
+          icon("network", class: "pe-2")
+          plain "Systems"
+        end
+
+        list.trigger(value: "dependencies") do
+          icon("blocks", class: "pe-2")
+          plain "Dependencies"
+        end
+
+        list.trigger(value: "deployments") do
+          icon("rocket", class: "pe-2")
+          plain "Deployments"
+        end
+
+        render_plugin_tab_triggers(@component, list)
+      end
+
+      tabs.content(value: "systems") do
+        systems_table
+      end
+      tabs.content(value: "dependencies") do
+        dependencies_section
+      end
+      tabs.content(value: "deployments") do
+        deployments_table
+      end
+
+      render_plugin_tab_content(@component, tabs)
     end
   end
 

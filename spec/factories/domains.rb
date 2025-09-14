@@ -4,7 +4,7 @@ FactoryBot.define do
   factory :domain do
     sequence(:name) { |n| "Domain #{n}" }
     description { Faker::Lorem.paragraph }
-    status { ["active", "closed"].sample }
+    status { [ "active", "closed" ].sample }
     image_url { "https://example.com/image.png" }
     association :owner, factory: :group
 
