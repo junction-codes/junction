@@ -10,114 +10,115 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_16_212250) do
+ActiveRecord::Schema[8.1].define(version: 2025_10_27_032624) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
   create_table "component_dependencies", force: :cascade do |t|
     t.bigint "component_id", null: false
-    t.bigint "dependency_id", null: false
     t.datetime "created_at", null: false
+    t.bigint "dependency_id", null: false
     t.datetime "updated_at", null: false
     t.index ["component_id"], name: "index_component_dependencies_on_component_id"
     t.index ["dependency_id"], name: "index_component_dependencies_on_dependency_id"
   end
 
   create_table "components", force: :cascade do |t|
-    t.string "name"
-    t.text "description"
-    t.string "lifecycle"
+    t.jsonb "annotations"
     t.string "component_type"
-    t.string "repository_url"
+    t.datetime "created_at", null: false
+    t.text "description"
     t.bigint "domain_id"
     t.string "image_url"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string "lifecycle"
+    t.string "name"
     t.bigint "owner_id"
+    t.string "repository_url"
+    t.datetime "updated_at", null: false
     t.index ["domain_id"], name: "index_components_on_domain_id"
     t.index ["owner_id"], name: "index_components_on_owner_id"
   end
 
   create_table "deployments", force: :cascade do |t|
-    t.string "environment"
-    t.string "platform"
-    t.string "location_identifier"
     t.bigint "component_id", null: false
     t.datetime "created_at", null: false
+    t.string "environment"
+    t.string "location_identifier"
+    t.string "platform"
     t.datetime "updated_at", null: false
     t.index ["component_id"], name: "index_deployments_on_component_id"
   end
 
   create_table "domains", force: :cascade do |t|
-    t.string "name"
-    t.text "description"
-    t.string "status"
-    t.string "image_url"
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.text "description"
+    t.string "image_url"
+    t.string "name"
     t.bigint "owner_id"
+    t.string "status"
+    t.datetime "updated_at", null: false
     t.index ["owner_id"], name: "index_domains_on_owner_id"
   end
 
   create_table "group_memberships", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.bigint "group_id", null: false
     t.datetime "created_at", null: false
+    t.bigint "group_id", null: false
     t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
     t.index ["group_id"], name: "index_group_memberships_on_group_id"
     t.index ["user_id"], name: "index_group_memberships_on_user_id"
   end
 
   create_table "groups", force: :cascade do |t|
-    t.string "name", null: false
-    t.string "group_type", null: false
-    t.string "email"
-    t.text "description", null: false
-    t.string "image_url"
-    t.bigint "parent_id"
     t.datetime "created_at", null: false
+    t.text "description", null: false
+    t.string "email"
+    t.string "group_type", null: false
+    t.string "image_url"
+    t.string "name", null: false
+    t.bigint "parent_id"
     t.datetime "updated_at", null: false
     t.index ["parent_id"], name: "index_groups_on_parent_id"
   end
 
   create_table "sessions", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.string "ip_address"
-    t.string "user_agent"
     t.datetime "created_at", null: false
+    t.string "ip_address"
     t.datetime "updated_at", null: false
+    t.string "user_agent"
+    t.bigint "user_id", null: false
     t.index ["user_id"], name: "index_sessions_on_user_id"
   end
 
   create_table "system_components", force: :cascade do |t|
-    t.bigint "system_id", null: false
     t.bigint "component_id", null: false
     t.datetime "created_at", null: false
+    t.bigint "system_id", null: false
     t.datetime "updated_at", null: false
     t.index ["component_id"], name: "index_system_components_on_component_id"
     t.index ["system_id"], name: "index_system_components_on_system_id"
   end
 
   create_table "systems", force: :cascade do |t|
-    t.string "name"
-    t.text "description"
-    t.string "status"
-    t.string "image_url"
-    t.bigint "domain_id", null: false
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.text "description"
+    t.bigint "domain_id", null: false
+    t.string "image_url"
+    t.string "name"
     t.bigint "owner_id"
+    t.string "status"
+    t.datetime "updated_at", null: false
     t.index ["domain_id"], name: "index_systems_on_domain_id"
     t.index ["owner_id"], name: "index_systems_on_owner_id"
   end
 
   create_table "users", force: :cascade do |t|
-    t.string "email_address", null: false
-    t.string "password_digest", null: false
-    t.string "display_name", null: false
-    t.string "pronouns"
-    t.string "image_url"
     t.datetime "created_at", null: false
+    t.string "display_name", null: false
+    t.string "email_address", null: false
+    t.string "image_url"
+    t.string "password_digest", null: false
+    t.string "pronouns"
     t.datetime "updated_at", null: false
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
