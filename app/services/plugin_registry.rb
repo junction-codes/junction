@@ -5,6 +5,14 @@ require "singleton"
 class PluginRegistry
   include Singleton
 
+  class << self
+    delegate :annotations_for, :cards_for, :register_annotation,
+             :register_routable_plugin_action, :register_sidebar_link,
+             :register_stat_card, :register_tab,
+             :routable_actions_grouped_by_context, :sidebar_links, :tabs_for,
+             to: :instance
+  end
+
   # Initialize the data structures to hold our plugin registrations.
   #
   # The structure is a nested hash:
@@ -12,12 +20,21 @@ class PluginRegistry
   #
   # e.g., { tabs: { "System" => [{ title: "CI/CD", ... }] } }
   def initialize
+    @annotations = Hash.new { |h, k| h[k] = {} }
     @hooks = {
-      sidebar_links: [],
+      cards: Hash.new { |h, k| h[k] = [] },
       tabs: Hash.new { |h, k| h[k] = [] },
-      cards: Hash.new { |h, k| h[k] = [] }
+      sidebar_links: []
     }
     @routable_actions = []
+  end
+
+  def register_annotation(context_class:, key:, title:, placeholder: nil)
+    @annotations[context_class][key] = {
+      key:,
+      title:,
+      placeholder:
+    }
   end
 
   def register_sidebar_link(title:, path:, icon:, disabled: false)
@@ -46,6 +63,10 @@ class PluginRegistry
       action:,
       path:
     }
+  end
+
+  def annotations_for(context_class)
+    @annotations[context_class]
   end
 
   def sidebar_links

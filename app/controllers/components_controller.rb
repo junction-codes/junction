@@ -99,6 +99,6 @@ class ComponentsController < ApplicationController
   end
 
   def component_params
-    params.expect(component: [ :name, :description, :repository_url, :lifecycle, :type, :domain_id, :image_url, :owner_id ])
+    params.expect(component: [ :name, :description, :repository_url, :lifecycle, :type, :domain_id, :image_url, :owner_id, annotations: {} ])
   end
 end

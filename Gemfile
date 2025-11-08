@@ -43,11 +43,14 @@ gem "thruster", require: false
 # gem "image_processing", "~> 1.2"
 
 # Additional dependencies.
+gem "chartkick", "~> 5.2"
 gem "phlex-rails", "~> 2.3"
+gem "rails_icons", "~> 1.4"
 gem "tailwind_merge", "~> 1.3"
 
 # Plugins.
 gem "rail_junction-github", path: "./plugins/rail_junction-github"
+gem "rail_junction-aws", path: "./plugins/rail_junction-aws"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -73,5 +76,3 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
-
-gem "rails_icons", "~> 1.4"

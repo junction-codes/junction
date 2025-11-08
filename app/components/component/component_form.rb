@@ -5,6 +5,8 @@ module Components
     include Phlex::Rails::Helpers::FormWith
     include Phlex::Rails::Helpers::OptionsForSelect
 
+    include PluginDispatchHelper
+
     def initialize(component:, domains: Domain.order(:name), owners: Group.order(:name))
       @component = component
       @domains = domains
@@ -36,6 +38,13 @@ module Components
             render TextField.new(f, :repository_url, "Repository URL")
             render TextAreaField.new(f, :description, "Description", required: true, help_text: "A brief summary of the component's goals.")
           end
+        end
+
+        f.fields_for :annotations, @component.annotations do |annotations_form|
+          render(AnnotationsForm.new(
+            form: annotations_form,
+            context: @component
+          ))
         end
 
         # Form actions.

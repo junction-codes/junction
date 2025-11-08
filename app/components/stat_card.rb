@@ -13,7 +13,7 @@ module Components
       render Card.new(class: "bg-white dark:bg-gray-800 overflow-hidden") do |card|
         div(class: "flex items-start justify-between") do
           card.header do |header|
-            header.title(class: "text-sm font-medium text-gray-500 dark:text-gray-400 truncate") { @title }
+            header.title(class: "text-sm font-medium text-gray-500 dark:text-gray-400") { @title }
           end
 
           div(class: "m-5 flex-shrink-0 p-3 rounded-full #{icon_bg_color}") do

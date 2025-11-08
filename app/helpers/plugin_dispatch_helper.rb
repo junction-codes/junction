@@ -27,7 +27,7 @@ module PluginDispatchHelper
         h3(class: "text-xl font-semibold text-gray-800 dark:text-white mb-4") { tab[:title] }
 
         if tab[:path_method].present?
-          turbo_frame_tag(tab[:target], src: main_app.send(tab[:path_method], context_object)) do
+          turbo_frame_tag(tab[:target], src: main_app.send(tab[:path_method], context_object), loading: :lazy) do
             div(class: "p-4") { render Components::Skeleton(class: "h-20") }
           end
         elsif tab[:component].present?

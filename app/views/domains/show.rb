@@ -61,7 +61,6 @@ class Views::Domains::Show < Views::Base
     div(class: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6") do
       render Components::StatCard.new(title: "Total Systems", value: @domain.systems.count, icon: "network")
       render Components::StatCard.new(title: "Total Components", value: @domain.components.count, icon: "server")
-      render Components::StatCard.new(title: "Monthly Cost", value: "$1,250", icon: "dollar-sign")
       render Components::StatCard.new(title: "Active Incidents", value: "1", icon: "siren", status: :warning)
     end
   end

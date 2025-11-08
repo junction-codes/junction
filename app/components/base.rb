@@ -8,8 +8,11 @@ module Components
     include Phlex::Rails::Helpers::T
     include Phlex::Rails::Helpers::TurboFrameTag
     include IconHelper
+    include Chartkick::Helper
 
     register_output_helper :icon
+    register_output_helper :line_chart
+    register_output_helper :pie_chart
 
     TAILWIND_MERGER = ::TailwindMerge::Merger.new.freeze unless defined?(TAILWIND_MERGER)
 
