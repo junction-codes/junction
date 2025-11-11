@@ -7,10 +7,10 @@ module Components
 
     include PluginDispatchHelper
 
-    def initialize(component:, domains: Domain.order(:name), owners: Group.order(:name))
+    def initialize(component:, owners: Group.order(:name), systems: System.order(:name))
       @component = component
-      @domains = domains
       @owners = owners
+      @systems = systems
     end
 
     def view_template
@@ -27,13 +27,12 @@ module Components
             render RichSelectField.new(f, :type, "Type", required: true, options: CatalogOptions.kinds)
             render RichSelectField.new(f, :lifecycle, "Lifecycle", required: true, options: CatalogOptions.lifecycles)
 
-            render ReferenceField.new(f, :domain_id, "Domain", required: true,
-                                   options: @domains, value: @component.domain, icon: "briefcase",
-                                   help_text: "Assign this component to an existing domain.")
-
             render ReferenceField.new(f, :owner_id, "Owner", icon: "users-round",
                                       options: @owners, value: @component.owner,
                                       help_text: "Assign an owner for this component.")
+            render ReferenceField.new(f, :system_id, "System", icon: "users-round",
+                                      options: @systems, value: @component.system,
+                                      help_text: "System this resource belongs to.")
 
             render TextField.new(f, :repository_url, "Repository URL")
             render TextAreaField.new(f, :description, "Description", required: true, help_text: "A brief summary of the component's goals.")

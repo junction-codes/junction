@@ -1,0 +1,25 @@
+- name: Keystone Copwatch Database
+  type: database
+  system: Keystone Copwatch
+  owner: Keystone Operators
+  description: |
+    PostgreSQL database for Keystone Copwatch, storing user data, reports, and
+    other relevant information.
+  annotations:
+    aws.amazon.com/cost-insights-tags: project=keystone-copwatch
+- name: Keystone Copwatch Documents
+  type: bucket
+  system: Keystone Copwatch
+  owner: Keystone Operators
+  description: |
+    Document storage for  Keystone Copwatch.
+  annotations:
+    aws.amazon.com/cost-insights-tags: project=keystone-copwatch
+- name: Keystone Copwatch Queue
+  type: queue
+  system: Keystone Copwatch
+  owner: Keystone Operators
+  description: |
+    Queue for processing tasks related to Keystone Copwatch.
+  annotations:
+    aws.amazon.com/cost-insights-tags: project=keystone-copwatch

@@ -1,29 +1,20 @@
-- name: Keystone Copwatch Database
-  lifecycle: experimental
-  type: database
-  domain: ACAB
-  description: |
-    PostgreSQL database for Keystone Copwatch, storing user data, reports, and
-    other relevant information.
-- name: Keystone Copwatch Website
-  lifecycle: experimental
-  type: web
-  domain: ACAB
-  systems:
-    - Keystone Copwatch
-  dependencies:
-    - Keystone Copwatch Database
-  description: |
-    Main website for Keystone Copwatch, providing resources and information on
-    police accountability.
 - name: Keystone Copwatch Worker
   lifecycle: experimental
   type: worker
-  domain: ACAB
-  systems:
-    - Keystone Copwatch
+  system: Keystone Copwatch
   dependencies:
-    - Keystone Copwatch Database
+    - resource:Keystone Copwatch Database
   description: |
     Background worker for Keystone Copwatch, handling tasks such as data
     processing and notifications.
+- name: Keystone Copwatch Website
+  lifecycle: experimental
+  type: web
+  system: Keystone Copwatch
+  dependencies:
+    - resource:Keystone Copwatch Database
+    - component:Keystone Copwatch Worker
+  description: |
+    Main website for Keystone Copwatch, providing resources and information on
+    police accountability.
+

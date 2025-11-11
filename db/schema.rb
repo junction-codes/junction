@@ -10,33 +10,35 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_10_27_032624) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_11_004818) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
-
-  create_table "component_dependencies", force: :cascade do |t|
-    t.bigint "component_id", null: false
-    t.datetime "created_at", null: false
-    t.bigint "dependency_id", null: false
-    t.datetime "updated_at", null: false
-    t.index ["component_id"], name: "index_component_dependencies_on_component_id"
-    t.index ["dependency_id"], name: "index_component_dependencies_on_dependency_id"
-  end
 
   create_table "components", force: :cascade do |t|
     t.jsonb "annotations"
     t.string "component_type"
     t.datetime "created_at", null: false
     t.text "description"
-    t.bigint "domain_id"
     t.string "image_url"
     t.string "lifecycle"
     t.string "name"
     t.bigint "owner_id"
     t.string "repository_url"
+    t.bigint "system_id"
     t.datetime "updated_at", null: false
-    t.index ["domain_id"], name: "index_components_on_domain_id"
     t.index ["owner_id"], name: "index_components_on_owner_id"
+    t.index ["system_id"], name: "index_components_on_system_id"
+  end
+
+  create_table "dependencies", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "source_id", null: false
+    t.string "source_type", null: false
+    t.bigint "target_id", null: false
+    t.string "target_type", null: false
+    t.datetime "updated_at", null: false
+    t.index ["source_type", "source_id"], name: "index_dependencies_on_source_type_and_source_id"
+    t.index ["target_type", "target_id"], name: "index_dependencies_on_target_type_and_target_id"
   end
 
   create_table "deployments", force: :cascade do |t|
@@ -81,6 +83,20 @@ ActiveRecord::Schema[8.1].define(version: 2025_10_27_032624) do
     t.index ["parent_id"], name: "index_groups_on_parent_id"
   end
 
+  create_table "resources", force: :cascade do |t|
+    t.jsonb "annotations"
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "image_url"
+    t.string "name"
+    t.bigint "owner_id", null: false
+    t.string "resource_type"
+    t.bigint "system_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["owner_id"], name: "index_resources_on_owner_id"
+    t.index ["system_id"], name: "index_resources_on_system_id"
+  end
+
   create_table "sessions", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "ip_address"
@@ -88,15 +104,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_10_27_032624) do
     t.string "user_agent"
     t.bigint "user_id", null: false
     t.index ["user_id"], name: "index_sessions_on_user_id"
-  end
-
-  create_table "system_components", force: :cascade do |t|
-    t.bigint "component_id", null: false
-    t.datetime "created_at", null: false
-    t.bigint "system_id", null: false
-    t.datetime "updated_at", null: false
-    t.index ["component_id"], name: "index_system_components_on_component_id"
-    t.index ["system_id"], name: "index_system_components_on_system_id"
   end
 
   create_table "systems", force: :cascade do |t|
@@ -123,18 +130,16 @@ ActiveRecord::Schema[8.1].define(version: 2025_10_27_032624) do
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
 
-  add_foreign_key "component_dependencies", "components"
-  add_foreign_key "component_dependencies", "components", column: "dependency_id"
-  add_foreign_key "components", "domains"
   add_foreign_key "components", "groups", column: "owner_id"
+  add_foreign_key "components", "systems"
   add_foreign_key "deployments", "components"
   add_foreign_key "domains", "groups", column: "owner_id"
   add_foreign_key "group_memberships", "groups"
   add_foreign_key "group_memberships", "users"
   add_foreign_key "groups", "groups", column: "parent_id"
+  add_foreign_key "resources", "groups", column: "owner_id"
+  add_foreign_key "resources", "systems"
   add_foreign_key "sessions", "users"
-  add_foreign_key "system_components", "components"
-  add_foreign_key "system_components", "systems"
   add_foreign_key "systems", "domains"
   add_foreign_key "systems", "groups", column: "owner_id"
 end

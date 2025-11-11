@@ -28,4 +28,8 @@ module CatalogOptions
   def self.platforms
     options[:platforms]
   end
+
+  def self.resources
+    options[:resources]
+  end
 end

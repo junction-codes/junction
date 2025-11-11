@@ -15,6 +15,7 @@ module Components
           item(href: "#{systems_path}", icon: "network", title: "Systems")
           item(href: "#{components_path}", icon: "server", title: "Components")
           item(href: "#{deployments_path}", icon: "rocket", title: "Deployments")
+          item(href: "#{resources_path}", icon: "rows-4", title: "Resources")
           item(href: "#{groups_path}", icon: "users-round", title: "Groups")
           item(href: "#{users_path}", icon: "user-round", title: "Users")
           item(href: "#", icon: "book-open", title: "TechDocs", disabled: true)

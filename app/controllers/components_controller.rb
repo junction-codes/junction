@@ -1,5 +1,6 @@
 class ComponentsController < ApplicationController
-  before_action :set_component, only: %i[ show edit update destroy dependency_graph ]
+  before_action :set_component, only: %i[ edit update destroy ]
+  before_action :eager_load_dependencies, only: %i[ show dependency_graph ]
 
   # GET /components
   def index
@@ -12,6 +13,8 @@ class ComponentsController < ApplicationController
   def show
     render Views::Components::Show.new(
       component: @component,
+      dependencies: (@component.dependent_components + @component.dependent_resources).sort_by(&:name),
+      dependents: (@component.component_dependents + @component.resource_dependents).sort_by(&:name)
     )
   end
 
@@ -60,36 +63,10 @@ class ComponentsController < ApplicationController
     redirect_to components_path, status: :see_other, alert: "Component was successfully destroyed."
   end
 
-  # GET /systems/:id/dependency_graph
-  #
-  # @todo Break this up into smaller methods for better readability.
+  # GET /components/:id/dependency_graph
   def dependency_graph
-    # Start with our component, it's dependencies, dependents, and their
-    # associated systems.
-    all_related_components = ([ @component ] + @component.dependencies + @component.dependents).uniq
-    systems = System.joins(:components).where(components: { id: all_related_components.map(&:id) }).distinct
-
-    nodes = all_related_components.map do |s|
-      { id: s.id, label: s.name, type: :component }
-    end
-
-    nodes += systems.map do |p|
-      { id: "system_#{p.id}", label: p.name, type: :system }
-    end
-
-    # Create edges for component-to-component dependencies.
-    edges = []
-    @component.dependencies.each { |dep| edges << { source: @component.id, target: dep.id } }
-    @component.dependents.each { |dep| edges << { source: dep.id, target: @component.id } }
-
-    # Create edges from components to their associated systems.
-    all_related_components.each do |s|
-      s.system_ids.each do |system_id|
-        edges << { target: s.id, source: "system_#{system_id}" }
-      end
-    end
-
-    render json: { nodes: nodes, edges: edges, current_node_id: @component.id }
+    graph_data = DependencyGraphService.new(model: @component).build
+    render json: graph_data
   end
 
   private
@@ -98,7 +75,12 @@ class ComponentsController < ApplicationController
     @component = Component.find(params.expect(:id))
   end
 
+  def eager_load_dependencies
+    @component = Component.includes(:dependencies, :dependents)
+                        .find(params.expect(:id))
+  end
+
   def component_params
-    params.expect(component: [ :name, :description, :repository_url, :lifecycle, :type, :domain_id, :image_url, :owner_id, annotations: {} ])
+    params.expect(component: [ :name, :description, :repository_url, :lifecycle, :type, :image_url, :owner_id, :system_id, annotations: {} ])
   end
 end

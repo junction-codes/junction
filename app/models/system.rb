@@ -8,6 +8,6 @@ class System < ApplicationRecord
 
   belongs_to :domain
   belongs_to :owner, class_name: "Group", optional: true
-  has_many :system_components, dependent: :destroy
-  has_many :components, through: :system_components
+  has_many :components
+  has_many :resources
 end

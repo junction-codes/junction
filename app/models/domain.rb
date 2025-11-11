@@ -10,5 +10,4 @@ class Domain < ApplicationRecord
 
   belongs_to :owner, class_name: "Group", optional: true
   has_many :systems
-  has_many :components
 end

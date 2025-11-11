@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   resources :passwords, param: :token
   resources :deployments
   resources :domains
+  resources :resources
   resources :groups
   resources :users
 
@@ -11,6 +12,10 @@ Rails.application.routes.draw do
   end
 
   resources :components do
+    get :dependency_graph, on: :member
+  end
+
+  resources :resources do
     get :dependency_graph, on: :member
   end
 

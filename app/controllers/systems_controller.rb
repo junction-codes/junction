@@ -64,61 +64,8 @@ class SystemsController < ApplicationController
   #
   # @todo Break this up into smaller methods for better readability.
   def dependency_graph
-    all_components = Set.new
-    all_edges = Set.new
-
-    # Starting with the dependencies of the current component, traverse the tree
-    # of components to find all dependencies.
-    components_to_process = @system.components.to_a
-    component_to_check = components_to_process.shift
-    while component_to_check
-      if all_components.include?(component_to_check)
-        component_to_check = components_to_process.shift
-        next
-      end
-
-      all_components.add(component_to_check)
-
-      # Find dependencies of the current component and add them to the set to be
-      # processed, but only if we haven't encountered them before.
-      component_to_check.dependencies.each do |dependency|
-        all_edges.add([ component_to_check.id, dependency.id ])
-        components_to_process.push(dependency) unless all_components.include?(dependency)
-      end
-
-      component_to_check = components_to_process.shift
-    end
-
-    # Find all the systems that depend on the discovered components.
-    all_system_ids = SystemComponent.where(component_id: all_components.map(&:id))
-                                    .pluck(:system_id).uniq
-    all_systems = System.find(all_system_ids)
-
-    nodes = all_components.map do |component|
-      { id: component.id, label: component.name, type: :component }
-    end
-
-    nodes += all_systems.map do |p|
-      { id: "system_#{p.id}", label: p.name, type: :system }
-    end
-
-    # Build edges for component-to-component dependencies.
-    edges = all_edges.map do |source_id, target_id|
-      { source: source_id, target: target_id }
-    end
-
-    # Add edges from components to their dependent systems.
-    component_to_system_links = SystemComponent.where(component_id: all_components.map(&:id))
-                                             .pluck(:component_id, :system_id)
-    component_to_system_links.each do |component_id, system_id|
-      edges << { target: component_id, source: "system_#{system_id}" }
-    end
-
-    render json: {
-      nodes: nodes.uniq,
-      edges: edges.uniq,
-      current_node_id: "system_#{@system.id}"
-    }
+    graph_data = DependencyGraphService.new(model: @system).build
+    render json: graph_data
   end
 
   private

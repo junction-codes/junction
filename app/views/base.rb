@@ -4,4 +4,6 @@
 class Views::Base < Components::Base
   include Phlex::Rails::Helpers::Flash
   include Phlex::Rails::Helpers::FormWith
+  include Phlex::Rails::Helpers::URLFor
+  include PluginDispatchHelper
 end

@@ -31,7 +31,6 @@ class Views::Components::Index < Views::Base
     table.header do |header|
       header.row do |row|
         row.head { "Component Name" }
-        row.head { "Domain" }
         row.head { "Lifecycle" }
         row.head { "Owner" }
         row.head(class: "relative") do
@@ -59,14 +58,6 @@ class Views::Components::Index < Views::Base
               div do
                 div(class: "text-sm font-medium text-gray-900 dark:text-white") { component.name }
                 div(class: "text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs") { component.description }
-              end
-            end
-          end
-
-          row.cell do
-            if component.domain
-              Link(href: domain_path(component.domain), class: "ps-0") do
-                component.domain.name
               end
             end
           end

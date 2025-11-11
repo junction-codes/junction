@@ -3,3 +3,8 @@
   description: Portal administrators with full access to all features.
   members:
     - admin@example.com
+- name: Keystone Operators
+  email: keystone@example.com
+  description: Operators responsible for managing Keystone Copwatch services.
+  members:
+    - admin@example.com

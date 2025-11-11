@@ -25,17 +25,16 @@ if Rails.env.development?
   end
 
   YAML.load_file(Rails.root.join('db', 'seeds', 'components.yaml'), symbolize_names: true).each do |component|
-    next if System.find_by(name: component[:name])
+    next if Component.find_by(name: component[:name])
 
     Rails.logger.info "Creating component #{component[:name]}"
-    component[:domain] = Domain.find_by(name: component[:domain]) if component[:domain].present?
+    component[:system] = System.find_by(name: component[:system]) if component[:system].present?
+    component[:dependent_components] = []
+    component[:dependent_resources] = []
 
-    component.fetch(:systems, []).map! do |system|
-      System.find_by(name: system)
-    end
-
-    component.fetch(:dependencies, []).map! do |dependency|
-      Component.find_by(name: dependency)
+    (component.delete(:dependencies) || []).each do |dependency|
+      type, name = dependency.split(':', 2)
+      component["dependent_#{type}s".to_sym] << type.capitalize.constantize.find_by(name: name.strip)
     end
 
     Component.create(component)
@@ -57,5 +56,14 @@ if Rails.env.development?
     end
 
     Group.create(group)
+  end
+
+  YAML.load_file(Rails.root.join('db', 'seeds', 'resources.yaml'), symbolize_names: true).each do |resource|
+    next if Resource.find_by(name: resource[:name])
+
+    Rails.logger.info "Creating resource #{resource[:name]}"
+    resource[:system] = System.find_by(name: resource[:system]) if resource[:system].present?
+    resource[:owner] = Group.find_by(name: resource[:owner]) if resource[:owner].present?
+    Resource.create(resource)
   end
 end

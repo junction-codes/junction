@@ -83,3 +83,14 @@ platforms:
     name: 'Aptible'
     icon: 'cloud'
     description: 'Deployed on the Aptible PaaS.'
+
+resources:
+  bucket:
+    name: 'Bucket'
+    icon: 'box'
+  database:
+    name: 'Database'
+    icon: 'database'
+  queue:
+    name: 'Queue'
+    icon: 'rows-4'

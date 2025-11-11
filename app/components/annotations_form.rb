@@ -15,7 +15,7 @@ module Components
           header.title { "Annotations" }
           header.description do
             plain <<~EOT
-              Metadata used to identify this component within external systems
+              Metadata used to identify this entity within external systems
               (e.g. monitoring, incident management, etc.).
             EOT
           end
