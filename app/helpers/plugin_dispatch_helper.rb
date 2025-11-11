@@ -37,12 +37,14 @@ module PluginDispatchHelper
     end
   end
 
-  # Renders all registered stat cards for a given object.
-  def render_plugin_stat_cards(context_object)
-    cards = PluginRegistry.instance.cards_for(context_object, type: :stat)
-    cards.each do |card|
-      # Each plugin registers its own Phlex component class to be rendered.
-      render card[:component].new(object: context_object)
+  # Renders UI components registered for a specific context and slot.
+  #
+  # @param context [ApplicationRecord] The record to render components for.
+  # @param slot [Symbol] The slot to render components for
+  def render_plugin_ui_components(context:, slot:)
+    components = PluginRegistry.instance.ui_components_for(context:, slot:)
+    components.each do |component|
+      render component.new(object: context)
     end
   end
 end

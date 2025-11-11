@@ -81,7 +81,7 @@ class Views::Components::Show < Views::Base
     div(class: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6") do
       render Components::StatCard.new(title: "Active Incidents", value: "1", icon: "siren", status: :warning)
 
-      render_plugin_stat_cards(@component)
+      render_plugin_ui_components(context: @component, slot: :overview_cards)
     end
   end
 

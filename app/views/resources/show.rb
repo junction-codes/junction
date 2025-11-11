@@ -73,7 +73,7 @@ class Views::Resources::Show < Views::Base
 
   def resource_stats
     div(class: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6") do
-      render_plugin_stat_cards(@resource)
+      render_plugin_ui_components(context: @resource, slot: :overview_cards)
     end
   end
 

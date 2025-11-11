@@ -14,6 +14,15 @@ class AnnotationsAccessor
     @data[key]
   end
 
+  # Retrieves the value for a key, with a default if the key is not present.
+  #
+  # @param key [String, Symbol] The key to look up.
+  # @param default [Object] The default value to return if the key is not found.
+  # @return [Object] The value associated with the key, or the default.
+  def fetch(key, default = nil)
+    @data.fetch(key, default)
+  end
+
   def to_h
     @data
   end
