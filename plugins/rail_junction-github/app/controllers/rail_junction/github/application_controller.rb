@@ -4,7 +4,11 @@ module RailJunction
       private
 
       def client
-        @client ||= ClientService.from_url(@object.repository_url)
+        @client ||= ClientService.new(slug:)
+      end
+
+      def slug
+        @object.annotations.fetch(Engine::ANNOTATION_PROJECT_SLUG, nil)
       end
     end
   end

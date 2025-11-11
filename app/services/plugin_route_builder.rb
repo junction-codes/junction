@@ -3,7 +3,7 @@
 class PluginRouteBuilder
   def self.draw(router)
     registry = PluginRegistry.instance
-    actions_by_context = registry.routable_actions_grouped_by_context
+    actions_by_context = registry.actions_grouped_by_context
 
     actions_by_context.each do |context_class_name, actions|
       # e.g., "System" -> :systems
@@ -15,10 +15,10 @@ class PluginRouteBuilder
           # Derives the route helper name from the path_method symbol.
           #
           # example: :system_github_actions_path -> :github_actions
-          as_name = action_details[:path_method].to_s
-                                                .delete_prefix("#{context_class_name.underscore}_")
-                                                .delete_suffix("_path")
-                                                .to_sym
+          as_name = action_details[:method].to_s
+                                           .delete_prefix("#{context_class_name.underscore}_")
+                                           .delete_suffix("_path")
+                                           .to_sym
           path_segment = action_details[:path].present? ? action_details[:path] : as_name.to_s.gsub("_", "/")
 
           router.get(

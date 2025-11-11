@@ -11,7 +11,7 @@ module RailJunction
         end
 
         def render?
-          @object.repository_url.present?
+          slug.present?
         end
 
         def template; end
@@ -25,7 +25,11 @@ module RailJunction
         private
 
         def client
-          @client ||= ClientService.from_url(@object.repository_url)
+          @client ||= ClientService.new(slug:)
+        end
+
+        def slug
+          @object.annotations.fetch(Engine::ANNOTATION_PROJECT_SLUG, nil)
         end
 
         def status

@@ -1,30 +1,30 @@
 # frozen_string_literal: true
 
-
 module RailJunction
   module Github
     class Engine < ::Rails::Engine
+      ANNOTATION_PROJECT_SLUG = "github.com/project-slug"
+
       isolate_namespace RailJunction::Github
 
       config.after_initialize do
-        # TODO: Remove unless we need a sidebar link for this plugin.
-        PluginRegistry.instance.register_sidebar_link(
-          title: "GitHub Stats",
-          path: :components_path,
-          icon: "github",
-          disabled: true
+        PluginRegistry.register_annotation(
+          context: ::Component,
+          key: ANNOTATION_PROJECT_SLUG,
+          title: "GitHub Repository Slug",
+          placeholder: "my-org/my-repo"
         )
 
-        PluginRegistry.instance.register_routable_plugin_action(
-          context_class: ::Component,
-          path_method: :component_github_actions_path,
+        PluginRegistry.register_action(
+          context: ::Component,
+          method: :component_github_actions_path,
           controller: "rail_junction/github/actions",
           action: "index"
         )
 
-        PluginRegistry.instance.register_routable_plugin_action(
-          context_class: ::Component,
-          path_method: :component_github_pull_requests_path,
+        PluginRegistry.register_action(
+          context: ::Component,
+          method: :component_github_pull_requests_path,
           controller: "rail_junction/github/pull_requests",
           action: "index"
         )
@@ -35,28 +35,32 @@ module RailJunction
         require_relative "../../../app/components/open_issues_stat_card"
         require_relative "../../../app/components/open_pr_stat_card"
 
-        PluginRegistry.instance.register_stat_card(
+        PluginRegistry.register_ui_component(
           context_class: ::Component,
+          slot: :overview_cards,
           component: RailJunction::Github::Components::OpenPrStatCard
         )
 
-        PluginRegistry.instance.register_stat_card(
+        PluginRegistry.register_ui_component(
           context_class: ::Component,
+          slot: :overview_cards,
           component: RailJunction::Github::Components::OpenIssuesStatCard
         )
 
-        PluginRegistry.instance.register_tab(
-          context_class: ::Component,
+        PluginRegistry.register_tab(
+          context: ::Component,
           title: "CI/CD",
           icon: "workflow",
-          path_method: :component_github_actions_path,
+          action: :component_github_actions_path,
+          if: ->(context:) { context.annotations[ANNOTATION_PROJECT_SLUG].present? }
         )
 
-        PluginRegistry.instance.register_tab(
-          context_class: ::Component,
+        PluginRegistry.register_tab(
+          context: ::Component,
           title: "Pull Requests",
           icon: "git-pull-request-arrow",
-          path_method: :component_github_pull_requests_path,
+          action: :component_github_pull_requests_path,
+          if: ->(context:) { context.annotations[ANNOTATION_PROJECT_SLUG].present? }
         )
       end
     end
