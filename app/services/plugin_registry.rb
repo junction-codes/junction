@@ -60,11 +60,11 @@ class PluginRegistry
   # Register a link to be displayed in the application sidebar.
   #
   # @param title [String] The title of the sidebar link.
-  # @param path [String] The path the link should point to.
+  # @param action [String] The path method to link to when the tab is clicked.
   # @param icon [String] The icon to display alongside the link.
   # @param disabled [Boolean] Whether the link should be disabled.
-  def register_sidebar_link(title:, path:, icon:, disabled: false)
-    @sidebar_links << { title:, path:, icon:, disabled: }
+  def register_sidebar_link(title:, action:, icon:, disabled: false)
+    @sidebar_links << { title:, action:, icon:, disabled: }
   end
 
   # Register a tab to be displayed in the UI for entities.
@@ -92,14 +92,14 @@ class PluginRegistry
   #
   # - overview_cards
   #
-  # @param context_class [Class] The model to add the component to.
+  # @param context [Class] The model to add the component to.
   # @param slot [Symbol] The slot on the page the component should be rendered
   #   in.
   # @param component [Components::Base] THe component class to render.
   #
   # @todo Add validation to ensure the slot is valid for the given context.
-  def register_ui_component(context_class:, slot:, component:)
-    @components[context_class(context_class).name][slot.to_sym] << component
+  def register_ui_component(context:, slot:, component:)
+    @components[context_class(context).name][slot.to_sym] << component
   end
 
   # Routable actions grouped by their context class.
