@@ -17,7 +17,7 @@ module RailJunction
         private
 
         def value
-          @value ||= client.pull_requests.count
+          @value ||= service.paged { service.pull_requests }.count
         end
       end
     end

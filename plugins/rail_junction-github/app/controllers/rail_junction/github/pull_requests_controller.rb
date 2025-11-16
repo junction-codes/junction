@@ -7,8 +7,8 @@ module RailJunction
 
       def index
         render RailJunction::Github::Views::PullRequests::Index.new(
-          object: @component,
-          pull_requests: client.pull_requests,
+          entity: @component,
+          pull_requests: RepositoryService.new(slug:).pull_requests,
           frame_id: "component_github_pull_requests",
         )
       end
@@ -16,7 +16,7 @@ module RailJunction
       private
 
       def set_component
-        @component = @object = ::Component.find(params[:component_id])
+        @component = @entity = ::Component.find(params[:component_id])
       end
     end
   end

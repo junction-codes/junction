@@ -5,7 +5,7 @@ module RailJunction
     module Components
       class Base < ::Components::Base
         def initialize(object:, **user_attrs)
-          @object = object
+          @entity = object
 
           super(**user_attrs)
         end
@@ -24,12 +24,12 @@ module RailJunction
 
         private
 
-        def client
-          @client ||= ClientService.new(slug:)
+        def service
+          @service ||= RepositoryService.new(slug:)
         end
 
         def slug
-          @object.annotations.fetch(Engine::ANNOTATION_PROJECT_SLUG, nil)
+          @entity.annotations.fetch(Engine::ANNOTATION_PROJECT_SLUG, nil)
         end
 
         def status

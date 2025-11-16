@@ -7,8 +7,8 @@ module RailJunction
 
       def index
         render RailJunction::Github::Views::Actions::Index.new(
-          object: @component,
-          workflows: client.workflows.workflows,
+          entity: @component,
+          workflow_runs: RepositoryService.new(slug:).workflow_runs,
           frame_id: "component_github_actions",
         )
       end
@@ -16,7 +16,7 @@ module RailJunction
       private
 
       def set_component
-        @component = @object = ::Component.find(params[:component_id])
+        @component = @entity = ::Component.find(params[:component_id])
       end
     end
   end

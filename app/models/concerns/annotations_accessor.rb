@@ -6,7 +6,7 @@ class AnnotationsAccessor
   include ActiveModel::Model
 
   def initialize(object, data)
-    @object = object
+    @entity = object
     @data = (data || {}).with_indifferent_access
   end
 
@@ -45,7 +45,7 @@ class AnnotationsAccessor
     key = method_name.to_s
     if @data.key?(key)
       @data[key]
-    elsif PluginRegistry.annotations_for(@object.class).keys.include?(key)
+    elsif PluginRegistry.annotations_for(@entity.class).keys.include?(key)
       nil
     else
       super

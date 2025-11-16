@@ -4,35 +4,41 @@ require "octokit"
 
 module RailJunction
   module Github
+    # Base service for GitHub API interactions.
     class ClientService
+      # Initialize the service.
+      #
+      # @param slug [String] The repository slug in the format "owner/repo".
       def initialize(slug:)
         @slug = slug
       end
 
+      # Create a new service instance from a repository URL.
+      #
+      # @param url [String] The repository URL.
+      # @return [ClientService] the client service instance.
       def self.from_url(url)
         new(slug: Octokit::Repository.from_url(url))
       end
 
-      def repo
-        client.repository(@slug)
-      end
-
-      def workflows
-        client.workflows(@slug)
-      end
-
-      def issues(state: :open)
-        client.issues(@slug, state:).reject { |issue| issue.pull_request }
-      end
-
-      def pull_requests(state: :open)
-        client.pull_requests(@slug, state:)
+      # Temporarily enable auto pagination for the duration of the block.
+      def paged(&)
+        client.auto_paginate = true
+        yield
+      ensure
+        client.auto_paginate = false
       end
 
       private
 
+      # Client for GitHub API interactions.
+      #
+      # Auto-pagination is disabled by default to avoid unexpectedly large
+      # fetches. See #paged to enable auto-pagination within a block.
+      #
+      # @return [Octokit::Client] the GitHub API client.
       def client
-        @client ||= Octokit::Client.new(auto_paginate: true)
+        @client ||= Octokit::Client.new(auto_paginate: false)
       end
     end
   end
