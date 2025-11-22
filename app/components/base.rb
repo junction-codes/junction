@@ -6,7 +6,6 @@ module Components
   class Base < Phlex::HTML
     include Phlex::Rails::Helpers::Routes
     include Phlex::Rails::Helpers::T
-    include Phlex::Rails::Helpers::TimeAgoInWords
     include Phlex::Rails::Helpers::TurboFrameTag
     include IconHelper
     include Chartkick::Helper

@@ -21,10 +21,17 @@ module RailJunction
                        action: :component_github_actions_path,
                        if: ->(context:) { context.annotations[ANNOTATION_PROJECT_SLUG].present? }
 
+            entity.action method: :component_github_issues_path,
+                          controller: "rail_junction/github/issues",
+                          action: "index"
+            entity.tab title: "Issues", icon: "bug",
+                       action: :component_github_issues_path,
+                       if: ->(context:) { context.annotations[ANNOTATION_PROJECT_SLUG].present? }
+
             entity.action method: :component_github_pull_requests_path,
                           controller: "rail_junction/github/pull_requests",
                           action: "index"
-            entity.tab title: "Pull Requests", icon: "git-pull-request-arrow",
+            entity.tab title: "Merge Requests", icon: "git-pull-request-arrow",
                        action: :component_github_pull_requests_path,
                        if: ->(context:) { context.annotations[ANNOTATION_PROJECT_SLUG].present? }
 
