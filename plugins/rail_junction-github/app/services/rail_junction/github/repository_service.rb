@@ -1,12 +1,23 @@
 # frozen_string_literal: true
 
-require "octokit"
-
 module RailJunction
   module Github
     # Service to interact with a specific GitHub repository.
     class RepositoryService < ClientService
-      DEFAULT_PAGE_SIZE = 10
+      # Initialize the service.
+      #
+      # @param slug [String] The repository slug in the format "owner/repo".
+      def initialize(slug:)
+        @slug = slug
+      end
+
+      # Create a new service instance from a repository URL.
+      #
+      # @param url [String] The repository URL.
+      # @return [ClientService] the client service instance.
+      def self.from_url(url)
+        new(slug: Octokit::Repository.from_url(url))
+      end
 
       # Retrieve issues for the repository.
       #

@@ -6,20 +6,7 @@ module RailJunction
   module Github
     # Base service for GitHub API interactions.
     class ClientService
-      # Initialize the service.
-      #
-      # @param slug [String] The repository slug in the format "owner/repo".
-      def initialize(slug:)
-        @slug = slug
-      end
-
-      # Create a new service instance from a repository URL.
-      #
-      # @param url [String] The repository URL.
-      # @return [ClientService] the client service instance.
-      def self.from_url(url)
-        new(slug: Octokit::Repository.from_url(url))
-      end
+      DEFAULT_PAGE_SIZE = 10
 
       # Temporarily enable auto pagination for the duration of the block.
       def paged(&)

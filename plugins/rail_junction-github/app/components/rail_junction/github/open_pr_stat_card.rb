@@ -5,7 +5,6 @@ module RailJunction
     module Components
       class OpenPrStatCard < Base
         def template
-
           render ::Components::StatCard.new(
             title: "Open Pull Requests",
             value:,

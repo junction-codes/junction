@@ -5,6 +5,8 @@ module RailJunction
     module Components
       # Header for a table showing GitHub repository information.
       class RepoTableHeader < ::Components::Base
+        DEFAULT_ATTRS = { class: "p-5 flex items-center" }.freeze
+
         # Initialize a new component.
         #
         # @param entity [ApplicationRecord] The entity the repository is related
@@ -27,12 +29,6 @@ module RailJunction
         end
 
         private
-
-        def default_attrs
-          {
-            class: "p-5 flex items-center"
-          }
-        end
 
         # URL for the link to the repository.
         #

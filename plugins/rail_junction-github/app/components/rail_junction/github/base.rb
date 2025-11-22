@@ -10,15 +10,9 @@ module RailJunction
           super(**user_attrs)
         end
 
-        def render?
-          slug.present?
-        end
-
         def template; end
 
         def view_template
-          return unless render?
-
           template
         end
 
