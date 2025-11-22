@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  include Annotated
+
   has_secure_password
 
   validates :password, presence: true, confirmation: true, length: { minimum: 8 }, password: true, if: :password_being_set?

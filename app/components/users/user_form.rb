@@ -11,6 +11,7 @@ module Components
     def view_template
       form_with(model: @user, class: "space-y-8", data: { controller: "form", action: "submit->form#disable" }) do |f|
         basic_settings(f)
+        annotations(f)
         email_settings(f)
         security_settings(f)
 
@@ -40,6 +41,12 @@ module Components
 
     def self?
       @user == Current.user
+    end
+
+    def annotations(form)
+      form.fields_for :annotations, @user.annotations do |annotations_form|
+        render AnnotationsForm.new(form: annotations_form, context: @user)
+      end
     end
 
     def basic_settings(form)

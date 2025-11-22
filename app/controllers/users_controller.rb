@@ -67,7 +67,7 @@ class UsersController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def user_params
-    params.expect(user: [ :display_name, :email_address, :email_address_confirmation, :image_url, :password, :password_challenge, :password_confirmation, :pronouns ])
+    params.expect(user: [ :display_name, :email_address, :email_address_confirmation, :image_url, :password, :password_challenge, :password_confirmation, :pronouns, annotations: {}  ])
   end
 
   def user_update_params
