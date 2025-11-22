@@ -14,6 +14,7 @@ module Components
     register_output_helper :line_chart
     register_output_helper :pie_chart
 
+    DEFAULT_ATTRS = {}.freeze
     TAILWIND_MERGER = ::TailwindMerge::Merger.new.freeze unless defined?(TAILWIND_MERGER)
 
     attr_reader :attrs
@@ -33,7 +34,7 @@ module Components
     private
 
     def default_attrs
-      {}
+      self.class::DEFAULT_ATTRS
     end
   end
 end

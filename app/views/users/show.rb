@@ -53,6 +53,8 @@ class Views::Users::Show < Views::Base
       render Components::StatCard.new(title: "Total Groups", value: @user.group_memberships.count, icon: "users-round")
       render Components::StatCard.new(title: "Total Systems", value: @user.systems.count, icon: "network")
       render Components::StatCard.new(title: "Total Components", value: @user.components.count, icon: "server")
+
+      render_plugin_ui_components(context: @user, slot: :user_profile_cards)
     end
   end
 

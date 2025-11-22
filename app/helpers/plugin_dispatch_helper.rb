@@ -50,20 +50,30 @@ module PluginDispatchHelper
   # @param context [ApplicationRecord] The record to render components for.
   # @param slot [Symbol] The slot to render components for
   def render_plugin_ui_components(context:, slot:)
-    components = PluginRegistry.instance.ui_components_for(context:, slot:)
-    components.each do |component|
-      render component.new(object: context)
+    visible_components(context, slot).each do |component|
+      render component[:component].new(object: context)
     end
   end
 
   private
+
+  # Retrieves the UI components that are visible for the given context and slot.
+  #
+  # @param context [ApplicationRecord] The record to check visibility against.
+  # @param slot [Symbol] The slot to check components for.
+  # @return [Array<Hash>] Definitions for the visible UI components.
+  def visible_components(context, slot)
+    PluginRegistry.ui_components_for(context:, slot:).select do |component|
+      component[:if].nil? || component[:if].call(context:)
+    end
+  end
 
   # Retrieves the tabes that are visible for the given context.
   #
   # @param context [ApplicationRecord] The record to check visibility against.
   # @return [Array<Hash>] Definitions for the visible tabs.
   def visible_tabs(context)
-    PluginRegistry.instance.tabs_for(context).select do |tab|
+    PluginRegistry.tabs_for(context).select do |tab|
       tab[:if].nil? || tab[:if].call(context:)
     end
   end

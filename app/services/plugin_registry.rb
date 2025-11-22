@@ -91,15 +91,18 @@ class PluginRegistry
   # The current known slots are:
   #
   # - overview_cards
+  # - user_profile_cards
   #
   # @param context [Class] The model to add the component to.
   # @param slot [Symbol] The slot on the page the component should be rendered
   #   in.
   # @param component [Components::Base] THe component class to render.
+  # @param if [Proc] A conditional Proc that determines if the component
+  #   should be rendered.
   #
   # @todo Add validation to ensure the slot is valid for the given context.
-  def register_ui_component(context:, slot:, component:)
-    @components[context_class(context).name][slot.to_sym] << component
+  def register_ui_component(context:, slot:, component:, if: nil)
+    @components[context_class(context).name][slot.to_sym] << { component:, if: }
   end
 
   # Routable actions grouped by their context class.
@@ -139,7 +142,7 @@ class PluginRegistry
   # @param context [Class, ApplicationRecord] The model to retrieve components
   #   for.
   # @param slot [Symbol] The slot on the page to retrieve components for.
-  # @return [Array<Components::Base>] An array of components to be rendered.
+  # @return [Array<Hash>] An array of component definitions.
   def ui_components_for(context:, slot:)
     @components[context_class(context).name][slot.to_sym]
   end

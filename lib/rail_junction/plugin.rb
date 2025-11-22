@@ -40,8 +40,8 @@ module RailJunction
     # @param context [Class] The entity class to scope registrations to.
     # @yieldparam [EntityRegistrationProxy] The proxy for entity-specific
     #   registrations.
-    def for_entity(context, &)
-      yield EntityRegistrationProxy.new(registry, context)
+    def for_entity(context, condition = nil, &)
+      yield EntityRegistrationProxy.new(registry, context, condition)
     end
 
     # Registers a global sidebar link.
@@ -63,9 +63,12 @@ module RailJunction
     #
     # @param registry [PluginRegistry] The plugin registry.
     # @param context [Class] The entity class context.
-    def initialize(registry, context)
+    # @param condition [Proc] An optional conditional Proc to be applied to all
+    #   supported registrations.
+    def initialize(registry, context, condition = nil)
       @registry = registry
       @context = context
+      @condition = condition
     end
 
     # Registers a new action for the entity context.
@@ -98,10 +101,12 @@ module RailJunction
     # @param slot [Symbol] The slot on the page the component should be rendered
     #   in.
     # @param component [Components::Base] THe component class to render.
+    # @param if [Proc] A conditional Proc that determines if the component
+    #   should be rendered.
     #
     # @see RailJunction::PluginRegistry#register_ui_component
-    def component(slot:, component:)
-      @registry.register_ui_component(context:, slot:, component:)
+    def component(slot:, component:, if: @condition)
+      @registry.register_ui_component(context:, slot:, component:, if:)
     end
 
     # Registers a new tab for the entity context.
@@ -111,10 +116,10 @@ module RailJunction
     # @param icon [String] Icon to display alongside the tab title.
     # @param target [String] Turbo frame ID for the tab's content.
     # @param if [Proc] A conditional Proc that determines if the tab should be
-    #   shown.
+    #   rendered.
     #
     # @see RailJunction::PluginRegistry#register_tab
-    def tab(title:, action:, icon: nil, target: nil, if: nil)
+    def tab(title:, action:, icon: nil, target: nil, if: @condition)
       @registry.register_tab(context:, title:, action:, icon:, target:, if:)
     end
   end
