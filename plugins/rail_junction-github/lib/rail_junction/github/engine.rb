@@ -13,31 +13,35 @@ module RailJunction
 
       config.after_initialize do
         Plugin.register "github" do |plugin|
-          plugin.for_entity ::Component, HAS_PROJECT_SLUG do |entity|
-            entity.annotation key: ANNOTATION_PROJECT_SLUG,
-                              title: "GitHub Repository Slug",
-                              placeholder: "my-org/my-repo"
+          [::Api, ::Component].each do |context|
+            name = context.to_s.downcase
 
-            entity.action method: :component_github_actions_path,
-                          controller: "rail_junction/github/actions",
-                          action: "index"
-            entity.tab title: "CI/CD", icon: "workflow",
-                       action: :component_github_actions_path
+            plugin.for_entity context, HAS_PROJECT_SLUG do |entity|
+              entity.annotation key: ANNOTATION_PROJECT_SLUG,
+                                title: "GitHub Repository Slug",
+                                placeholder: "my-org/my-repo"
 
-            entity.action method: :component_github_issues_path,
-                          controller: "rail_junction/github/issues",
-                          action: "index"
-            entity.tab title: "Issues", icon: "bug",
-                       action: :component_github_issues_path
+              entity.action method: :"#{name}_github_actions_path",
+                            controller: "rail_junction/github/actions",
+                            action: "index"
+              entity.tab title: "CI/CD", icon: "workflow",
+                         action: :"#{name}_github_actions_path"
 
-            entity.action method: :component_github_pull_requests_path,
-                          controller: "rail_junction/github/pull_requests",
-                          action: "index"
-            entity.tab title: "Merge Requests", icon: "git-pull-request-arrow",
-                       action: :component_github_pull_requests_path
+              entity.action method: :"#{name}_github_issues_path",
+                            controller: "rail_junction/github/issues",
+                            action: "index"
+              entity.tab title: "Issues", icon: "bug",
+                         action: :"#{name}_github_issues_path"
 
-            entity.component slot: :overview_cards, component: Components::OpenPrStatCard
-            entity.component slot: :overview_cards, component: Components::OpenIssuesStatCard
+              entity.action method: :"#{name}_github_pull_requests_path",
+                            controller: "rail_junction/github/pull_requests",
+                            action: "index"
+              entity.tab title: "Merge Requests", icon: "git-pull-request-arrow",
+                         action: :"#{name}_github_pull_requests_path"
+
+              entity.component slot: :overview_cards, component: Components::OpenPrStatCard
+              entity.component slot: :overview_cards, component: Components::OpenIssuesStatCard
+            end
           end
 
           plugin.for_entity ::User, HAS_USER_LOGIN do |entity|

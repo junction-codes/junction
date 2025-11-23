@@ -3,20 +3,14 @@
 module RailJunction
   module Github
     class PullRequestsController < ApplicationController
-      before_action :set_component
+      before_action :set_entity
 
       def index
         render RailJunction::Github::Views::PullRequests::Index.new(
-          entity: @component,
+          entity: @entity,
           pull_requests: RepositoryService.new(slug:).pull_requests,
-          frame_id: "component_github_pull_requests",
+          frame_id: frame_id("github-pull-requests")
         )
-      end
-
-      private
-
-      def set_component
-        @component = @entity = ::Component.find(params[:component_id])
       end
     end
   end

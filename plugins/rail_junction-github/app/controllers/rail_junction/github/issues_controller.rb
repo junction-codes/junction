@@ -3,20 +3,14 @@
 module RailJunction
   module Github
     class IssuesController < ApplicationController
-      before_action :set_component
+      before_action :set_entity
 
       def index
         render RailJunction::Github::Views::Issues::Index.new(
-          entity: @component,
+          entity: @entity,
           issues: RepositoryService.new(slug:).issues,
-          frame_id: "component_github_issues",
+          frame_id: frame_id("github-issues")
         )
-      end
-
-      private
-
-      def set_component
-        @component = @entity = ::Component.find(params[:component_id])
       end
     end
   end

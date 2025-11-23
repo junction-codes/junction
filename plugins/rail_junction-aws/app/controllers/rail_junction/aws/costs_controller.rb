@@ -8,7 +8,7 @@ module RailJunction
       def index
         render RailJunction::Aws::Views::Costs::Index.new(
           object: @component,
-          frame_id: "component_aws_costs",
+          frame_id: "component-aws-costs",
           historical_costs: CostExplorerService.new(model: @component).historical_costs,
           service_costs: CostExplorerService.new(model: @component).costs_by_service
         )

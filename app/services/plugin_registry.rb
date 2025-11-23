@@ -82,7 +82,7 @@ class PluginRegistry
       action:,
       icon:,
       if:,
-      target: target || action&.to_s&.gsub("_path", "") || title.parameterize
+      target: target || action&.to_s&.gsub("_path", "").gsub("_", "-") || title.parameterize
     }
   end
 
