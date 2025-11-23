@@ -30,10 +30,11 @@ class Views::Apis::Index < Views::Base
   def table_header(table)
     table.header do |header|
       header.row do |row|
-        row.head { "API Name" }
+        row.head { "Name" }
         row.head { "System" }
-        row.head { "Lifecycle" }
         row.head { "Owner" }
+        row.head { "Type" }
+        row.head { "Lifecycle" }
         row.head(class: "relative") do
           span(class: "sr-only") { "View" }
         end
@@ -64,21 +65,25 @@ class Views::Apis::Index < Views::Base
           end
 
           row.cell do
-            if api.system.present?
-              Link(href: system_path(api.system), class: "ps-0") do
-                api.system.name
-              end
+            Link(href: system_path(api.system), class: "ps-0") { api.system.name } if api.system.present?
+          end
+
+          row.cell do
+            Link(href: group_path(api.owner)) { api.owner.name } if api.owner.present?
+          end
+
+          row.cell do
+            break unless api.type.present?
+
+            if CatalogOptions.apis.key?(api.type)
+              CatalogOptions.apis[api.type][:name]
+            else
+              api.type.capitalize
             end
           end
 
           row.cell do
             render Components::Badge.new(variant: api.lifecycle) { api.lifecycle&.capitalize }
-          end
-
-          row.cell do
-            if api.owner.present?
-              render Link(href: group_path(api.owner)) { api.owner.name }
-            end
           end
 
           row.cell(class: "text-right text-sm font-medium") do

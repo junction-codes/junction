@@ -30,10 +30,10 @@ class Views::Systems::Index < Views::Base
   def table_header(table)
     table.header do |header|
       header.row do |row|
-        row.head { "System Name" }
+        row.head { "System" }
+        row.head { "Owner" }
         row.head { "Domain" }
         row.head { "Status" }
-        row.head { "Owner" }
         row.head(class: "relative") do
           span(class: "sr-only") { "View" }
         end
@@ -64,22 +64,17 @@ class Views::Systems::Index < Views::Base
           end
 
           row.cell do
-            if system.domain
-              Link(href: domain_path(system.domain), class: "ps-0") do
-                system.domain.name
-              end
-            end
+            Link(href: group_path(system.owner)) { system.owner.name } if system.owner.present?
+          end
+
+          row.cell do
+            Link(href: domain_path(system.domain), class: "ps-0") { system.domain.name } if system.domain.present?
           end
 
           row.cell do
             render Components::Badge.new(variant: system.status&.to_sym) { system.status&.capitalize }
           end
 
-          row.cell do
-            if system.owner.present?
-              render Link(href: group_path(system.owner)) { system.owner.name }
-            end
-          end
 
           row.cell(class: "text-right text-sm font-medium") do
             a(href: system_path(system), class: "text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300") { "View" }

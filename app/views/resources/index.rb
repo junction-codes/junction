@@ -32,9 +32,10 @@ module Views
       def table_header(table)
         table.header do |header|
           header.row do |row|
-            row.head { "Resource Name" }
+            row.head { "Name" }
             row.head { "System" }
             row.head { "Owner" }
+            row.head { "Type" }
             row.head(class: "relative") do
               span(class: "sr-only") { "View" }
             end
@@ -59,21 +60,26 @@ module Views
 
                   div do
                     div(class: "text-sm font-medium text-gray-900 dark:text-white") { resource.name }
+                    div(class: "text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs") { resource.description }
                   end
                 end
               end
 
               row.cell do
-                if resource.system.present?
-                  Link(href: system_path(resource.system), class: "ps-0") do
-                    resource.system.name
-                  end
-                end
+                Link(href: system_path(resource.system), class: "ps-0") { resource.system.name } if resource.system.present?
               end
 
               row.cell do
-                if resource.owner.present?
-                  render Link(href: group_path(resource.owner)) { resource.owner.name }
+                Link(href: group_path(resource.owner)) { resource.owner.name } if resource.owner.present?
+              end
+
+              row.cell do
+                break unless resource.type.present?
+
+                if CatalogOptions.resources.key?(resource.type)
+                  CatalogOptions.resources[resource.type][:name]
+                else
+                  resource.type.capitalize
                 end
               end
 

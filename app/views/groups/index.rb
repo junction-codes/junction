@@ -30,7 +30,7 @@ class Views::Groups::Index < Views::Base
   def table_header(table)
     table.header do |header|
       header.row do |row|
-        row.head { "Group Name" }
+        row.head { "Name" }
         row.head { "Type" }
         row.head { "Email" }
         row.head { "Parent" }
@@ -63,7 +63,15 @@ class Views::Groups::Index < Views::Base
             end
           end
 
-          row.cell { group.group_type&.capitalize }
+          row.cell do
+            break unless group.type.present?
+
+            if CatalogOptions.group_types.key?(group.type)
+              CatalogOptions.group_types[group.type][:name]
+            else
+              group.type.capitalize
+            end
+          end
 
           row.cell do group.email
             Link(href: "mailto:#{group.email}", class: "ps-0") { group.email } if group.email.present?

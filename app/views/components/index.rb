@@ -30,9 +30,11 @@ class Views::Components::Index < Views::Base
   def table_header(table)
     table.header do |header|
       header.row do |row|
-        row.head { "Component Name" }
-        row.head { "Lifecycle" }
+        row.head { "Name" }
+        row.head { "System" }
         row.head { "Owner" }
+        row.head { "Type" }
+        row.head { "Lifecycle" }
         row.head(class: "relative") do
           span(class: "sr-only") { "View" }
         end
@@ -63,13 +65,25 @@ class Views::Components::Index < Views::Base
           end
 
           row.cell do
-            render Components::Badge.new(variant: component.lifecycle&.to_sym) { component.lifecycle&.capitalize }
+            Link(href: system_path(component.system), class: "ps-0") { component.system.name } if component.system.present?
           end
 
           row.cell do
-            if component.owner.present?
-              render Link(href: group_path(component.owner)) { component.owner.name }
+            Link(href: group_path(component.owner)) { component.owner.name } if component.owner.present?
+          end
+
+          row.cell do
+            break unless component.type.present?
+
+            if CatalogOptions.kinds.key?(component.type)
+              CatalogOptions.kinds[component.type][:name]
+            else
+              component.type.capitalize
             end
+          end
+
+          row.cell do
+            render Components::Badge.new(variant: component.lifecycle&.to_sym) { component.lifecycle&.capitalize }
           end
 
           row.cell(class: "text-right text-sm font-medium") do

@@ -32,7 +32,7 @@ class Views::Domains::Index < Views::Base
   def table_header(table)
     table.header do |header|
       header.row do |row|
-        row.head { "Domain Name" }
+        row.head { "Name" }
         row.head { "Status" }
         row.head { "Owner" }
         row.head(class: "relative") do
