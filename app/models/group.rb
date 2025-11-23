@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Group < ApplicationRecord
   attribute :group_type, :string, default: "team"
   alias_attribute :type, :group_type

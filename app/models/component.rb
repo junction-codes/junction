@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Component < ApplicationRecord
   include Annotated
   include Dependable

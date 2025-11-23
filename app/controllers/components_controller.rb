@@ -1,5 +1,9 @@
 class ComponentsController < ApplicationController
-  before_action :set_component, only: %i[ edit update destroy ]
+  include HasDependencies
+  include HasDependencyGraph
+  include HasDependents
+
+  before_action :set_entity, only: %i[ edit update destroy ]
   before_action :eager_load_dependencies, only: %i[ show dependency_graph ]
 
   # GET /components
@@ -11,11 +15,7 @@ class ComponentsController < ApplicationController
 
   # GET /components/:id
   def show
-    render Views::Components::Show.new(
-      component: @component,
-      dependencies: (@component.dependent_components + @component.dependent_resources).sort_by(&:name),
-      dependents: (@component.component_dependents + @component.resource_dependents).sort_by(&:name)
-    )
+    render Views::Components::Show.new(component: @entity, dependencies:, dependents:)
   end
 
   # GET /components/new
@@ -29,54 +29,48 @@ class ComponentsController < ApplicationController
   # GET /components/:id/edit
   def edit
     render Views::Components::Edit.new(
-      component: @component,
+      component: @entity,
       owners: Group.order(:name)
     )
   end
 
   # POST /components
   def create
-    @component = Component.new(component_params)
+    @entity = Component.new(component_params)
 
-    if @component.save
-      redirect_to @component, success: "Component was successfully created."
+    if @entity.save
+      redirect_to @entity, success: "Component was successfully created."
     else
       flash.now[:alert] = "There were errors creating the component."
-      render Views::Components::New.new(component: @component, owners: Group.order(:name)), status: :unprocessable_entity
+      render Views::Components::New.new(component: @entity, owners: Group.order(:name)), status: :unprocessable_entity
     end
   end
 
   # PATCH/PUT /components/:id
   def update
-    if @component.update(component_params)
-      redirect_to @component, success: "Component was successfully updated."
+    if @entity.update(component_params)
+      redirect_to @entity, success: "Component was successfully updated."
     else
       flash.now[:alert] = "There were errors updating the component."
-      render Views::Components::Edit.new(component: @component, owners: Group.order(:name)), status: :unprocessable_entity
+      render Views::Components::Edit.new(component: @entity, owners: Group.order(:name)), status: :unprocessable_entity
     end
   end
 
   # DELETE /components/:id
   def destroy
-    @component.destroy!
+    @entity.destroy!
 
     redirect_to components_path, status: :see_other, alert: "Component was successfully destroyed."
   end
 
-  # GET /components/:id/dependency_graph
-  def dependency_graph
-    graph_data = DependencyGraphService.new(model: @component).build
-    render json: graph_data
-  end
-
   private
 
-  def set_component
-    @component = Component.find(params.expect(:id))
+  def set_entity
+    @entity = Component.find(params.expect(:id))
   end
 
   def eager_load_dependencies
-    @component = Component.includes(:dependencies, :dependents)
+    @entity = Component.includes(:dependencies, :dependents)
                         .find(params.expect(:id))
   end
 

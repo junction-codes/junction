@@ -40,6 +40,23 @@ if Rails.env.development?
     Component.create(component)
   end
 
+  YAML.load_file(Rails.root.join('db', 'seeds', 'apis.yaml'), symbolize_names: true).each do |api|
+    next if Api.find_by(name: api[:name])
+
+    Rails.logger.info "Creating API #{api[:name]}"
+    api[:system] = System.find_by(name: api[:system]) if api[:system].present?
+    api[:owner] = Group.find_by(name: api[:owner]) if api[:owner].present?
+    api[:dependent_components] = []
+    api[:dependent_resources] = []
+
+    (api.delete(:dependencies) || []).each do |dependency|
+      type, name = dependency.split(':', 2)
+      api["dependent_#{type}s".to_sym] << type.capitalize.constantize.find_by(name: name.strip)
+    end
+
+    Api.create(api)
+  end
+
   YAML.load_file(Rails.root.join('db', 'seeds', 'users.yaml'), symbolize_names: true).each do |user|
     next if User.find_by(email_address: user[:email_address])
 

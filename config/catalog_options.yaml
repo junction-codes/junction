@@ -1,3 +1,25 @@
+apis:
+  asyncapi:
+    name: AsyncAPI
+    icon: webhook
+    description: Specification for building asynchronous APIs.
+  openapi:
+    name: OpenAPI
+    icon: webhook
+    description: Specification for building APIs.
+  graphql:
+    name: GraphQL
+    icon: webhook
+    description: Specification for building GraphQL APIs.
+  grpc:
+    name: gRPC
+    icon: webhook
+    description: Specification for building gRPC APIs.
+  wsdl:
+    name: WSDL
+    icon: bubbles
+    description: Specification for building SOAP APIs.
+
 group_types:
   business_unit:
     name: Business Unit

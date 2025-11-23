@@ -6,6 +6,10 @@ module Dependentable
 
   included do
     has_many :dependencies, as: :source, class_name: "Dependency", dependent: :destroy
+    has_many :dependent_apis,
+             through: :dependencies,
+             source: :target,
+             source_type: "Api"
     has_many :dependent_components,
              through: :dependencies,
              source: :target,

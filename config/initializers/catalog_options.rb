@@ -9,6 +9,10 @@ module CatalogOptions
                  end
   end
 
+  def self.apis
+    options[:apis]
+  end
+
   def self.environments
     options[:environments]
   end

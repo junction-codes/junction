@@ -6,6 +6,10 @@ module Dependable
 
   included do
     has_many :dependents, as: :target, class_name: "Dependency", dependent: :destroy
+    has_many :api_dependents,
+             through: :dependents,
+             source: :source,
+             source_type: "Api"
     has_many :component_dependents,
              through: :dependents,
              source: :source,

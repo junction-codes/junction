@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class System < ApplicationRecord
   attribute :status, :string, default: "active"
 

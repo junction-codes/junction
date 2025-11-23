@@ -10,9 +10,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_22_191023) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_22_233317) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "apis", force: :cascade do |t|
+    t.jsonb "annotations"
+    t.string "api_type"
+    t.datetime "created_at", null: false
+    t.text "definition"
+    t.text "description"
+    t.string "image_url"
+    t.string "lifecycle"
+    t.string "name"
+    t.bigint "owner_id", null: false
+    t.bigint "system_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["owner_id"], name: "index_apis_on_owner_id"
+    t.index ["system_id"], name: "index_apis_on_system_id"
+  end
 
   create_table "components", force: :cascade do |t|
     t.jsonb "annotations"
@@ -131,6 +147,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_22_191023) do
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
 
+  add_foreign_key "apis", "groups", column: "owner_id"
+  add_foreign_key "apis", "systems"
   add_foreign_key "components", "groups", column: "owner_id"
   add_foreign_key "components", "systems"
   add_foreign_key "deployments", "components"

@@ -7,7 +7,7 @@ Rails.application.routes.draw do
   resources :groups
   resources :users
 
-  resources :systems do
+  resources :apis do
     get :dependency_graph, on: :member
   end
 
@@ -16,6 +16,10 @@ Rails.application.routes.draw do
   end
 
   resources :resources do
+    get :dependency_graph, on: :member
+  end
+
+  resources :systems do
     get :dependency_graph, on: :member
   end
 

@@ -63,6 +63,10 @@ class DependencyGraphService
   def find_system_deps_and_entities(entity)
     return unless entity.is_a?(System)
 
+    entity.apis.includes(:system).each do |api|
+      find_all_related_deps_and_entities(api)
+    end
+
     entity.components.includes(:system).each do |component|
       find_all_related_deps_and_entities(component)
     end

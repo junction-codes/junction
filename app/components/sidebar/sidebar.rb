@@ -14,6 +14,7 @@ module Components
           item(href: "#{domains_path}", icon: "briefcase", title: "Domains")
           item(href: "#{systems_path}", icon: "network", title: "Systems")
           item(href: "#{components_path}", icon: "server", title: "Components")
+          item(href: "#{apis_path}", icon: "webhook", title: "APIs")
           item(href: "#{deployments_path}", icon: "rocket", title: "Deployments")
           item(href: "#{resources_path}", icon: "rows-4", title: "Resources")
           item(href: "#{groups_path}", icon: "users-round", title: "Groups")
