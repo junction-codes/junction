@@ -22,7 +22,6 @@ module RailJunction
             ::Components::Table(**attrs) do |table|
               table.header do |header|
                 header.row do |row|
-                  row.cell { "ID" }
                   row.cell { "Message" }
                   row.cell { "Source" }
                   row.cell { "Status" }
