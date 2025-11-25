@@ -19,11 +19,10 @@ module RailJunction
           end
 
           def view_template
-            Components::RepoTableHeader(entity: @entity, path: "pulls")
+            header
             ::Components::Table(**attrs) do |table|
               table.header do |header|
                 header.row do |row|
-                  row.cell { "ID" }
                   row.cell { "Title" }
                   row.cell { "Creator" }
                   row.cell { "Created" }
@@ -37,6 +36,14 @@ module RailJunction
                 end
               end
             end
+          end
+
+          private
+
+          def header
+            @entity.is_a?(Group) ?
+              Components::TeamTableHeader(entity: @entity) :
+              Components::RepoTableHeader(entity: @entity, path: "pulls")
           end
         end
       end

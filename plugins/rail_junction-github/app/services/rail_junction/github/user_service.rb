@@ -13,10 +13,7 @@ module RailJunction
         @username = username
       end
 
-      # Retrieve issues for the repository.
-      #
-      # The GitHub API returns both issues and pull requests in the issues
-      # endpoint. This method filters out pull requests to return only issues.
+      # Retrieve details of the user.
       #
       # @return [Sawyer::Resource] Details of the user.
       def user

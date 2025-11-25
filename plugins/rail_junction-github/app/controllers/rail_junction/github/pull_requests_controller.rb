@@ -8,9 +8,16 @@ module RailJunction
       def index
         render RailJunction::Github::Views::PullRequests::Index.new(
           entity: @entity,
-          pull_requests: RepositoryService.new(slug:).pull_requests,
+          pull_requests:,
           frame_id: frame_id("github-pull-requests")
         )
+      end
+
+      private
+
+      def pull_requests
+        service = context == Group ? TeamService : RepositoryService
+        service.new(slug:).pull_requests
       end
     end
   end

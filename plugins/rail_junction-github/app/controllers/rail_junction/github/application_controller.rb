@@ -43,7 +43,10 @@ module RailJunction
       end
 
       def slug
-        @entity.annotations.fetch(Engine::ANNOTATION_PROJECT_SLUG, nil)
+        @entity.annotations.fetch(
+          context == Group ? Engine::ANNOTATION_TEAM_SLUG : Engine::ANNOTATION_PROJECT_SLUG,
+          nil
+        )
       end
     end
   end

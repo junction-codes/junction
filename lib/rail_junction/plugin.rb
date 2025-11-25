@@ -100,7 +100,7 @@ module RailJunction
     #
     # @param slot [Symbol] The slot on the page the component should be rendered
     #   in.
-    # @param component [Components::Base] THe component class to render.
+    # @param component [::Components::Base] THe component class to render.
     # @param if [Proc] A conditional Proc that determines if the component
     #   should be rendered.
     #
