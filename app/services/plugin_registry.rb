@@ -90,6 +90,7 @@ class PluginRegistry
   #
   # The current known slots are:
   #
+  # - group_profile_cards
   # - overview_cards
   # - user_profile_cards
   #

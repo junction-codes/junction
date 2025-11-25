@@ -69,6 +69,6 @@ class GroupsController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def group_params
-    params.expect(group: [ :description, :name, :email, :image_url, :parent_id, :type ])
+    params.expect(group: [ :description, :name, :email, :image_url, :parent_id, :type, annotations: {} ])
   end
 end
