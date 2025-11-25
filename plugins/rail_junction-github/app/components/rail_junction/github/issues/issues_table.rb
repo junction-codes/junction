@@ -23,7 +23,6 @@ module RailJunction
             ::Components::Table(**attrs) do |table|
               table.header do |header|
                 header.row do |row|
-                  row.cell { "ID" }
                   row.cell { "Title" }
                   row.cell { "Creator" }
                   row.cell { "Assignees" }
@@ -35,10 +34,16 @@ module RailJunction
 
               table.body do
                 @issues.each do |issue|
-                  IssueRow(issue:)
+                  IssueRow(issue:, slug:)
                 end
               end
             end
+          end
+
+          private
+
+          def slug
+            @entity.annotations[Engine::ANNOTATION_PROJECT_SLUG]
           end
         end
       end

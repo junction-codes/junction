@@ -55,6 +55,9 @@ kinds:
   database:
     name: 'Database'
     icon: 'database'
+  library:
+    name: 'Library'
+    icon: 'library'
   web:
     name: 'Web Service'
     icon: 'globe'

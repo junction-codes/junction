@@ -16,8 +16,9 @@ module RailJunction
       private
 
       def pull_requests
-        service = context == Group ? TeamService : RepositoryService
-        service.new(slug:).pull_requests
+        # TODO: Create a service factory to avoid this conditional logic.
+        service = (context == Group ? TeamService : RepositoryService).new(slug:)
+        service.pull_requests
       end
     end
   end
