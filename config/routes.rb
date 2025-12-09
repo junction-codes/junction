@@ -31,6 +31,10 @@ Rails.application.routes.draw do
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
+  # OmniAuth routes for single sign-on.
+  get "/auth/:provider/callback", to: "sessions/omniauth#callback"
+  get "/auth/failure", to: "sessions/omniauth#failure"
+
   # Add plugin routes.
   PluginRouteBuilder.draw(self)
 

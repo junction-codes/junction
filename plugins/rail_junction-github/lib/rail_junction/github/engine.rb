@@ -15,7 +15,9 @@ module RailJunction
 
       ActiveSupport.on_load(:junction_plugins) do
         plugin = Plugin.new("github", RailJunction::Github, icon: "github", title: "GitHub")
-        plugin.auth_provider ENV["GITHUB_KEY"], ENV["GITHUB_SECRET"]
+        plugin.auth_provider ENV["GITHUB_KEY"], ENV["GITHUB_SECRET"], callback: ->(auth) {
+          User.find_by(annotations: { ANNOTATION_USER_LOGIN => auth.info.nickname })
+        }
 
         %w[Api Component].each do |context|
           plugin.for_entity context, HAS_PROJECT_SLUG do |entity|

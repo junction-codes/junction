@@ -46,6 +46,9 @@ gem "thruster", require: false
 # Additional dependencies.
 gem "chartkick", "~> 5.2"
 gem "phlex-rails", "~> 2.3"
+gem "omniauth", "~> 2.1"
+gem "omniauth-github", "~> 2.0"
+gem "omniauth-rails_csrf_protection", "~> 2.0"
 gem "rails_icons", "~> 1.4"
 gem "tailwind_merge", "~> 1.3"
 

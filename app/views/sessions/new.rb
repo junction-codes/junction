@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Views::Sessions::New < Views::Base
+  include Phlex::Rails::Helpers::ButtonTo
+
   def view_template
     render Layouts::Unauthenticated.new do
       template
@@ -47,7 +49,34 @@ class Views::Sessions::New < Views::Base
                 end
               end
             end
+
+            provider_logins
           end
+        end
+      end
+    end
+  end
+
+  private
+
+  def provider_logins
+    return unless PluginRegistry.auth_providers.any?
+
+    div(class: "relative") do
+      div(class: "absolute inset-0 flex items-center") do
+        span(class: "w-full border-t")
+      end
+
+      div(class: "relative flex justify-center text-xs uppercase") do
+        "Or continue with"
+      end
+    end
+
+    div(class: "grid gap-2") do
+      PluginRegistry.auth_providers.each_value do |provider|
+        button_to("/auth/#{provider[:provider]}", method: :post, data: { turbo: false }, class: "cursor-pointer inline-flex h-9 w-full items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50") do
+          icon(provider[:icon], class: "mr-2 h-4 w-4")
+          plain provider[:title]
         end
       end
     end

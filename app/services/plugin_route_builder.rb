@@ -11,7 +11,7 @@ class PluginRouteBuilder
       resource_name = context.to_s.underscore.pluralize.to_sym
       router.resources resource_name do
         actions.each do |action|
-          name = helper_name(action)
+          name = helper_name(action, context)
 
           router.get(
             action[:path].present? ? action[:path] : name.to_s.gsub("_", "/"),
@@ -28,8 +28,9 @@ class PluginRouteBuilder
   # Derives the helper name for a given action.
   #
   # @param action [Hash] The action definition.
+  # @param context [Class] The entity class for the context.
   # @return [Symbol] The derived helper name.
-  def helper_name(action)
+  def self.helper_name(action, context)
     action[:method].to_s.delete_prefix("#{context.to_s.underscore}_")
                         .delete_suffix("_path")
                         .to_sym

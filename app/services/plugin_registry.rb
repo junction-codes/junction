@@ -91,7 +91,7 @@ class PluginRegistry
   #
   # @return [Array<Hash>] An array of sidebar link definitions.
   def sidebar_links
-    @plugins.flat_map(&:sidebar_links)
+    @plugins.values.flat_map(&:sidebar_links)
   end
 
   # Retrieves all registered tabs for a given context.
@@ -99,7 +99,7 @@ class PluginRegistry
   # @param context [Class, ApplicationRecord] The model to retrieve tabs for.
   # @return [Array<Hash>] An array of tab definitions.
   def tabs_for(context)
-    @plugins.flat_map { |plugin| plugin.tabs_for(context_string(context)) }
+    @plugins.values.flat_map { |plugin| plugin.tabs_for(context_string(context)) }
   end
 
   private

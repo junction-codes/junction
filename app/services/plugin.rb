@@ -30,13 +30,15 @@ class Plugin
   # Registers an authentication provider for the plugin.
   #
   # @param args [Array] Positional arguments to pass to the provider.
-  # @param provider [Symbol] The unique name of the provider, if different from the
-  #   plugin name.
+  # @param callback [Proc] A callback to find the user from the authentication
+  #   data.
+  # @param provider [Symbol] The unique name of the provider, if different from
+  #   the plugin name.
   # @param icon [String] Optional icon associated with the provider.
   # @param title [String] Optional, human-readable title for the provider.
   # @param options [Hash] Additional options for the provider.
-  def auth_provider(*args, provider: @name.to_sym, icon: @icon, title: @title, **options)
-    @auth_providers[provider] = { provider:, args:, icon:, title:, options: }
+  def auth_provider(*args, callback:, provider: @name.to_sym, icon: @icon, title: @title, **options)
+    @auth_providers[provider] = { provider:, callback:, args:, icon:, title:, options: }
   end
 
   # Registers a global sidebar link.

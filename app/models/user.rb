@@ -10,6 +10,7 @@ class User < ApplicationRecord
   validates :email_address, presence: true, format: URI::MailTo::EMAIL_REGEXP, uniqueness: true, confirmation: { if: :will_save_change_to_email_address? }
   validates :image_url, allow_blank: true, format: URI::DEFAULT_PARSER.make_regexp(%w[http https])
 
+  has_many :identities, dependent: :destroy
   has_many :sessions, dependent: :destroy
   has_many :group_memberships, dependent: :destroy
   has_many :groups, through: :group_memberships
@@ -32,5 +33,20 @@ class User < ApplicationRecord
   def deep_group_ids
     group_memberships.includes(group: :parent)
                      .map(&:group).flat_map(&:self_and_ancestors).uniq
+  end
+
+  # Loads a user from an OmniAuth authentication callback.
+  #
+  # @param auth [OmniAuth::AuthHash] The authentication data from OmniAuth.
+  # @return [User] The found user.
+  def self.from_omniauth(auth)
+    identity = Identity.find_by(provider: auth.provider, uid: auth.uid)
+    return identity.user if identity
+
+    provider = PluginRegistry.auth_providers[auth.provider.to_sym]
+    user  = provider[:callback].call(auth)
+    user.identities.create!(provider: auth.provider, uid: auth.uid) if user
+
+    user
   end
 end
