@@ -1,5 +1,5 @@
 class SystemsController < ApplicationController
-  before_action :set_system, only: %i[ show edit update destroy dependency_graph ]
+  before_action :set_entity, only: %i[ show edit update destroy dependency_graph ]
 
   # GET /systems
   def index
@@ -70,7 +70,7 @@ class SystemsController < ApplicationController
 
   private
 
-  def set_system
+  def set_entity
     @system = System.find(params.expect(:id))
   end
 

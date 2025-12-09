@@ -1,5 +1,5 @@
 class DomainsController < ApplicationController
-  before_action :set_domain, only: %i[show edit update destroy]
+  before_action :set_entity, only: %i[show edit update destroy]
 
   # GET /domains
   def index
@@ -62,7 +62,7 @@ class DomainsController < ApplicationController
 
   private
 
-  def set_domain
+  def set_entity
     @domain = Domain.find(params.expect(:id))
   end
 

@@ -5,7 +5,7 @@ class ResourcesController < ApplicationController
   include HasDependencyGraph
   include HasDependents
 
-  before_action :set_resource, only: %i[ edit update destroy ]
+  before_action :set_entity, only: %i[ edit update destroy ]
   before_action :eager_load_dependencies, only: %i[ show dependency_graph ]
 
   def index

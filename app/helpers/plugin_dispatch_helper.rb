@@ -63,7 +63,7 @@ module PluginDispatchHelper
   # @param slot [Symbol] The slot to check components for.
   # @return [Array<Hash>] Definitions for the visible UI components.
   def visible_components(context, slot)
-    PluginRegistry.ui_components_for(context:, slot:).select do |component|
+    PluginRegistry.components_for(context:, slot:).select do |component|
       component[:if].nil? || component[:if].call(context:)
     end
   end
