@@ -7,9 +7,5 @@ FactoryBot.define do
     component_type { CatalogOptions.kinds.keys.sample }
     lifecycle { CatalogOptions.lifecycles.keys.sample }
     image_url { 'https://example.com/image.png' }
-
-    # You can add associations here if needed, for example:
-    # association :domain
-    # association :owner, factory: :group
   end
 end

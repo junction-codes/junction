@@ -5,6 +5,10 @@ require 'rails_helper'
 RSpec.describe Component, type: :model do
   subject(:component) { build(:component) }
 
+  it_behaves_like "a model with dependencies"
+  it_behaves_like "a model that can be depended on"
+  it_behaves_like "a model that can be owned"
+
   describe 'validations' do
     it 'is valid with valid attributes' do
       expect(component).to be_valid
@@ -68,13 +72,10 @@ RSpec.describe Component, type: :model do
   end
 
   describe 'associations' do
-    it { should belong_to(:domain).optional }
-    it { is_expected.to belong_to(:owner).class_name('Group').optional }
     it { is_expected.to have_many(:deployments).dependent(:destroy) }
-    it { is_expected.to have_many(:system_components).dependent(:destroy) }
-    it { is_expected.to have_many(:systems).through(:system_components) }
-    it { is_expected.to have_many(:dependencies).through(:component_dependencies) }
-    it { is_expected.to have_many(:dependents).through(:inverse_component_dependencies) }
+    it { is_expected.to belong_to(:system).optional }
+    it { is_expected.to have_many(:dependencies) }
+    it { is_expected.to have_many(:dependents) }
   end
 
   describe 'defaults' do

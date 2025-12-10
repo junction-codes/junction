@@ -3,11 +3,11 @@
 class Resource < ApplicationRecord
   include Dependable
   include Dependentable
+  include Ownable
 
   attribute :annotations, :jsonb, default: {}
   alias_attribute :type, :resource_type
 
-  belongs_to :owner, class_name: "Group"
   belongs_to :system
 
   # Get the icon associated with the component's type.

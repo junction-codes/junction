@@ -4,11 +4,11 @@ class Api < ApplicationRecord
   include Annotated
   include Dependable
   include Dependentable
+  include Ownable
 
   attribute :lifecycle, :string, default: "experimental"
   alias_attribute :type, :api_type
 
-  belongs_to :owner, class_name: "Group"
   belongs_to :system
 
   validates :api_type, presence: true, inclusion: { in: CatalogOptions.apis.keys }

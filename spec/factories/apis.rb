@@ -1,0 +1,15 @@
+# frozen_string_literal: true
+
+FactoryBot.define do
+  factory :api do
+    sequence(:name) { |n| "API Name #{n}" }
+    description { Faker::Lorem.paragraph }
+    api_type { CatalogOptions.apis.keys.sample }
+    lifecycle { CatalogOptions.lifecycles.keys.sample }
+    image_url { 'https://example.com/image.png' }
+    definition { Faker::Json.shallow_json }
+
+    association :owner, factory: :group
+    association :system
+  end
+end

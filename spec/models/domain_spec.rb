@@ -3,15 +3,12 @@
 require 'rails_helper'
 
 RSpec.describe Domain, type: :model do
+  subject(:domain) { build(:domain) }
+
+  it_behaves_like "a model that can be owned"
+
   describe 'validations' do
-    subject(:domain) { build(:domain) }
-
     it 'is valid with valid attributes' do
-      expect(domain).to be_valid
-    end
-
-    it 'is valid without an owner' do
-      domain.owner = nil
       expect(domain).to be_valid
     end
 
@@ -59,9 +56,7 @@ RSpec.describe Domain, type: :model do
   end
 
   describe 'associations' do
-    it { is_expected.to belong_to(:owner).class_name('Group').optional }
     it { is_expected.to have_many(:systems) }
-    it { is_expected.to have_many(:components) }
   end
 
   describe 'defaults' do

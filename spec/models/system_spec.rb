@@ -3,15 +3,12 @@
 require 'rails_helper'
 
 RSpec.describe System, type: :model do
+  subject(:system) { build(:system) }
+
+  it_behaves_like "a model that can be owned"
+
   describe 'validations' do
-    subject(:system) { build(:system) }
-
     it 'is valid with valid attributes' do
-      expect(system).to be_valid
-    end
-
-    it 'is valid without an owner' do
-      system.owner = nil
       expect(system).to be_valid
     end
 
@@ -60,9 +57,8 @@ RSpec.describe System, type: :model do
 
   describe 'associations' do
     it { is_expected.to belong_to(:domain) }
-    it { is_expected.to belong_to(:owner).class_name('Group').optional }
-    it { is_expected.to have_many(:system_components).dependent(:destroy) }
-    it { is_expected.to have_many(:components).through(:system_components) }
+    it { is_expected.to have_many(:components) }
+    it { is_expected.to have_many(:resources) }
   end
 
   describe 'defaults' do

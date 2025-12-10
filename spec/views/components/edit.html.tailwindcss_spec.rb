@@ -7,9 +7,7 @@ RSpec.describe "components/edit", type: :view do
       description: "MyText",
       lifecycle: "production",
       component_type: "api",
-      repository_url: "MyString",
       image_url: "https://example.com/image.png",
-      domain: nil,
       owner: nil
     )
   }

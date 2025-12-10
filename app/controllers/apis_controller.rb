@@ -33,7 +33,7 @@ class ApisController < ApplicationController
     @entity = Api.new(api_params)
 
     if @entity.save
-      redirect_to @entity, success: "API was successfully created."
+      redirect_to @entity, success: "API was successfully created.", status: :see_other
     else
       flash.now[:alert] = "There were errors creating the API."
       render Views::Apis::New.new(api: @entity, owners: owner_options, systems: system_options), status: :unprocessable_entity
@@ -43,7 +43,7 @@ class ApisController < ApplicationController
   # PATH/PUT /api/:id
   def update
     if @entity.update(api_params)
-      redirect_to @entity, success: "API was successfully updated."
+      redirect_to @entity, success: "API was successfully updated.", status: :see_other
     else
       flash.now[:alert] = "There were errors updating the API."
       render Views::Apis::Edit.new(api: @entity, owners: owner_options, systems: system_options), status: :unprocessable_entity
@@ -68,7 +68,7 @@ class ApisController < ApplicationController
   end
 
   def api_params
-    params.expect(api: [ :name, :description, :definition, :lifecycle, :type, :image_url, :owner_id, :system_id, annotations: {} ])
+    params.expect(api: [ :api_type, :name, :description, :definition, :lifecycle, :type, :image_url, :owner_id, :system_id, annotations: {} ])
   end
 
   def owner_options

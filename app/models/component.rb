@@ -4,6 +4,7 @@ class Component < ApplicationRecord
   include Annotated
   include Dependable
   include Dependentable
+  include Ownable
 
   attribute :lifecycle, :string, default: "experimental"
   alias_attribute :type, :component_type
@@ -14,7 +15,6 @@ class Component < ApplicationRecord
   validates :lifecycle, presence: true, inclusion: { in: CatalogOptions.lifecycles.keys }
   validates :image_url, allow_blank: true, format: URI::DEFAULT_PARSER.make_regexp(%w[http https])
 
-  belongs_to :owner, class_name: "Group", optional: true
   belongs_to :system, optional: true
   has_many :deployments, dependent: :destroy
 

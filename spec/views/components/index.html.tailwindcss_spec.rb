@@ -8,9 +8,7 @@ RSpec.describe "components/index", type: :view do
         description: "MyText",
         lifecycle: "production",
         component_type: "api",
-        repository_url: "Repository Url",
         image_url: "https://example.com/image.png",
-        domain: nil,
         owner: nil
       ),
       Component.create!(
@@ -18,9 +16,7 @@ RSpec.describe "components/index", type: :view do
         description: "MyText",
         lifecycle: "experimental",
         component_type: "worker",
-        repository_url: "Repository Url",
         image_url: nil,
-        domain: nil,
         owner: nil
       )
     ])

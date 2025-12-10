@@ -5,7 +5,6 @@ one:
   component_type: api
   repository_url: MyString
   image_url: https://example.com/image.png
-  domain:
   owner:
 
 two:
@@ -15,5 +14,4 @@ two:
   component_type: worker
   repository_url: MyString
   image_url:
-  domain:
   owner:

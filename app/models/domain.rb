@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Domain < ApplicationRecord
+  include Ownable
+
   attribute :status, :string, default: "active"
 
   validates :description, presence: true
@@ -8,6 +10,5 @@ class Domain < ApplicationRecord
   validates :status, presence: true, inclusion: { in: %w[active closed] }
   validates :image_url, allow_blank: true, format: URI::DEFAULT_PARSER.make_regexp(%w[http https])
 
-  belongs_to :owner, class_name: "Group", optional: true
   has_many :systems
 end
