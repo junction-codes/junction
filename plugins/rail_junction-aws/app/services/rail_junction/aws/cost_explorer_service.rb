@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'aws-sdk-costexplorer'
+require "aws-sdk-costexplorer"
 
 module RailJunction
   module Aws
@@ -22,7 +22,7 @@ module RailJunction
       def costs_by_service(period: 30.days)
         with_cache(period) do
           costs = Hash.new(0.0)
-          cost_and_usage(period: period, granularity: "MONTHLY", group_by: [{ type: "DIMENSION", key: "SERVICE" }]).each do |result|
+          cost_and_usage(period: period, granularity: "MONTHLY", group_by: [ { type: "DIMENSION", key: "SERVICE" } ]).each do |result|
             result.groups.each do |group|
               costs[group.keys.first] += group.metrics["UnblendedCost"].amount.to_f
             end
@@ -41,7 +41,7 @@ module RailJunction
       def historical_costs(period: 30.days)
         with_cache(period) do
           cost_and_usage(period: period).map do |result|
-            [result.time_period.start, result.total["UnblendedCost"].amount.to_f]
+            [ result.time_period.start, result.total["UnblendedCost"].amount.to_f ]
           end
         end
       end
@@ -104,7 +104,7 @@ module RailJunction
         annotation = @model.annotations[Engine::ANNOTATION_COST_INSIGHTS_TAGS] || ""
         @tags = annotation.split(",").to_h do |tag_pair|
           key, value = tag_pair.split("=").map(&:strip)
-          [key, value]
+          [ key, value ]
         end
       end
 
@@ -115,7 +115,7 @@ module RailJunction
       end
 
       def with_cache(*facets, &)
-        key = cache_key_for([caller_locations(1,1)[0].base_label] + facets)
+        key = cache_key_for([ caller_locations(1, 1)[0].base_label ] + facets)
         Rails.cache.fetch(key, expires_in: CACHE_EXPIRES_IN) { yield }
       end
 
@@ -137,15 +137,15 @@ module RailJunction
       # @param group_by [Array<Hash>] Dimensions to group the data by.
       # @return [Array<Aws::CostExplorer::Types::ResultByTime>] The cost and
       #   usage data.
-      def cost_and_usage(period: 30.days, granularity: "DAILY", metrics: ["UnblendedCost"], group_by: [])
+      def cost_and_usage(period: 30.days, granularity: "DAILY", metrics: [ "UnblendedCost" ], group_by: [])
         client.get_cost_and_usage({
           filter:,
           granularity:,
           metrics:,
           group_by:,
           time_period: {
-            start: (Time.now - period).strftime('%Y-%m-%d'),
-            end: Time.now.utc.strftime('%Y-%m-%d'),
+            start: (Time.now - period).strftime("%Y-%m-%d"),
+            end: Time.now.utc.strftime("%Y-%m-%d")
           }
         }).results_by_time
       end
@@ -155,8 +155,8 @@ module RailJunction
           filter:,
           dimension:,
           time_period: {
-            start: (Time.now - period).strftime('%Y-%m-%d'),
-            end: Time.now.utc.strftime('%Y-%m-%d'),
+            start: (Time.now - period).strftime("%Y-%m-%d"),
+            end: Time.now.utc.strftime("%Y-%m-%d")
           }
         }).dimension_values
       end
@@ -168,8 +168,8 @@ module RailJunction
           {
             tags: {
               key: key.to_s,
-              values: [value.to_s],
-              match_options: ["EQUALS"]
+              values: [ value.to_s ],
+              match_options: [ "EQUALS" ]
             }
           }
         end

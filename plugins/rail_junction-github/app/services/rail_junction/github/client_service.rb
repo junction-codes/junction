@@ -36,7 +36,7 @@ module RailJunction
       def graphql(query:, variables: {})
         results = []
         loop do
-          resp = client.post '/graphql', { query: query, variables: variables }.to_json
+          resp = client.post "/graphql", { query: query, variables: variables }.to_json
           pp(resp)
           results.concat(resp.dig(:data, :search, :nodes) || [])
 

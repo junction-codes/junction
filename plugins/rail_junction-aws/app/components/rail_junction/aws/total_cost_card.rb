@@ -19,7 +19,7 @@ module RailJunction
         end
 
         def value
-          '$%.2f' % service.total_costs
+          "$%.2f" % service.total_costs
         end
       end
     end

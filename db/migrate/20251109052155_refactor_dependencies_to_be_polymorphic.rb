@@ -23,8 +23,8 @@ class RefactorDependenciesToBePolymorphic < ActiveRecord::Migration[8.1]
 
     change_column_default :dependencies, :source_type, from: 'Component', to: nil
     change_column_default :dependencies, :target_type, from: 'Component', to: nil
-    add_index :dependencies, [:source_type, :source_id]
-    add_index :dependencies, [:target_type, :target_id]
+    add_index :dependencies, [ :source_type, :source_id ]
+    add_index :dependencies, [ :target_type, :target_id ]
 
     # Clean up the old foreign keys and indexes (if they exist).
     if foreign_key_exists?(:dependencies, :components, column: :source_id)

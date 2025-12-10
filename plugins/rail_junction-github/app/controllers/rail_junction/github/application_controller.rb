@@ -10,7 +10,7 @@ module RailJunction
       # @raise [ActiveRecord::RecordNotFound] If the context class is not found
       #   or is invalid.
       def context
-        name = entity_key.to_s.sub(/_id\z/, '')
+        name = entity_key.to_s.sub(/_id\z/, "")
         context = name.classify.safe_constantize
         raise ActiveRecord::RecordNotFound, "Unknown entity #{name}" unless context && context < ::ApplicationRecord
 
@@ -23,8 +23,8 @@ module RailJunction
       #
       # @raise [ActionController::BadRequest] If no id parameter is found.
       def entity_key
-        key = params.keys.find { |k| k.to_s.end_with?('_id') }
-        raise ActionController::BadRequest, 'Missing id parameter' unless key
+        key = params.keys.find { |k| k.to_s.end_with?("_id") }
+        raise ActionController::BadRequest, "Missing id parameter" unless key
 
         key
       end

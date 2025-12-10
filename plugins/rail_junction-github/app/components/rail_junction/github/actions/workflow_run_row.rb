@@ -61,7 +61,7 @@ module RailJunction
               end
 
               row.cell do
-                p(class: 'pb-2') { @workflow_run.head_branch }
+                p(class: "pb-2") { @workflow_run.head_branch }
                 p { @workflow_run.head_sha }
               end
 
@@ -69,7 +69,7 @@ module RailJunction
 
               row.cell(class: "text-right") do
                 # TODO: Implement actions.
-                Link(variant: :disabled, title: "Rerun workflow") { icon('rotate-ccw') }
+                Link(variant: :disabled, title: "Rerun workflow") { icon("rotate-ccw") }
               end
             end
           end

@@ -7,7 +7,7 @@ module RailJunction
         def template
           render ::Components::StatCard.new(
             title: "Month-over-Month Cost Change",
-            value: '%.2f%%' % value,
+            value: "%.2f%%" % value,
             icon:,
             status:
           )
