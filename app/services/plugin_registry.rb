@@ -8,10 +8,13 @@ class PluginRegistry
 
   class PluginNotFoundError < ArgumentError; end
 
+  attr_reader :plugins
+
   class << self
     # Delegate class methods to the singleton instance.
     delegate :actions, :annotations_for, :auth_providers, :components_for,
-             :plugin, :register_plugin, :sidebar_links, :tabs_for,
+             :plugin, :plugins, :register_plugin, :reset!, :sidebar_links,
+             :tabs_for,
              to: :instance
   end
 
@@ -25,6 +28,11 @@ class PluginRegistry
   # @param plugin [Plugin] The plugin to register.
   def register_plugin(plugin)
     @plugins[plugin.name] = plugin
+  end
+
+  # Reset the registry, clearing all registered plugins.
+  def reset!
+    @plugins = {}
   end
 
   # Routable actions grouped by their context class.

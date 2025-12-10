@@ -56,7 +56,7 @@ class EntityScope
   # @param target [String] Optional target identifier for the turbo frame
   #   within the tab.
   def tab(title:, action:, icon: nil, target: nil)
-    target ||= action&.to_s&.gsub("_path", "").gsub("_", "-") || title.parameterize
+    target ||= action&.to_s&.gsub("_path", "")&.gsub("_", "-") || title.parameterize
     @tabs << { title:, action:, icon:, if: @condition, target: }
   end
 
