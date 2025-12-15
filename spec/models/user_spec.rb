@@ -1,93 +1,72 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe User, type: :model do
-  describe 'validations' do
+  describe "validations" do
     subject(:user) { build(:user) }
 
-    it 'is valid with valid attributes' do
+    it "is valid with valid attributes" do
       expect(user).to be_valid
     end
 
-    it 'is invalid without a display_name' do
-      user.display_name = nil
-      expect(user).not_to be_valid
-      expect(user.errors[:display_name]).to include("can't be blank")
+    it_behaves_like "validates presence of", :display_name
+    it_behaves_like "validates email format of", :email_address, required: true
+    it_behaves_like "validates presence of", :email_address
+    it_behaves_like "validates uniqueness of", :email_address, "duplicate@example.com"
+    it_behaves_like "validates presence of", :password
+    it_behaves_like "validates image_url format"
+
+    context "when the password is too short" do
+      before { user.password = user.password_confirmation = "short" }
+
+      it "is invalid" do
+        expect(user).not_to be_valid
+      end
+
+      it "includes length error for password" do
+        user.valid?
+        expect(user.errors[:password]).to include("is too short (minimum is 8 characters)")
+      end
     end
 
-    it 'is invalid without an email_address' do
-      user.email_address = nil
-      expect(user).not_to be_valid
-      expect(user.errors[:email_address]).to include("can't be blank")
+    context "when the password confirmation does not match" do
+      before { user.password_confirmation = "mismatch" }
+
+      it "is invalid" do
+        user.password_confirmation = "wrong_password"
+        expect(user).not_to be_valid
+      end
+
+      it "includes confirmation error for password_confirmation" do
+        user.valid?
+        expect(user.errors[:password_confirmation]).to include("doesn't match Password")
+      end
     end
 
-    it 'is invalid with a duplicate email_address' do
-      create(:user, email_address: 'test@example.com')
-      user.email_address = 'test@example.com'
-      expect(user).not_to be_valid
-      expect(user.errors[:email_address]).to include('has already been taken')
-    end
-
-    it 'is invalid with an invalid email_address format' do
-      user.email_address = 'not-an-email'
-      expect(user).not_to be_valid
-      expect(user.errors[:email_address]).to include('is invalid')
-    end
-
-    it 'is invalid without a password' do
-      user.password = nil
-      expect(user).not_to be_valid
-      expect(user.errors[:password]).to include("can't be blank")
-    end
-
-    it 'is invalid if password is too short' do
-      user.password = 'short'
-      user.password_confirmation = 'short'
-      expect(user).not_to be_valid
-      expect(user.errors[:password]).to include('is too short (minimum is 8 characters)')
-    end
-
-    it 'is invalid if password confirmation does not match' do
-      user.password_confirmation = 'wrong_password'
-      expect(user).not_to be_valid
-      expect(user.errors[:password_confirmation]).to include("doesn't match Password")
-    end
-
-    it 'is valid when updating attributes without changing the password' do
+    it "is valid when updating attributes without changing the password" do
       user.save!
-      user.display_name = 'New Name'
+      user.display_name = "New Name"
       expect(user).to be_valid
-    end
-
-    it 'is valid with a blank image_url' do
-      user.image_url = ''
-      expect(user).to be_valid
-    end
-
-    it 'is invalid with an invalid image_url format' do
-      user.image_url = 'not-a-valid-url'
-      expect(user).not_to be_valid
-      expect(user.errors[:image_url]).to include('is invalid')
     end
   end
 
-  describe 'associations' do
+  describe "associations" do
     it { is_expected.to have_many(:sessions).dependent(:destroy) }
     it { is_expected.to have_many(:group_memberships).dependent(:destroy) }
     it { is_expected.to have_many(:groups).through(:group_memberships) }
   end
 
-  describe 'normalizations' do
-    it 'downcases and strips the email address before validation' do
-      user = build(:user, email_address: '  TEST@EXAMPLE.COM  ')
+  describe "normalizations" do
+    it "downcases and strips the email address before validation" do
+      user = build(:user, email_address: "  TEST@EXAMPLE.COM  ")
       user.valid?
-      expect(user.email_address).to eq('test@example.com')
+      expect(user.email_address).to eq("test@example.com")
     end
   end
 
-  describe '#deep_group_ids' do
-    it 'returns ids of all groups the user is a member of, including ancestors' do
+  describe "#deep_group_ids" do
+    it "returns ids of all groups the user is a member of, including ancestors" do
       grandparent = create(:group)
       parent = create(:group, parent: grandparent)
       child = create(:group, parent: parent)
@@ -97,35 +76,35 @@ RSpec.describe User, type: :model do
     end
   end
 
-  describe '#components' do
-    it 'returns components owned by the user\'s groups and their ancestors' do
-      grandparent = create(:group)
-      parent = create(:group, parent: grandparent)
-      child = create(:group, parent: parent)
+  describe "#components" do
+    let(:grandparent) { create(:group) }
+    let(:parent) { create(:group, parent: grandparent) }
+    let(:child) { create(:group, parent: parent) }
+    let!(:components) do
+      [ child, parent, grandparent ].map { |owner| create(:component, owner:) }
+    end
+
+    it "returns components owned by the user's groups and their ancestors" do
       user = create(:user, groups: [ child ])
+      create(:component)
 
-      component1 = create(:component, owner: child)
-      component2 = create(:component, owner: parent)
-      component3 = create(:component, owner: grandparent)
-      _unrelated_component = create(:component)
-
-      expect(user.components).to contain_exactly(component1, component2, component3)
+      expect(user.components).to match_array(components)
     end
   end
 
-  describe '#systems' do
-    it 'returns systems owned by the user\'s groups and their ancestors' do
-      grandparent = create(:group)
-      parent = create(:group, parent: grandparent)
-      child = create(:group, parent: parent)
+  describe "#systems" do
+    let(:grandparent) { create(:group) }
+    let(:parent) { create(:group, parent: grandparent) }
+    let(:child) { create(:group, parent: parent) }
+    let!(:systems) do
+      [ child, parent, grandparent ].map { |owner| create(:system, owner:) }
+    end
+
+    it "returns systems owned by the user's groups and their ancestors" do
       user = create(:user, groups: [ child ])
+      create(:system)
 
-      system1 = create(:system, owner: child)
-      system2 = create(:system, owner: parent)
-      system3 = create(:system, owner: grandparent)
-      _unrelated_system = create(:system)
-
-      expect(user.systems).to contain_exactly(system1, system2, system3)
+      expect(user.systems).to match_array(systems)
     end
   end
 end

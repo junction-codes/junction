@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe "groups/show", type: :view do
-  before(:each) do
+  before do
     assign(:group, Group.create!(
       name: "Name",
       description: "MyText",
@@ -14,12 +14,5 @@ RSpec.describe "groups/show", type: :view do
 
   it "renders attributes in <p>" do
     skip "implement tests for phlex views"
-
-    render
-    expect(rendered).to match(/Name/)
-    expect(rendered).to match(/Group Type/)
-    expect(rendered).to match(/Email/)
-    expect(rendered).to match(/Image Url/)
-    expect(rendered).to match(//)
   end
 end

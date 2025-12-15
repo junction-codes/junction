@@ -1,68 +1,28 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe Group, type: :model do
-  describe 'validations' do
+  describe "validations" do
     subject(:group) { build(:group) }
 
-    it 'is valid with valid attributes' do
+    it "is valid with valid attributes" do
       expect(group).to be_valid
     end
 
-    it 'is invalid without a name' do
-      group.name = nil
-      expect(group).not_to be_valid
-      expect(group.errors[:name]).to include("can't be blank")
-    end
-
-    it 'is invalid with a duplicate name' do
-      create(:group, name: 'Duplicate Name')
-      group.name = 'Duplicate Name'
-      expect(group).not_to be_valid
-      expect(group.errors[:name]).to include('has already been taken')
-    end
-
-    it 'is invalid without a description' do
-      group.description = nil
-      expect(group).not_to be_valid
-      expect(group.errors[:description]).to include("can't be blank")
-    end
-
-    it 'is invalid without a group_type' do
-      group.group_type = nil
-      expect(group).not_to be_valid
-      expect(group.errors[:group_type]).to include("can't be blank")
-    end
-
-    it 'is valid with a blank email' do
-      group.email = ''
-      expect(group).to be_valid
-    end
-
-    it 'is invalid with an invalid email format' do
-      group.email = 'not-an-email'
-      expect(group).not_to be_valid
-      expect(group.errors[:email]).to include('is invalid')
-    end
-
-    it 'is valid with a blank image_url' do
-      group.image_url = ''
-      expect(group).to be_valid
-    end
-
-    it 'is invalid with an invalid image_url format' do
-      group.image_url = 'not-a-valid-url'
-      expect(group).not_to be_valid
-      expect(group.errors[:image_url]).to include('is invalid')
-    end
+    it_behaves_like "validates presence of", :description
+    it_behaves_like "validates email format of", :email
+    it_behaves_like "validates presence of", :group_type
+    it_behaves_like "validates presence of", :name
+    it_behaves_like "validates uniqueness of", :name
+    it_behaves_like "validates image_url format"
   end
 
   describe 'associations' do
-    it { is_expected.to belong_to(:parent).class_name('Group').optional }
     it { is_expected.to have_many(:children).class_name('Group').with_foreign_key('parent_id').dependent(:destroy) }
     it { is_expected.to have_many(:group_memberships).dependent(:destroy) }
     it { is_expected.to have_many(:members).through(:group_memberships).source(:user) }
+    it { is_expected.to belong_to(:parent).class_name('Group').optional }
   end
 
   describe 'defaults' do

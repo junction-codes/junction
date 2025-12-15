@@ -1,9 +1,13 @@
+# frozen_string_literal: true
+
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require 'spec_helper'
 ENV['RAILS_ENV'] ||= 'test'
 require_relative '../config/environment'
+
 # Prevent database truncation if the environment is production
 abort("The Rails environment is running in production mode!") if Rails.env.production?
+
 # Uncomment the line below in case you have `--require rails_helper` in the `.rspec` file
 # that will avoid rails generators crashing because migrations haven't been run yet
 # return unless Rails.env.test?
@@ -42,9 +46,36 @@ begin
 rescue ActiveRecord::PendingMigrationError => e
   abort e.to_s.strip
 end
+
+Capybara.register_driver :cuprite do |app|
+  Capybara::Cuprite::Driver.new(
+    app,
+    window_size: [ 1400, 900 ],
+    browser_options: {
+      # Required for Docker/CI environments.
+      'no-sandbox': nil,
+      # Helpful in CI environments to avoid limited resource problems.
+      'disable-gpu': nil,
+      'disable-dev-shm-usage': nil
+    },
+    # Enable debugging in development
+    inspector: true,
+    # Set to false for debugging
+    headless: true
+  )
+end
+
+# Set Cuprite as the JavaScript driver
+Capybara.javascript_driver = :cuprite
+
 RSpec.configure do |config|
   # Include helpers.
   config.include AuthenticationHelper, type: :request
+
+  # Configure system tests.
+  config.before(:each, :js, type: :system) do
+    driven_by :cuprite
+  end
 
   # Configure fixtures.
   config.use_transactional_fixtures = true
@@ -74,6 +105,7 @@ RSpec.configure do |config|
 
   # Filter lines from Rails gems in backtraces.
   config.filter_rails_from_backtrace!
+
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
 end

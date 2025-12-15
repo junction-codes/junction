@@ -11,25 +11,7 @@ RSpec.describe "domains/edit", type: :view do
     )
   }
 
-  before(:each) do
-    # assign(:domain, domain)
-  end
-
   it "renders the edit domain form" do
     skip "implement tests for phlex views"
-
-    render
-
-    assert_select "form[action=?][method=?]", domain_path(domain), "post" do
-      assert_select "input[name=?]", "domain[name]"
-
-      assert_select "textarea[name=?]", "domain[description]"
-
-      assert_select "input[name=?]", "domain[status]"
-
-      assert_select "input[name=?]", "domain[image_url]"
-
-      assert_select "input[name=?]", "domain[owner_id]"
-    end
   end
 end

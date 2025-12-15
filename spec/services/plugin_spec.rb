@@ -158,7 +158,7 @@ RSpec.describe Plugin do
     it "returns components for registered context and slot" do
       plugin.for_entity("Domain") { |scope| }
 
-      expect(plugin.components_for("Domain", :ui_)).to eq([ { component: "MyComponent" } ])
+      expect(plugin.components_for("Domain", :header)).to eq([ { component: "MyComponent" } ])
     end
   end
 

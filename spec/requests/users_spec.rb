@@ -104,7 +104,7 @@ RSpec.describe "/users", type: :request do
         it "does not create a new User" do
           expect {
             post users_url, params: { user: invalid_attributes }
-          }.to change(User, :count).by(0)
+          }.not_to change(User, :count)
         end
 
         it "renders a response with 422 status (i.e. to display the 'new' template)" do

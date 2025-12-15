@@ -84,7 +84,7 @@ RSpec.describe "/deployments", type: :request do
       it "does not create a new Deployment" do
         expect {
           post deployments_url, params: { deployment: invalid_attributes }
-        }.to change(Deployment, :count).by(0)
+        }.not_to change(Deployment, :count)
       end
 
       it "renders a response with 422 status (i.e. to display the 'new' template)" do

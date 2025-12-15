@@ -116,7 +116,7 @@ RSpec.describe "/components", type: :request do
         it "does not create a new component" do
           expect {
             post components_url, params: { component: invalid_attributes }
-          }.to change(Component, :count).by(0)
+          }.not_to change(Component, :count)
         end
 
         it "renders a response with 422 status" do

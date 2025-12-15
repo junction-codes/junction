@@ -1,2 +1,22 @@
 inherit_gem:
   rubocop-rails-omakase: rubocop.yml
+
+plugins:
+  - rubocop-capybara
+  - rubocop-performance
+  - rubocop-rails
+  - rubocop-rspec
+
+AllCops:
+  NewCops: enable
+
+RSpec/ExampleLength:
+  CountAsOne:
+    - array
+    - hash
+    - heredoc
+    - method_call
+
+# Prefer greater nesting depth for better organization.
+RSpec/NestedGroups:
+  Max: 6

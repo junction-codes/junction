@@ -101,7 +101,7 @@ RSpec.describe "Resources", type: :request do
         it "does not create a new resource" do
           expect {
             post resources_url, params: { resource: invalid_attributes }
-          }.to change(Resource, :count).by(0)
+          }.not_to change(Resource, :count)
         end
 
         it "renders a response with 422 status" do

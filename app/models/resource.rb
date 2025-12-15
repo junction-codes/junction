@@ -1,12 +1,17 @@
 # frozen_string_literal: true
 
 class Resource < ApplicationRecord
+  include Annotated
   include Dependable
   include Dependentable
   include Ownable
 
-  attribute :annotations, :jsonb, default: {}
   alias_attribute :type, :resource_type
+
+  validates :description, presence: true
+  validates :image_url, allow_blank: true, format: URI::DEFAULT_PARSER.make_regexp(%w[http https])
+  validates :name, presence: true, uniqueness: true
+  validates :resource_type, presence: true, inclusion: { in: CatalogOptions.resources.keys }
 
   belongs_to :system
 

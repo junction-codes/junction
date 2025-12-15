@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe "groups/index", type: :view do
-  before(:each) do
+  before do
     assign(:groups, [
       Group.create!(
         name: "Name",
@@ -24,13 +24,5 @@ RSpec.describe "groups/index", type: :view do
 
   it "renders a list of groups" do
     skip "implement tests for phlex views"
-
-    render
-    cell_selector = 'div>p'
-    assert_select cell_selector, text: Regexp.new("Name".to_s), count: 2
-    assert_select cell_selector, text: Regexp.new("Group Type".to_s), count: 2
-    assert_select cell_selector, text: Regexp.new("Email".to_s), count: 2
-    assert_select cell_selector, text: Regexp.new("Image Url".to_s), count: 2
-    assert_select cell_selector, text: Regexp.new(nil.to_s), count: 2
   end
 end

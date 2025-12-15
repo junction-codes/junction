@@ -5,16 +5,14 @@ require "rails_helper"
 RSpec.describe PluginRegistry do
   subject(:registry) { described_class.instance }
 
-  let(:actions) { {} }
-  let(:annotations) { {} }
-  let(:auth_providers) { {} }
-  let(:components) { [] }
-  let(:sidebar_links) { [] }
-  let(:tabs) { [] }
+  let(:methods) do
+    { actions: {}, annotations_for: {}, auth_providers: {}, components_for: [],
+      sidebar_links: [], tabs_for: []  }
+  end
+
+
   let(:plugin) do
-    instance_double(Plugin, name: "test_plugin", actions:,
-                    annotations_for: annotations, auth_providers:,
-                    components_for: components, sidebar_links:, tabs_for: tabs)
+    instance_double(Plugin, name: "test_plugin", **methods)
   end
 
   before { registry.reset! }
@@ -34,20 +32,11 @@ RSpec.describe PluginRegistry do
   end
 
   describe "#actions" do
-    context "with no registered actions" do
-      it "returns an empty hash when no plugins are registered" do
-        expect(registry.actions).to eq({})
-      end
-
-      it "return an empty hash" do
-        registry.register_plugin(plugin)
-
-        expect(registry.actions).to eq({})
-      end
-    end
+    it_behaves_like "registry aggregation method", :actions, {}, {}
 
     context "with registered actions" do
       let(:actions) { { "Domain" => [ { method: :domain_path } ] } }
+      let(:methods) { super().merge(actions:) }
 
       it "aggregates actions from registered plugins" do
         registry.register_plugin(plugin)
@@ -58,101 +47,39 @@ RSpec.describe PluginRegistry do
   end
 
   describe "#annotations_for" do
-    context "with no registered annotations" do
-      it "returns an empty hash when no plugins are registered" do
-        expect(registry.annotations_for("Domain")).to eq({})
-      end
-
-      it "return an empty hash" do
-        registry.register_plugin(plugin)
-
-        expect(registry.annotations_for("Domain")).to eq({})
-      end
-    end
+    it_behaves_like "registry aggregation method", :annotations_for, {}, { context: "Domain" }
 
     context "with registered annotations" do
       let(:annotations) { { "example.com/owner" => { title: "Owner" } } }
+      let(:methods) { super().merge(annotations_for: annotations) }
 
-      it "returns annotations when given a class" do
-        registry.register_plugin(plugin)
-
-        expect(registry.annotations_for(Domain)).to eq({ "example.com/owner" => { title: "Owner" } })
-      end
-
-      it "returns annotations when given a model" do
-        registry.register_plugin(plugin)
-
-        expect(registry.annotations_for(create(:domain))).to eq({ "example.com/owner" => { title: "Owner" } })
-      end
-
-      it "returns annotations when given a string" do
-        registry.register_plugin(plugin)
-
-        expect(registry.annotations_for("Domain")).to eq({ "example.com/owner" => { title: "Owner" } })
-      end
+      it_behaves_like "context type handling", :annotations_for, { "example.com/owner" => { title: "Owner" } }, {}
     end
   end
 
   describe "#auth_providers" do
-    context "with no registered auth providers" do
-      it "returns an empty hash when no plugins are registered" do
-        expect(registry.auth_providers).to eq({})
-      end
-
-      it "return an empty hash" do
-        registry.register_plugin(plugin)
-
-        expect(registry.auth_providers).to eq({})
-      end
-    end
+    it_behaves_like "registry aggregation method", :auth_providers, {}, {}
 
     context "with registered auth providers" do
       let(:auth_providers) { { "test_provider" => { provider: "test_provider" } } }
-
+      let(:methods) { super().merge(auth_providers:) }
 
       it "aggregates auth providers from registered plugins" do
         registry.register_plugin(plugin)
 
-        expect(registry.auth_providers).to eq({ "test_provider" => { provider: "test_provider" } })
+        expect(registry.auth_providers).to eq(auth_providers)
       end
     end
   end
 
   describe "#components_for" do
-    context "with no registered components" do
-      it "returns an empty array when no plugins are registered" do
-        expect(registry.components_for(context: "Domain", slot: :header)).to eq([])
-      end
-
-      it "return an empty array" do
-        registry.register_plugin(plugin)
-
-        expect(registry.components_for(context: "Domain", slot: :header)).to eq([])
-      end
-    end
+    it_behaves_like "registry aggregation method", :components_for, [], { context: "Domain", slot: :header }
 
     context "with registered components" do
-      let(:components) do
-        [ { component: "HeaderComponent" } ]
-      end
+      let(:components) { [ { component: "HeaderComponent" } ] }
+      let(:methods) { super().merge(components_for: components) }
 
-      it "returns components when given a class" do
-        registry.register_plugin(plugin)
-
-        expect(registry.components_for(context: Domain, slot: :header)).to eq([ { component: "HeaderComponent" } ])
-      end
-
-      it "returns components when given a model" do
-        registry.register_plugin(plugin)
-
-        expect(registry.components_for(context: create(:domain), slot: :header)).to eq([ { component: "HeaderComponent" } ])
-      end
-
-      it "returns components when given a string" do
-        registry.register_plugin(plugin)
-
-        expect(registry.components_for(context: "Domain", slot: :header)).to eq([ { component: "HeaderComponent" } ])
-      end
+      it_behaves_like "context type handling", :components_for, [ { component: "HeaderComponent" } ], { slot: :header }
     end
   end
 
@@ -169,20 +96,11 @@ RSpec.describe PluginRegistry do
   end
 
   describe "#sidebar_links" do
-    context "with no registered sidebar links" do
-      it "returns an empty array when no plugins are registered" do
-        expect(registry.sidebar_links).to eq([])
-      end
-
-      it "return an empty array" do
-        registry.register_plugin(plugin)
-
-        expect(registry.sidebar_links).to eq([])
-      end
-    end
+    it_behaves_like "registry aggregation method", :sidebar_links, [], {}
 
     context "with registered sidebar links" do
       let(:sidebar_links) { [ { action: "/path", title: "Test Link" } ] }
+      let(:methods) { super().merge(sidebar_links:) }
 
       it "aggregates sidebar links from registered plugins" do
         registry.register_plugin(plugin)
@@ -193,38 +111,13 @@ RSpec.describe PluginRegistry do
   end
 
   describe "#tabs_for" do
-    context "with no registered tabs" do
-      it "returns an empty array when no plugins are registered" do
-        expect(registry.tabs_for("Domain")).to eq([])
-      end
-
-      it "return an empty array" do
-        registry.register_plugin(plugin)
-
-        expect(registry.tabs_for("Domain")).to eq([])
-      end
-    end
+    it_behaves_like "registry aggregation method", :tabs_for, [], { context: "Domain" }
 
     context "with registered tabs" do
       let(:tabs) { [ { title: "Details", action: :domain_path } ] }
+      let(:methods) { super().merge(tabs_for: tabs) }
 
-      it "returns tabs when given a class" do
-        registry.register_plugin(plugin)
-
-        expect(registry.tabs_for(Domain)).to eq([ { title: "Details", action: :domain_path } ])
-      end
-
-      it "returns tabs when given a model" do
-        registry.register_plugin(plugin)
-
-        expect(registry.tabs_for(create(:domain))).to eq([ { title: "Details", action: :domain_path } ])
-      end
-
-      it "returns tabs when given a string" do
-        registry.register_plugin(plugin)
-
-        expect(registry.tabs_for("Domain")).to eq([ { title: "Details", action: :domain_path } ])
-      end
+      it_behaves_like "context type handling", :tabs_for, [ { title: "Details", action: :domain_path } ], {}
     end
   end
 end

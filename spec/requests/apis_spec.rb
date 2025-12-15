@@ -101,7 +101,7 @@ RSpec.describe "Apis", type: :request do
         it "does not create a new api" do
           expect {
             post apis_url, params: { api: invalid_attributes }
-          }.to change(Api, :count).by(0)
+          }.not_to change(Api, :count)
         end
 
         it "renders a response with 422 status" do

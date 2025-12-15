@@ -14,27 +14,11 @@ RSpec.describe "systems/edit", type: :view do
     )
   }
 
-  before(:each) do
+  before do
     assign(:system, system)
   end
 
   it "renders the edit system form" do
     skip "implement tests for phlex views"
-
-    render
-
-    assert_select "form[action=?][method=?]", system_path(system), "post" do
-      assert_select "input[name=?]", "system[name]"
-
-      assert_select "textarea[name=?]", "system[description]"
-
-      assert_select "input[name=?]", "system[status]"
-
-      assert_select "input[name=?]", "system[image_url]"
-
-      assert_select "input[name=?]", "system[domain_id]"
-
-      assert_select "input[name=?]", "system[owner_id]"
-    end
   end
 end

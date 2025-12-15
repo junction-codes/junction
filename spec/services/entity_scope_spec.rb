@@ -10,8 +10,11 @@ RSpec.describe EntityScope do
   let(:condition) { nil }
 
   describe "#action" do
+    let(:required_params) { { method: :domain_path, controller: "domains", action: :show } }
+    let(:custom_params) { { method: :domain_path, controller: "domains", action: :show, path: "/custom/path" } }
+
     it "registers an action with required parameters" do
-      entity_scope.action(method: :domain_path, controller: "domains", action: :show)
+      entity_scope.action(**required_params)
 
       expect(entity_scope.actions).to contain_exactly({
         method: :domain_path,
@@ -22,7 +25,7 @@ RSpec.describe EntityScope do
     end
 
     it "registers an action with a custom path" do
-      entity_scope.action(method: :domain_path, controller: "domains", action: :show, path: "/custom/path")
+      entity_scope.action(**custom_params)
 
       expect(entity_scope.actions.first[:path]).to eq("/custom/path")
     end
@@ -33,17 +36,17 @@ RSpec.describe EntityScope do
       expect(entity_scope.actions.first[:action]).to eq(:index)
     end
 
-    it "registers multiple actions" do
-      entity_scope.action(method: :domain_path, controller: "domains", action: :show)
-      entity_scope.action(method: :domains_path, controller: "domains", action: :index)
-
-      expect(entity_scope.actions.size).to eq(2)
-    end
+    it_behaves_like "entity scope registration method allows multiple", :action, :actions,
+                     { method: :domain_path, controller: "domains", action: :show },
+                     { method: :domains_path, controller: "domains", action: :index }
   end
 
   describe "#annotation" do
+    let(:required_params) { { key: "example.com/owner", title: "Owner" } }
+    let(:custom_params) { { key: "example.com/owner", title: "Owner", placeholder: "Me" } }
+
     it "registers an annotation with required parameters" do
-      entity_scope.annotation(key: "example.com/owner", title: "Owner")
+      entity_scope.annotation(**required_params)
 
       expect(entity_scope.annotations["example.com/owner"]).to eq({
         key: "example.com/owner",
@@ -53,7 +56,7 @@ RSpec.describe EntityScope do
     end
 
     it "registers an annotation with custom values" do
-      entity_scope.annotation(key: "example.com/owner", title: "Owner", placeholder: "Me")
+      entity_scope.annotation(**custom_params)
 
       expect(entity_scope.annotations["example.com/owner"]).to eq({
         key: "example.com/owner",
@@ -62,17 +65,16 @@ RSpec.describe EntityScope do
       })
     end
 
-    it "registers multiple annotations with different keys" do
-      entity_scope.annotation(key: "example.com/owner", title: "Owner")
-      entity_scope.annotation(key: "example.com/team", title: "Team")
-
-      expect(entity_scope.annotations.size).to eq(2)
-    end
+    it_behaves_like "entity scope registration method allows multiple", :annotation, :annotations,
+                     { key: "example.com/owner", title: "Owner" },
+                     { key: "example.com/team", title: "Team" }
   end
 
   describe "#component" do
+    let(:required_params) { { slot: :header, component: "HeaderComponent" } }
+
     it "registers a component for a slot" do
-      entity_scope.component(slot: :header, component: "HeaderComponent")
+      entity_scope.component(**required_params)
 
       expect(entity_scope.send(:instance_variable_get, :@components)[:header]).to contain_exactly({
         slot: :header,
@@ -97,11 +99,11 @@ RSpec.describe EntityScope do
       expect(component_map[:header].size).to eq(1)
     end
 
-    context "A condition is provided" do
+    context "when a condition is provided" do
       let(:condition) { proc { true } }
 
       it "registers a component with a condition" do
-        entity_scope.component(slot: :header, component: "HeaderComponent")
+        entity_scope.component(**required_params)
 
         components = entity_scope.send(:instance_variable_get, :@components)[:header]
         expect(components.first[:if]).to eq(condition)
@@ -110,8 +112,11 @@ RSpec.describe EntityScope do
   end
 
   describe "#tab" do
+    let(:required_params) { { title: "Details", action: :domain_path } }
+    let(:custom_params) { { title: "Details", action: :domain_path, icon: "info-icon", target: "details-frame" } }
+
     it "registers a tab with required parameters" do
-      entity_scope.tab(title: "Details", action: :domain_path)
+      entity_scope.tab(**required_params)
 
       expect(entity_scope.tabs).to contain_exactly({
         title: "Details",
@@ -123,7 +128,7 @@ RSpec.describe EntityScope do
     end
 
     it "registers a tab with custom values" do
-      entity_scope.tab(title: "Details", action: :domain_path, icon: "info-icon", target: "details-frame")
+      entity_scope.tab(**custom_params)
 
       expect(entity_scope.tabs).to contain_exactly({
         title: "Details",
@@ -140,22 +145,12 @@ RSpec.describe EntityScope do
       expect(entity_scope.tabs.first[:target]).to eq("custom-tab")
     end
 
-    it "registers multiple tabs" do
-      entity_scope.tab(title: "Details", action: :domain_path)
-      entity_scope.tab(title: "Settings", action: :domain_settings_path)
+    it_behaves_like "entity scope registration method allows multiple", :tab, :tabs,
+                     { title: "Details", action: :domain_path },
+                     { title: "Settings", action: :domain_settings_path }
 
-      expect(entity_scope.tabs.size).to eq(2)
-    end
-
-    context "A condition is provided" do
-      let(:condition) { proc { true } }
-
-      it "registers a tab with a condition" do
-        entity_scope.tab(title: "Details", action: :domain_path)
-
-        expect(entity_scope.tabs.first[:if]).to eq(condition)
-      end
-    end
+    it_behaves_like "entity scope registration with condition", :tab, :tabs,
+                     { title: "Details", action: :domain_path }, :if
   end
 
   describe "#components_for" do

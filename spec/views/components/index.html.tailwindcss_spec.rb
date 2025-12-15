@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe "components/index", type: :view do
-  before(:each) do
+  before do
     assign(:components, [
       Component.create!(
         name: "Name",
@@ -24,16 +24,5 @@ RSpec.describe "components/index", type: :view do
 
   it "renders a list of components" do
     skip "implement tests for phlex views"
-
-    render
-    cell_selector = 'div>p'
-    assert_select cell_selector, text: Regexp.new("Name".to_s), count: 2
-    assert_select cell_selector, text: Regexp.new("MyText".to_s), count: 2
-    assert_select cell_selector, text: Regexp.new("Lifecycle".to_s), count: 2
-    assert_select cell_selector, text: Regexp.new("Component Type".to_s), count: 2
-    assert_select cell_selector, text: Regexp.new("Repository Url".to_s), count: 2
-    assert_select cell_selector, text: Regexp.new("Image Url".to_s), count: 2
-    assert_select cell_selector, text: Regexp.new(nil.to_s), count: 2
-    assert_select cell_selector, text: Regexp.new(nil.to_s), count: 2
   end
 end

@@ -14,6 +14,7 @@ class Api < ApplicationRecord
   validates :api_type, presence: true, inclusion: { in: CatalogOptions.apis.keys }
   validates :definition, presence: true
   validates :description, presence: true
+  validates :image_url, allow_blank: true, format: URI::DEFAULT_PARSER.make_regexp(%w[http https])
   validates :lifecycle, presence: true, inclusion: { in: CatalogOptions.lifecycles.keys }
   validates :name, presence: true, uniqueness: true
 

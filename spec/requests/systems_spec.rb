@@ -84,7 +84,7 @@ RSpec.describe "/systems", type: :request do
       it "does not create a new System" do
         expect {
           post systems_url, params: { system: invalid_attributes }
-        }.to change(System, :count).by(0)
+        }.not_to change(System, :count)
       end
 
       it "renders a response with 422 status (i.e. to display the 'new' template)" do

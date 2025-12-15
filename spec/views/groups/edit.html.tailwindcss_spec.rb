@@ -12,25 +12,11 @@ RSpec.describe "groups/edit", type: :view do
     )
   }
 
-  before(:each) do
+  before do
     assign(:group, group)
   end
 
   it "renders the edit group form" do
     skip "implement tests for phlex views"
-
-    render
-
-    assert_select "form[action=?][method=?]", group_path(group), "post" do
-      assert_select "input[name=?]", "group[name]"
-
-      assert_select "input[name=?]", "group[group_type]"
-
-      assert_select "input[name=?]", "group[email]"
-
-      assert_select "input[name=?]", "group[image_url]"
-
-      assert_select "input[name=?]", "group[parent_id]"
-    end
   end
 end

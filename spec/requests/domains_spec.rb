@@ -80,7 +80,7 @@ RSpec.describe "/domains", type: :request do
       it "does not create a new Domain" do
         expect {
           post domains_url, params: { domain: invalid_attributes }
-        }.to change(Domain, :count).by(0)
+        }.not_to change(Domain, :count)
       end
 
       it "renders a response with 422 status (i.e. to display the 'new' template)" do

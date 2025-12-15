@@ -3,4 +3,8 @@
 require_relative 'shared_examples/authentication_required_examples'
 require_relative 'shared_examples/dependable_examples'
 require_relative 'shared_examples/dependentable_examples'
+require_relative 'shared_examples/entity_scope_registration_examples'
 require_relative 'shared_examples/ownable_examples'
+require_relative 'shared_examples/plugin_registration_examples'
+require_relative 'shared_examples/plugin_registry_examples'
+require_relative 'shared_examples/validation_examples'
