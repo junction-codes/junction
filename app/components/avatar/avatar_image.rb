@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
 module Components
+  # UI component to display a user or entity's avatar image.
   class AvatarImage < Base
     def initialize(src:, alt: "", **attrs)
       @src = src
       @alt = alt
+
       super(**attrs)
     end
 

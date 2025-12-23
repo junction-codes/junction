@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Components
+  # UI component to display a dialog container.
   class Dialog < Base
     def initialize(open: false, **attrs)
       @open = open

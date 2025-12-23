@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Components
+  # UI component to display a user or entity's avatar.
   class Avatar < Base
     SIZES = {
       xs: "h-4 w-4 text-[0.5rem]",
@@ -8,11 +9,11 @@ module Components
       md: "h-10 w-10 text-base",
       lg: "h-14 w-14 text-xl",
       xl: "h-20 w-20 text-3xl"
-    }
+   }.freeze
 
-    def initialize(size: :md, **attrs)
+    def initialize(size: :md, **user_attrs)
       @size = size
-      @size_classes = SIZES[@size]
+
       super(**attrs)
     end
 
@@ -32,7 +33,7 @@ module Components
 
     def default_attrs
       {
-        class: [ "relative flex shrink-0 overflow-hidden rounded-full", @size_classes ]
+        class: [ "relative flex shrink-0 overflow-hidden rounded-full", SIZES[@size] ]
       }
     end
   end

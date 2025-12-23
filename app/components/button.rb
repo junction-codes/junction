@@ -2,6 +2,12 @@
 
 module Components
   class Button < Base
+    BASE_CLASSES = "cursor-pointer whitespace-nowrap inline-flex " \
+                   "items-center justify-center rounded-md font-medium " \
+                   "transition-colors focus-visible:outline-none " \
+                   "focus-visible:ring-1 focus-visible:ring-ring " \
+                   "disabled:pointer-events-none disabled:opacity-50"
+
     def initialize(type: :button, variant: :primary, size: :md, icon: false, **attrs)
       @type = type
       @variant = variant.to_sym
@@ -34,13 +40,9 @@ module Components
       end
     end
 
-    def base_classes
-      "cursor-pointer whitespace-nowrap inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-    end
-
     def primary_classes
       [
-        base_classes,
+        BASE_CLASSES,
         "bg-primary text-primary-foreground shadow hover:bg-primary/90",
         size_classes
       ]
@@ -48,7 +50,7 @@ module Components
 
     def link_classes
       [
-        base_classes,
+        BASE_CLASSES,
         "text-primary underline-offset-4 hover:underline",
         size_classes
       ]
@@ -56,7 +58,7 @@ module Components
 
     def secondary_classes
       [
-        base_classes,
+        BASE_CLASSES,
         "bg-secondary text-secondary-foreground hover:bg-opacity-80",
         size_classes
       ]
@@ -64,7 +66,7 @@ module Components
 
     def destructive_classes
       [
-        base_classes,
+        BASE_CLASSES,
         "bg-destructive text-destructive-background shadow-sm hover:bg-destructive/90",
         size_classes
       ]
@@ -72,7 +74,7 @@ module Components
 
     def outline_classes
       [
-        base_classes,
+        BASE_CLASSES,
         "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
         size_classes
       ]
@@ -80,7 +82,7 @@ module Components
 
     def ghost_classes
       [
-        base_classes,
+        BASE_CLASSES,
         "hover:bg-accent hover:text-accent-foreground",
         size_classes
       ]

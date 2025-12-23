@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Components
+  # UI component to display a card title.
   class CardTitle < Base
     def view_template(&)
       h3(**attrs, &)

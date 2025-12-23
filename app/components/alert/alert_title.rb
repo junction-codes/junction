@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Components
+  # UI component for the title section of an alert.
   class AlertTitle < Base
     def view_template(&)
       h5(**attrs, &)

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Components
+  # UI component to display a card description.
   class CardDescription < Base
     def view_template(&)
       p(**attrs, &)

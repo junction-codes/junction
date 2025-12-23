@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Components
+  # UI component to display a dialog description.
   class DialogDescription < Base
     def view_template(&)
       p(**attrs, &)

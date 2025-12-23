@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Components
+  # UI component to display a fallback avatar when no image is available.
   class AvatarFallback < Base
     def view_template(&)
       span(**attrs, &)

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Components
+  # UI component to display a dialog middle section.
   class DialogMiddle < Base
     def view_template(&)
       div(**attrs, &)

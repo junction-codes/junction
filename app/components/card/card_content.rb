@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Components
+  # UI component to display the content section of a card.
   class CardContent < Base
     def view_template(&)
       div(**attrs, &)

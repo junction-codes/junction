@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Components
+  # UI component for the description section of an alert.
   class AlertDescription < Base
     def view_template(&)
       div(**attrs, &)
