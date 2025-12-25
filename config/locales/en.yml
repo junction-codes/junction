@@ -30,3 +30,13 @@
 en:
   app:
     title: Rail Junction
+  components:
+    alert:
+      close: Close
+      titles:
+        alert: Alert
+        default: Information
+        success: Success
+        warning: Warning
+    dialog:
+      close: Close

@@ -53,8 +53,9 @@ gem "rails_icons", "~> 1.4"
 gem "tailwind_merge", "~> 1.3"
 
 # Plugins.
-gem "rail_junction-github", path: "./plugins/rail_junction-github"
-gem "rail_junction-aws", path: "./plugins/rail_junction-aws"
+# TODO: Switch to released versions when available.
+gem "junction-aws", git: "git@github.com:jamesiarmes/junction-aws.git", branch: "main"
+gem "junction-github", git: "git@github.com:jamesiarmes/junction-github.git", branch: "main"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem

@@ -1,14 +1,18 @@
-PATH
-  remote: plugins/rail_junction-aws
+GIT
+  remote: git@github.com:jamesiarmes/junction-aws.git
+  revision: fa008478f4023ee989a47a8eac25a791b0121600
+  branch: main
   specs:
-    rail_junction-aws (0.1.0)
+    junction-aws (0.1.0)
       aws-sdk-costexplorer (~> 1.0)
       rails (~> 8.1)
 
-PATH
-  remote: plugins/rail_junction-github
+GIT
+  remote: git@github.com:jamesiarmes/junction-github.git
+  revision: c9896a39526604e6a6a54a1d41bd39cb55ec0029
+  branch: main
   specs:
-    rail_junction-github (0.1.0)
+    junction-github (0.1.0)
       octokit (~> 10.0)
       rails (~> 8.1)
 
@@ -493,6 +497,8 @@ DEPENDENCIES
   faker (~> 3.5)
   importmap-rails
   jbuilder
+  junction-aws!
+  junction-github!
   kamal
   omniauth (~> 2.1)
   omniauth-github (~> 2.0)
@@ -501,8 +507,6 @@ DEPENDENCIES
   phlex-rails (~> 2.3)
   propshaft
   puma (>= 5.0)
-  rail_junction-aws!
-  rail_junction-github!
   rails (~> 8.1)
   rails_icons (~> 1.4)
   rspec-rails (~> 8.0)
