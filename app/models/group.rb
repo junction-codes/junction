@@ -33,4 +33,8 @@ class Group < ApplicationRecord
 
     ancestors
   end
+
+  def self.ransackable_attributes(auth_object = nil)
+    %w[created_at description email group_type name parent_id updated_at]
+  end
 end

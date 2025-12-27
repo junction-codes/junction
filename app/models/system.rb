@@ -13,4 +13,12 @@ class System < ApplicationRecord
   belongs_to :domain
   has_many :components
   has_many :resources
+
+  def self.ransackable_associations(auth_object = nil)
+    %w[domain owner]
+  end
+
+  def self.ransackable_attributes(auth_object = nil)
+    %w[created_at description domain_id name owner_id status updated_at]
+  end
 end

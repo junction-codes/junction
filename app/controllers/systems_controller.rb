@@ -3,8 +3,15 @@ class SystemsController < ApplicationController
 
   # GET /systems
   def index
+    @q = System.ransack(params[:q])
+    @q.sorts = "name asc" if @q.sorts.empty?
+
     render Views::Systems::Index.new(
-      systems: System.order(:name),
+      systems: @q.result,
+      query: @q,
+      available_statuses:,
+      available_owners:,
+      available_domains:
     )
   end
 
@@ -17,18 +24,12 @@ class SystemsController < ApplicationController
 
   # GET /systems/new
   def new
-    render Views::Systems::New.new(
-      system: System.new,
-      owners: Group.order(:name)
-    )
+    render Views::Systems::New.new(system: System.new, available_domains:, available_owners:)
   end
 
   # GET /systems/:id/edit
   def edit
-    render Views::Systems::Edit.new(
-      system: @system,
-      owners: Group.order(:name)
-    )
+    render Views::Systems::Edit.new(system: @system, available_domains:, available_owners:)
   end
 
   # POST /systems
@@ -39,7 +40,7 @@ class SystemsController < ApplicationController
       redirect_to @system, success: "System was successfully created."
     else
       flash.now[:alert] = "There were errors creating the system."
-      render Views::Systems::New.new(system: @system, owners: Group.order(:name)), status: :unprocessable_entity
+      render Views::Systems::New.new(system: @system, available_domains:, available_owners:), status: :unprocessable_entity
     end
   end
 
@@ -49,7 +50,7 @@ class SystemsController < ApplicationController
       redirect_to @system, success: "System was successfully updated."
     else
       flash.now[:alert] = "There were errors updating the system."
-      render Views::Systems::Edit.new(system: @system, owners: Group.order(:name)), status: :unprocessable_entity
+      render Views::Systems::Edit.new(system: @system, available_domains:, available_owners:), status: :unprocessable_entity
     end
   end
 
@@ -69,6 +70,32 @@ class SystemsController < ApplicationController
   end
 
   private
+
+  # Returns an array of available domains for systems.
+  #
+  # @return [Array<Array(String, Integer)>] Array of [name, id] pairs for
+  #   domains.
+  def available_domains
+    Domain.select(:description, :id, :image_url, :name).order(:name)
+  end
+
+  # Returns an array of available owners for systems.
+  #
+  # @return [Array<Array(String, Integer)>] Array of [name, id] pairs for
+  #   owners.
+  def available_owners
+    Group.select(:description, :id, :image_url, :name).order(:name)
+  end
+
+  # Returns an array of available statuses for systems.
+  #
+  # @return [Array<Array(String, String)>] Array of [label, value] pairs for
+  #   statuses.
+  def available_statuses
+    System.validators_on(:status).find do |v|
+      v.is_a?(ActiveModel::Validations::InclusionValidator)
+    end&.options[:in]&.map { |s| [ s.capitalize, s ] } || []
+  end
 
   def set_entity
     @system = System.find(params.expect(:id))

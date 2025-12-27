@@ -1,12 +1,31 @@
 # frozen_string_literal: true
 
+# Index view for Systems.
 class Views::Systems::Index < Views::Base
-  def initialize(systems:)
+  attr_reader :available_domains, :available_owners, :available_statuses,
+              :query, :systems
+
+  # Initializes the view.
+  #
+  # @param systems [ActiveRecord::Relation] Collection of systems to display.
+  # @param query [Ransack::Search] Ransack query object for filtering and
+  #   sorting.
+  # @param available_domains [Array<Array>] Domain options as [label, value]
+  #   pairs for filtering.
+  # @param available_owners [Array<Array>] Owner options as [label, value] pairs
+  #   for filtering.
+  # @param available_statuses [Array<Array>] Status options as [label, value]
+  #   pairs for filtering.
+  def initialize(systems:, query:, available_domains:, available_owners:, available_statuses:)
     @systems = systems
+    @query = query
+    @available_domains = available_domains
+    @available_owners = available_owners
+    @available_statuses = available_statuses
   end
 
   def view_template
-    render Layouts::Application.new do
+    render Layouts::Application do
       div(class: "p-6") do
         div(class: "flex justify-between items-center mb-6") do
           h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { "Systems" }
@@ -14,6 +33,9 @@ class Views::Systems::Index < Views::Base
             "New System"
           end
         end
+
+        Components::SystemFilters(query:, available_domains:, available_owners:,
+                                  available_statuses:)
 
         div(class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
           render Components::Table do |table|
@@ -30,10 +52,30 @@ class Views::Systems::Index < Views::Base
   def table_header(table)
     table.header do |header|
       header.row do |row|
-        row.head { "System" }
-        row.head { "Owner" }
-        row.head { "Domain" }
-        row.head { "Status" }
+        row.sortable_head(
+          query:,
+          field: "name",
+          sort_url: ->(field, direction) { systems_path(q: { s: "#{field} #{direction}" }) }
+        ) { "System" }
+
+        row.sortable_head(
+          query:,
+          field: "owner_id",
+          sort_url: ->(field, direction) { systems_path(q: { s: "#{field} #{direction}" }) }
+        ) { "Owner" }
+
+        row.sortable_head(
+          query:,
+          field: "domain_id",
+          sort_url: ->(field, direction) { systems_path(q: { s: "#{field} #{direction}" }) }
+        ) { "Domain" }
+
+        row.sortable_head(
+          query:,
+          field: "status",
+          sort_url: ->(field, direction) { systems_path(q: { s: "#{field} #{direction}" }) }
+        ) { "Status" }
+
         row.head(class: "relative") do
           span(class: "sr-only") { "View" }
         end
@@ -72,7 +114,7 @@ class Views::Systems::Index < Views::Base
           end
 
           row.cell do
-            render Components::Badge.new(variant: system.status&.to_sym) { system.status&.capitalize }
+            Components::Badge(variant: system.status&.to_sym) { system.status&.capitalize }
           end
 
 

@@ -14,6 +14,10 @@ module Components
       render TableHead.new(*, **, &)
     end
 
+    def sortable_head(*, **, &)
+      render TableSortableHead.new(*, **, &)
+    end
+
     private
 
     def default_attrs

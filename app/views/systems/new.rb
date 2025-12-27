@@ -1,13 +1,24 @@
 # frozen_string_literal: true
 
+# Creation view for Systems.
 class Views::Systems::New < Views::Base
-  def initialize(system:, owners:)
+  attr_reader :available_domains, :available_owners, :system
+
+  # Initializes the view.
+  #
+  # @param system [System] The system being edited.
+  # @param available_domains [Array<Array>] Domain options as [label, value]
+  #   pairs for the system.
+  # @param available_owners [Array<Array>] Owner options as [label, value] pairs
+  #   for the system.
+  def initialize(system:, available_domains:, available_owners:)
     @system = system
-    @owners = owners
+    @available_domains = available_domains
+    @available_owners = available_owners
   end
 
   def view_template
-    render Layouts::Application.new do
+    render Layouts::Application do
       template
     end
   end
@@ -20,7 +31,7 @@ class Views::Systems::New < Views::Base
       end
 
       main(class: "mt-6 max-w-2xl mx-auto") do
-        render Components::SystemForm.new(system: @system, owners: @owners)
+        Components::SystemForm(system:, available_domains:, available_owners:)
       end
     end
   end

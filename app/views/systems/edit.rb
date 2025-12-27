@@ -1,9 +1,20 @@
 # frozen_string_literal: true
 
+# Edit view for Systems
 class Views::Systems::Edit < Views::Base
-  def initialize(system:, owners:)
+  attr_reader :available_domains, :available_owners, :system
+
+  # Initializes the view.
+  #
+  # @param system [System] The system being edited.
+  # @param available_domains [Array<Array>] Domain options as [label, value]
+  #   pairs for the system.
+  # @param available_owners [Array<Array>] Owner options as [label, value] pairs
+  #   for the system.
+  def initialize(system:, available_domains:, available_owners:)
     @system = system
-    @owners = owners
+    @available_domains = available_domains
+    @available_owners = available_owners
   end
 
   def view_template
@@ -21,11 +32,11 @@ class Views::Systems::Edit < Views::Base
 
       div(class: "grid grid-cols-1 lg:grid-cols-3 gap-8") do
         main(class: "lg:col-span-2") do
-          render Components::SystemForm.new(system: @system, owners: @owners)
+          Components::SystemForm(system:, available_domains:, available_owners:)
         end
 
         aside(class: "space-y-6") do
-          render Components::SystemEditSidebar.new(system: @system)
+          Components::SystemEditSidebar(system:)
         end
       end
     end

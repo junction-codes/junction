@@ -11,4 +11,8 @@ class Domain < ApplicationRecord
   validates :image_url, allow_blank: true, format: URI::DEFAULT_PARSER.make_regexp(%w[http https])
 
   has_many :systems
+
+  def self.ransackable_attributes(auth_object = nil)
+    %w[created_at description name owner_id status updated_at]
+  end
 end
