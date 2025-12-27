@@ -1,12 +1,36 @@
 # frozen_string_literal: true
 
+# Index view for components.
 class Views::Components::Index < Views::Base
-  def initialize(components:)
+  attr_reader :available_lifecycles, :available_owners, :available_systems,
+              :available_types, :components, :query
+
+  # Initializes the view.
+  #
+  # @param components [ActiveRecord::Relation] Collection of components to
+  #   display.
+  # @param query [Ransack::Search] Ransack query object for filtering and
+  #   sorting.
+  # @param available_lifecycles [Array<Array>] Lifecycle options as [label,
+  #   value] pairs for filtering.
+  # @param available_owners [Array<Array>] Owner entity options with name and id
+  #   attributes.
+  # @param available_systems [Array<Array>] System entity options with name and
+  #   id attributes.
+  # @param available_types [Array<Array>] Type options as [label, value] pairs
+  #   for filtering.
+  def initialize(components:, query:, available_lifecycles:, available_owners:,
+                 available_systems:, available_types:)
     @components = components
+    @query = query
+    @available_lifecycles = available_lifecycles
+    @available_owners = available_owners
+    @available_systems = available_systems
+    @available_types = available_types
   end
 
   def view_template
-    render Layouts::Application.new do
+    render Layouts::Application do
       div(class: "p-6") do
         div(class: "flex justify-between items-center mb-6") do
           h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { "Components" }
@@ -14,6 +38,8 @@ class Views::Components::Index < Views::Base
             "New Component"
           end
         end
+
+        Components::ComponentFilters(query: @query, available_lifecycles:, available_owners:, available_systems:, available_types:)
 
         div(class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
           render Components::Table do |table|

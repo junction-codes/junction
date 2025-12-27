@@ -10,10 +10,10 @@ class Views::Systems::Index < Views::Base
   # @param systems [ActiveRecord::Relation] Collection of systems to display.
   # @param query [Ransack::Search] Ransack query object for filtering and
   #   sorting.
-  # @param available_domains [Array<Array>] Domain options as [label, value]
-  #   pairs for filtering.
-  # @param available_owners [Array<Array>] Owner options as [label, value] pairs
-  #   for filtering.
+  # @param available_domains [Array<Array>] Domain entity options with name and
+  #   id attributes.
+  # @param available_owners [Array<Array>] Owner entity options with name and id
+  #   attributes.
   # @param available_statuses [Array<Array>] Status options as [label, value]
   #   pairs for filtering.
   def initialize(systems:, query:, available_domains:, available_owners:, available_statuses:)

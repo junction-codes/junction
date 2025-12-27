@@ -8,8 +8,16 @@ class ComponentsController < ApplicationController
 
   # GET /components
   def index
+    @q = Component.ransack(params[:q])
+    @q.sorts = "name asc" if @q.sorts.empty?
+
     render Views::Components::Index.new(
-      components: Component.order(:name),
+      components: @q.result,
+      query: @q,
+      available_lifecycles:,
+      available_owners:,
+      available_systems:,
+      available_types:,
     )
   end
 
@@ -22,7 +30,8 @@ class ComponentsController < ApplicationController
   def new
     render Views::Components::New.new(
       component: Component.new,
-      owners: Group.order(:name)
+      available_owners:,
+      available_systems:
     )
   end
 
@@ -30,7 +39,8 @@ class ComponentsController < ApplicationController
   def edit
     render Views::Components::Edit.new(
       component: @entity,
-      owners: Group.order(:name)
+      available_owners:,
+      available_systems:
     )
   end
 
@@ -42,7 +52,7 @@ class ComponentsController < ApplicationController
       redirect_to @entity, success: "Component was successfully created."
     else
       flash.now[:alert] = "There were errors creating the component."
-      render Views::Components::New.new(component: @entity, owners: Group.order(:name)), status: :unprocessable_entity
+      render Views::Components::New.new(component: @entity, available_owners:, available_systems:), status: :unprocessable_entity
     end
   end
 
@@ -52,7 +62,7 @@ class ComponentsController < ApplicationController
       redirect_to @entity, success: "Component was successfully updated."
     else
       flash.now[:alert] = "There were errors updating the component."
-      render Views::Components::Edit.new(component: @entity, owners: Group.order(:name)), status: :unprocessable_entity
+      render Views::Components::Edit.new(component: @entity, available_owners:, available_systems:), status: :unprocessable_entity
     end
   end
 
@@ -64,6 +74,38 @@ class ComponentsController < ApplicationController
   end
 
   private
+
+  # Returns an array of available lifecycles for components.
+  #
+  # @return [Array<Array(String, String)>] Array of [name, key] pairs for
+  #   lifecycles.
+  def available_lifecycles
+    CatalogOptions.lifecycles.map { |key, opts| [ opts[:name], key ] }
+  end
+
+  # Returns an array of available owners for components.
+  #
+  # @return [Array<Array(String, Integer)>] Array of [name, id] pairs for
+  #   owners.
+  def available_owners
+    Group.select(:description, :id, :image_url, :name).order(:name)
+  end
+
+  # Returns an array of available systems for components.
+  #
+  # @return [Array<Array(String, Integer)>] Array of [name, id] pairs for
+  #   systems.
+  def available_systems
+    System.select(:description, :id, :image_url, :name).order(:name)
+  end
+
+  # Returns an array of available types for components.
+  #
+  # @return [Array<Array(String, String)>] Array of [name, key] pairs for
+  #   types.
+  def available_types
+    CatalogOptions.kinds.map { |key, opts| [ opts[:name], key ] }
+  end
 
   def set_entity
     @entity = Component.find(params.expect(:id))

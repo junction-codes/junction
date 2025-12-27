@@ -6,11 +6,11 @@ class Views::Systems::New < Views::Base
 
   # Initializes the view.
   #
-  # @param system [System] The system being edited.
-  # @param available_domains [Array<Array>] Domain options as [label, value]
-  #   pairs for the system.
-  # @param available_owners [Array<Array>] Owner options as [label, value] pairs
-  #   for the system.
+  # @param system [System] The system being created.
+  # @param available_domains [Array<Array>] Domain entity options with name and
+  #   id attributes.
+  # @param available_owners [Array<Array>] Owner entity options with name and id
+  #   attributes.
   def initialize(system:, available_domains:, available_owners:)
     @system = system
     @available_domains = available_domains

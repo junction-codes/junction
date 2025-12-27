@@ -1,13 +1,24 @@
 # frozen_string_literal: true
 
+# Edit view for components.
 class Views::Components::Edit < Views::Base
-  def initialize(component:, owners:)
+  attr_reader :available_owners, :available_systems, :component
+
+  # Initializes the view.
+  #
+  # @param component [Component] The component being modified.
+  # @param available_owners [Array<Array>] Owner entity options with name and id
+  #   attributes.
+  # @param available_systems [Array<Array>] System entity options with name and
+  #   id attributes.
+  def initialize(component:, available_owners:, available_systems:)
     @component = component
-    @owners = owners
+    @available_owners = available_owners
+    @available_systems = available_systems
   end
 
   def view_template
-    render Layouts::Application.new do
+    render Layouts::Application do
       template
     end
   end
@@ -21,11 +32,11 @@ class Views::Components::Edit < Views::Base
 
       div(class: "grid grid-cols-1 lg:grid-cols-3 gap-8") do
         main(class: "lg:col-span-2") do
-          render Components::ComponentForm.new(component: @component, owners: @owners)
+          Components::ComponentForm(component:, available_owners:, available_systems:)
         end
 
         aside(class: "space-y-6") do
-          render Components::ComponentEditSidebar.new(component: @component)
+          Components::ComponentEditSidebar(component:)
         end
       end
     end
