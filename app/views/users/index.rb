@@ -1,12 +1,21 @@
 # frozen_string_literal: true
 
+# Index view for users.
 class Views::Users::Index < Views::Base
-  def initialize(users:)
+  attr_reader :query, :users
+
+  # Initializes the view.
+  #
+  # @param users [ActiveRecord::Relation] Collection of users to display.
+  # @param query [Ransack::Search] Ransack query object for filtering and
+  #   sorting.
+  def initialize(users:, query:)
     @users = users
+    @query = query
   end
 
   def view_template
-    render Layouts::Application.new do
+    render Layouts::Application do
       div(class: "p-6") do
         div(class: "flex justify-between items-center mb-6") do
           h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { "Users" }
@@ -14,6 +23,8 @@ class Views::Users::Index < Views::Base
             "New User"
           end
         end
+
+        Components::UserFilters(query:)
 
         div(class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
           render Components::Table do |table|
@@ -30,8 +41,11 @@ class Views::Users::Index < Views::Base
   def table_header(table)
     table.header do |header|
       header.row do |row|
-        row.head { "Name" }
-        row.head { "Email" }
+        sort_url = ->(field, direction) { users_path(q: { s: "#{field} #{direction}" }) }
+
+        row.sortable_head(query:, field: "display_name", sort_url:) { "User" }
+        row.sortable_head(query:, field: "email_address", sort_url:) { "Email" }
+
         row.head(class: "relative") do
           span(class: "sr-only") { "View" }
         end

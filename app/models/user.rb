@@ -17,6 +17,14 @@ class User < ApplicationRecord
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 
+  def self.ransackable_associations(auth_object = nil)
+    %w[groups]
+  end
+
+  def self.ransackable_attributes(auth_object = nil)
+    %w[created_at display_name email_address updated_at]
+  end
+
   def password_being_set?
     password.present?
   end

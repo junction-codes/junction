@@ -1,12 +1,18 @@
 # frozen_string_literal: true
 
+# Creation view for users.
 class Views::Users::New < Views::Base
+  attr_reader :user
+
+  # Initializes the view.
+  #
+  # @param user [User] The user being created.
   def initialize(user:)
     @user = user
   end
 
   def view_template
-    render Layouts::Application.new do
+    render Layouts::Application do
       template
     end
   end
@@ -20,7 +26,7 @@ class Views::Users::New < Views::Base
       end
 
       main(class: "mt-6 max-w-2xl mx-auto") do
-        render Components::UserForm.new(user: @user)
+        Components::UserForm(user:)
       end
     end
   end

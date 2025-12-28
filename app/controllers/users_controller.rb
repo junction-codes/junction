@@ -3,30 +3,25 @@ class UsersController < ApplicationController
 
   # GET /users or /users.json
   def index
-    render Views::Users::Index.new(
-      users: User.order(:display_name),
-    )
+    @q = User.ransack(params[:q])
+    @q.sorts = "name asc" if @q.sorts.empty?
+
+    render Views::Users::Index.new(users: @q.result, query: @q)
   end
 
   # GET /users/1 or /users/1.json
   def show
-    render Views::Users::Show.new(
-      user: @user,
-    )
+    render Views::Users::Show.new(user: @user)
   end
 
   # GET /users/new
   def new
-    render Views::Users::New.new(
-      user: User.new,
-    )
+    render Views::Users::New.new(user: User.new)
   end
 
   # GET /users/1/edit
   def edit
-    render Views::Users::Edit.new(
-      user: @user,
-    )
+    render Views::Users::Edit.new(user: @user)
   end
 
   # POST /users or /users.json

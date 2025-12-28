@@ -19,6 +19,14 @@ class Group < ApplicationRecord
   has_many :components, foreign_key: "owner_id"
   has_many :systems, foreign_key: "owner_id"
 
+  def self.ransackable_associations(auth_object = nil)
+    %w[parent children]
+  end
+
+  def self.ransackable_attributes(auth_object = nil)
+    %w[created_at description email group_type name parent_id type updated_at]
+  end
+
   def icon
     CatalogOptions.group_types[type]&.[](:icon) || "users-round"
   end
@@ -32,13 +40,5 @@ class Group < ApplicationRecord
     end
 
     ancestors
-  end
-
-  def self.ransackable_associations(auth_object = nil)
-    %w[parent children]
-  end
-
-  def self.ransackable_attributes(auth_object = nil)
-    %w[created_at description email group_type name parent_id type updated_at]
   end
 end

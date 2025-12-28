@@ -1,12 +1,18 @@
 # frozen_string_literal: true
 
+# Edit view for users.
 class Views::Users::Edit < Views::Base
+  attr_reader :user
+
+  # Initializes the view.
+  #
+  # @param user [User] The user being modified.
   def initialize(user:)
     @user = user
   end
 
   def view_template
-    render Layouts::Application.new do
+    render Layouts::Application do
       template
     end
   end
@@ -22,11 +28,11 @@ class Views::Users::Edit < Views::Base
       # Two-column layout for form and sidebar.
       div(class: "grid grid-cols-1 lg:grid-cols-3 gap-8") do
         main(class: "lg:col-span-2") do
-          render Components::UserForm.new(user: @user)
+          Components::UserForm(user:)
         end
 
         aside(class: "space-y-6") do
-          render Components::UserEditSidebar.new(user: @user)
+          Components::UserEditSidebar(user:)
         end
       end
     end
