@@ -62,10 +62,6 @@ module Views
             row.sortable_head(query:, field: "system_id", sort_url:) { "System" }
             row.sortable_head(query:, field: "owner_id", sort_url:) { "Owner" }
             row.sortable_head(query:, field: "type", sort_url:) { "Type" }
-
-            row.head(class: "relative") do
-              span(class: "sr-only") { "View" }
-            end
           end
         end
       end
@@ -86,7 +82,10 @@ module Views
                   end
 
                   div do
-                    div(class: "text-sm font-medium text-gray-900 dark:text-white") { resource.name }
+                    div(class: "text-sm font-medium text-gray-900 dark:text-white") do
+                      a(href: resource_path(resource)) { resource.name }
+                    end
+
                     div(class: "text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs") { resource.description }
                   end
                 end
@@ -108,10 +107,6 @@ module Views
                 else
                   resource.type.capitalize
                 end
-              end
-
-              row.cell(class: "text-right text-sm font-medium") do
-                a(href: resource_path(resource), class: "text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300") { "View" }
               end
             end
           end

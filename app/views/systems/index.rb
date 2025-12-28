@@ -58,10 +58,6 @@ class Views::Systems::Index < Views::Base
         row.sortable_head(query:, field: "owner_id", sort_url:) { "Owner" }
         row.sortable_head(query:, field: "domain_id", sort_url:) { "Domain" }
         row.sortable_head(query:, field: "status", sort_url:) { "Status" }
-
-        row.head(class: "relative") do
-          span(class: "sr-only") { "View" }
-        end
       end
     end
   end
@@ -82,7 +78,10 @@ class Views::Systems::Index < Views::Base
               end
 
               div do
-                div(class: "text-sm font-medium text-gray-900 dark:text-white") { system.name }
+                div(class: "text-sm font-medium text-gray-900 dark:text-white") do
+                  a(href: system_path(system)) { system.name }
+                end
+
                 div(class: "text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs") { system.description }
               end
             end
@@ -98,11 +97,6 @@ class Views::Systems::Index < Views::Base
 
           row.cell do
             Components::Badge(variant: system.status&.to_sym) { system.status&.capitalize }
-          end
-
-
-          row.cell(class: "text-right text-sm font-medium") do
-            a(href: system_path(system), class: "text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300") { "View" }
           end
         end
       end

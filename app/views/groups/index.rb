@@ -50,10 +50,6 @@ class Views::Groups::Index < Views::Base
         row.sortable_head(query:, field: "type", sort_url:) { "Type" }
         row.sortable_head(query:, field: "email", sort_url:) { "Email" }
         row.sortable_head(query:, field: "parent_id", sort_url:) { "Parent" }
-
-        row.head(class: "relative") do
-          span(class: "sr-only") { "View" }
-        end
       end
     end
   end
@@ -74,7 +70,10 @@ class Views::Groups::Index < Views::Base
               end
 
               div do
-                div(class: "text-sm font-medium text-gray-900 dark:text-white") { group.name }
+                div(class: "text-sm font-medium text-gray-900 dark:text-white") do
+                  a(href: group_path(group)) { group.name }
+                end
+
                 div(class: "text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs") { group.description }
               end
             end
@@ -100,10 +99,6 @@ class Views::Groups::Index < Views::Base
                 group.parent.name
               end
             end
-          end
-
-          row.cell(class: "text-right text-sm font-medium") do
-            a(href: group_path(group), class: "text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300") { "View" }
           end
         end
       end

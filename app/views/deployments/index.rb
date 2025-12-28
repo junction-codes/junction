@@ -54,11 +54,14 @@ class Views::Deployments::Index < Views::Base
   def table_header(table)
     table.header do |header|
       header.row do |row|
-        row.head { "Component" }
-        row.head { "Owner" }
-        row.head { "Environment" }
-        row.head { "Platform" }
-        row.head { "Identifier" }
+        sort_url = ->(field, direction) { deployments_path(q: { s: "#{field} #{direction}" }) }
+
+        row.sortable_head(query:, field: "component_id", sort_url:) { "Component" }
+        row.sortable_head(query:, field: "owner_id", sort_url:) { "Owner" }
+        row.sortable_head(query:, field: "environment", sort_url:) { "Environment" }
+        row.sortable_head(query:, field: "platform", sort_url:) { "Platform" }
+        row.sortable_head(query:, field: "location_identifier", sort_url:) { "Identifier" }
+
         row.head(class: "relative") do
           span(class: "sr-only") { "View" }
         end

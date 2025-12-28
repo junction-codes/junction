@@ -54,10 +54,6 @@ class Views::Domains::Index < Views::Base
         row.sortable_head(query:, field: "name", sort_url:) { "Domain" }
         row.sortable_head(query:, field: "status", sort_url:) { "Status" }
         row.sortable_head(query:, field: "owner_id", sort_url:) { "Owner" }
-
-        row.head(class: "relative") do
-          span(class: "sr-only") { "View" }
-        end
       end
     end
   end
@@ -79,7 +75,10 @@ class Views::Domains::Index < Views::Base
 
               # Domain details.
               div do
-                div(class: "text-sm font-medium text-gray-900 dark:text-white") { domain.name }
+                div(class: "text-sm font-medium text-gray-900 dark:text-white") do
+                  a(href: domain_path(domain)) { domain.name }
+                end
+
                 div(class: "text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs") { domain.description }
               end
             end
@@ -93,10 +92,6 @@ class Views::Domains::Index < Views::Base
             if domain.owner.present?
               render Link(href: group_path(domain.owner)) { domain.owner.name }
             end
-          end
-
-          row.cell(class: "text-right text-sm font-medium") do
-            a(href: domain_path(domain), class: "text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300") { "View" }
           end
         end
       end

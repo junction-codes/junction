@@ -45,10 +45,6 @@ class Views::Users::Index < Views::Base
 
         row.sortable_head(query:, field: "display_name", sort_url:) { "User" }
         row.sortable_head(query:, field: "email_address", sort_url:) { "Email" }
-
-        row.head(class: "relative") do
-          span(class: "sr-only") { "View" }
-        end
       end
     end
   end
@@ -69,7 +65,10 @@ class Views::Users::Index < Views::Base
               end
 
               div do
-                div(class: "text-sm font-medium text-gray-900 dark:text-white") { user.display_name }
+                div(class: "text-sm font-medium text-gray-900 dark:text-white") do
+                  a(href: user_path(user)) { user.display_name }
+                end
+
                 div(class: "text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs") { user.pronouns }
               end
             end
@@ -77,10 +76,6 @@ class Views::Users::Index < Views::Base
 
           row.cell do
             Link(href: "mailto:#{user.email_address}", class: "ps-0") { user.email_address }
-          end
-
-          row.cell(class: "text-right text-sm font-medium") do
-            a(href: user_path(user), class: "text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300") { "View" }
           end
         end
       end

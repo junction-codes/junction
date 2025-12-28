@@ -63,10 +63,6 @@ class Views::Apis::Index < Views::Base
         row.sortable_head(query:, field: "owner_id", sort_url:) { "Owner" }
         row.sortable_head(query:, field: "type", sort_url:) { "Type" }
         row.sortable_head(query:, field: "lifecycle", sort_url:) { "Lifecycle" }
-
-        row.head(class: "relative") do
-          span(class: "sr-only") { "View" }
-        end
       end
     end
   end
@@ -87,7 +83,9 @@ class Views::Apis::Index < Views::Base
               end
 
               div do
-                div(class: "text-sm font-medium text-gray-900 dark:text-white") { api.name }
+                div(class: "text-sm font-medium text-gray-900 dark:text-white") do
+                   a(href: api_path(api)) { api.name }
+                end
                 div(class: "text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs") { api.description }
               end
             end
@@ -113,10 +111,6 @@ class Views::Apis::Index < Views::Base
 
           row.cell do
             Components::Badge(variant: api.lifecycle) { api.lifecycle&.capitalize }
-          end
-
-          row.cell(class: "text-right text-sm font-medium") do
-            a(href: api_path(api), class: "text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300") { "View" }
           end
         end
       end
