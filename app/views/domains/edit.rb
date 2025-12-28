@@ -1,13 +1,21 @@
 # frozen_string_literal: true
 
+# Edit view for domains.
 class Views::Domains::Edit < Views::Base
-  def initialize(domain:, owners:)
+  attr_reader :available_owners, :domain
+
+  # Initializes the view.
+  #
+  # @param domain [Domain] The domain being modified.
+  # @param available_owners [Array<Array>] Owner entity options with name and id
+  #   attributes.
+  def initialize(domain:, available_owners:)
     @domain = domain
-    @owners = owners
+    @available_owners = available_owners
   end
 
   def view_template
-    render Layouts::Application.new do
+    render Layouts::Application do
       template
     end
   end
@@ -23,11 +31,11 @@ class Views::Domains::Edit < Views::Base
       # Two-column layout for form and sidebar.
       div(class: "grid grid-cols-1 lg:grid-cols-3 gap-8") do
         main(class: "lg:col-span-2") do
-          render Components::DomainForm.new(domain: @domain, owners: @owners)
+          Components::DomainForm(domain:, available_owners:)
         end
 
         aside(class: "space-y-6") do
-          render Components::DomainEditSidebar.new(domain: @domain)
+          Components::DomainEditSidebar.new(domain:)
         end
       end
     end

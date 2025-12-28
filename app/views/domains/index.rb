@@ -1,8 +1,23 @@
 # frozen_string_literal: true
 
+# Index view for domains.
 class Views::Domains::Index < Views::Base
-  def initialize(domains:)
+  attr_reader :available_owners, :available_statuses, :domains, :query
+
+  # Initializes the view.
+  #
+  # @param domains [ActiveRecord::Relation] Collection of domains to display.
+  # @param query [Ransack::Search] Ransack query object for filtering and
+  #   sorting.
+  # @param available_owners [Array<Array>] Owner entity options with name and id
+  #   attributes.
+  # @param available_statuses [Array<Array>] Status options as [label, value]
+  #   pairs for filtering.
+  def initialize(domains:, query:, available_owners:, available_statuses:)
     @domains = domains
+    @query = query
+    @available_owners = available_owners
+    @available_statuses = available_statuses
   end
 
   def view_template
@@ -15,6 +30,8 @@ class Views::Domains::Index < Views::Base
             "New Domain"
           end
         end
+
+        Components::DomainFilters(query:, available_owners:, available_statuses:)
 
         # Domains table.
         div(class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
@@ -32,9 +49,12 @@ class Views::Domains::Index < Views::Base
   def table_header(table)
     table.header do |header|
       header.row do |row|
-        row.head { "Name" }
-        row.head { "Status" }
-        row.head { "Owner" }
+        sort_url = ->(field, direction) { domains_path(q: { s: "#{field} #{direction}" }) }
+
+        row.sortable_head(query:, field: "name", sort_url:) { "Domain" }
+        row.sortable_head(query:, field: "status", sort_url:) { "Status" }
+        row.sortable_head(query:, field: "owner_id", sort_url:) { "Owner" }
+
         row.head(class: "relative") do
           span(class: "sr-only") { "View" }
         end

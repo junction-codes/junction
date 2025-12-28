@@ -3,32 +3,30 @@ class DomainsController < ApplicationController
 
   # GET /domains
   def index
+    @q = Domain.ransack(params[:q])
+    @q.sorts = "name asc" if @q.sorts.empty?
+
     render Views::Domains::Index.new(
-      domains: Domain.order(:name),
+      domains: @q.result,
+      query: @q,
+      available_owners:,
+      available_statuses:
     )
   end
 
   # GET /domains/:id
   def show
-    render Views::Domains::Show.new(
-      domain: @domain,
-    )
+    render Views::Domains::Show.new(domain: @domain)
   end
 
   # GET /domains/new
   def new
-    render Views::Domains::New.new(
-      domain: Domain.new,
-      owners: Group.order(:name)
-    )
+    render Views::Domains::New.new(domain: Domain.new, available_owners:)
   end
 
   # GET /domains/:id/edit
   def edit
-    render Views::Domains::Edit.new(
-      domain: @domain,
-      owners: Group.order(:name)
-    )
+    render Views::Domains::Edit.new(domain: @domain, available_owners:)
   end
 
   # POST /domains
@@ -39,7 +37,7 @@ class DomainsController < ApplicationController
       redirect_to @domain, success: "Domain was successfully created."
     else
       flash.now[:alert] = "There were errors creating the domain."
-      render Views::Domains::New.new(domain: @domain, owners: Group.order(:name)), status: :unprocessable_entity
+      render Views::Domains::New.new(domain: @domain, available_owners:), status: :unprocessable_entity
     end
   end
 
@@ -49,7 +47,7 @@ class DomainsController < ApplicationController
       redirect_to @domain, success: "Domain was successfully updated."
     else
       flash.now[:alert] = "There were errors updating the domain."
-      render Views::Domains::Edit.new(domain: @domain, owners: Group.order(:name)), status: :unprocessable_entity
+      render Views::Domains::Edit.new(domain: @domain, available_owners:), status: :unprocessable_entity
     end
   end
 
@@ -61,6 +59,24 @@ class DomainsController < ApplicationController
   end
 
   private
+
+  # Returns an array of available owners for domains.
+  #
+  # @return [Array<Array(String, Integer)>] Array of [name, id] pairs for
+  #   owners.
+  def available_owners
+    Group.select(:description, :id, :image_url, :name).order(:name)
+  end
+
+  # Returns an array of available statuses for domains.
+  #
+  # @return [Array<Array(String, String)>] Array of [label, value] pairs for
+  #   statuses.
+  def available_statuses
+    Domain.validators_on(:status).find do |v|
+      v.is_a?(ActiveModel::Validations::InclusionValidator)
+    end&.options[:in]&.map { |s| [ s.capitalize, s ] } || []
+  end
 
   def set_entity
     @domain = Domain.find(params.expect(:id))

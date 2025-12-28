@@ -4,9 +4,9 @@ module Components
   class DomainForm < Base
     include Phlex::Rails::Helpers::FormWith
 
-    def initialize(domain:, owners:)
+    def initialize(domain:, available_owners:)
       @domain = domain
-      @owners = owners
+      @available_owners = available_owners
     end
 
     def view_template
@@ -24,7 +24,7 @@ module Components
             render TextField.new(f, :image_url, "Logo URL", placeholder: "https://example.com/logo.png")
 
             render ReferenceField.new(f, :owner_id, "Owner", icon: "users-round",
-                                      options: @owners, value: @domain.owner,
+                                      options: @available_owners, value: @domain.owner,
                                       help_text: "Assign an owner for this domain.")
 
             render TextAreaField.new(f, :description, "Description", required: true, help_text: "A brief, high-level summary of the domain's mission.")

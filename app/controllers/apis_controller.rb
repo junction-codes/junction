@@ -69,7 +69,7 @@ class ApisController < ApplicationController
 
   private
 
-  # Returns an array of available lifecycles for components.
+  # Returns an array of available lifecycles for apis.
   #
   # @return [Array<Array(String, String)>] Array of [name, key] pairs for
   #   lifecycles.
@@ -77,7 +77,7 @@ class ApisController < ApplicationController
     CatalogOptions.lifecycles.map { |key, opts| [ opts[:name], key ] }
   end
 
-  # Returns an array of available owners for components.
+  # Returns an array of available owners for apis.
   #
   # @return [Array<Array(String, Integer)>] Array of [name, id] pairs for
   #   owners.
@@ -85,7 +85,7 @@ class ApisController < ApplicationController
     Group.select(:description, :id, :image_url, :name).order(:name)
   end
 
-  # Returns an array of available systems for components.
+  # Returns an array of available systems for apis.
   #
   # @return [Array<Array(String, Integer)>] Array of [name, id] pairs for
   #   systems.
@@ -93,7 +93,7 @@ class ApisController < ApplicationController
     System.select(:description, :id, :image_url, :name).order(:name)
   end
 
-  # Returns an array of available types for components.
+  # Returns an array of available types for apis.
   #
   # @return [Array<Array(String, String)>] Array of [name, key] pairs for
   #   types.
