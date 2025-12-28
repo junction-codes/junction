@@ -1,12 +1,21 @@
 # frozen_string_literal: true
 
+# Edit view for deployments.
 class Views::Deployments::Edit < Views::Base
-  def initialize(deployment:)
+  attr_reader :available_components, :deployment
+
+  # Initializes the view.
+  #
+  # @param deployment [Deployment] The deployment being modified.
+  # @param available_components [Array<Array>] Component entity options with
+  #   name and id attributes.
+  def initialize(deployment:, available_components:)
     @deployment = deployment
+    @available_components = available_components
   end
 
   def view_template
-    render Layouts::Application.new do
+    render Layouts::Application do
       template
     end
   end
@@ -20,11 +29,11 @@ class Views::Deployments::Edit < Views::Base
 
       div(class: "grid grid-cols-1 lg:grid-cols-3 gap-8") do
         main(class: "lg:col-span-2") do
-          render Components::DeploymentForm.new(deployment: @deployment)
+          Components::DeploymentForm(deployment:, available_components:)
         end
 
         aside(class: "space-y-6") do
-          render Components::DeploymentEditSidebar.new(deployment: @deployment)
+          Components::DeploymentEditSidebar(deployment:)
         end
       end
     end

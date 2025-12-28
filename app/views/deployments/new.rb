@@ -1,8 +1,17 @@
 # frozen_string_literal: true
 
+# Creation view for deployments.
 class Views::Deployments::New < Views::Base
-  def initialize(deployment:)
+  attr_reader :available_components, :deployment
+
+  # Initializes the view.
+  #
+  # @param deployment [Deployment] The deployment being modified.
+  # @param available_components [Array<Array>] Component entity options with
+  #   name and id attributes.
+  def initialize(deployment:, available_components:)
     @deployment = deployment
+    @available_components = available_components
   end
 
   def view_template
@@ -19,7 +28,7 @@ class Views::Deployments::New < Views::Base
       end
 
       main(class: "mt-6 max-w-2xl mx-auto") do
-        render Components::DeploymentForm.new(deployment: @deployment)
+        Components::DeploymentForm(deployment:, available_components:)
       end
     end
   end

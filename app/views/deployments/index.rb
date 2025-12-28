@@ -1,12 +1,33 @@
 # frozen_string_literal: true
 
+# Index view for deployments.
 class Views::Deployments::Index < Views::Base
-  def initialize(deployments:)
+  attr_reader :available_components, :available_environments,
+              :available_platforms, :deployments, :query
+
+  # Initializes the view.
+  #
+  # @param deployments [ActiveRecord::Relation] Collection of deployments to
+  #  display.
+  # @param query [Ransack::Search] Ransack query object for filtering and
+  #   sorting.
+  # @param available_components [ActiveRecord::Relation] Component entity
+  #   options with name and id attributes.
+  # @param available_environments [Array<Array>] Environment options as
+  #   [label, value] pairs for filtering.
+  # @param available_platforms [Array<Array>] Platform options as [label,
+  #   value] pairs for filtering.
+  def initialize(deployments:, query:, available_components:,
+    available_environments:, available_platforms:)
     @deployments = deployments
+    @query = query
+    @available_components = available_components
+    @available_environments = available_environments
+    @available_platforms = available_platforms
   end
 
   def view_template
-    render Layouts::Application.new do
+    render Layouts::Application do
       div(class: "p-6") do
         div(class: "flex justify-between items-center mb-6") do
           h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { "Deployments" }
@@ -14,6 +35,9 @@ class Views::Deployments::Index < Views::Base
             "New Deployment"
           end
         end
+
+        Components::DeploymentFilters(query:, available_components:,
+                                      available_environments:, available_platforms:)
 
         div(class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
           render Components::Table do |table|

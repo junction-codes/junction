@@ -5,9 +5,9 @@ module Components
     include Phlex::Rails::Helpers::FormWith
     include Phlex::Rails::Helpers::OptionsForSelect
 
-    def initialize(deployment:, components: Component.order(:name))
+    def initialize(deployment:, available_components:)
       @deployment = deployment
-      @components = components
+      @available_components = available_components
     end
 
     def view_template
@@ -24,7 +24,7 @@ module Components
             render RichSelectField.new(f, :platform, "Platform", required: true, options: CatalogOptions.platforms)
 
             render ReferenceField.new(f, :component_id, "Component", required: true,
-                                   options: @components, value: @deployment.component, icon: "server",
+                                   options: @available_components, value: @deployment.component, icon: "server",
                                    help_text: "Select the component this is a deployment of.")
 
             render TextField.new(f, :location_identifier, "Identifier")

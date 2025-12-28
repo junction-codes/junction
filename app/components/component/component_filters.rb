@@ -12,8 +12,8 @@ module Components
     #   and id attributes for filtering.
     # @param available_systems [ActiveRecord::Relation] System options with name
     #   and id attributes for filtering.
-    # @param available_types [Array<Array>] Type options as [label, value]
-    #   and id attributes for filtering.
+    # @param available_types [Array<Array>] Type options as [label, value] pairs
+    #   for filtering.
     # @param user_attrs [Hash] Additional HTML attributes for the component.
     def initialize(query:, available_lifecycles: [], available_owners: [],
                    available_systems: [], available_types: [], **user_attrs)
