@@ -60,10 +60,9 @@ class DomainsController < ApplicationController
 
   private
 
-  # Returns an array of available owners for domains.
+  # Returns a collection of available owners for domains.
   #
-  # @return [Array<Array(String, Integer)>] Array of [name, id] pairs for
-  #   owners.
+  # @return [ActiveRecord::Relation] Collection of owners.
   def available_owners
     Group.select(:description, :id, :image_url, :name).order(:name)
   end

@@ -1,13 +1,21 @@
 # frozen_string_literal: true
 
+# Edit view for groups.
 class Views::Groups::Edit < Views::Base
-  def initialize(group:, parents:)
+  attr_reader :available_parents, :group
+
+  # Initializes the view.
+  #
+  # @param group [Group] The group being modified.
+  # @param available_parents [Array<Array>] Parent entity options with name and
+  #   id attributes.
+  def initialize(group:, available_parents:)
     @group = group
-    @parents = parents
+    @available_parents = available_parents
   end
 
   def view_template
-    render Layouts::Application.new do
+    render Layouts::Application do
       template
     end
   end
@@ -23,11 +31,11 @@ class Views::Groups::Edit < Views::Base
       # Two-column layout for form and sidebar.
       div(class: "grid grid-cols-1 lg:grid-cols-3 gap-8") do
         main(class: "lg:col-span-2") do
-          render Components::GroupForm.new(group: @group, parents: @parents)
+          Components::GroupForm(group:, available_parents:)
         end
 
         aside(class: "space-y-6") do
-          render Components::GroupEditSidebar.new(group: @group)
+          Components::GroupEditSidebar(group:)
         end
       end
     end

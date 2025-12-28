@@ -1,8 +1,20 @@
 # frozen_string_literal: true
 
+# Index view for groups.
 class Views::Groups::Index < Views::Base
-  def initialize(groups:)
+  attr_reader :available_types, :groups, :query
+
+  # Initializes the view.
+  #
+  # @param groups [ActiveRecord::Relation] Collection of groups to display.
+  # @param query [Ransack::Search] Ransack query object for filtering
+  #   and sorting.
+  # @param available_types [Array<Array>] Type options as [label, value] pairs
+  #   for filtering.
+  def initialize(groups:, query:, available_types:)
     @groups = groups
+    @query = query
+    @available_types = available_types
   end
 
   def view_template
@@ -14,6 +26,8 @@ class Views::Groups::Index < Views::Base
             "New Group"
           end
         end
+
+        Components::GroupFilters(query:, available_types:)
 
         div(class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
           render Components::Table do |table|
@@ -30,10 +44,13 @@ class Views::Groups::Index < Views::Base
   def table_header(table)
     table.header do |header|
       header.row do |row|
-        row.head { "Name" }
-        row.head { "Type" }
-        row.head { "Email" }
-        row.head { "Parent" }
+        sort_url = ->(field, direction) { groups_path(q: { s: "#{field} #{direction}" }) }
+
+        row.sortable_head(query:, field: "name", sort_url:) { "Group" }
+        row.sortable_head(query:, field: "type", sort_url:) { "Type" }
+        row.sortable_head(query:, field: "email", sort_url:) { "Email" }
+        row.sortable_head(query:, field: "parent_id", sort_url:) { "Parent" }
+
         row.head(class: "relative") do
           span(class: "sr-only") { "View" }
         end

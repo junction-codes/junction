@@ -77,18 +77,16 @@ class ApisController < ApplicationController
     CatalogOptions.lifecycles.map { |key, opts| [ opts[:name], key ] }
   end
 
-  # Returns an array of available owners for apis.
+  # Returns a collection of available owners for apis.
   #
-  # @return [Array<Array(String, Integer)>] Array of [name, id] pairs for
-  #   owners.
+  # @return [ActiveRecord::Relation] Collection of owners.
   def available_owners
     Group.select(:description, :id, :image_url, :name).order(:name)
   end
 
-  # Returns an array of available systems for apis.
+  # Returns a collection of available systems for apis.
   #
-  # @return [Array<Array(String, Integer)>] Array of [name, id] pairs for
-  #   systems.
+  # @return [ActiveRecord::Relation] Collection of systems.
   def available_systems
     System.select(:description, :id, :image_url, :name).order(:name)
   end

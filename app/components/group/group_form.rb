@@ -4,9 +4,9 @@ module Components
   class GroupForm < Base
     include Phlex::Rails::Helpers::FormWith
 
-    def initialize(group:, parents:)
+    def initialize(group:, available_parents:)
       @group = group
-      @parents = parents
+      @available_parents = available_parents
     end
 
     def view_template
@@ -23,7 +23,7 @@ module Components
             render RichSelectField.new(f, :type, "Type", required: true, options: CatalogOptions.group_types)
 
             render ReferenceField.new(f, :parent_id, "Parent", required: false, icon: "users-round",
-                                      options: @parents, value: @group.parent,
+                                      options: @available_parents, value: @group.parent,
                                       help_text: "Select a parent for this group.")
 
             render TextField.new(f, :email, "Email", placeholder: "example@example.com")

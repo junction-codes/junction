@@ -9,8 +9,8 @@ class Group < ApplicationRecord
   validates :description, presence: true
   validates :email, allow_blank: true, format: URI::MailTo::EMAIL_REGEXP
   validates :group_type, presence: true
-  validates :name, presence: true, uniqueness: true
   validates :image_url, allow_blank: true, format: URI::DEFAULT_PARSER.make_regexp(%w[http https])
+  validates :name, presence: true, uniqueness: true
 
   belongs_to :parent, class_name: "Group", optional: true
   has_many :children, class_name: "Group", foreign_key: "parent_id", dependent: :destroy
@@ -34,7 +34,11 @@ class Group < ApplicationRecord
     ancestors
   end
 
+  def self.ransackable_associations(auth_object = nil)
+    %w[parent children]
+  end
+
   def self.ransackable_attributes(auth_object = nil)
-    %w[created_at description email group_type name parent_id updated_at]
+    %w[created_at description email group_type name parent_id type updated_at]
   end
 end

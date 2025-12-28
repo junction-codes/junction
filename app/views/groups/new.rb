@@ -1,13 +1,21 @@
 # frozen_string_literal: true
 
+# Creation view for groups.
 class Views::Groups::New < Views::Base
-  def initialize(group:, parents:)
+  attr_reader :available_parents, :group
+
+  # Initializes the view.
+  #
+  # @param group [Group] The group being created.
+  # @param available_parents [Array<Array>] Parent entity options with name and
+  #   id attributes.
+  def initialize(group:, available_parents:)
     @group = group
-    @parents = parents
+    @available_parents = available_parents
   end
 
   def view_template
-    render Layouts::Application.new do
+    render Layouts::Application do
       template
     end
   end
@@ -21,7 +29,7 @@ class Views::Groups::New < Views::Base
       end
 
       main(class: "mt-6 max-w-2xl mx-auto") do
-        render Components::GroupForm.new(group: @group, parents: @parents)
+        Components::GroupForm(group:, available_parents:)
       end
     end
   end
