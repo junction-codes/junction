@@ -7,10 +7,10 @@ module Components
 
     include PluginDispatchHelper
 
-    def initialize(api:, owners: Group.order(:name), systems: System.order(:name))
+    def initialize(api:, available_owners:, available_systems:)
       @api = api
-      @owners = owners
-      @systems = systems
+      @available_owners = available_owners
+      @available_systems = available_systems
     end
 
     def view_template
@@ -28,10 +28,10 @@ module Components
             render RichSelectField.new(f, :lifecycle, "Lifecycle", required: true, options: CatalogOptions.lifecycles)
 
             render ReferenceField.new(f, :owner_id, "Owner", icon: "users-round",
-                                      options: @owners, value: @api.owner, required: true,
+                                      options: @available_owners, value: @api.owner, required: true,
                                       help_text: "Assign an owner for this API.")
             render ReferenceField.new(f, :system_id, "System", icon: "users-round",
-                                      options: @systems, value: @api.system, required: true,
+                                      options: @available_systems, value: @api.system, required: true,
                                       help_text: "System this API belongs to.")
 
             render TextAreaField.new(f, :description, "Description", required: true, help_text: "A brief summary of the component's goals.")

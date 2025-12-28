@@ -52,29 +52,12 @@ class Views::Systems::Index < Views::Base
   def table_header(table)
     table.header do |header|
       header.row do |row|
-        row.sortable_head(
-          query:,
-          field: "name",
-          sort_url: ->(field, direction) { systems_path(q: { s: "#{field} #{direction}" }) }
-        ) { "System" }
+        sort_url = ->(field, direction) { systems_path(q: { s: "#{field} #{direction}" }) }
 
-        row.sortable_head(
-          query:,
-          field: "owner_id",
-          sort_url: ->(field, direction) { systems_path(q: { s: "#{field} #{direction}" }) }
-        ) { "Owner" }
-
-        row.sortable_head(
-          query:,
-          field: "domain_id",
-          sort_url: ->(field, direction) { systems_path(q: { s: "#{field} #{direction}" }) }
-        ) { "Domain" }
-
-        row.sortable_head(
-          query:,
-          field: "status",
-          sort_url: ->(field, direction) { systems_path(q: { s: "#{field} #{direction}" }) }
-        ) { "Status" }
+        row.sortable_head(query:, field: "name", sort_url:) { "System" }
+        row.sortable_head(query:, field: "owner_id", sort_url:) { "Owner" }
+        row.sortable_head(query:, field: "domain_id", sort_url:) { "Domain" }
+        row.sortable_head(query:, field: "status", sort_url:) { "Status" }
 
         row.head(class: "relative") do
           span(class: "sr-only") { "View" }

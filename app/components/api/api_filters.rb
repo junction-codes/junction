@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 module Components
-  # Renders filters available when searching Component entities.
-  class ComponentFilters < Base
+  # Renders filters available when searching API entities.
+  class ApiFilters < Base
     # Initializes the component.
     #
     # @param query [Ransack::Search] Ransack query object for filtering.
@@ -29,8 +29,8 @@ module Components
     def view_template(&)
       render Components::TableFilterBar.new(
         query: @query,
-        action_url: components_path,
-        clear_url: components_path
+        action_url: apis_path,
+        clear_url: apis_path
       ) do |bar|
         div(class: "grid grid-cols-1 md:grid-cols-4 gap-4") do
           bar.text_filter(

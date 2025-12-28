@@ -1,12 +1,35 @@
 # frozen_string_literal: true
 
+# Index view for APIs.
 class Views::Apis::Index < Views::Base
-  def initialize(apis:)
+  attr_reader :apis, :available_lifecycles, :available_owners,
+              :available_systems, :available_types, :query
+
+  # Initializes the view.
+  #
+  # @param apis [ActiveRecord::Relation] Collection of APIs to display.
+  # @param query [Ransack::Search] Ransack query object for filtering and
+  #   sorting.
+  # @param available_lifecycles [Array<Array>] Lifecycle options as [label,
+  #   value] pairs for filtering.
+  # @param available_owners [ActiveRecord::Relation] Owner entity options with
+  #   name and id attributes.
+  # @param available_systems [ActiveRecord::Relation] System entity options with
+  #   name and id attributes.
+  # @param available_types [Array<Array>] Type options as [label, value] pairs
+  #   for filtering.
+  def initialize(apis:, query:, available_lifecycles:, available_owners:,
+                 available_systems:, available_types:)
     @apis = apis
+    @query = query
+    @available_lifecycles = available_lifecycles
+    @available_owners = available_owners
+    @available_systems = available_systems
+    @available_types = available_types
   end
 
   def view_template
-    render Layouts::Application.new do
+    render Layouts::Application do
       div(class: "p-6") do
         div(class: "flex justify-between items-center mb-6") do
           h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { "APIs" }
@@ -14,6 +37,9 @@ class Views::Apis::Index < Views::Base
             "New API"
           end
         end
+
+        Components::ApiFilters(query:, available_lifecycles:, available_owners:,
+                               available_systems:, available_types:)
 
         div(class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
           render Components::Table do |table|
@@ -30,11 +56,14 @@ class Views::Apis::Index < Views::Base
   def table_header(table)
     table.header do |header|
       header.row do |row|
-        row.head { "Name" }
-        row.head { "System" }
-        row.head { "Owner" }
-        row.head { "Type" }
-        row.head { "Lifecycle" }
+        sort_url = ->(field, direction) { apis_path(q: { s: "#{field} #{direction}" }) }
+
+        row.sortable_head(query:, field: "name", sort_url:) { "API" }
+        row.sortable_head(query:, field: "system_id", sort_url:) { "System" }
+        row.sortable_head(query:, field: "owner_id", sort_url:) { "Owner" }
+        row.sortable_head(query:, field: "type", sort_url:) { "Type" }
+        row.sortable_head(query:, field: "lifecycle", sort_url:) { "Lifecycle" }
+
         row.head(class: "relative") do
           span(class: "sr-only") { "View" }
         end
@@ -83,7 +112,7 @@ class Views::Apis::Index < Views::Base
           end
 
           row.cell do
-            render Components::Badge.new(variant: api.lifecycle) { api.lifecycle&.capitalize }
+            Components::Badge(variant: api.lifecycle) { api.lifecycle&.capitalize }
           end
 
           row.cell(class: "text-right text-sm font-medium") do

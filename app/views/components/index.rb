@@ -39,7 +39,9 @@ class Views::Components::Index < Views::Base
           end
         end
 
-        Components::ComponentFilters(query: @query, available_lifecycles:, available_owners:, available_systems:, available_types:)
+        Components::ComponentFilters(query:, available_lifecycles:,
+                                     available_owners:, available_systems:,
+                                     available_types:)
 
         div(class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
           render Components::Table do |table|
@@ -56,11 +58,14 @@ class Views::Components::Index < Views::Base
   def table_header(table)
     table.header do |header|
       header.row do |row|
-        row.head { "Name" }
-        row.head { "System" }
-        row.head { "Owner" }
-        row.head { "Type" }
-        row.head { "Lifecycle" }
+        sort_url = ->(field, direction) { components_path(q: { s: "#{field} #{direction}" }) }
+
+        row.sortable_head(query:, field: "name", sort_url:) { "Component" }
+        row.sortable_head(query:, field: "system_id", sort_url:) { "System" }
+        row.sortable_head(query:, field: "owner_id", sort_url:) { "Owner" }
+        row.sortable_head(query:, field: "type", sort_url:) { "Type" }
+        row.sortable_head(query:, field: "lifecycle", sort_url:) { "Lifecycle" }
+
         row.head(class: "relative") do
           span(class: "sr-only") { "View" }
         end

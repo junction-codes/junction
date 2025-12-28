@@ -10,7 +10,17 @@ class ApisController < ApplicationController
 
   # GET /api
   def index
-    render Views::Apis::Index.new(apis: Api.order(:name))
+    @q = Api.ransack(params[:q])
+    @q.sorts = "name asc" if @q.sorts.empty?
+
+    render Views::Apis::Index.new(
+      apis: @q.result,
+      query: @q,
+      available_lifecycles:,
+      available_owners:,
+      available_systems:,
+      available_types:,
+    )
   end
 
   # GET /api/:id
@@ -20,12 +30,12 @@ class ApisController < ApplicationController
 
   # GET /api/new
   def new
-    render Views::Apis::New.new(api: Api.new, owners: owner_options, systems: system_options)
+    render Views::Apis::New.new(api: Api.new, available_owners:, available_systems:)
   end
 
   # GET /api/:id/edit
   def edit
-    render Views::Apis::Edit.new(api: @entity, owners: owner_options, systems: system_options)
+    render Views::Apis::Edit.new(api: @entity, available_owners:, available_systems:)
   end
 
   # POST /api
@@ -36,7 +46,7 @@ class ApisController < ApplicationController
       redirect_to @entity, success: "API was successfully created.", status: :see_other
     else
       flash.now[:alert] = "There were errors creating the API."
-      render Views::Apis::New.new(api: @entity, owners: owner_options, systems: system_options), status: :unprocessable_entity
+      render Views::Apis::New.new(api: @entity, available_owners:, available_systems:), status: :unprocessable_entity
     end
   end
 
@@ -46,7 +56,7 @@ class ApisController < ApplicationController
       redirect_to @entity, success: "API was successfully updated.", status: :see_other
     else
       flash.now[:alert] = "There were errors updating the API."
-      render Views::Apis::Edit.new(api: @entity, owners: owner_options, systems: system_options), status: :unprocessable_entity
+      render Views::Apis::Edit.new(api: @entity, available_owners:, available_systems:), status: :unprocessable_entity
     end
   end
 
@@ -59,6 +69,38 @@ class ApisController < ApplicationController
 
   private
 
+  # Returns an array of available lifecycles for components.
+  #
+  # @return [Array<Array(String, String)>] Array of [name, key] pairs for
+  #   lifecycles.
+  def available_lifecycles
+    CatalogOptions.lifecycles.map { |key, opts| [ opts[:name], key ] }
+  end
+
+  # Returns an array of available owners for components.
+  #
+  # @return [Array<Array(String, Integer)>] Array of [name, id] pairs for
+  #   owners.
+  def available_owners
+    Group.select(:description, :id, :image_url, :name).order(:name)
+  end
+
+  # Returns an array of available systems for components.
+  #
+  # @return [Array<Array(String, Integer)>] Array of [name, id] pairs for
+  #   systems.
+  def available_systems
+    System.select(:description, :id, :image_url, :name).order(:name)
+  end
+
+  # Returns an array of available types for components.
+  #
+  # @return [Array<Array(String, String)>] Array of [name, key] pairs for
+  #   types.
+  def available_types
+    CatalogOptions.apis.map { |key, opts| [ opts[:name], key ] }
+  end
+
   def set_entity
     @entity = Api.find(params.expect(:id))
   end
@@ -69,13 +111,5 @@ class ApisController < ApplicationController
 
   def api_params
     params.expect(api: [ :api_type, :name, :description, :definition, :lifecycle, :type, :image_url, :owner_id, :system_id, annotations: {} ])
-  end
-
-  def owner_options
-    Group.order(:name)
-  end
-
-  def system_options
-    System.order(:name)
   end
 end

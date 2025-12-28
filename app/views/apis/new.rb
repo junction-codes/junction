@@ -1,14 +1,24 @@
 # frozen_string_literal: true
 
+# Creation view for APIs.
 class Views::Apis::New < Views::Base
-  def initialize(api:, owners:, systems:)
+  attr_reader :api, :available_owners, :available_systems
+
+  # Initializes the view.
+  #
+  # @param api [Api] The API being created.
+  # @param available_owners [Array<Array>] Owner entity options with name and id
+  #   attributes.
+  # @param available_systems [Array<Array>] System entity options with name and
+  #   id attributes.
+  def initialize(api:, available_owners:, available_systems:)
     @api = api
-    @owners = owners
-    @systems = systems
+    @available_owners = available_owners
+    @available_systems = available_systems
   end
 
   def view_template
-    render Layouts::Application.new do
+    render Layouts::Application do
       template
     end
   end
@@ -21,7 +31,7 @@ class Views::Apis::New < Views::Base
       end
 
       main(class: "mt-6 max-w-2xl mx-auto") do
-        render Components::ApiForm.new(api: @api, owners: @owners, systems: @systems)
+        Components::ApiForm(api:, available_owners:, available_systems:)
       end
     end
   end

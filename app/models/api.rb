@@ -18,6 +18,14 @@ class Api < ApplicationRecord
   validates :lifecycle, presence: true, inclusion: { in: CatalogOptions.lifecycles.keys }
   validates :name, presence: true, uniqueness: true
 
+  def self.ransackable_associations(auth_object = nil)
+    %w[owner system]
+  end
+
+  def self.ransackable_attributes(auth_object = nil)
+    %w[created_at api_type description lifecycle name owner_id system_id type updated_at]
+  end
+
   # Get the icon associated with the component's type.
   #
   # @return [String] The icon name.
