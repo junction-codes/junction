@@ -7,10 +7,10 @@ module Components
 
     include PluginDispatchHelper
 
-    def initialize(resource:, owners: Group.order(:name), systems: System.order(:name))
+    def initialize(resource:, available_owners:, available_systems:)
       @resource = resource
-      @owners = owners
-      @systems = systems
+      @available_owners = available_owners
+      @available_systems = available_systems
     end
 
     def view_template
@@ -27,11 +27,11 @@ module Components
             render RichSelectField.new(f, :type, "Type", required: true, options: CatalogOptions.resources)
 
             render ReferenceField.new(f, :owner_id, "Owner", required: true,
-                                      icon: "users-round", options: @owners,
+                                      icon: "users-round", options: @available_owners,
                                       value: @resource.owner,
                                       help_text: "Assign an owner for this resource.")
             render ReferenceField.new(f, :system_id, "System", icon: "users-round",
-                                      options: @systems, value: @resource.system,
+                                      options: @available_systems, value: @resource.system,
                                       help_text: "System this resource belongs to.")
 
             render TextAreaField.new(f, :description, "Description", required: true, help_text: "A brief summary of the resource's goals.")

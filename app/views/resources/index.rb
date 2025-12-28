@@ -2,13 +2,34 @@
 
 module Views
   module Resources
+    # Index view for resources.
     class Index < Views::Base
-      def initialize(resources:)
+      attr_reader :available_owners, :available_systems, :available_types,
+                  :query, :resources
+
+      # Initializes the view.
+      #
+      # @param resources [ActiveRecord::Relation] Collection of resources to
+      #   display.
+      # @param query [Ransack::Search] Ransack query object for filtering and
+      #   sorting.
+      # @param available_owners [Array<Array>] Owner entity options with name
+      #   and id attributes.
+      # @param available_systems [Array<Array>] System entity options with name
+      #   and id attributes.
+      # @param available_types [Array<Array>] Type options as [label, value]
+      #   pairs for filtering.
+      def initialize(resources:, query:, available_owners:, available_systems:,
+                     available_types:)
         @resources = resources
+        @query = query
+        @available_owners = available_owners
+        @available_systems = available_systems
+        @available_types = available_types
       end
 
       def view_template
-        render Layouts::Application.new do
+        render Layouts::Application do
           div(class: "p-6") do
             div(class: "flex justify-between items-center mb-6") do
               h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { "Resources" }
@@ -16,6 +37,9 @@ module Views
                 "New Resource"
               end
             end
+
+            ::Components::ResourceFilters(query:, available_owners:,
+                                          available_systems:, available_types:)
 
             div(class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
               render ::Components::Table do |table|
@@ -32,10 +56,13 @@ module Views
       def table_header(table)
         table.header do |header|
           header.row do |row|
-            row.head { "Name" }
-            row.head { "System" }
-            row.head { "Owner" }
-            row.head { "Type" }
+            sort_url = ->(field, direction) { resources_path(q: { s: "#{field} #{direction}" }) }
+
+            row.sortable_head(query:, field: "name", sort_url:) { "Resource" }
+            row.sortable_head(query:, field: "system_id", sort_url:) { "System" }
+            row.sortable_head(query:, field: "owner_id", sort_url:) { "Owner" }
+            row.sortable_head(query:, field: "type", sort_url:) { "Type" }
+
             row.head(class: "relative") do
               span(class: "sr-only") { "View" }
             end

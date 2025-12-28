@@ -9,8 +9,15 @@ class ResourcesController < ApplicationController
   before_action :eager_load_dependencies, only: %i[ show dependency_graph ]
 
   def index
+    @q = Resource.ransack(params[:q])
+    @q.sorts = "name asc" if @q.sorts.empty?
+
     render Views::Resources::Index.new(
-      resources: Resource.order(:name),
+      resources: @q.result,
+      query: @q,
+      available_owners:,
+      available_systems:,
+      available_types:,
     )
   end
 
@@ -21,14 +28,16 @@ class ResourcesController < ApplicationController
   def new
     render Views::Resources::New.new(
       resource: Resource.new,
-      owners: Group.order(:name)
+      available_owners:,
+      available_systems:
     )
   end
 
   def edit
     render Views::Resources::Edit.new(
       resource: @entity,
-      owners: Group.order(:name)
+      available_owners:,
+      available_systems:
     )
   end
 
@@ -39,7 +48,7 @@ class ResourcesController < ApplicationController
       redirect_to @entity, success: "Resource was successfully created."
     else
       flash.now[:alert] = "There were errors creating the resource."
-      render Views::Resources::New.new(resource: @entity, owners: Group.order(:name)), status: :unprocessable_entity
+      render Views::Resources::New.new(resource: @entity, available_owners:, available_systems:), status: :unprocessable_entity
     end
   end
 
@@ -48,7 +57,7 @@ class ResourcesController < ApplicationController
       redirect_to @entity, success: "Resource was successfully updated."
     else
       flash.now[:alert] = "There were errors updating the resource."
-      render Views::Resources::Edit.new(resource: @entity, owners: Group.order(:name)), status: :unprocessable_entity
+      render Views::Resources::Edit.new(resource: @entity, available_owners:, available_systems:), status: :unprocessable_entity
     end
   end
 
@@ -59,6 +68,27 @@ class ResourcesController < ApplicationController
   end
 
   private
+
+  # Returns a collection of available owners for resources.
+  #
+  # @return [ActiveRecord::Relation] Collection of owners.
+  def available_owners
+    Group.select(:description, :id, :image_url, :name).order(:name)
+  end
+
+  # Returns a collection of available systems for resources.
+  #
+  # @return [ActiveRecord::Relation] Collection of systems.
+  def available_systems
+    System.select(:description, :id, :image_url, :name).order(:name)
+  end
+
+  # Returns an array of available types for resources.
+  #
+  # @return [Array<Array(String, String)>] Array of [name, key] pairs for types.
+  def available_types
+    CatalogOptions.resources.map { |key, opts| [ opts[:name], key ] }
+  end
 
   def set_entity
     @entity = Resource.find(params.expect(:id))

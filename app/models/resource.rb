@@ -15,6 +15,14 @@ class Resource < ApplicationRecord
 
   belongs_to :system
 
+  def self.ransackable_associations(auth_object = nil)
+    %w[owner system]
+  end
+
+  def self.ransackable_attributes(auth_object = nil)
+    %w[created_at description name owner_id resource_type system_id type updated_at]
+  end
+
   # Get the icon associated with the component's type.
   #
   # @return [String] The icon name.

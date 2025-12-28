@@ -1,13 +1,24 @@
 # frozen_string_literal: true
 
+# Edit view for resources.
 class Views::Resources::Edit < Views::Base
-  def initialize(resource:, owners:)
+  attr_reader :available_owners, :available_systems, :resource
+
+  # Initializes the view.
+  #
+  # @param resource [Resource] The resource being modified.
+  # @param available_owners [Array<Array>] Owner entity options with name and
+  #   id attributes.
+  # @param available_systems [Array<Array>] System entity options with name and
+  #  id attributes.
+  def initialize(resource:, available_owners:, available_systems:)
     @resource = resource
-    @owners = owners
+    @available_owners = available_owners
+    @available_systems = available_systems
   end
 
   def view_template
-    render Layouts::Application.new do
+    render Layouts::Application do
       template
     end
   end
@@ -21,11 +32,11 @@ class Views::Resources::Edit < Views::Base
 
       div(class: "grid grid-cols-1 lg:grid-cols-3 gap-8") do
         main(class: "lg:col-span-2") do
-          render Components::ResourceForm.new(resource: @resource, owners: @owners)
+          Components::ResourceForm(resource:, available_owners:, available_systems:)
         end
 
         aside(class: "space-y-6") do
-          render Components::ResourceEditSidebar.new(resource: @resource)
+          Components::ResourceEditSidebar(resource:)
         end
       end
     end
