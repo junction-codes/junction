@@ -28,8 +28,35 @@
 #       enabled: "ON"
 
 en:
+  activerecord:
+    models:
+      api:
+        one: API
+        other: APIs
+      component:
+        one: Component
+        other: Components
+      deployment:
+        one: Deployment
+        other: Deployments
+      domain:
+        one: Domain
+        other: Domains
+      group:
+        one: Group
+        other: Groups
+      resource:
+        one: Resource
+        other: Resources
+      system:
+        one: System
+        other: Systems
+        app:
+      user:
+        one: User
+        other: Users
   app:
-    title: Rail Junction
+    title: Junction
   components:
     alert:
       close: Close
@@ -40,3 +67,21 @@ en:
         warning: Warning
     dialog:
       close: Close
+  dashboard:
+    hero_card:
+      new_component: "New component"
+      new_system: "New system"
+      view_profile: "View profile"
+      welcome_title: "Welcome, %{name}!"
+      welcome_description: "A quick snapshot of your catalog and recent activity for %{name}."
+    my_entities:
+      description: "Catalog entities owned by your groups."
+      domain_label: "Domain:"
+      empty: "No entities owned by your groups yet."
+      owner_label: "Owner:"
+      system_label: "System:"
+      title: "My catalog items"
+    updated_entities:
+      description: "Latest changes across APIs, components, domains, resources, and systems."
+      empty: "No catalog updates yet."
+      title: "Recent catalog updates"

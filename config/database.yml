@@ -27,13 +27,13 @@ default: &default
 
 development:
   <<: *default
-  database: devportal_development
+  database: junction_development
 
   # The specified database role being used to connect to PostgreSQL.
   # To create additional roles in PostgreSQL see `$ createuser --help`.
   # When left blank, PostgreSQL will use the default role. This is
   # the same name as the operating system user running Rails.
-  #username: devportal
+  #username: junction
 
   # The password associated with the PostgreSQL role (username).
   #password:
@@ -61,7 +61,7 @@ development:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: devportal_test
+  database: junction_test
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -86,18 +86,18 @@ test:
 production:
   primary: &primary_production
     <<: *default
-    database: devportal_production
-    username: devportal
-    password: <%= ENV["DEVPORTAL_DATABASE_PASSWORD"] %>
+    database: junction_production
+    username: junction
+    password: <%= ENV["JUNCTION_DATABASE_PASSWORD"] %>
   cache:
     <<: *primary_production
-    database: devportal_production_cache
+    database: junction_production_cache
     migrations_paths: db/cache_migrate
   queue:
     <<: *primary_production
-    database: devportal_production_queue
+    database: junction_production_queue
     migrations_paths: db/queue_migrate
   cable:
     <<: *primary_production
-    database: devportal_production_cable
+    database: junction_production_cable
     migrations_paths: db/cable_migrate
