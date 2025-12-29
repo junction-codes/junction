@@ -65,7 +65,7 @@ group :development, :test do
   gem "rubocop-rails-omakase", require: false
   gem "rubocop-rspec", "~> 3.8", require: false
   gem "simplecov", "~> 0.22"
-  gem "shoulda-matchers", "~> 6.5", require: false
+  gem "shoulda-matchers", "~> 7.0", require: false
   gem "vcr", "~> 6.3"
 end
 
