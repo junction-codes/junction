@@ -112,8 +112,20 @@ def import_users(path)
     next if User.find_by(email_address: user[:email_address])
 
     Rails.logger.info "Creating user #{user[:display_name]}"
-    User.create(user)
+    user[:password] = random_password
+    entity = User.create(user)
+
+    unless entity.persisted?
+      puts "Failed to create user #{user[:display_name]}"
+    end
   end
+end
+
+def random_password(length: 64)
+  chars = [ *'0'..'9', *'a'..'z', *'A'..'Z', '+', '$', '@', '!', '#' ]
+  length.times.map do
+    chars.sample
+  end.join
 end
 
 org = "sample"
