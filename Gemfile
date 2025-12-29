@@ -60,7 +60,6 @@ group :development, :test do
   gem "brakeman", "~> 7.1", require: false
   gem "factory_bot_rails", "~> 6.5", require: false
   gem "faker", "~> 3.5", require: false
-  gem "rspec_pacman_formatter", "~> 0.1", require: false
   gem "rspec-rails", "~> 8.0", require: false
   gem "rubocop-capybara", "~> 2.22", require: false
   gem "rubocop-rails-omakase", require: false
