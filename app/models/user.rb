@@ -29,6 +29,10 @@ class User < ApplicationRecord
     password.present?
   end
 
+  def icon
+    "user-round"
+  end
+
   def components
     Component.where(owner: deep_group_ids).uniq
   end

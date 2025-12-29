@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# Controller for managing Domain catalog entities.
 class DomainsController < ApplicationController
   before_action :set_entity, only: %i[show edit update destroy]
 

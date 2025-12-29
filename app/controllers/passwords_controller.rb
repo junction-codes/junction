@@ -1,11 +1,16 @@
+# frozen_string_literal: true
+
+# Controller for managing user password resets..
 class PasswordsController < ApplicationController
   allow_unauthenticated_access
   before_action :set_user_by_token, only: %i[ edit update ]
 
+  # GET /passwords/new
   def new
     render Views::Passwords::New
   end
 
+  # POST /passwords
   def create
     user = User.find_by(email_address: params[:email_address])
     if user
@@ -15,10 +20,12 @@ class PasswordsController < ApplicationController
     redirect_to new_session_path, success: "Password reset instructions sent (if user with that email address exists)."
   end
 
+  # GET /passwords/:token/edit
   def edit
     render Views::Passwords::Edit.new(token: params[:token])
   end
 
+  # PATCH/PUT /passwords/:token
   def update
     if @user.update(params.permit(:password, :password_confirmation))
       redirect_to new_session_path, success: "Password has been reset."
@@ -28,9 +35,10 @@ class PasswordsController < ApplicationController
   end
 
   private
-    def set_user_by_token
-      @user = User.find_by_password_reset_token!(params[:token])
-    rescue ActiveSupport::MessageVerifier::InvalidSignature
-      redirect_to new_password_path, alert: "Password reset link is invalid or has expired."
-    end
+
+  def set_user_by_token
+    @user = User.find_by_password_reset_token!(params[:token])
+  rescue ActiveSupport::MessageVerifier::InvalidSignature
+    redirect_to new_password_path, alert: "Password reset link is invalid or has expired."
+  end
 end

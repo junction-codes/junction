@@ -21,4 +21,8 @@ class System < ApplicationRecord
   def self.ransackable_attributes(auth_object = nil)
     %w[created_at description domain_id name owner_id status updated_at]
   end
+
+  def icon
+    "network"
+  end
 end

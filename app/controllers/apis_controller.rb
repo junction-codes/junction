@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Controller for managing API catalog entities.
 class ApisController < ApplicationController
   include HasDependencies
   include HasDependencyGraph

@@ -1,7 +1,10 @@
+# frozen_string_literal: true
+
+# Controller for managing Users.
 class UsersController < ApplicationController
   before_action :set_entity, only: %i[ show edit update destroy ]
 
-  # GET /users or /users.json
+  # GET /users
   def index
     @q = User.ransack(params[:q])
     @q.sorts = "name asc" if @q.sorts.empty?
@@ -9,7 +12,7 @@ class UsersController < ApplicationController
     render Views::Users::Index.new(users: @q.result, query: @q)
   end
 
-  # GET /users/1 or /users/1.json
+  # GET /users/:id
   def show
     render Views::Users::Show.new(user: @user)
   end
@@ -19,12 +22,12 @@ class UsersController < ApplicationController
     render Views::Users::New.new(user: User.new)
   end
 
-  # GET /users/1/edit
+  # GET /users/:id/edit
   def edit
     render Views::Users::Edit.new(user: @user)
   end
 
-  # POST /users or /users.json
+  # POST /users
   def create
     @user = User.new(user_params)
 
@@ -36,7 +39,7 @@ class UsersController < ApplicationController
     end
   end
 
-  # PATCH/PUT /users/1 or /users/1.json
+  # PATCH/PUT /users/:id
   def update
     if @user.update(user_update_params)
       redirect_to @user, success: "User was successfully updated."
@@ -46,7 +49,7 @@ class UsersController < ApplicationController
     end
   end
 
-  # DELETE /users/1 or /users/1.json
+  # DELETE /users/:id
   def destroy
     @user.destroy!
 

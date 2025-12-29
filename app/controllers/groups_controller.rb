@@ -1,7 +1,10 @@
+# frozen_string_literal: true
+
+# Controller for managing Groups..
 class GroupsController < ApplicationController
   before_action :set_entity, only: %i[ show edit update destroy ]
 
-  # GET /groups or /groups.json
+  # GET /groups
   def index
     @q = Group.ransack(params[:q])
     @q.sorts = "name asc" if @q.sorts.empty?
@@ -13,7 +16,7 @@ class GroupsController < ApplicationController
     )
   end
 
-  # GET /groups/1 or /groups/1.json
+  # GET /groups/:id
   def show
     render Views::Groups::Show.new(group: @group)
   end
@@ -23,12 +26,12 @@ class GroupsController < ApplicationController
     render Views::Groups::New.new(group: Group.new, available_parents:)
   end
 
-  # GET /groups/1/edit
+  # GET /groups/:id/edit
   def edit
     render Views::Groups::Edit.new(group: @group, available_parents:)
   end
 
-  # POST /groups or /groups.json
+  # POST /groups
   def create
     @group = Group.new(group_params)
 
@@ -40,7 +43,7 @@ class GroupsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /groups/1 or /groups/1.json
+  # PATCH/PUT /groups/:id
   def update
     if @group.update(group_params)
       redirect_to @group, success: "Group was successfully updated."
@@ -50,7 +53,7 @@ class GroupsController < ApplicationController
     end
   end
 
-  # DELETE /groups/1 or /groups/1.json
+  # DELETE /groups/:id
   def destroy
     @group.destroy!
 

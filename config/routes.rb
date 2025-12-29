@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   resource :session
+  resource :dashboard, only: :show
   resources :passwords, param: :token
   resources :deployments
   resources :domains
@@ -39,5 +40,5 @@ Rails.application.routes.draw do
   PluginRouteBuilder.draw(self)
 
   # Defines the root path route ("/")
-  root "domains#index"
+  root "dashboards#show"
 end

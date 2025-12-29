@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Controller for managing Resource catalog entities.
 class ResourcesController < ApplicationController
   include HasDependencies
   include HasDependencyGraph
@@ -8,6 +9,7 @@ class ResourcesController < ApplicationController
   before_action :set_entity, only: %i[ edit update destroy ]
   before_action :eager_load_dependencies, only: %i[ show dependency_graph ]
 
+  # GET /resources
   def index
     @q = Resource.ransack(params[:q])
     @q.sorts = "name asc" if @q.sorts.empty?
@@ -21,10 +23,12 @@ class ResourcesController < ApplicationController
     )
   end
 
+  # GET /resources/:id
   def show
     render Views::Resources::Show.new(resource: @entity, dependencies:, dependents:)
   end
 
+  # GET /resources/new
   def new
     render Views::Resources::New.new(
       resource: Resource.new,
@@ -33,6 +37,7 @@ class ResourcesController < ApplicationController
     )
   end
 
+  # GET /resources/:id/edit
   def edit
     render Views::Resources::Edit.new(
       resource: @entity,
@@ -41,6 +46,7 @@ class ResourcesController < ApplicationController
     )
   end
 
+  # POST /resources
   def create
     @entity = Resource.new(resource_params)
 
@@ -52,6 +58,7 @@ class ResourcesController < ApplicationController
     end
   end
 
+  # PATCH/PUT /resources/:id
   def update
     if @entity.update(resource_params)
       redirect_to @entity, success: "Resource was successfully updated."
@@ -61,6 +68,7 @@ class ResourcesController < ApplicationController
     end
   end
 
+  # DELETE /resources/:id
   def destroy
     @entity.destroy!
 

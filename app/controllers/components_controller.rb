@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# Controller for managing Component catalog entities.
 class ComponentsController < ApplicationController
   include HasDependencies
   include HasDependencyGraph

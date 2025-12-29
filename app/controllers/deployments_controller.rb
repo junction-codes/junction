@@ -1,7 +1,10 @@
+# frozen_string_literal: true
+
+# Controller for managing Deployments..
 class DeploymentsController < ApplicationController
   before_action :set_deployment, only: %i[ show edit update destroy ]
 
-  # GET /deployments or /deployments.json
+  # GET /deployments
   def index
     @q = Deployment.ransack(params[:q])
     @q.sorts = "name asc" if @q.sorts.empty?
@@ -15,7 +18,7 @@ class DeploymentsController < ApplicationController
     )
   end
 
-  # GET /deployments/1 or /deployments/1.json
+  # GET /deployments/:id
   def show
     render Views::Deployments::Show.new(deployment: @deployment)
   end
@@ -28,7 +31,7 @@ class DeploymentsController < ApplicationController
     )
   end
 
-  # GET /deployments/1/edit
+  # GET /deployments/:id/edit
   def edit
     render Views::Deployments::Edit.new(
       deployment: @deployment,
@@ -36,7 +39,7 @@ class DeploymentsController < ApplicationController
     )
   end
 
-  # POST /deployments or /deployments.json
+  # POST /deployments
   def create
     @deployment = Deployment.new(deployment_params)
 
@@ -48,7 +51,7 @@ class DeploymentsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /deployments/1 or /deployments/1.json
+  # PATCH/PUT /deployments/:id
   def update
     if @deployment.update(deployment_params)
       redirect_to @deployment, success: "Deployment was successfully updated."
@@ -58,7 +61,7 @@ class DeploymentsController < ApplicationController
     end
   end
 
-  # DELETE /deployments/1 or /deployments/1.json
+  # DELETE /deployments/:id
   def destroy
     @deployment.destroy!
 

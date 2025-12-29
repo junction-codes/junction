@@ -26,9 +26,6 @@ class Component < ApplicationRecord
     %w[created_at component_type description lifecycle name owner_id system_id type updated_at]
   end
 
-  # Get the icon associated with the component's type.
-  #
-  # @return [String] The icon name.
   def icon
     CatalogOptions.kinds[type]&.[](:icon) || "server"
   end

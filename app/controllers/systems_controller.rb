@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# Controller for managing System catalog entities.
 class SystemsController < ApplicationController
   before_action :set_entity, only: %i[ show edit update destroy dependency_graph ]
 

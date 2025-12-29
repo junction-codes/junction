@@ -10,7 +10,7 @@ module Components
         class: "bg-white dark:bg-gray-800 flex flex-col transition-all duration-300 w-64"
       ) do
         nav(class: "flex-1 px-2 py-4 space-y-2") do
-          item(href: "#", icon: "house", title: "Dashboard", disabled: true)
+          item(href: "#{dashboard_path}", icon: "house", title: "Dashboard")
           item(href: "#{domains_path}", icon: "briefcase", title: "Domains")
           item(href: "#{systems_path}", icon: "network", title: "Systems")
           item(href: "#{components_path}", icon: "server", title: "Components")

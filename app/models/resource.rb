@@ -23,9 +23,6 @@ class Resource < ApplicationRecord
     %w[created_at description name owner_id resource_type system_id type updated_at]
   end
 
-  # Get the icon associated with the component's type.
-  #
-  # @return [String] The icon name.
   def icon
     CatalogOptions.resources[type]&.[](:icon) || "rows-4"
   end
