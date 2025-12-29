@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'rspec_pacman_formatter'
 require 'simplecov'
 
 SimpleCov.start 'rails' do
