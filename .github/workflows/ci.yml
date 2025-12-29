@@ -85,6 +85,9 @@ jobs:
           ruby-version: .ruby-version
           bundler-cache: true
 
+      - name: Install icons
+        run: bin/rails generate rails_icons:sync
+
       - name: Run tests
         env:
           RAILS_ENV: test
