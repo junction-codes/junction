@@ -237,7 +237,7 @@ GEM
     parser (3.3.10.0)
       ast (~> 2.4.1)
       racc
-    pg (1.6.2-x86_64-linux)
+    pg (1.6.3-x86_64-linux)
     phlex (2.3.1)
       zeitwerk (~> 2.7)
     phlex-rails (2.3.1)
@@ -466,7 +466,7 @@ DEPENDENCIES
   omniauth (~> 2.1)
   omniauth-github (~> 2.0)
   omniauth-rails_csrf_protection (~> 2.0)
-  pg (~> 1.1)
+  pg (~> 1.6)
   phlex-rails (~> 2.3)
   propshaft
   puma (>= 5.0)
