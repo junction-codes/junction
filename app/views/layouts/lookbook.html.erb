@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html class="<%= params.dig(:lookbook, :display, :theme) %>">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= turbo_refresh_method_tag :morph %>
+    <%= turbo_refresh_scroll_tag :preserve %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+    <%= stylesheet_link_tag :app %>
+
+    <%= javascript_importmap_tags %>
+
+    <title><%= content_for?(:title) ? content_for(:title) : "Component Preview" %></title>
+  </head>
+
+  <body class="bg-gray-50 dark:bg-gray-900">
+    <div class="flex flex-col h-screen">
+      <div class="flex flex-1 overflow-hidden">
+        <main class="flex-1 overflow-y-auto transition-all duration-300 mt-5 md:mx-10">
+          <%= yield %>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

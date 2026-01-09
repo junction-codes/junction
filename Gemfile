@@ -57,6 +57,8 @@ group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
 
+  gem "lookbook", git: "https://github.com/lookbook-hq/lookbook.git", branch: "phlex-render-compat"
+
   gem "brakeman", "~> 7.1", require: false
   gem "factory_bot_rails", "~> 6.5", require: false
   gem "faker", "~> 3.5", require: false
