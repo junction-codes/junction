@@ -2,6 +2,9 @@ require_relative "boot"
 
 require "rails/all"
 
+# Load the engine early so its initializers run during boot.
+require_relative "../lib/junction/engine"
+
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)

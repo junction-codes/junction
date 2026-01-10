@@ -10,6 +10,10 @@ module Components
     include IconHelper
     include Chartkick::Helper
 
+    # Include engine and mounted helpers
+    include Junction::Engine.routes.url_helpers
+    include Rails.application.routes.mounted_helpers
+
     register_output_helper :icon
     register_output_helper :line_chart
     register_output_helper :pie_chart
