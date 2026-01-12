@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 # Controller for managing user password resets..
-class PasswordsController < ApplicationController
+module Junction
+  class PasswordsController < Junction::ApplicationController
   allow_unauthenticated_access
   before_action :set_user_by_token, only: %i[ edit update ]
 
@@ -41,4 +42,5 @@ class PasswordsController < ApplicationController
   rescue ActiveSupport::MessageVerifier::InvalidSignature
     redirect_to new_password_path, alert: "Password reset link is invalid or has expired."
   end
+end
 end

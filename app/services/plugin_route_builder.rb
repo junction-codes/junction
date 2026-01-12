@@ -6,7 +6,7 @@ class PluginRouteBuilder
   #
   # @param router [ActionDispatch::Routing::Mapper] The router to draw routes into.
   def self.draw(router)
-    PluginRegistry.actions.each do |context, actions|
+    Junction::PluginRegistry.actions.each do |context, actions|
       # Re-open the existing resource block in the router to add plugin actions.
       resource_name = context.to_s.underscore.pluralize.to_sym
       router.resources resource_name do

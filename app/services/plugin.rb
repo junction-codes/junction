@@ -24,7 +24,7 @@ class Plugin
 
   # Registers the plugin with the global registry.
   def register
-    PluginRegistry.register_plugin(self)
+    Junction::PluginRegistry.register_plugin(self)
   end
 
   # Registers an authentication provider for the plugin.

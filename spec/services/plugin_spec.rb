@@ -23,11 +23,11 @@ RSpec.describe Plugin do
   end
 
   describe "#register" do
-    before { allow(PluginRegistry).to receive(:register_plugin) }
+    before { allow(Junction::PluginRegistry).to receive(:register_plugin) }
 
-    it "registers the plugin with PluginRegistry" do
+    it "registers the plugin with Junction::PluginRegistry" do
       plugin.register
-      expect(PluginRegistry).to have_received(:register_plugin).with(plugin)
+      expect(Junction::PluginRegistry).to have_received(:register_plugin).with(plugin)
     end
   end
 

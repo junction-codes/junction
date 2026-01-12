@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
-require "rubocop/rake_task"
+begin
+  require "rubocop/rake_task"
 
-RuboCop::RakeTask.new
+  RuboCop::RakeTask.new
+rescue LoadError
+  # RuboCop not installed, skip task
+end

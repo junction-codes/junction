@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    Junction (0.1.0)
+    junction-codes (0.1.0)
       bcrypt (~> 3.1)
       bootsnap (~> 1.20)
       chartkick (~> 5.2)
@@ -483,13 +483,13 @@ PLATFORMS
   x86_64-linux-gnu
 
 DEPENDENCIES
-  Junction!
   brakeman (~> 7.1)
   capybara (~> 3.4)
   cuprite (~> 0.17)
   debug
   factory_bot_rails (~> 6.5)
   faker (~> 3.5)
+  junction-codes!
   propshaft
   rspec-rails (~> 8.0)
   rubocop-capybara (~> 2.22)

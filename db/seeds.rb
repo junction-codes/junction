@@ -10,6 +10,22 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
+# Ensure default admin user exists (for standalone Junction installation)
+def create_default_admin_user
+  return if User.exists?(email_address: "admin@example.com")
+
+  User.create!(
+    display_name: "Administrator",
+    email_address: "admin@example.com",
+    password: "passWord1!",
+    password_confirmation: "passWord1!"
+  )
+
+  puts "✓ Created default admin user: admin@example.com (password: passWord1!)"
+end
+
+create_default_admin_user
+
 def import_apis(path)
   return unless File.exist?(Rails.root.join(path, 'apis.yaml'))
 

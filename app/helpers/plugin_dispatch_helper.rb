@@ -7,7 +7,7 @@ module PluginDispatchHelper
   # @param sidebar [SidebarComponent] The sidebar component to render links
   #   into.
   def render_sidebar_links(sidebar)
-    PluginRegistry.instance.sidebar_links.each do |link|
+    Junction::PluginRegistry.instance.sidebar_links.each do |link|
       params = link
       params[:href] = params[:path].is_a?(Symbol) ? main_app.send(params.delete(:path)) : params.delete(:path)
       sidebar.item(**params)
@@ -63,7 +63,7 @@ module PluginDispatchHelper
   # @param slot [Symbol] The slot to check components for.
   # @return [Array<Hash>] Definitions for the visible UI components.
   def visible_components(context, slot)
-    PluginRegistry.components_for(context:, slot:).select do |component|
+    Junction::PluginRegistry.components_for(context:, slot:).select do |component|
       component[:if].nil? || component[:if].call(context:)
     end
   end
@@ -73,7 +73,7 @@ module PluginDispatchHelper
   # @param context [ApplicationRecord] The record to check visibility against.
   # @return [Array<Hash>] Definitions for the visible tabs.
   def visible_tabs(context)
-    PluginRegistry.tabs_for(context).select do |tab|
+    Junction::PluginRegistry.tabs_for(context).select do |tab|
       tab[:if].nil? || tab[:if].call(context:)
     end
   end

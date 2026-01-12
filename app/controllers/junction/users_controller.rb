@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 # Controller for managing Users.
-class UsersController < ApplicationController
+module Junction
+  class UsersController < Junction::ApplicationController
   before_action :set_entity, only: %i[ show edit update destroy ]
 
   # GET /users
@@ -75,4 +76,5 @@ class UsersController < ApplicationController
 
     p
   end
+end
 end

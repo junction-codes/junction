@@ -45,7 +45,7 @@ class AnnotationsAccessor
     key = method_name.to_s
     if @data.key?(key)
       @data[key]
-    elsif PluginRegistry.annotations_for(@entity.class).keys.include?(key)
+    elsif Junction::PluginRegistry.annotations_for(@entity.class).keys.include?(key)
       nil
     else
       super

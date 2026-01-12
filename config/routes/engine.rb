@@ -1,28 +1,28 @@
 # frozen_string_literal: true
 
 Junction::Engine.routes.draw do
-  resource :session
-  resource :dashboard, only: :show
-  resources :passwords, param: :token
-  resources :deployments
-  resources :domains
-  resources :resources
-  resources :groups
-  resources :users
+  resource :session, controller: "junction/sessions"
+  resource :dashboard, only: :show, controller: "junction/dashboard"
+  resources :passwords, param: :token, controller: "junction/passwords"
+  resources :deployments, controller: "junction/deployments"
+  resources :domains, controller: "junction/domains"
+  resources :resources, controller: "junction/resources"
+  resources :groups, controller: "junction/groups"
+  resources :users, controller: "junction/users"
 
-  resources :apis do
+  resources :apis, controller: "junction/apis" do
     get :dependency_graph, on: :member
   end
 
-  resources :components do
+  resources :components, controller: "junction/components" do
     get :dependency_graph, on: :member
   end
 
-  resources :resources do
+  resources :resources, controller: "junction/resources" do
     get :dependency_graph, on: :member
   end
 
-  resources :systems do
+  resources :systems, controller: "junction/systems" do
     get :dependency_graph, on: :member
   end
 
@@ -35,12 +35,12 @@ Junction::Engine.routes.draw do
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   # OmniAuth routes for single sign-on.
-  get "/auth/:provider/callback", to: "sessions/omniauth#callback"
-  get "/auth/failure", to: "sessions/omniauth#failure"
+  get "/auth/:provider/callback", to: "junction/sessions/omniauth#callback"
+  get "/auth/failure", to: "junction/sessions/omniauth#failure"
 
   # Add plugin routes.
   PluginRouteBuilder.draw(self)
 
   # Defines the root path route ("/")
-  root "dashboards#show"
+  root "junction/dashboards#show"
 end

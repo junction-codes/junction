@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 # Controller for managing API catalog entities.
-class ApisController < ApplicationController
+module Junction
+  class ApisController < Junction::ApplicationController
   include HasDependencies
   include HasDependencyGraph
   include HasDependents
@@ -111,4 +112,5 @@ class ApisController < ApplicationController
   def api_params
     params.expect(api: [ :api_type, :name, :description, :definition, :lifecycle, :type, :image_url, :owner_id, :system_id, annotations: {} ])
   end
+end
 end

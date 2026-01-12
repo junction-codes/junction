@@ -2,11 +2,12 @@
 
 require "singleton"
 
-# Registry for managing plugin hooks into the application.
-class PluginRegistry
-  include Singleton
+module Junction
+  # Registry for managing plugin hooks into the application.
+  class PluginRegistry
+    include Singleton
 
-  class PluginNotFoundError < ArgumentError; end
+    class PluginNotFoundError < ArgumentError; end
 
   attr_reader :plugins
 
@@ -121,5 +122,6 @@ class PluginRegistry
     return context if context.is_a?(String)
 
     context.is_a?(Class) ? context.to_s : context.class.to_s
+  end
   end
 end

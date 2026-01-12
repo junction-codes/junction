@@ -2,6 +2,7 @@
 
 module Junction
   # Base controller for the Junction engine.
+  # Host applications can include concerns or override behavior as needed.
   class ApplicationController < ActionController::Base
     include Authentication
     include PluginDispatchHelper

@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 # Controller for managing System catalog entities.
-class SystemsController < ApplicationController
+module Junction
+  class SystemsController < Junction::ApplicationController
   before_action :set_entity, only: %i[ show edit update destroy dependency_graph ]
 
   # GET /systems
@@ -107,4 +108,5 @@ class SystemsController < ApplicationController
   def system_params
     params.expect(system: [ :name, :description, :status, :domain_id, :owner_id ])
   end
+end
 end

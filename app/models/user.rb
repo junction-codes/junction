@@ -55,7 +55,7 @@ class User < ApplicationRecord
     identity = Identity.find_by(provider: auth.provider, uid: auth.uid)
     return identity.user if identity
 
-    provider = PluginRegistry.auth_providers[auth.provider.to_sym]
+    provider = Junction::PluginRegistry.auth_providers[auth.provider.to_sym]
     user  = provider[:callback].call(auth)
     user.identities.create!(provider: auth.provider, uid: auth.uid) if user
 

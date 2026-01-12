@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 # Controller for managing Groups..
-class GroupsController < ApplicationController
+module Junction
+  class GroupsController < Junction::ApplicationController
   before_action :set_entity, only: %i[ show edit update destroy ]
 
   # GET /groups
@@ -86,4 +87,5 @@ class GroupsController < ApplicationController
   def group_params
     params.expect(group: [ :description, :name, :email, :image_url, :parent_id, :type, annotations: {} ])
   end
+end
 end

@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 # Controller for managing Deployments..
-class DeploymentsController < ApplicationController
+module Junction
+  class DeploymentsController < Junction::ApplicationController
   before_action :set_deployment, only: %i[ show edit update destroy ]
 
   # GET /deployments
@@ -104,4 +105,5 @@ class DeploymentsController < ApplicationController
   def deployment_params
     params.expect(deployment: [ :environment, :platform, :location_identifier, :component_id ])
   end
+end
 end

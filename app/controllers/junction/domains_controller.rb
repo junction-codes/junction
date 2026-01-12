@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 # Controller for managing Domain catalog entities.
-class DomainsController < ApplicationController
+module Junction
+  class DomainsController < Junction::ApplicationController
   before_action :set_entity, only: %i[show edit update destroy]
 
   # GET /domains
@@ -87,4 +88,5 @@ class DomainsController < ApplicationController
   def domain_params
     params.expect(domain: [ :name, :description, :image_url, :status, :owner_id ])
   end
+end
 end

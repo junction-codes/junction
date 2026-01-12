@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 # Controller for managing user sessions.
-class SessionsController < ApplicationController
+module Junction
+  class SessionsController < Junction::ApplicationController
   allow_unauthenticated_access only: %i[ new create ]
   rate_limit to: 10, within: 3.minutes, only: :create, with: -> { redirect_to new_session_url, alert: "Try again later.", status: :too_many_requests }
 
@@ -25,5 +26,6 @@ class SessionsController < ApplicationController
   def destroy
     terminate_session
     redirect_to new_session_path
+  end
   end
 end

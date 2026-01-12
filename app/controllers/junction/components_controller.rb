@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 # Controller for managing Component catalog entities.
-class ComponentsController < ApplicationController
+module Junction
+  class ComponentsController < Junction::ApplicationController
   include HasDependencies
   include HasDependencyGraph
   include HasDependents
@@ -120,4 +121,5 @@ class ComponentsController < ApplicationController
   def component_params
     params.expect(component: [ :name, :description, :repository_url, :lifecycle, :type, :image_url, :owner_id, :system_id, annotations: {} ])
   end
+end
 end

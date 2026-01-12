@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 # Controller for managing Resource catalog entities.
-class ResourcesController < ApplicationController
+module Junction
+  class ResourcesController < Junction::ApplicationController
   include HasDependencies
   include HasDependencyGraph
   include HasDependents
@@ -110,4 +111,5 @@ class ResourcesController < ApplicationController
   def resource_params
     params.expect(resource: [ :name, :description, :type, :image_url, :owner_id, :system_id, annotations: {} ])
   end
+end
 end

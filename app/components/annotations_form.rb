@@ -34,7 +34,7 @@ module Components
 
     # TODO: Support arbitrary annotations.
     def annotations
-      @annotations ||= PluginRegistry.instance.annotations_for(@context.class)
+      @annotations ||= Junction::PluginRegistry.instance.annotations_for(@context.class)
     end
 
     def render_field_for(annotation)

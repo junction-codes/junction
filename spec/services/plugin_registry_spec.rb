@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe PluginRegistry do
+RSpec.describe Junction::PluginRegistry do
   subject(:registry) { described_class.instance }
 
   let(:methods) do
@@ -85,7 +85,7 @@ RSpec.describe PluginRegistry do
 
   describe "#plugin" do
     it "raises an error if the plugin is not found" do
-      expect { registry.plugin("non_existent_plugin") }.to raise_error(PluginRegistry::PluginNotFoundError)
+      expect { registry.plugin("non_existent_plugin") }.to raise_error(Junction::PluginRegistry::PluginNotFoundError)
     end
 
     it "returns the plugin if found" do

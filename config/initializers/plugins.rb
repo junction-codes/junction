@@ -2,4 +2,4 @@
 
 require_relative "../../app/services/plugin_registry"
 
-PluginRegistry.instance
+Junction::PluginRegistry.instance
