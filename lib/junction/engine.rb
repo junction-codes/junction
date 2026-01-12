@@ -62,7 +62,7 @@ module Junction
       # Auto-load junction-plugins-* gems after the engine loads but before initializers
       next if app.root.to_s == root.to_s
 
-      Junction::PluginLoader.load! unless Rails.env.test?
+      # Junction::PluginLoader.load! unless Rails.env.test?
     end
 
     initializer "junction.importmap", before: "importmap" do |app|
