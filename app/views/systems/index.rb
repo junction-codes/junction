@@ -25,7 +25,7 @@ class Views::Systems::Index < Views::Base
   end
 
   def view_template
-    render Layouts::Application do
+    render Junction::Layouts::Application do
       div(class: "p-6") do
         div(class: "flex justify-between items-center mb-6") do
           h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { "Systems" }

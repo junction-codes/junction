@@ -46,8 +46,7 @@ module Junction
         meta name: "mobile-web-app-capable", content: "yes"
         csrf_meta_tags
         csp_meta_tag
-        turbo_refresh_method_tag :morph
-        turbo_refresh_scroll_tag :preserve
+        turbo_refreshes_with method: :morph, scroll: :preserve
       end
 
       def link_tags
@@ -57,7 +56,7 @@ module Junction
         link rel: "icon", href: "/icon.png", type: "image/png"
         link rel: "icon", href: "/icon.svg", type: "image/svg+xml"
         link rel: "apple-touch-icon", href: "/icon.png"
-        stylesheet_link_tag :app, 'data-turbo-track': "reload"
+        stylesheet_link_tag :tailwind, 'data-turbo-track': "reload"
       end
 
       def page_title

@@ -6,7 +6,7 @@ class Views::Users::Show < Views::Base
   end
 
   def view_template
-    render Layouts::Application.new do
+    render Junction::Layouts::Application.new do
       div(class: "p-6 space-y-8") do
         user_header
         user_stats

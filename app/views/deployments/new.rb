@@ -15,7 +15,7 @@ class Views::Deployments::New < Views::Base
   end
 
   def view_template
-    render Layouts::Application.new do
+    render Junction::Layouts::Application.new do
       template
     end
   end

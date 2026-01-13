@@ -21,7 +21,7 @@ class Views::Domains::Index < Views::Base
   end
 
   def view_template
-    render Layouts::Application.new do
+    render Junction::Layouts::Application.new do
       div(class: "p-6") do
         # Page header.
         div(class: "flex justify-between items-center mb-6") do

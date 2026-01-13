@@ -1,10 +1,8 @@
   # frozen_string_literal: true
 
-  # module Junction
+module Junction
   module Layouts
     class Unauthenticated < Base
-      include Phlex::Rails::Helpers::TurboRefreshesWith
-
       def view_template(&block)
         doctype
 
@@ -57,4 +55,4 @@
       end
     end
   end
-# end
+end

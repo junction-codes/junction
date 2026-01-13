@@ -4,7 +4,7 @@ class Views::Sessions::New < Views::Base
   include Phlex::Rails::Helpers::ButtonTo
 
   def view_template
-    render Layouts::Unauthenticated do
+    render Junction::Layouts::Unauthenticated do
       template
     end
   end
