@@ -1,9 +1,15 @@
-@import "tailwindcss";
+@import "tailwindcss" source(none);
+
+@source "../../../javascript/**/*.js";
+@source "../../../components/**/*.rb";
+@source "../../../helpers/**/*.rb";
+@source "../../../layouts/**/*.rb";
+@source "../../../views/**/*.rb";
 
 @plugin "@tailwindcss/forms";
 @plugin "@tailwindcss/typography";
 
-/* @import "tw-animate-css.js"; */
+@import "../../../../vendor/javascript/tw-animate-css.js";
 
 @custom-variant dark (&:is(.dark *));
 

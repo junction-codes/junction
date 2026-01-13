@@ -78,16 +78,5 @@ module Junction
       app.config.assets.paths << root.join("app/javascript")
       app.config.assets.paths << root.join("vendor/javascript")
     end
-
-    initializer "junction.tailwindcss" do |app|
-      if defined?(Tailwindcss)
-        # Add engine views to the host app's search path
-        # app.config.tailwindcss.engines ||= []
-        # app.config.tailwindcss.engines << Junction::Engine.engine_name
-        app.config.tailwindcss.content << Junction::Engine.root.join("app/views/**/*")
-        app.config.tailwindcss.content << Junction::Engine.root.join("app/helpers/**/*")
-        app.config.tailwindcss.content << Junction::Engine.root.join("app/javascript/**/*")
-      end
-    end
   end
 end
