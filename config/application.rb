@@ -35,9 +35,5 @@ module Junction
     config.generators do |g|
       g.test_framework :rspec
     end
-
-    def icon
-      config_for(:app)&.[](:icon) ||  "train-track"
-    end
   end
 end

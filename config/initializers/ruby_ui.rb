@@ -15,9 +15,6 @@ Rails.autoloaders.main.inflector.inflect(
 )
 
 # Tell the autoloader where for find layours.
-Rails.autoloaders.main.push_dir(
-  Junction::Engine.root.join("app/layouts"), namespace: Layouts
-)
 Rails.autoloaders.main.collapse(Junction::Engine.root.join("app/layouts/*"))
 
 # Allow grouping components into subdirectories without creating a new

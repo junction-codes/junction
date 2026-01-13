@@ -8,6 +8,8 @@ require "tailwindcss-rails"
 
 module Junction
   class Engine < ::Rails::Engine
+    ENGINE_CONFIG_PATH = root.join("config", "junction.yml").freeze
+
     engine_name "junction"
 
     paths["config/routes.rb"] = [ "config/routes/engine.rb" ]
@@ -44,9 +46,12 @@ module Junction
     end
 
     initializer "junction.configuration" do |app|
-      # Allow host apps to configure Junction behavior
-      app.config.junction = ActiveSupport::OrderedOptions.new unless app.config.respond_to?(:junction)
-      app.config.junction.allow_demo_mode ||= ENV.fetch("JUNCTION_DEMO_MODE", "false") == "true"
+      Junction.config = app.config_for(ENGINE_CONFIG_PATH)
+
+      app_config_path = app.root.join("config", "junction.yml")
+      if File.exist?(app_config_path)
+        Junction.config.merge!(app.config_for(app_config_path))
+      end
     end
 
     initializer "junction.helpers", after: :load_config_initializers do |app|

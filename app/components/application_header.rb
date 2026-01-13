@@ -16,7 +16,7 @@ module Components
           end
 
           h1(class: "text-xl font-semibold text-gray-800 dark:text-white whitespace-nowrap inline-flex items-center justify-center") do
-            icon(Rails.application.icon, class: "h-8 w-8 pe-2")
+            icon(Junction.config.icon, class: "h-8 w-8 pe-2")
             plain t("app.title")
           end
         end
