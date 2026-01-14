@@ -34,11 +34,11 @@ module Junction
                 end
               end
 
-              ::Components::DomainFilters(query:, available_owners:, available_statuses:)
+              DomainFilters(query:, available_owners:, available_statuses:)
 
               # Domains table.
               div(class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
-                render ::Components::Table do |table|
+                render Table do |table|
                   table_header(table)
                   table_body(table)
                 end
@@ -88,7 +88,7 @@ module Junction
                 end
 
                 row.cell do
-                  render ::Components::Badge.new(variant: domain.status&.to_sym) { domain.status&.capitalize }
+                  render Badge.new(variant: domain.status&.to_sym) { domain.status&.capitalize }
                 end
 
                 row.cell do

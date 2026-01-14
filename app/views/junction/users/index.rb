@@ -27,10 +27,10 @@ module Junction
                 end
               end
 
-              ::Components::UserFilters(query:)
+              UserFilters(query:)
 
               div(class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
-                render ::Components::Table do |table|
+                render Table do |table|
                   table_header(table)
                   table_body(table)
                 end

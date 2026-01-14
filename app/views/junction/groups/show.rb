@@ -63,15 +63,15 @@ module Junction
 
         def group_stats
           div(class: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6") do
-            render ::Components::StatCard.new(title: "Total Systems", value: @group.systems.count, icon: "network")
-            render ::Components::StatCard.new(title: "Total Components", value: @group.components.count, icon: "server")
+            render StatCard.new(title: "Total Systems", value: @group.systems.count, icon: "network")
+            render StatCard.new(title: "Total Components", value: @group.components.count, icon: "server")
 
             render_plugin_ui_components(context: @group, slot: :group_profile_cards)
           end
         end
 
         def group_tabs
-          render ::Components::Tabs.new do |tabs|
+          render Tabs.new do |tabs|
             tabs.list do |list|
               list.trigger(value: "members") do
                 icon("blocks", class: "pe-2")
@@ -107,7 +107,7 @@ module Junction
                     tr(class: "hover:bg-gray-50 dark:hover:bg-gray-700/50") do
                       td(class: "px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white") { component.name }
                       td(class: "px-6 py-4 whitespace-nowrap") do
-                        render ::Components::Badge.new(variant: component.lifecycle&.to_sym) { component.lifecycle&.capitalize }
+                        render Badge.new(variant: component.lifecycle&.to_sym) { component.lifecycle&.capitalize }
                       end
                       td(class: "px-6 py-4 whitespace-nowrap text-right text-sm font-medium") do
                         a(href: "#{component_path(component)}", class: "text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300") { "View" }

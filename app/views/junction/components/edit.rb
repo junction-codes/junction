@@ -35,11 +35,11 @@ module Junction
 
             div(class: "grid grid-cols-1 lg:grid-cols-3 gap-8") do
               main(class: "lg:col-span-2") do
-                ::Components::ComponentForm(component:, available_owners:, available_systems:)
+                ComponentForm(component:, available_owners:, available_systems:)
               end
 
               aside(class: "space-y-6") do
-                ::Components::ComponentEditSidebar(component:)
+                ComponentEditSidebar(component:)
               end
             end
           end

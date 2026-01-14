@@ -34,11 +34,11 @@ module Junction
             # Two-column layout for form and sidebar.
             div(class: "grid grid-cols-1 lg:grid-cols-3 gap-8") do
               main(class: "lg:col-span-2") do
-                ::Components::GroupForm(group:, available_parents:)
+                GroupForm(group:, available_parents:)
               end
 
               aside(class: "space-y-6") do
-                ::Components::GroupEditSidebar(group:)
+                GroupEditSidebar(group:)
               end
             end
           end

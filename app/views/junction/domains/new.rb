@@ -31,7 +31,7 @@ module Junction
             end
 
             main(class: "mt-6 max-w-2xl mx-auto") do
-              ::Components::DomainForm(domain:, available_owners:)
+              DomainForm(domain:, available_owners:)
             end
           end
         end

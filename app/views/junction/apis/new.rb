@@ -34,7 +34,7 @@ module Junction
             end
 
             main(class: "mt-6 max-w-2xl mx-auto") do
-              ::Components::ApiForm(api:, available_owners:, available_systems:)
+              ApiForm(api:, available_owners:, available_systems:)
             end
           end
         end

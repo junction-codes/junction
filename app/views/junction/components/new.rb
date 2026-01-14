@@ -34,7 +34,7 @@ module Junction
             end
 
             main(class: "mt-6 max-w-2xl mx-auto") do
-              ::Components::ComponentForm(component:, available_owners:, available_systems:)
+              ComponentForm(component:, available_owners:, available_systems:)
             end
           end
         end

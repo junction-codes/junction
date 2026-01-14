@@ -30,10 +30,10 @@ module Junction
                 end
               end
 
-              ::Components::GroupFilters(query:, available_types:)
+              GroupFilters(query:, available_types:)
 
               div(class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
-                render ::Components::Table do |table|
+                render Table do |table|
                   table_header(table)
                   table_body(table)
                 end

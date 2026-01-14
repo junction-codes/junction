@@ -80,14 +80,14 @@ module Junction
         def api_stats
           div(class: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6") do
             # TODO: Remove placeholder.
-            render ::Components::StatCard.new(title: "Active Incidents", value: "1", icon: "siren", status: :warning)
+            render StatCard.new(title: "Active Incidents", value: "1", icon: "siren", status: :warning)
 
             render_plugin_ui_components(context: @api, slot: :overview_cards)
           end
         end
 
         def api_tabs
-          render ::Components::Tabs.new do |tabs|
+          render Tabs.new do |tabs|
             tabs.list do |list|
               list.trigger(value: "dependencies") do
                 icon("blocks", class: "pe-2")

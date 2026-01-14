@@ -25,13 +25,13 @@ module Junction
         def view_template
           render Junction::Layouts::Application.new do
             div(class: "p-6 space-y-8") do
-              ::Components::DashboardHeroCard(user:)
+              DashboardHeroCard(user:)
 
               render_plugin_ui_components(context: @user, slot: :user_dashboard)
 
               div(class: "grid grid-cols-1 xl:grid-cols-3 gap-6") do
-                ::Components::DashboardMyEntities(entities: @owned_entities)
-                ::Components::DashboardUpdatedEntities(entities: @recent_catalog_items)
+                DashboardMyEntities(entities: @owned_entities)
+                DashboardUpdatedEntities(entities: @recent_catalog_items)
               end
             end
           end

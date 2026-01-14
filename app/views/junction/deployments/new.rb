@@ -31,7 +31,7 @@ module Junction
             end
 
             main(class: "mt-6 max-w-2xl mx-auto") do
-              ::Components::DeploymentForm(deployment:, available_components:)
+              DeploymentForm(deployment:, available_components:)
             end
           end
         end

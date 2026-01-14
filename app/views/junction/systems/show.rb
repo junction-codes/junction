@@ -81,8 +81,8 @@ module Junction
 
         def system_stats
           div(class: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6") do
-            render ::Components::StatCard.new(title: "Total Components", value: @system.components.count, icon: "server")
-            render ::Components::StatCard.new(title: "Active Incidents", value: "1", icon: "siren", status: :warning)
+            render StatCard.new(title: "Total Components", value: @system.components.count, icon: "server")
+            render StatCard.new(title: "Active Incidents", value: "1", icon: "siren", status: :warning)
           end
         end
 
@@ -121,7 +121,7 @@ module Junction
                 tr(class: "hover:bg-gray-50 dark:hover:bg-gray-700/50") do
                   td(class: "px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white") { component.name }
                   td(class: "px-6 py-4 whitespace-nowrap") do
-                    render ::Components::Badge.new(variant: component.lifecycle&.to_sym) { component.lifecycle&.capitalize }
+                    render Badge.new(variant: component.lifecycle&.to_sym) { component.lifecycle&.capitalize }
                   end
                   td(class: "px-6 py-4 whitespace-nowrap text-right text-sm font-medium") do
                     a(href: "/components/#{component.id}", class: "text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300") { "View" }

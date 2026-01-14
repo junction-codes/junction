@@ -83,14 +83,14 @@ module Junction
 
         def component_stats
           div(class: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6") do
-            render ::Components::StatCard.new(title: "Active Incidents", value: "1", icon: "siren", status: :warning)
+            render StatCard.new(title: "Active Incidents", value: "1", icon: "siren", status: :warning)
 
             render_plugin_ui_components(context: @component, slot: :overview_cards)
           end
         end
 
         def component_tabs
-          render ::Components::Tabs.new do |tabs|
+          render Tabs.new do |tabs|
             tabs.list do |list|
               list.trigger(value: "dependencies") do
                 icon("blocks", class: "pe-2")

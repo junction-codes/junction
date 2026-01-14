@@ -82,7 +82,7 @@ module Junction
         end
 
         def resource_tabs
-          render ::Components::Tabs.new do |tabs|
+          render Tabs.new do |tabs|
             tabs.list do |list|
               list.trigger(value: "dependencies") do
                 icon("blocks", class: "pe-2")

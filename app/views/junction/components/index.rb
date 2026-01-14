@@ -42,12 +42,12 @@ module Junction
                 end
               end
 
-              ::Components::ComponentFilters(query:, available_lifecycles:,
+              ComponentFilters(query:, available_lifecycles:,
                                           available_owners:, available_systems:,
                                           available_types:)
 
               div(class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
-                render ::Components::Table.new do |table|
+                render Table.new do |table|
                   table_header(table)
                   table_body(table)
                 end
@@ -116,7 +116,7 @@ module Junction
                 end
 
                 row.cell do
-                  render ::Components::Badge.new(variant: component.lifecycle&.to_sym) { component.lifecycle&.capitalize }
+                  render Badge.new(variant: component.lifecycle&.to_sym) { component.lifecycle&.capitalize }
                 end
               end
             end

@@ -41,11 +41,11 @@ module Junction
                 end
               end
 
-              ::Components::ApiFilters(query:, available_lifecycles:, available_owners:,
+              ApiFilters(query:, available_lifecycles:, available_owners:,
                                      available_systems:, available_types:)
 
               div(class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
-                render ::Components::Table do |table|
+                render Table do |table|
                   table_header(table)
                   table_body(table)
                 end
@@ -113,7 +113,7 @@ module Junction
                 end
 
                 row.cell do
-                  ::Components::Badge(variant: api.lifecycle) { api.lifecycle&.capitalize }
+                  Badge(variant: api.lifecycle) { api.lifecycle&.capitalize }
                 end
               end
             end

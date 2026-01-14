@@ -29,7 +29,7 @@ module Junction
             end
 
             main(class: "mt-6 max-w-2xl mx-auto") do
-              ::Components::UserForm(user:)
+              UserForm(user:)
             end
           end
         end

@@ -37,11 +37,11 @@ module Junction
                 end
               end
 
-              ::Components::SystemFilters(query:, available_domains:, available_owners:,
+              SystemFilters(query:, available_domains:, available_owners:,
                                           available_statuses:)
 
               div(class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
-                render ::Components::Table do |table|
+                render Table do |table|
                   table_header(table)
                   table_body(table)
                 end
@@ -99,7 +99,7 @@ module Junction
                 end
 
                 row.cell do
-                  ::Components::Badge(variant: system.status&.to_sym) { system.status&.capitalize }
+                  Badge(variant: system.status&.to_sym) { system.status&.capitalize }
                 end
               end
             end

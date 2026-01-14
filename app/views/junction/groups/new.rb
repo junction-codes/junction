@@ -32,7 +32,7 @@ module Junction
             end
 
             main(class: "mt-6 max-w-2xl mx-auto") do
-              ::Components::GroupForm(group:, available_parents:)
+              GroupForm(group:, available_parents:)
             end
           end
         end

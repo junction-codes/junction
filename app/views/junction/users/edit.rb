@@ -31,11 +31,11 @@ module Junction
             # Two-column layout for form and sidebar.
             div(class: "grid grid-cols-1 lg:grid-cols-3 gap-8") do
               main(class: "lg:col-span-2") do
-                ::Components::UserForm(user:)
+                UserForm(user:)
               end
 
               aside(class: "space-y-6") do
-                ::Components::UserEditSidebar(user:)
+                UserEditSidebar(user:)
               end
             end
           end

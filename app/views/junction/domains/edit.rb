@@ -34,11 +34,11 @@ module Junction
             # Two-column layout for form and sidebar.
             div(class: "grid grid-cols-1 lg:grid-cols-3 gap-8") do
               main(class: "lg:col-span-2") do
-                ::Components::DomainForm(domain:, available_owners:)
+                DomainForm(domain:, available_owners:)
               end
 
               aside(class: "space-y-6") do
-                ::Components::DomainEditSidebar(domain:)
+                DomainEditSidebar(domain:)
               end
             end
           end

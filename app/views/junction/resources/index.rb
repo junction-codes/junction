@@ -39,11 +39,11 @@ module Junction
                 end
               end
 
-              ::Components::ResourceFilters(query:, available_owners:,
+              ResourceFilters(query:, available_owners:,
                                             available_systems:, available_types:)
 
               div(class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
-                render ::Components::Table do |table|
+                render Table do |table|
                   table_header(table)
                   table_body(table)
                 end

@@ -81,7 +81,7 @@ module Junction
 
         def deployment_stats
           div(class: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6") do
-            render ::Components::StatCard.new(title: "Active Incidents", value: "1", icon: "siren", status: :warning)
+            render StatCard.new(title: "Active Incidents", value: "1", icon: "siren", status: :warning)
           end
         end
       end

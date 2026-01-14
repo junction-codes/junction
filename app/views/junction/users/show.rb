@@ -54,9 +54,9 @@ module Junction
 
         def user_stats
           div(class: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6") do
-            render ::Components::StatCard.new(title: "Total Groups", value: @user.group_memberships.count, icon: "users-round")
-            render ::Components::StatCard.new(title: "Total Systems", value: @user.systems.count, icon: "network")
-            render ::Components::StatCard.new(title: "Total Components", value: @user.components.count, icon: "server")
+            render StatCard.new(title: "Total Groups", value: @user.group_memberships.count, icon: "users-round")
+            render StatCard.new(title: "Total Systems", value: @user.systems.count, icon: "network")
+            render StatCard.new(title: "Total Components", value: @user.components.count, icon: "server")
 
             render_plugin_ui_components(context: @user, slot: :user_profile_cards)
           end
@@ -80,7 +80,7 @@ module Junction
                     tr(class: "hover:bg-gray-50 dark:hover:bg-gray-700/50") do
                       td(class: "px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white") { system.name }
                       td(class: "px-6 py-4 whitespace-nowrap") do
-                        render ::Components::Badge.new(variant: system.status.to_sym) { system.status.capitalize }
+                        render Badge.new(variant: system.status.to_sym) { system.status.capitalize }
                       end
                       td(class: "px-6 py-4 whitespace-nowrap text-right text-sm font-medium") do
                         a(href: "#{system_path(system)}", class: "text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300") { "View" }
@@ -111,7 +111,7 @@ module Junction
                     tr(class: "hover:bg-gray-50 dark:hover:bg-gray-700/50") do
                       td(class: "px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white") { component.name }
                       td(class: "px-6 py-4 whitespace-nowrap") do
-                        render ::Components::Badge.new(variant: component.lifecycle&.to_sym) { component.lifecycle&.capitalize }
+                        render Badge.new(variant: component.lifecycle&.to_sym) { component.lifecycle&.capitalize }
                       end
                       td(class: "px-6 py-4 whitespace-nowrap text-right text-sm font-medium") do
                         a(href: "#{component_path(component)}", class: "text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300") { "View" }
