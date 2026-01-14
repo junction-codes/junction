@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :user do
+  factory :user, class: "Junction::User" do
     sequence(:display_name) { |n| "Test User #{n}" }
     sequence(:email_address) { |n| "user-#{n}@example.com" }
     password { Faker::Internet.password(max_length: 72, special_characters: true) }

@@ -33,7 +33,7 @@ RSpec.describe "/domains", type: :request do
 
   describe "GET /index" do
     it "renders a successful response" do
-      Domain.create! valid_attributes
+      Junction::Domain.create! valid_attributes
       get domains_url
       expect(response).to be_successful
     end
@@ -41,7 +41,7 @@ RSpec.describe "/domains", type: :request do
 
   describe "GET /show" do
     it "renders a successful response" do
-      domain = Domain.create! valid_attributes
+      domain = Junction::Domain.create! valid_attributes
       get domain_url(domain)
       expect(response).to be_successful
     end
@@ -56,7 +56,7 @@ RSpec.describe "/domains", type: :request do
 
   describe "GET /edit" do
     it "renders a successful response" do
-      domain = Domain.create! valid_attributes
+      domain = Junction::Domain.create! valid_attributes
       get edit_domain_url(domain)
       expect(response).to be_successful
     end
@@ -99,14 +99,14 @@ RSpec.describe "/domains", type: :request do
       }
 
       it "updates the requested domain" do
-        domain = Domain.create! valid_attributes
+        domain = Junction::Domain.create! valid_attributes
         patch domain_url(domain), params: { domain: new_attributes }
         domain.reload
         expect(domain.status).to eq("closed")
       end
 
       it "redirects to the domain" do
-        domain = Domain.create! valid_attributes
+        domain = Junction::Domain.create! valid_attributes
         patch domain_url(domain), params: { domain: new_attributes }
         domain.reload
         expect(response).to redirect_to(domain_url(domain))
@@ -115,7 +115,7 @@ RSpec.describe "/domains", type: :request do
 
     context "with invalid parameters" do
       it "renders a response with 422 status (i.e. to display the 'edit' template)" do
-        domain = Domain.create! valid_attributes
+        domain = Junction::Domain.create! valid_attributes
         patch domain_url(domain), params: { domain: invalid_attributes }
         expect(response).to have_http_status(:unprocessable_content)
       end
@@ -124,14 +124,14 @@ RSpec.describe "/domains", type: :request do
 
   describe "DELETE /destroy" do
     it "destroys the requested domain" do
-      domain = Domain.create! valid_attributes
+      domain = Junction::Domain.create! valid_attributes
       expect {
         delete domain_url(domain)
       }.to change(Domain, :count).by(-1)
     end
 
     it "redirects to the domains list" do
-      domain = Domain.create! valid_attributes
+      domain = Junction::Domain.create! valid_attributes
       delete domain_url(domain)
       expect(response).to redirect_to(domains_url)
     end

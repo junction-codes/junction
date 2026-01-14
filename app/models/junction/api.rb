@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-class Api < ApplicationRecord
+module Junction
+  class Api < ApplicationRecord
   include Annotated
   include Dependable
   include Dependentable
@@ -32,4 +33,5 @@ class Api < ApplicationRecord
   def icon
     CatalogOptions.apis[type]&.[](:icon) || "webhook"
   end
+end
 end

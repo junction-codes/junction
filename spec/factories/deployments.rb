@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :deployment do
+  factory :deployment, class: "Junction::Deployment" do
     association :component
 
     environment { CatalogOptions.environments.keys.sample }

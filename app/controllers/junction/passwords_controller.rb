@@ -13,7 +13,7 @@ module Junction
 
   # POST /passwords
   def create
-    user = User.find_by(email_address: params[:email_address])
+    user = Junction::User.find_by(email_address: params[:email_address])
     if user
       PasswordsMailer.reset(user).deliver_later
     end
@@ -38,7 +38,7 @@ module Junction
   private
 
   def set_user_by_token
-    @user = User.find_by_password_reset_token!(params[:token])
+    @user = Junction::User.find_by_password_reset_token!(params[:token])
   rescue ActiveSupport::MessageVerifier::InvalidSignature
     redirect_to new_password_path, alert: "Password reset link is invalid or has expired."
   end

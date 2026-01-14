@@ -4,7 +4,7 @@ RSpec.describe "systems/show", type: :view do
   fixtures :domains
 
   before do
-    assign(:system, System.create!(
+    assign(:system, Junction::System.create!(
       name: "Name",
       description: "MyText",
       status: "active",

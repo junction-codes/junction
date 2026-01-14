@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe "groups/index", type: :view do
   before do
     assign(:groups, [
-      Group.create!(
+      Junction::Group.create!(
         name: "Name",
         description: "MyText",
         group_type: "team",
@@ -11,7 +11,7 @@ RSpec.describe "groups/index", type: :view do
         image_url: "https://example.com/image.png",
         parent: nil
       ),
-      Group.create!(
+      Junction::Group.create!(
         name: "Second Name",
         description: "MyText",
         group_type: "business_unit",

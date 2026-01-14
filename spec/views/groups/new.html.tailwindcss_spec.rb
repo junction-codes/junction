@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "groups/new", type: :view do
   before do
-    assign(:group, Group.new(
+    assign(:group, Junction::Group.new(
       name: "MyString",
       description: "MyText",
       group_type: "team",

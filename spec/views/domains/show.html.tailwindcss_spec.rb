@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "domains/show", type: :view do
   before do
-    assign(:domain, Domain.create!(
+    assign(:domain, Junction::Domain.create!(
       name: "Name",
       description: "MyText",
       status: "active",

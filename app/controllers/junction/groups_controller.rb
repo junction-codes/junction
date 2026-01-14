@@ -7,7 +7,7 @@ module Junction
 
   # GET /groups
   def index
-    @q = Group.ransack(params[:q])
+    @q = Junction::Group.ransack(params[:q])
     @q.sorts = "name asc" if @q.sorts.empty?
 
     render Views::Groups::Index.new(
@@ -24,7 +24,7 @@ module Junction
 
   # GET /groups/new
   def new
-    render Views::Groups::New.new(group: Group.new, available_parents:)
+    render Views::Groups::New.new(group: Junction::Group.new, available_parents:)
   end
 
   # GET /groups/:id/edit
@@ -34,7 +34,7 @@ module Junction
 
   # POST /groups
   def create
-    @group = Group.new(group_params)
+    @group = Junction::Group.new(group_params)
 
     if @group.save
       redirect_to @group, success: "Group was successfully created."
@@ -80,7 +80,7 @@ module Junction
 
   # Use callbacks to share common setup or constraints between actions.
   def set_entity
-    @group = Group.find(params.expect(:id))
+    @group = Junction::Group.find(params.expect(:id))
   end
 
   # Only allow a list of trusted parameters through.

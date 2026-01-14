@@ -3,16 +3,16 @@
 # Controller for managing Resource catalog entities.
 module Junction
   class ResourcesController < Junction::ApplicationController
-  include HasDependencies
-  include HasDependencyGraph
-  include HasDependents
+  include Junction::HasDependencies
+  include Junction::HasDependencyGraph
+  include Junction::HasDependents
 
   before_action :set_entity, only: %i[ edit update destroy ]
   before_action :eager_load_dependencies, only: %i[ show dependency_graph ]
 
   # GET /resources
   def index
-    @q = Resource.ransack(params[:q])
+    @q = Junction::Resource.ransack(params[:q])
     @q.sorts = "name asc" if @q.sorts.empty?
 
     render Views::Resources::Index.new(
@@ -32,7 +32,7 @@ module Junction
   # GET /resources/new
   def new
     render Views::Resources::New.new(
-      resource: Resource.new,
+      resource: Junction::Resource.new,
       available_owners:,
       available_systems:
     )
@@ -49,7 +49,7 @@ module Junction
 
   # POST /resources
   def create
-    @entity = Resource.new(resource_params)
+    @entity = Junction::Resource.new(resource_params)
 
     if @entity.save
       redirect_to @entity, success: "Resource was successfully created."
@@ -100,7 +100,7 @@ module Junction
   end
 
   def set_entity
-    @entity = Resource.find(params.expect(:id))
+    @entity = Junction::Resource.find(params.expect(:id))
   end
 
   def eager_load_dependencies

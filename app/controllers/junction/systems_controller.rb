@@ -7,7 +7,7 @@ module Junction
 
   # GET /systems
   def index
-    @q = System.ransack(params[:q])
+    @q = Junction::System.ransack(params[:q])
     @q.sorts = "name asc" if @q.sorts.empty?
 
     render Views::Systems::Index.new(
@@ -28,7 +28,7 @@ module Junction
 
   # GET /systems/new
   def new
-    render Views::Systems::New.new(system: System.new, available_domains:, available_owners:)
+    render Views::Systems::New.new(system: Junction::System.new, available_domains:, available_owners:)
   end
 
   # GET /systems/:id/edit
@@ -38,7 +38,7 @@ module Junction
 
   # POST /systems
   def create
-    @system = System.new(system_params)
+    @system = Junction::System.new(system_params)
 
     if @system.save
       redirect_to @system, success: "System was successfully created."
@@ -102,7 +102,7 @@ module Junction
   end
 
   def set_entity
-    @system = System.find(params.expect(:id))
+    @system = Junction::System.find(params.expect(:id))
   end
 
   def system_params

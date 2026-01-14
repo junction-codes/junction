@@ -4,7 +4,7 @@ RSpec.describe "deployments/edit", type: :view do
   fixtures :components
 
   let(:deployment) {
-    Deployment.create!(
+    Junction::Deployment.create!(
       environment: "staging",
       platform: "aws",
       location_identifier: "MyString",

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :resource do
+  factory :resource, class: "Junction::Resource" do
     sequence(:name) { |n| "Resource Name #{n}" }
     description { Faker::Lorem.paragraph }
     resource_type { CatalogOptions.resources.keys.sample }

@@ -5,13 +5,13 @@ RSpec.describe "deployments/index", type: :view do
 
   before do
     assign(:deployments, [
-      Deployment.create!(
+      Junction::Deployment.create!(
         environment: "staging",
         platform: "aws",
         location_identifier: "Location Identifier",
         component: components(:one)
       ),
-      Deployment.create!(
+      Junction::Deployment.create!(
         environment: "production",
         platform: "aptible",
         location_identifier: "Location Identifier",

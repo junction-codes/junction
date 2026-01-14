@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :system do
+  factory :system, class: "Junction::System" do
     sequence(:name) { |n| "System #{n}" }
     description { Faker::Lorem.paragraph }
     status { %w[active closed].sample }

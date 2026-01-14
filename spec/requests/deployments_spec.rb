@@ -37,7 +37,7 @@ RSpec.describe "/deployments", type: :request do
 
   describe "GET /index" do
     it "renders a successful response" do
-      Deployment.create! valid_attributes
+      Junction::Deployment.create! valid_attributes
       get deployments_url
       expect(response).to be_successful
     end
@@ -45,7 +45,7 @@ RSpec.describe "/deployments", type: :request do
 
   describe "GET /show" do
     it "renders a successful response" do
-      deployment = Deployment.create! valid_attributes
+      deployment = Junction::Deployment.create! valid_attributes
       get deployment_url(deployment)
       expect(response).to be_successful
     end
@@ -60,7 +60,7 @@ RSpec.describe "/deployments", type: :request do
 
   describe "GET /edit" do
     it "renders a successful response" do
-      deployment = Deployment.create! valid_attributes
+      deployment = Junction::Deployment.create! valid_attributes
       get edit_deployment_url(deployment)
       expect(response).to be_successful
     end
@@ -103,14 +103,14 @@ RSpec.describe "/deployments", type: :request do
       }
 
       it "updates the requested deployment" do
-        deployment = Deployment.create! valid_attributes
+        deployment = Junction::Deployment.create! valid_attributes
         patch deployment_url(deployment), params: { deployment: new_attributes }
         deployment.reload
         expect(deployment.platform).to eq("aptible")
       end
 
       it "redirects to the deployment" do
-        deployment = Deployment.create! valid_attributes
+        deployment = Junction::Deployment.create! valid_attributes
         patch deployment_url(deployment), params: { deployment: new_attributes }
         deployment.reload
         expect(response).to redirect_to(deployment_url(deployment))
@@ -119,7 +119,7 @@ RSpec.describe "/deployments", type: :request do
 
     context "with invalid parameters" do
       it "renders a response with 422 status (i.e. to display the 'edit' template)" do
-        deployment = Deployment.create! valid_attributes
+        deployment = Junction::Deployment.create! valid_attributes
         patch deployment_url(deployment), params: { deployment: invalid_attributes }
         expect(response).to have_http_status(:unprocessable_content)
       end
@@ -128,14 +128,14 @@ RSpec.describe "/deployments", type: :request do
 
   describe "DELETE /destroy" do
     it "destroys the requested deployment" do
-      deployment = Deployment.create! valid_attributes
+      deployment = Junction::Deployment.create! valid_attributes
       expect {
         delete deployment_url(deployment)
       }.to change(Deployment, :count).by(-1)
     end
 
     it "redirects to the deployments list" do
-      deployment = Deployment.create! valid_attributes
+      deployment = Junction::Deployment.create! valid_attributes
       delete deployment_url(deployment)
       expect(response).to redirect_to(deployments_url)
     end

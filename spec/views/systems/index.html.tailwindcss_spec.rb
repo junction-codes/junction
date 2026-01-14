@@ -5,7 +5,7 @@ RSpec.describe "systems/index", type: :view do
 
   before do
     assign(:systems, [
-      System.create!(
+      Junction::System.create!(
         name: "Name",
         description: "MyText",
         status: "active",
@@ -13,7 +13,7 @@ RSpec.describe "systems/index", type: :view do
         domain: domains(:one),
         owner: nil
       ),
-      System.create!(
+      Junction::System.create!(
         name: "Second Name",
         description: "MyText",
         status: "closed",

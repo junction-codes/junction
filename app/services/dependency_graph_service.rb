@@ -41,8 +41,8 @@ class DependencyGraphService
 
     # Find all dependencies where this entity is the source OR the target.
     # We eager-load :source and :target to prevent N+1 queries in the next step.
-    deps = Dependency.where(source: entity)
-                     .or(Dependency.where(target: entity))
+    deps = Junction::Dependency.where(source: entity)
+                     .or(Junction::Dependency.where(target: entity))
                      .includes(:source, :target)
     @dependencies.merge(deps)
 

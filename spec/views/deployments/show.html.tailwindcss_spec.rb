@@ -4,7 +4,7 @@ RSpec.describe "deployments/show", type: :view do
   fixtures :components
 
   before do
-    assign(:deployment, Deployment.create!(
+    assign(:deployment, Junction::Deployment.create!(
       environment: "staging",
       platform: "aws",
       location_identifier: "Location Identifier",

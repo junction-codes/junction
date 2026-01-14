@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-class Component < ApplicationRecord
+module Junction
+  class Component < ApplicationRecord
   include Annotated
   include Dependable
   include Dependentable
@@ -15,8 +16,8 @@ class Component < ApplicationRecord
   validates :lifecycle, presence: true, inclusion: { in: CatalogOptions.lifecycles.keys }
   validates :name, presence: true, uniqueness: true
 
-  belongs_to :system, optional: true
-  has_many :deployments, dependent: :destroy
+  belongs_to :system, optional: true, class_name: "Junction::System"
+  has_many :deployments, dependent: :destroy, class_name: "Junction::Deployment"
 
   def self.ransackable_associations(auth_object = nil)
     %w[owner system]
@@ -29,4 +30,5 @@ class Component < ApplicationRecord
   def icon
     CatalogOptions.kinds[type]&.[](:icon) || "server"
   end
+end
 end

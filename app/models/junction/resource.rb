@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-class Resource < ApplicationRecord
+module Junction
+  class Resource < ApplicationRecord
   include Annotated
   include Dependable
   include Dependentable
@@ -13,7 +14,7 @@ class Resource < ApplicationRecord
   validates :name, presence: true, uniqueness: true
   validates :resource_type, presence: true, inclusion: { in: CatalogOptions.resources.keys }
 
-  belongs_to :system
+  belongs_to :system, class_name: "Junction::System"
 
   def self.ransackable_associations(auth_object = nil)
     %w[owner system]
@@ -26,4 +27,5 @@ class Resource < ApplicationRecord
   def icon
     CatalogOptions.resources[type]&.[](:icon) || "rows-4"
   end
+end
 end

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-class Group < ApplicationRecord
+module Junction
+  class Group < ApplicationRecord
   include Annotated
 
   attribute :group_type, :string, default: "team"
@@ -12,12 +13,12 @@ class Group < ApplicationRecord
   validates :image_url, allow_blank: true, format: URI::DEFAULT_PARSER.make_regexp(%w[http https])
   validates :name, presence: true, uniqueness: true
 
-  belongs_to :parent, class_name: "Group", optional: true
-  has_many :children, class_name: "Group", foreign_key: "parent_id", dependent: :destroy
-  has_many :group_memberships, dependent: :destroy
-  has_many :members, through: :group_memberships, class_name: "User", source: :user
-  has_many :components, foreign_key: "owner_id"
-  has_many :systems, foreign_key: "owner_id"
+  belongs_to :parent, class_name: "Junction::Group", optional: true
+  has_many :children, class_name: "Junction::Group", foreign_key: "parent_id", dependent: :destroy
+  has_many :group_memberships, dependent: :destroy, class_name: "Junction::GroupMembership"
+  has_many :members, through: :group_memberships, class_name: "Junction::User", source: :user
+  has_many :components, foreign_key: "owner_id", class_name: "Junction::Component"
+  has_many :systems, foreign_key: "owner_id", class_name: "Junction::System"
 
   def self.ransackable_associations(auth_object = nil)
     %w[parent children]
@@ -41,4 +42,5 @@ class Group < ApplicationRecord
 
     ancestors
   end
+end
 end

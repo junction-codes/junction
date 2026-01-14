@@ -4,6 +4,7 @@ require "importmap-rails"
 require "turbo-rails"
 require "stimulus-rails"
 require "rails_icons"
+require "ransack"
 require "tailwindcss-rails"
 
 module Junction
@@ -11,16 +12,9 @@ module Junction
     ENGINE_CONFIG_PATH = root.join("config", "junction.yml").freeze
 
     engine_name "junction"
+    # isolate_namespace Junction
 
     paths["config/routes.rb"] = [ "config/routes/engine.rb" ]
-
-    initializer "junction.append_migrations" do |app|
-      next if app.root.to_s == root.to_s
-
-      config.paths["db/migrate"].expanded.each do |expanded_path|
-        app.config.paths["db/migrate"] << expanded_path
-      end
-    end
 
     initializer "junction.view_overrides" do |app|
       next if app.root.to_s == root.to_s

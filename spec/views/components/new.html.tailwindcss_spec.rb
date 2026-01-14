@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "components/new", type: :view do
   before do
-    assign(:component, Component.new(
+    assign(:component, Junction::Component.new(
       name: "MyString",
       description: "MyText",
       lifecycle: "production",

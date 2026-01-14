@@ -3,16 +3,16 @@
 # Controller for managing API catalog entities.
 module Junction
   class ApisController < Junction::ApplicationController
-  include HasDependencies
-  include HasDependencyGraph
-  include HasDependents
+  include Junction::HasDependencies
+  include Junction::HasDependencyGraph
+  include Junction::HasDependents
 
   before_action :set_entity, only: %i[ edit update destroy ]
   before_action :eager_load_dependencies, only: %i[ show dependency_graph ]
 
   # GET /api
   def index
-    @q = Api.ransack(params[:q])
+    @q = Junction::Api.ransack(params[:q])
     @q.sorts = "name asc" if @q.sorts.empty?
 
     render Views::Apis::Index.new(
@@ -32,7 +32,7 @@ module Junction
 
   # GET /api/new
   def new
-    render Views::Apis::New.new(api: Api.new, available_owners:, available_systems:)
+    render Views::Apis::New.new(api: Junction::Api.new, available_owners:, available_systems:)
   end
 
   # GET /api/:id/edit
@@ -42,7 +42,7 @@ module Junction
 
   # POST /api
   def create
-    @entity = Api.new(api_params)
+    @entity = Junction::Api.new(api_params)
 
     if @entity.save
       redirect_to @entity, success: "API was successfully created.", status: :see_other
@@ -102,7 +102,7 @@ module Junction
   end
 
   def set_entity
-    @entity = Api.find(params.expect(:id))
+    @entity = Junction::Api.find(params.expect(:id))
   end
 
   def eager_load_dependencies

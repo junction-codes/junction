@@ -7,7 +7,7 @@ module Junction
 
   # GET /deployments
   def index
-    @q = Deployment.ransack(params[:q])
+    @q = Junction::Deployment.ransack(params[:q])
     @q.sorts = "name asc" if @q.sorts.empty?
 
     render Views::Deployments::Index.new(
@@ -27,7 +27,7 @@ module Junction
   # GET /deployments/new
   def new
     render Views::Deployments::New.new(
-      deployment: Deployment.new,
+      deployment: Junction::Deployment.new,
       available_components:
     )
   end
@@ -42,7 +42,7 @@ module Junction
 
   # POST /deployments
   def create
-    @deployment = Deployment.new(deployment_params)
+    @deployment = Junction::Deployment.new(deployment_params)
 
     if @deployment.save
       redirect_to @deployment, success: "Deployment was successfully created."
@@ -98,7 +98,7 @@ module Junction
 
   # Use callbacks to share common setup or constraints between actions.
   def set_deployment
-    @deployment = Deployment.find(params.expect(:id))
+    @deployment = Junction::Deployment.find(params.expect(:id))
   end
 
   # Only allow a list of trusted parameters through.

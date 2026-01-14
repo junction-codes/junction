@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :group do
+  factory :group, class: "Junction::Group" do
     sequence(:name) { |n| "Group #{n}" }
     description { Faker::Lorem.paragraph }
     sequence(:email) { |n| "group-#{n}@example.com" }

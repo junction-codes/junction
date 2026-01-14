@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :component do
+  factory :component, class: "Junction::Component" do
     sequence(:name) { |n| "Component Name #{n}" }
     description { Faker::Lorem.paragraph }
     component_type { CatalogOptions.kinds.keys.sample }

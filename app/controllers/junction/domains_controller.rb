@@ -7,7 +7,7 @@ module Junction
 
   # GET /domains
   def index
-    @q = Domain.ransack(params[:q])
+    @q = Junction::Domain.ransack(params[:q])
     @q.sorts = "name asc" if @q.sorts.empty?
 
     render Views::Domains::Index.new(
@@ -25,7 +25,7 @@ module Junction
 
   # GET /domains/new
   def new
-    render Views::Domains::New.new(domain: Domain.new, available_owners:)
+    render Views::Domains::New.new(domain: Junction::Domain.new, available_owners:)
   end
 
   # GET /domains/:id/edit
@@ -35,7 +35,7 @@ module Junction
 
   # POST /domains
   def create
-    @domain = Domain.new(domain_params)
+    @domain = Junction::Domain.new(domain_params)
 
     if @domain.save
       redirect_to @domain, success: "Domain was successfully created."
@@ -82,7 +82,7 @@ module Junction
   end
 
   def set_entity
-    @domain = Domain.find(params.expect(:id))
+    @domain = Junction::Domain.find(params.expect(:id))
   end
 
   def domain_params

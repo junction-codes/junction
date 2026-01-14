@@ -37,7 +37,7 @@ RSpec.describe "/systems", type: :request do
 
   describe "GET /index" do
     it "renders a successful response" do
-      System.create! valid_attributes
+      Junction::System.create! valid_attributes
       get systems_url
       expect(response).to be_successful
     end
@@ -45,7 +45,7 @@ RSpec.describe "/systems", type: :request do
 
   describe "GET /show" do
     it "renders a successful response" do
-      system = System.create! valid_attributes
+      system = Junction::System.create! valid_attributes
       get system_url(system)
       expect(response).to be_successful
     end
@@ -60,7 +60,7 @@ RSpec.describe "/systems", type: :request do
 
   describe "GET /edit" do
     it "renders a successful response" do
-      system = System.create! valid_attributes
+      system = Junction::System.create! valid_attributes
       get edit_system_url(system)
       expect(response).to be_successful
     end
@@ -103,14 +103,14 @@ RSpec.describe "/systems", type: :request do
       }
 
       it "updates the requested system" do
-        system = System.create! valid_attributes
+        system = Junction::System.create! valid_attributes
         patch system_url(system), params: { system: new_attributes }
         system.reload
         expect(system.status).to eq("closed")
       end
 
       it "redirects to the system" do
-        system = System.create! valid_attributes
+        system = Junction::System.create! valid_attributes
         patch system_url(system), params: { system: new_attributes }
         system.reload
         expect(response).to redirect_to(system_url(system))
@@ -119,7 +119,7 @@ RSpec.describe "/systems", type: :request do
 
     context "with invalid parameters" do
       it "renders a response with 422 status (i.e. to display the 'edit' template)" do
-        system = System.create! valid_attributes
+        system = Junction::System.create! valid_attributes
         patch system_url(system), params: { system: invalid_attributes }
         expect(response).to have_http_status(:unprocessable_content)
       end
@@ -128,14 +128,14 @@ RSpec.describe "/systems", type: :request do
 
   describe "DELETE /destroy" do
     it "destroys the requested system" do
-      system = System.create! valid_attributes
+      system = Junction::System.create! valid_attributes
       expect {
         delete system_url(system)
       }.to change(System, :count).by(-1)
     end
 
     it "redirects to the systems list" do
-      system = System.create! valid_attributes
+      system = Junction::System.create! valid_attributes
       delete system_url(system)
       expect(response).to redirect_to(systems_url)
     end

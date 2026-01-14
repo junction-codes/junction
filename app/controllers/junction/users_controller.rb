@@ -7,7 +7,7 @@ module Junction
 
   # GET /users
   def index
-    @q = User.ransack(params[:q])
+    @q = Junction::User.ransack(params[:q])
     @q.sorts = "name asc" if @q.sorts.empty?
 
     render Views::Users::Index.new(users: @q.result, query: @q)
@@ -20,7 +20,7 @@ module Junction
 
   # GET /users/new
   def new
-    render Views::Users::New.new(user: User.new)
+    render Views::Users::New.new(user: Junction::User.new)
   end
 
   # GET /users/:id/edit
@@ -30,7 +30,7 @@ module Junction
 
   # POST /users
   def create
-    @user = User.new(user_params)
+    @user = Junction::User.new(user_params)
 
     if @user.save
       redirect_to @user, success: "User was successfully created."
@@ -61,7 +61,7 @@ module Junction
 
   # Use callbacks to share common setup or constraints between actions.
   def set_entity
-    @user = User.find(params.expect(:id))
+    @user = Junction::User.find(params.expect(:id))
   end
 
   # Only allow a list of trusted parameters through.

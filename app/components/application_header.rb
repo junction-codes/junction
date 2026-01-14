@@ -2,7 +2,7 @@
 
 module Components
   class ApplicationHeader < Base
-    def initialize(user: Current.user, **user_attrs)
+    def initialize(user: Junction::Current.user, **user_attrs)
       @user = user
 
       super

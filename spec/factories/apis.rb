@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :api do
+  factory :api, class: "Junction::Api" do
     sequence(:name) { |n| "API Name #{n}" }
     description { Faker::Lorem.paragraph }
     api_type { CatalogOptions.apis.keys.sample }

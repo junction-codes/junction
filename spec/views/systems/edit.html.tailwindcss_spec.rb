@@ -4,7 +4,7 @@ RSpec.describe "systems/edit", type: :view do
   fixtures :domains
 
   let(:system) {
-    System.create!(
+    Junction::System.create!(
       name: "MyEditString",
       description: "MyText",
       status: "active",

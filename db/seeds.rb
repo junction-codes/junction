@@ -12,9 +12,9 @@
 
 # Ensure default admin user exists (for standalone Junction installation)
 def create_default_admin_user
-  return if User.exists?(email_address: "admin@example.com")
+  return if Junction::User.exists?(email_address: "admin@example.com")
 
-  User.create!(
+  Junction::User.create!(
     display_name: "Administrator",
     email_address: "admin@example.com",
     password: "passWord1!",
@@ -88,7 +88,7 @@ def import_groups(path)
 
     Rails.logger.info "Creating user #{group[:name]}"
     group.fetch(:members, []).map! do |member|
-      User.find_by(email_address: member)
+      Junction::User.find_by(email_address: member)
     end
 
     Group.create(group)
@@ -125,11 +125,11 @@ def import_users(path)
   return unless File.exist?(Rails.root.join(path, 'users.yaml'))
 
   YAML.load_file(Rails.root.join(path, 'users.yaml'), symbolize_names: true).each do |user|
-    next if User.find_by(email_address: user[:email_address])
+    next if Junction::User.find_by(email_address: user[:email_address])
 
     Rails.logger.info "Creating user #{user[:display_name]}"
     user[:password] = random_password
-    entity = User.create(user)
+    entity = Junction::User.create(user)
 
     unless entity.persisted?
       puts "Failed to create user #{user[:display_name]}"

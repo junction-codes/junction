@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-class System < ApplicationRecord
+module Junction
+  class System < ApplicationRecord
   include Ownable
 
   attribute :status, :string, default: "active"
@@ -10,9 +11,9 @@ class System < ApplicationRecord
   validates :name, presence: true, uniqueness: true
   validates :status, presence: true, inclusion: { in: %w[active closed] }
 
-  belongs_to :domain
-  has_many :components
-  has_many :resources
+  belongs_to :domain, class_name: "Junction::Domain"
+  has_many :components, class_name: "Junction::Component"
+  has_many :resources, class_name: "Junction::Resource"
 
   def self.ransackable_associations(auth_object = nil)
     %w[domain owner]
@@ -25,4 +26,5 @@ class System < ApplicationRecord
   def icon
     "network"
   end
+end
 end

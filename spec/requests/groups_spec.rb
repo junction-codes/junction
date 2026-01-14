@@ -32,7 +32,7 @@ RSpec.describe "/groups", type: :request do
 
   describe "GET /index" do
     it "renders a successful response" do
-      Group.create! valid_attributes
+      Junction::Group.create! valid_attributes
       get groups_url
       expect(response).to be_successful
     end
@@ -40,7 +40,7 @@ RSpec.describe "/groups", type: :request do
 
   describe "GET /show" do
     it "renders a successful response" do
-      group = Group.create! valid_attributes
+      group = Junction::Group.create! valid_attributes
       get group_url(group)
       expect(response).to be_successful
     end
@@ -55,7 +55,7 @@ RSpec.describe "/groups", type: :request do
 
   describe "GET /edit" do
     it "renders a successful response" do
-      group = Group.create! valid_attributes
+      group = Junction::Group.create! valid_attributes
       get edit_group_url(group)
       expect(response).to be_successful
     end
@@ -98,14 +98,14 @@ RSpec.describe "/groups", type: :request do
       }
 
       it "updates the requested group" do
-        group = Group.create! valid_attributes
+        group = Junction::Group.create! valid_attributes
         patch group_url(group), params: { group: new_attributes }
         group.reload
         expect(group.type).to eq("business_unit")
       end
 
       it "redirects to the group" do
-        group = Group.create! valid_attributes
+        group = Junction::Group.create! valid_attributes
         patch group_url(group), params: { group: new_attributes }
         group.reload
         expect(response).to redirect_to(group_url(group))
@@ -114,7 +114,7 @@ RSpec.describe "/groups", type: :request do
 
     context "with invalid parameters" do
       it "renders a response with 422 status (i.e. to display the 'edit' template)" do
-        group = Group.create! valid_attributes
+        group = Junction::Group.create! valid_attributes
         patch group_url(group), params: { group: invalid_attributes }
         expect(response).to have_http_status(:unprocessable_content)
       end
@@ -123,14 +123,14 @@ RSpec.describe "/groups", type: :request do
 
   describe "DELETE /destroy" do
     it "destroys the requested group" do
-      group = Group.create! valid_attributes
+      group = Junction::Group.create! valid_attributes
       expect {
         delete group_url(group)
       }.to change(Group, :count).by(-1)
     end
 
     it "redirects to the groups list" do
-      group = Group.create! valid_attributes
+      group = Junction::Group.create! valid_attributes
       delete group_url(group)
       expect(response).to redirect_to(groups_url)
     end

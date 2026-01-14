@@ -3,16 +3,16 @@
 # Controller for managing Component catalog entities.
 module Junction
   class ComponentsController < Junction::ApplicationController
-  include HasDependencies
-  include HasDependencyGraph
-  include HasDependents
+  include Junction::HasDependencies
+  include Junction::HasDependencyGraph
+  include Junction::HasDependents
 
   before_action :set_entity, only: %i[ edit update destroy ]
   before_action :eager_load_dependencies, only: %i[ show dependency_graph ]
 
   # GET /components
   def index
-    @q = Component.ransack(params[:q])
+    @q = Junction::Component.ransack(params[:q])
     @q.sorts = "name asc" if @q.sorts.empty?
 
     render Views::Components::Index.new(
@@ -33,7 +33,7 @@ module Junction
   # GET /components/new
   def new
     render Views::Components::New.new(
-      component: Component.new,
+      component: Junction::Component.new,
       available_owners:,
       available_systems:
     )
@@ -50,7 +50,7 @@ module Junction
 
   # POST /components
   def create
-    @entity = Component.new(component_params)
+    @entity = Junction::Component.new(component_params)
 
     if @entity.save
       redirect_to @entity, success: "Component was successfully created."
@@ -110,7 +110,7 @@ module Junction
   end
 
   def set_entity
-    @entity = Component.find(params.expect(:id))
+    @entity = Junction::Component.find(params.expect(:id))
   end
 
   def eager_load_dependencies
