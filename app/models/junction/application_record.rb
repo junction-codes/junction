@@ -3,7 +3,6 @@
 module Junction
   class ApplicationRecord < ActiveRecord::Base
     self.abstract_class = true
-    self.table_name_prefix = "junction_"
 
     # Get the icon associated with the record.
     #

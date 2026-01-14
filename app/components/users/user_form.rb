@@ -40,7 +40,7 @@ module Components
     end
 
     def self?
-      @user == Current.user
+      @user == Junction::Current.user
     end
 
     def annotations(form)

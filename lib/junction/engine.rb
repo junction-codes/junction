@@ -12,7 +12,7 @@ module Junction
     ENGINE_CONFIG_PATH = root.join("config", "junction.yml").freeze
 
     engine_name "junction"
-    # isolate_namespace Junction
+    isolate_namespace Junction
 
     paths["config/routes.rb"] = [ "config/routes/engine.rb" ]
 

@@ -10,12 +10,13 @@ module Components
 end
 
 module Junction
-  module Layouts
-  end
+  module Layouts; end
+
+  module Views; end
 end
 
 Rails.autoloaders.main.push_dir(
-  Junction::Engine.root.join("app/views"), namespace: Views
+  Junction::Engine.root.join("app/views/junction"), namespace: Junction::Views
 )
 
 Rails.autoloaders.main.push_dir(
