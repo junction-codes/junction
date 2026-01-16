@@ -2,7 +2,7 @@
 
 module Junction
   class GroupMembership < ApplicationRecord
-  belongs_to :user, class_name: "Junction::User"
-  belongs_to :group, class_name: "Junction::Group"
-end
+    belongs_to :user, class_name: "Junction::User"
+    belongs_to :group, class_name: "Junction::Group"
+  end
 end

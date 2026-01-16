@@ -2,10 +2,10 @@
 
 module Junction
   class Dependency < ApplicationRecord
-  belongs_to :source, polymorphic: true
-  belongs_to :target, polymorphic: true
+    belongs_to :source, polymorphic: true
+    belongs_to :target, polymorphic: true
 
-  validates :target_type, presence: true
-  validates :target_id, presence: true
-end
+    validates :target_type, presence: true
+    validates :target_id, presence: true
+  end
 end
