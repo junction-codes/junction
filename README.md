@@ -24,5 +24,54 @@ every day.
 >
 > Contributors and testers are welcome, but please use with caution and care.
 
+### Quick Start
+
+The fastest way to try Junction is to create a new Rails app and add Junction as
+a gem.
+
+1. Create a new Rails app (if you don't have one)
+
+   ```bash
+   rails new my-portal
+   cd my-portal
+   ```
+
+1. Add Junction to your Gemfile
+
+   ```bash
+   bundle add "junction-codes" --git https://github.com/junction-codes/junction.git
+   bundle insall
+   ```
+
+1. [Configure your database][database-config]
+1. Run the install generator
+
+   > [!NOTE]
+   > This will:
+   >
+   > - Mount the Juntion engine
+   > - Create the database
+   > - Install and run all migrations
+   > - Create a default admin user (`admin@example.com` / `passWord1!`)
+
+   ```bash
+   ./bin/rails g junction:install
+   ```
+
+1. Compile assets and start the application in development
+
+   ```bash
+   ./bin/rails assets:precompile
+   ./bin/dev
+   ```
+
+You should now be able to access the application at http://localhost:3000. Log
+in using the default username and password `admin@example.com` and `passWord1`.
+
+> [!CAUTION]
+> Remember to change the default password before making the application
+> available outside your local system.
+
 [backstage]: https://backstage.io/
+[database-config]: https://guides.rubyonrails.org/configuring.html#configuring-a-database
 [rails]: https://rubyonrails.org/
