@@ -2,11 +2,7 @@
 
 require "omniauth"
 
-require_relative "../../app/services/plugin_registry"
-
-# require Rails.root.join("app/services/plugin_registry")
-# require Rails.root.join("app/services/plugin")
-# require Rails.root.join("app/services/entity_scope")
+require_relative "../../app/services/junction/plugin_registry"
 
 ActiveSupport.run_load_hooks(:junction_plugins)
 

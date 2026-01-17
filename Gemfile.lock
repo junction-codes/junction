@@ -483,6 +483,7 @@ PLATFORMS
   x86_64-linux-gnu
 
 DEPENDENCIES
+  bcrypt
   brakeman (~> 7.1)
   capybara (~> 3.4)
   cuprite (~> 0.17)

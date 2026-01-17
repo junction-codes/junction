@@ -16,6 +16,11 @@ module Junction
 
     paths["config/routes.rb"] = [ "config/routes/engine.rb" ]
 
+    initializer "junction.zeitwerk_ignore" do
+      # Ignore our gems entrypoint file to avoid Zeitwerk warnings.
+      Rails.autoloaders.main.ignore(root.join("lib/junction-codes.rb"))
+    end
+
     initializer "junction.view_overrides" do |app|
       next if app.root.to_s == root.to_s
 

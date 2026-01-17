@@ -4,6 +4,7 @@ source "https://rubygems.org"
 
 gemspec
 
+gem "bcrypt"
 gem "propshaft"
 
 group :development, :test do

@@ -34,13 +34,13 @@ RSpec.shared_examples "a model that can be depended on" do
     it 'destroys dependency associations when destroyed' do
       subject.save!
       dependency = create(:dependency, source: dependent_api, target: subject)
-      expect { subject.destroy }.to change { Dependency.exists?(dependency.id) }.from(true).to(false)
+      expect { subject.destroy }.to change { Junction::Dependency.exists?(dependency.id) }.from(true).to(false)
     end
 
     it 'does not destroy the dependent record when destroyed' do
       subject.save!
       create(:dependency, source: dependent_api, target: subject)
-      expect { subject.destroy }.not_to change { Api.exists?(dependent_api.id) }.from(true)
+      expect { subject.destroy }.not_to change { Junction::Api.exists?(dependent_api.id) }.from(true)
     end
   end
 end

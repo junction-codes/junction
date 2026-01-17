@@ -12,7 +12,7 @@ RSpec.describe Junction::PluginRegistry do
 
 
   let(:plugin) do
-    instance_double(Plugin, name: "test_plugin", **methods)
+    instance_double(Junction::Plugin, name: "test_plugin", **methods)
   end
 
   before { registry.reset! }
@@ -35,19 +35,19 @@ RSpec.describe Junction::PluginRegistry do
     it_behaves_like "registry aggregation method", :actions, {}, {}
 
     context "with registered actions" do
-      let(:actions) { { "Domain" => [ { method: :domain_path } ] } }
+      let(:actions) { { "Junction::Domain" => [ { method: :domain_path } ] } }
       let(:methods) { super().merge(actions:) }
 
       it "aggregates actions from registered plugins" do
         registry.register_plugin(plugin)
 
-        expect(registry.actions).to eq({ Domain => [ { method: :domain_path } ] })
+        expect(registry.actions).to eq({ Junction::Domain => [ { method: :domain_path } ] })
       end
     end
   end
 
   describe "#annotations_for" do
-    it_behaves_like "registry aggregation method", :annotations_for, {}, { context: "Domain" }
+    it_behaves_like "registry aggregation method", :annotations_for, {}, { context: "Junction::Domain" }
 
     context "with registered annotations" do
       let(:annotations) { { "example.com/owner" => { title: "Owner" } } }
@@ -73,7 +73,7 @@ RSpec.describe Junction::PluginRegistry do
   end
 
   describe "#components_for" do
-    it_behaves_like "registry aggregation method", :components_for, [], { context: "Domain", slot: :header }
+    it_behaves_like "registry aggregation method", :components_for, [], { context: "Junction::Domain", slot: :header }
 
     context "with registered components" do
       let(:components) { [ { component: "HeaderComponent" } ] }
@@ -111,7 +111,7 @@ RSpec.describe Junction::PluginRegistry do
   end
 
   describe "#tabs_for" do
-    it_behaves_like "registry aggregation method", :tabs_for, [], { context: "Domain" }
+    it_behaves_like "registry aggregation method", :tabs_for, [], { context: "Junction::Domain" }
 
     context "with registered tabs" do
       let(:tabs) { [ { title: "Details", action: :domain_path } ] }

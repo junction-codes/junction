@@ -39,7 +39,7 @@ Junction::Engine.routes.draw do
   get "/auth/failure", to: "sessions/omniauth#failure"
 
   # Add plugin routes.
-  PluginRouteBuilder.draw(self)
+  Junction::PluginRouteBuilder.draw(self)
 
   # Defines the root path route ("/")
   root "dashboards#show"

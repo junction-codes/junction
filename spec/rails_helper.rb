@@ -71,6 +71,7 @@ Capybara.javascript_driver = :cuprite
 RSpec.configure do |config|
   # Include helpers.
   config.include AuthenticationHelper, type: :request
+  config.include Junction::Engine.routes.url_helpers, type: :request
 
   # Configure system tests.
   config.before(:each, :js, type: :system) do
