@@ -11,6 +11,20 @@ module Junction
         route 'mount Junction::Engine => "/"'
       end
 
+      def compile_assets
+        say "\n🚞 Compiling Junction assets...", :green
+        rails_command("g rails_icons:install --libraries=lucide boxicons", capture: true)
+        rails_command("tailwindcss:install", capture: true)
+        rails_command("tailwindcss:engines", capture: true)
+        rails_command("assets:precompile", capture: true)
+
+        create_file("app/assets/svg/icons/boxicons/.keep")
+        create_file("app/assets/svg/icons/lucide/.keep")
+        append_to_file(".gitignore", %(\n/app/assets/svg/icons/**/*.svg\n))
+
+        say "   ✓ Assets compiled"
+      end
+
       def setup_database
         say "\n🚉 Setting up database...", :green
 

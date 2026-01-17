@@ -45,3 +45,5 @@
 
 /app/assets/builds/*
 !/app/assets/builds/.keep
+
+/app/assets/svg/icons/**/*.svg
