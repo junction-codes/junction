@@ -3,8 +3,26 @@
   description: Portal administrators with full access to all features.
   members:
     - admin@example.com
-- name: Keystone Operators
-  email: keystone@example.com
-  description: Operators responsible for managing Keystone Copwatch services.
+    - aadmin@example.com
+- name: Junction Developers
+  email: developers@example.com
+  description: |
+    Engineering team responsible for developing and maintaining the Junction
+    platform.
   members:
-    - admin@example.com
+    - ttester@example.com
+    - aadmin@example.com
+    - ssupervisor@example.com
+    - ddeveloper@example.com
+- name: Demo Developers
+  description: |
+    Team responsible for building and maintaining the Junction demo application.
+  members:
+    - ssupervisor@example.com
+    - ttester@example.com
+- name: Plugin Maintainers
+  description: |
+    Team responsible for managing and maintaining official Junction plugins.
+  members:
+    - aadmin@example.com
+    - ddeveloper@example.com

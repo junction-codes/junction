@@ -1,27 +1,27 @@
-- name: Keystone Copwatch API
+- name: Junction API
   lifecycle: experimental
   type: openapi
-  system: Keystone Copwatch
-  owner: Keystone Operators
+  system: Junction Codes
+  owner: Junction Developers
   dependencies:
-    - component:Keystone Copwatch Website
+    - component:Junction
   description: |
-    REST API for the Keystone Copwatch website.
+    REST API for the Junction.
   definition: |
     openapi: 3.0.1
     info:
-      title: Keystone Copwatch API
-      description: REST API for the Keystone Copwatch website.
+      title: Junction API
+      description: REST API for the Junction.
       version: 1.0.0
     servers:
-      - url: https://api.keystonecopwatch.org/v1
+      - url: https://api.junction.codes/v1
     paths:
-      /reports:
+      /components:
         get:
-          summary: Get a list of reports
+          summary: Get a list of components
           responses:
             '200':
-              description: A list of reports
+              description: A list of components
               content:
                 application/json:
                   schema:
@@ -31,16 +31,16 @@
                       properties:
                         id:
                           type: integer
-                        title:
+                        name:
                           type: string
                         description:
                           type: string
-                        date:
+                        created_at:
                           type: string
                           format: date-time
-      /reports/{id}:
+      /components/{id}:
         get:
-          summary: Get a specific report by ID
+          summary: Get a specific component by ID
           parameters:
             - in: path
               name: id
@@ -49,7 +49,7 @@
                 type: integer
           responses:
             '200':
-              description: A specific report
+              description: A specific component
               content:
                 application/json:
                   schema:
@@ -57,11 +57,10 @@
                     properties:
                       id:
                         type: integer
-                      title:
+                      name:
                         type: string
                       description:
                         type: string
-                      date:
+                      created_at:
                         type: string
                         format: date-time
-
