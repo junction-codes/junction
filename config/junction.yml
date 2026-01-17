@@ -1,0 +1,12 @@
+default: &default
+  icon: train-track
+  title: Junction
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+production:
+  <<: *default

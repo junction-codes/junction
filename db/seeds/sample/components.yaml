@@ -1,20 +1,21 @@
-- name: Keystone Copwatch Worker
+- name: Junction Components
   lifecycle: experimental
-  type: worker
-  system: Keystone Copwatch
+  type: library
+  system: Junction Codes
+  owner: Junction Developers
   dependencies:
-    - resource:Keystone Copwatch Database
+    - resource:Junction Database
   description: |
-    Background worker for Keystone Copwatch, handling tasks such as data
-    processing and notifications.
-- name: Keystone Copwatch Website
+    UI components for the Junction web application, including reusable elements
+    and styles.
+- name: Junction
   lifecycle: experimental
   type: web
-  system: Keystone Copwatch
+  system: Junction Codes
+  owner: Junction Developers
   dependencies:
-    - resource:Keystone Copwatch Database
-    - component:Keystone Copwatch Worker
+    - component:Junction Components
+    - resource:Junction Database
   description: |
-    Main website for Keystone Copwatch, providing resources and information on
-    police accountability.
-
+    Main web application for Junction, providing core functionality and user
+    interface.

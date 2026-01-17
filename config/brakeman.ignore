@@ -1,0 +1,136 @@
+{
+  "ignored_warnings": [
+    {
+      "fingerprint": "01bd60e58ac1cfd38c211b90eeec045a7eb7e94922f9900ca529b94cd6ebf351",
+      "note": "Phlex component rendering - not a path injection vulnerability"
+    },
+    {
+      "fingerprint": "0531e60a5e81efdda628f7deff462c183697e687fcc2e42ea9f04c87184dd5b4",
+      "note": "Phlex component rendering - not a path injection vulnerability"
+    },
+    {
+      "fingerprint": "0fc2daa6b222806bd3a3d9f7b82e9275ce2ff07d53a2579a31de74298184d22d",
+      "note": "Phlex component rendering - not a path injection vulnerability"
+    },
+    {
+      "fingerprint": "1ece65da984bb4692de9c0d8bc4fb15ccf632f33fcba7c0010ef4302dfcadc92",
+      "note": "Phlex component rendering - not a path injection vulnerability"
+    },
+    {
+      "fingerprint": "229a9d418bc5621aa8f73fad57f34d2bd1a4eb7f003b48d973c582bc0a711a79",
+      "note": "Phlex component rendering - not a path injection vulnerability"
+    },
+    {
+      "fingerprint": "33ffce8cf3a94305822c53feec11b073cbd1070ddf0c99f0fc0cf166e250fb8a",
+      "note": "Phlex component rendering - not a path injection vulnerability"
+    },
+    {
+      "fingerprint": "3f9ec34403b15d0b07adb83b0af0cf06d4a348fd5185da552101bce36ea0b2cb",
+      "note": "Phlex component rendering - not a path injection vulnerability"
+    },
+    {
+      "fingerprint": "4e45bb4fb6bf20b4beb8bd4fa468c945cead0a3f76c740205f274bf92b1990ff",
+      "note": "Phlex component rendering - not a path injection vulnerability"
+    },
+    {
+      "fingerprint": "51aa1edd67a093ed8fe17e1613c22534d9846843eb2675088d233fe1adc751fd",
+      "note": "Phlex component rendering - not a path injection vulnerability"
+    },
+    {
+      "fingerprint": "526eb02f75193b5e4dfe513890dbe3d5f8ba253fa82a14e50204936a7687a1d2",
+      "note": "Phlex component rendering - not a path injection vulnerability"
+    },
+    {
+      "fingerprint": "5361be763335b02c5b7d5a190f825be88c8939c25c28cdc4fd659f81e04e834b",
+      "note": "Phlex component rendering - not a path injection vulnerability"
+    },
+    {
+      "fingerprint": "65e41b2ebc56aa663a2fea2c9f56e2ae1af5b44bc039a18d5bba0e90728f243e",
+      "note": "Phlex component rendering - not a path injection vulnerability"
+    },
+    {
+      "fingerprint": "66202aaff26fe67193678ac0f10edd820a1c0afbe633ba44f8586638752ac5f5",
+      "note": "Phlex component rendering - not a path injection vulnerability"
+    },
+    {
+      "fingerprint": "71087d8fdd3fee6e74ae50704d17a042fd3ef2fe4832850de6c2cd59c9083c17",
+      "note": "Phlex component rendering - not a path injection vulnerability"
+    },
+    {
+      "fingerprint": "7cce556ddaeb6e8ab113fedb1abba34af1f0474235ccafe0c2750582e95dbdae",
+      "note": "Phlex component rendering - not a path injection vulnerability"
+    },
+    {
+      "fingerprint": "7efb0c717f7b13139400046c0eb5af518b8ed9e6e37ce537afb3c3cdf23d28b0",
+      "note": "Phlex component rendering - not a path injection vulnerability"
+    },
+    {
+      "fingerprint": "7fea70f2260903544b5c3e6f9f4667d18f5359f94e1604bd5a869b702105b4b2",
+      "note": "Phlex component rendering - not a path injection vulnerability"
+    },
+    {
+      "fingerprint": "82f71f5aa49ad0ea4c1f07e73aac10ba884e6711631c198807c73c6d80b5e345",
+      "note": "Phlex component rendering - not a path injection vulnerability"
+    },
+    {
+      "fingerprint": "8d4560da28e6d51ba72c6230ab8ea9f3a0857350bfffa4e51a4e388dcac970e3",
+      "note": "Phlex component rendering - not a path injection vulnerability"
+    },
+    {
+      "fingerprint": "906eb059f00a8ba3e4ca6e2fee344e7587e636eedfed71cd5e6c2d44432b123a",
+      "note": "Phlex component rendering - not a path injection vulnerability"
+    },
+    {
+      "fingerprint": "9079b72044485d0140d204cc3a9ba1241a6147a4e6957fc251bbe19a8e9fff8d",
+      "note": "Phlex component rendering - not a path injection vulnerability"
+    },
+    {
+      "fingerprint": "a080685bdbbc312487fd2ddcc36a9fae802bea2392cd8140a43bd078f1f8d135",
+      "note": "Phlex component rendering - not a path injection vulnerability"
+    },
+    {
+      "fingerprint": "a55f3e89564fb7abc2bc1cc57ff06a441f41483784b4b510bd63713f6bca27fb",
+      "note": "Phlex component rendering - not a path injection vulnerability"
+    },
+    {
+      "fingerprint": "ae2fd03f9c0963f74dbef05babc1d458fbb005b2720e4ee22aa4266f84daec66",
+      "note": "Phlex component rendering - not a path injection vulnerability"
+    },
+    {
+      "fingerprint": "afa4f1d312e727bf9081e026666a6f979817a69fd3458dad3c695fbfd4303eef",
+      "note": "Phlex component rendering - not a path injection vulnerability"
+    },
+    {
+      "fingerprint": "b9c6d0ec0c3c0b12cb674f7a74bae9ddc4ca3df5baaaba6880a82ff87b579745",
+      "note": "Phlex component rendering - not a path injection vulnerability"
+    },
+    {
+      "fingerprint": "c04c54b821b0ae55ce278783f396e7cfa338ca1dbd4e1fc9ea3f7c3e81b15ab2",
+      "note": "Phlex component rendering - not a path injection vulnerability"
+    },
+    {
+      "fingerprint": "c738624bd0c6a0cdba29da0258cf35ce8dabf5a8fc1dcb0e5c1381c0d4596512",
+      "note": "Phlex component rendering - not a path injection vulnerability"
+    },
+    {
+      "fingerprint": "c95f926276b05f8398ebbb69a564e0d0cd44e011e7944d1287a2fabe46538e5f",
+      "note": "Phlex component rendering - not a path injection vulnerability"
+    },
+    {
+      "fingerprint": "d68f7b3a942c4a4a645ba4001606669432cf880ab74ea51327d12817a18424f0",
+      "note": "Phlex component rendering - not a path injection vulnerability"
+    },
+    {
+      "fingerprint": "e9e9f1444002df9abc265e41c119bf082226fd1cbd98209eb7a71bb702d94ced",
+      "note": "Phlex component rendering - not a path injection vulnerability"
+    },
+    {
+      "fingerprint": "eb603bdc1fbaac0673605ea4bdd5a5610a1d00dcbccbd53aafb417048a07374a",
+      "note": "Phlex component rendering - not a path injection vulnerability"
+    },
+    {
+      "fingerprint": "f17c088cd7b50205436eb8a74232f4e169c96f54c954f3f98cee8a2caf407a71",
+      "note": "Phlex component rendering - not a path injection vulnerability"
+    }
+  ]
+}

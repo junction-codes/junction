@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "domains/edit", type: :view do
   let(:domain) {
-    Domain.create!(
+    Junction::Domain.create!(
       name: "MyString",
       description: "MyText",
       status: "active",

@@ -3,14 +3,14 @@ require 'rails_helper'
 RSpec.describe "domains/index", type: :view do
   before do
     assign(:domains, [
-      Domain.create!(
+      Junction::Domain.create!(
         name: "Name",
         description: "MyText",
         status: "active",
         image_url: "https://example.com/image.png",
         owner: nil
       ),
-      Domain.create!(
+      Junction::Domain.create!(
         name: "Second Name",
         description: "MyText",
         status: "closed",

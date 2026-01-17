@@ -1,3 +1,7 @@
+# frozen_string_literal: true
+
+require "rails_icons"
+
 RailsIcons.configure do |config|
   config.default_library = "lucide"
   config.default_variant = "outline"

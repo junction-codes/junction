@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "components/show", type: :view do
   before do
-    assign(:component, Component.create!(
+    assign(:component, Junction::Component.create!(
       name: "Name",
       description: "MyText",
       lifecycle: "production",

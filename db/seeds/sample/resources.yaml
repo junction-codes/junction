@@ -1,25 +1,18 @@
-- name: Keystone Copwatch Database
+- name: Junction Database
   type: database
-  system: Keystone Copwatch
-  owner: Keystone Operators
+  system: Junction Codes
+  owner: Junction Developers
   description: |
-    PostgreSQL database for Keystone Copwatch, storing user data, reports, and
-    other relevant information.
-  annotations:
-    aws.amazon.com/cost-insights-tags: project=keystone-copwatch
-- name: Keystone Copwatch Documents
+    PostgreSQL database for Junction.
+- name: Junction Document Store
   type: bucket
-  system: Keystone Copwatch
-  owner: Keystone Operators
+  system: Junction Codes
+  owner: Junction Developers
   description: |
-    Document storage for  Keystone Copwatch.
-  annotations:
-    aws.amazon.com/cost-insights-tags: project=keystone-copwatch
-- name: Keystone Copwatch Queue
-  type: queue
-  system: Keystone Copwatch
-  owner: Keystone Operators
+    Document storage for Junction.
+- name: Junction Demo Database
+  type: database
+  system: Junction Demo Application
+  owner: Demo Developers
   description: |
-    Queue for processing tasks related to Keystone Copwatch.
-  annotations:
-    aws.amazon.com/cost-insights-tags: project=keystone-copwatch
+    Database for Junction Demo Application.

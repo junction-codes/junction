@@ -14,7 +14,7 @@ RSpec.shared_examples "registry aggregation method" do |method_name, empty_value
 end
 
 RSpec.shared_examples "context type handling" do |method_name, expected_result, params|
-  let(:values) { { class: Domain, model: create(:domain), string: "Domain" } }
+  let(:values) { { class: Junction::Domain, model: create(:domain), string: "Junction::Domain" } }
 
   %i[class model string].each do |context_type|
     it "returns #{method_name.to_s.tr('_', ' ')} when given a #{context_type}" do

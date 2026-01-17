@@ -1,21 +1,21 @@
 require 'rails_helper'
 
 RSpec.describe "deployments/index", type: :view do
-  fixtures :components
+  fixtures "junction/components"
 
   before do
     assign(:deployments, [
-      Deployment.create!(
+      Junction::Deployment.create!(
         environment: "staging",
         platform: "aws",
         location_identifier: "Location Identifier",
-        component: components(:one)
+        component: junction_components(:one)
       ),
-      Deployment.create!(
+      Junction::Deployment.create!(
         environment: "production",
         platform: "aptible",
         location_identifier: "Location Identifier",
-        component: components(:two)
+        component: junction_components(:two)
       )
     ])
   end

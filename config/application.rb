@@ -1,6 +1,11 @@
+# frozen_string_literal: true
+
 require_relative "boot"
 
 require "rails/all"
+
+# Load the engine early so its initializers run during boot.
+require_relative "../lib/junction/engine"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -16,8 +21,6 @@ module Junction
     # Common ones are `templates`, `generators`, or `middleware`, for example.
     config.autoload_lib(ignore: %w[assets tasks])
 
-    config.app = config_for(:app)
-
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files
@@ -29,10 +32,6 @@ module Junction
 
     config.generators do |g|
       g.test_framework :rspec
-    end
-
-    def icon
-      config_for(:app)&.[](:icon) ||  "train-track"
     end
   end
 end

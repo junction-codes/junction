@@ -1,14 +1,14 @@
 require 'rails_helper'
 
 RSpec.describe "deployments/edit", type: :view do
-  fixtures :components
+  fixtures "junction/components"
 
   let(:deployment) {
-    Deployment.create!(
+    Junction::Deployment.create!(
       environment: "staging",
       platform: "aws",
       location_identifier: "MyString",
-      component: components(:one)
+      component: junction_components(:one)
     )
   }
 

@@ -1,15 +1,15 @@
 require 'rails_helper'
 
 RSpec.describe "systems/edit", type: :view do
-  fixtures :domains
+  fixtures "junction/domains"
 
   let(:system) {
-    System.create!(
+    Junction::System.create!(
       name: "MyEditString",
       description: "MyText",
       status: "active",
       image_url: "https://example.com/image.png",
-      domain: domains(:one),
+      domain: junction_domains(:one),
       owner: nil
     )
   }
