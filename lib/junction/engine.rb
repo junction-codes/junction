@@ -19,6 +19,7 @@ module Junction
     initializer "junction.zeitwerk_ignore" do
       # Ignore our gems entrypoint file to avoid Zeitwerk warnings.
       Rails.autoloaders.main.ignore(root.join("lib/junction-codes.rb"))
+      Rails.autoloaders.main.ignore(root.join("lib/junction/version.rb"))
     end
 
     initializer "junction.view_overrides" do |app|
