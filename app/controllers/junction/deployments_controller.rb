@@ -85,7 +85,7 @@ module Junction
     # @return [Array<Array(String, String)>] Array of [name, key] pairs for
     #   environments.
     def available_environments
-      CatalogOptions.environments.map { |key, opts| [ opts[:name], key ] }
+      Junction::CatalogOptions.environments.map { |key, opts| [ opts[:name], key ] }
     end
 
     # Returns an array of available platforms for deployments.
@@ -93,7 +93,7 @@ module Junction
     # @return [Array<Array(String, String)>] Array of [name, key] pairs for
     #   platforms.
     def available_platforms
-      CatalogOptions.platforms.map { |key, opts| [ opts[:name], key ] }
+      Junction::CatalogOptions.platforms.map { |key, opts| [ opts[:name], key ] }
     end
 
     # Use callbacks to share common setup or constraints between actions.

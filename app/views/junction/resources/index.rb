@@ -103,8 +103,8 @@ module Junction
                 row.cell do
                   break unless resource.type.present?
 
-                  if CatalogOptions.resources.key?(resource.type)
-                    CatalogOptions.resources[resource.type][:name]
+                  if Junction::CatalogOptions.resources.key?(resource.type)
+                    Junction::CatalogOptions.resources[resource.type][:name]
                   else
                     resource.type.capitalize
                   end

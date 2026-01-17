@@ -108,8 +108,8 @@ module Junction
                 row.cell do
                   break unless component.type.present?
 
-                  if CatalogOptions.kinds.key?(component.type)
-                    CatalogOptions.kinds[component.type][:name]
+                  if Junction::CatalogOptions.kinds.key?(component.type)
+                    Junction::CatalogOptions.kinds[component.type][:name]
                   else
                     component.type.capitalize
                   end

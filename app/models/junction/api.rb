@@ -12,11 +12,11 @@ module Junction
 
     belongs_to :system
 
-    validates :api_type, presence: true, inclusion: { in: CatalogOptions.apis.keys }
+    validates :api_type, presence: true, inclusion: { in: Junction::CatalogOptions.apis.keys }
     validates :definition, presence: true
     validates :description, presence: true
     validates :image_url, allow_blank: true, format: URI::DEFAULT_PARSER.make_regexp(%w[http https])
-    validates :lifecycle, presence: true, inclusion: { in: CatalogOptions.lifecycles.keys }
+    validates :lifecycle, presence: true, inclusion: { in: Junction::CatalogOptions.lifecycles.keys }
     validates :name, presence: true, uniqueness: true
 
     def self.ransackable_associations(auth_object = nil)
@@ -31,7 +31,7 @@ module Junction
     #
     # @return [String] The icon name.
     def icon
-      CatalogOptions.apis[type]&.[](:icon) || "webhook"
+      Junction::CatalogOptions.apis[type]&.[](:icon) || "webhook"
     end
   end
 end

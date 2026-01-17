@@ -105,8 +105,8 @@ module Junction
                 row.cell do
                   break unless api.type.present?
 
-                  if CatalogOptions.apis.key?(api.type)
-                    CatalogOptions.apis[api.type][:name]
+                  if Junction::CatalogOptions.apis.key?(api.type)
+                    Junction::CatalogOptions.apis[api.type][:name]
                   else
                     api.type.capitalize
                   end

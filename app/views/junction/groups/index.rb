@@ -85,8 +85,8 @@ module Junction
                 row.cell do
                   break unless group.type.present?
 
-                  if CatalogOptions.group_types.key?(group.type)
-                    CatalogOptions.group_types[group.type][:name]
+                  if Junction::CatalogOptions.group_types.key?(group.type)
+                    Junction::CatalogOptions.group_types[group.type][:name]
                   else
                     group.type.capitalize
                   end

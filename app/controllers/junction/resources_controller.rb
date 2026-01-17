@@ -96,7 +96,7 @@ module Junction
     #
     # @return [Array<Array(String, String)>] Array of [name, key] pairs for types.
     def available_types
-      CatalogOptions.resources.map { |key, opts| [ opts[:name], key ] }
+      Junction::CatalogOptions.resources.map { |key, opts| [ opts[:name], key ] }
     end
 
     def set_entity

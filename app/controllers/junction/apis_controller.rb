@@ -76,7 +76,7 @@ module Junction
     # @return [Array<Array(String, String)>] Array of [name, key] pairs for
     #   lifecycles.
     def available_lifecycles
-      CatalogOptions.lifecycles.map { |key, opts| [ opts[:name], key ] }
+      Junction::CatalogOptions.lifecycles.map { |key, opts| [ opts[:name], key ] }
     end
 
     # Returns a collection of available owners for apis.
@@ -98,7 +98,7 @@ module Junction
     # @return [Array<Array(String, String)>] Array of [name, key] pairs for
     #   types.
     def available_types
-      CatalogOptions.apis.map { |key, opts| [ opts[:name], key ] }
+      Junction::CatalogOptions.apis.map { |key, opts| [ opts[:name], key ] }
     end
 
     def set_entity

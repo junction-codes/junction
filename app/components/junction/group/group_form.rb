@@ -21,7 +21,7 @@ module Junction
 
             card.content(class: "space-y-4") do
               render TextField.new(f, :name, "Group Name", required: true)
-              render RichSelectField.new(f, :type, "Type", required: true, options: CatalogOptions.group_types)
+              render RichSelectField.new(f, :type, "Type", required: true, options: Junction::CatalogOptions.group_types)
 
               render ReferenceField.new(f, :parent_id, "Parent", required: false, icon: "users-round",
                                         options: @available_parents, value: @group.parent,

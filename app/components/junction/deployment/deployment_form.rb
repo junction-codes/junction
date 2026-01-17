@@ -21,8 +21,8 @@ module Junction
             end
 
             card.content(class: "space-y-4") do
-              render RichSelectField.new(f, :environment, "Environment", required: true, options: CatalogOptions.environments)
-              render RichSelectField.new(f, :platform, "Platform", required: true, options: CatalogOptions.platforms)
+              render RichSelectField.new(f, :environment, "Environment", required: true, options: Junction::CatalogOptions.environments)
+              render RichSelectField.new(f, :platform, "Platform", required: true, options: Junction::CatalogOptions.platforms)
 
               render ReferenceField.new(f, :component_id, "Component", required: true,
                                     options: @available_components, value: @deployment.component, icon: "server",

@@ -2,6 +2,7 @@
 
 require "junction/engine"
 require "junction/version"
+require "junction/catalog_options"
 
 module Junction
   mattr_accessor :config

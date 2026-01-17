@@ -33,13 +33,13 @@ RSpec.describe Junction::Group, type: :model do
 
   describe '#icon' do
     it 'returns the icon for a known group type' do
-      allow(CatalogOptions).to receive(:group_types).and_return({ 'team' => { icon: 'team-icon' } })
+      allow(Junction::CatalogOptions).to receive(:group_types).and_return({ 'team' => { icon: 'team-icon' } })
       group = build(:group, group_type: 'team')
       expect(group.icon).to eq('team-icon')
     end
 
     it 'returns the default icon for an unknown group type' do
-      allow(CatalogOptions).to receive(:group_types).and_return({})
+      allow(Junction::CatalogOptions).to receive(:group_types).and_return({})
       group = build(:group, group_type: 'unknown-type')
       expect(group.icon).to eq('users-round')
     end

@@ -25,7 +25,7 @@ module Junction
 
             card.content(class: "space-y-4") do
               render TextField.new(f, :name, "Resource Name", required: true)
-              render RichSelectField.new(f, :type, "Type", required: true, options: CatalogOptions.resources)
+              render RichSelectField.new(f, :type, "Type", required: true, options: Junction::CatalogOptions.resources)
 
               render ReferenceField.new(f, :owner_id, "Owner", required: true,
                                         icon: "users-round", options: @available_owners,

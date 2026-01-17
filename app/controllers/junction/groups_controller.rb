@@ -75,7 +75,7 @@ module Junction
     # @return [Array<Array(String, String)>] Array of [name, key] pairs for
     #   types.
     def available_types
-      CatalogOptions.group_types.map { |key, opts| [ opts[:name], key ] }
+      Junction::CatalogOptions.group_types.map { |key, opts| [ opts[:name], key ] }
     end
 
     # Use callbacks to share common setup or constraints between actions.

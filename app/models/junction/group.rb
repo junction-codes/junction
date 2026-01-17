@@ -29,7 +29,7 @@ module Junction
     end
 
     def icon
-      CatalogOptions.group_types[type]&.[](:icon) || "users-round"
+      Junction::CatalogOptions.group_types[type]&.[](:icon) || "users-round"
     end
 
     def self_and_ancestors
