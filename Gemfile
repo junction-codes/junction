@@ -5,6 +5,7 @@ source "https://rubygems.org"
 gemspec
 
 gem "bcrypt"
+gem "chartkick"
 gem "propshaft"
 
 group :development, :test do

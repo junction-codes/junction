@@ -30,8 +30,8 @@ module Junction
                   end
 
                   form_with(url: password_path(@token), class: "space-y-4 md:space-y-6", method: :put) do |form|
-                    Components::PasswordField(form, :password, "Enter new password", placeholder: "••••••••", required: true, autofocus: true, autocomplete: "new-password")
-                    Components::PasswordField(form, :password_confirmation, "Repeat new password", placeholder: "••••••••", required: true, autofocus: true, autocomplete: "new-password")
+                    PasswordField(form, :password, "Enter new password", placeholder: "••••••••", required: true, autofocus: true, autocomplete: "new-password")
+                    PasswordField(form, :password_confirmation, "Repeat new password", placeholder: "••••••••", required: true, autofocus: true, autocomplete: "new-password")
 
                     div(class: "flex items-center justify-between") do
                       a(href: new_session_path, class: "text-sm font-medium text-primary-600 hover:underline dark:text-primary-500") { plain("Back to log in") }

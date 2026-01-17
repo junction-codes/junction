@@ -1,2 +1,2 @@
-web: bin/rails server
+web: RUBY_DEBUG_OPEN=TRUE RUBY_DEBUG_NONSTOP=TRUE rdbg --command --open --stop-at-load -- bin/rails server
 css: bin/rails tailwindcss:watch

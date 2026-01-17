@@ -26,7 +26,7 @@ module Junction
                   end
 
                   form_with(url: passwords_path, class: "space-y-4 md:space-y-6") do |form|
-                    Components::TextField(form, :email_address, "Your email", type: "email", placeholder: "example@example.com", autofocus: true, autocomplete: "username")
+                    TextField(form, :email_address, "Your email", type: "email", placeholder: "example@example.com", autofocus: true, autocomplete: "username")
 
                     div(class: "flex items-center justify-between") do
                       a(href: new_session_path, class: "text-sm font-medium text-primary-600 hover:underline dark:text-primary-500") { plain("Back to log in") }

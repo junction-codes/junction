@@ -486,6 +486,7 @@ DEPENDENCIES
   bcrypt
   brakeman (~> 7.1)
   capybara (~> 3.4)
+  chartkick
   cuprite (~> 0.17)
   debug
   factory_bot_rails (~> 6.5)
