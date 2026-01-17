@@ -7,8 +7,8 @@ module Junction
       # Initializes the component.
       #
       # @param query [Ransack::Search] Ransack query object for filtering.
-      # @param available_types [Array<Array>] Type options as [label, value] paris
-      #   for filtering.
+      # @param available_types [Array<Array>] Type options as [label, value]
+      #   pairs for filtering.
       # @param user_attrs [Hash] Additional HTML attributes for the component.
       def initialize(query:, available_types: [], **user_attrs)
         @query = query

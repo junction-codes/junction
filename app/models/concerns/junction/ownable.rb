@@ -6,7 +6,7 @@ module Junction
     extend ActiveSupport::Concern
 
     included do
-      belongs_to :owner, class_name: "Group", optional: true
+      belongs_to :owner, class_name: "Junction::Group", optional: true
     end
   end
 end
