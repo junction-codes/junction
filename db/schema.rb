@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_12_235743) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_17_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -53,8 +53,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_12_235743) do
     t.bigint "target_id", null: false
     t.string "target_type", null: false
     t.datetime "updated_at", null: false
-    t.index ["source_type", "source_id"], name: "index_junction_dependencies_on_source_type_and_source_id"
-    t.index ["target_type", "target_id"], name: "index_junction_dependencies_on_target_type_and_target_id"
+    t.index ["source_type", "source_id"], name: "index_junction_dependencies_on_source"
+    t.index ["target_type", "target_id"], name: "index_junction_dependencies_on_target"
   end
 
   create_table "junction_deployments", force: :cascade do |t|
