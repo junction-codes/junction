@@ -15,6 +15,14 @@ module Junction
       def helpers
         @helpers ||= Junction::ApplicationController.helpers
       end
+
+      # Returns the correct stylesheet asset name depending on whether we're in
+      # the engine or the host application.
+      #
+      # @return [String] The stylesheet asset name.
+      def stylesheet_asset
+        Rails.root == Junction::Engine.root ? "builds/tailwind" : "tailwind"
+      end
     end
   end
 end

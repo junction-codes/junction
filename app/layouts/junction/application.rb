@@ -56,7 +56,7 @@ module Junction
         link rel: "icon", href: "/icon.png", type: "image/png"
         link rel: "icon", href: "/icon.svg", type: "image/svg+xml"
         link rel: "apple-touch-icon", href: "/icon.png"
-        stylesheet_link_tag "builds/tailwind", 'data-turbo-track': "reload"
+        stylesheet_link_tag stylesheet_asset, 'data-turbo-track': "reload"
       end
 
       def page_title
