@@ -56,7 +56,7 @@ module Junction
         redirect_to @entity, success: "Component was successfully created."
       else
         flash.now[:alert] = "There were errors creating the component."
-        render Views::Components::New.new(component: @entity, available_owners:, available_systems:), status: :unprocessable_entity
+        render Views::Components::New.new(component: @entity, available_owners:, available_systems:), status: :unprocessable_content
       end
     end
 
@@ -66,7 +66,7 @@ module Junction
         redirect_to @entity, success: "Component was successfully updated."
       else
         flash.now[:alert] = "There were errors updating the component."
-        render Views::Components::Edit.new(component: @entity, available_owners:, available_systems:), status: :unprocessable_entity
+        render Views::Components::Edit.new(component: @entity, available_owners:, available_systems:), status: :unprocessable_content
       end
     end
 

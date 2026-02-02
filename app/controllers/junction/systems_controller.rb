@@ -44,7 +44,7 @@ module Junction
         redirect_to @system, success: "System was successfully created."
       else
         flash.now[:alert] = "There were errors creating the system."
-        render Views::Systems::New.new(system: @system, available_domains:, available_owners:), status: :unprocessable_entity
+        render Views::Systems::New.new(system: @system, available_domains:, available_owners:), status: :unprocessable_content
       end
     end
 
@@ -54,7 +54,7 @@ module Junction
         redirect_to @system, success: "System was successfully updated."
       else
         flash.now[:alert] = "There were errors updating the system."
-        render Views::Systems::Edit.new(system: @system, available_domains:, available_owners:), status: :unprocessable_entity
+        render Views::Systems::Edit.new(system: @system, available_domains:, available_owners:), status: :unprocessable_content
       end
     end
 

@@ -36,7 +36,7 @@ module Junction
         redirect_to @user, success: "User was successfully created."
       else
         flash.now[:alert] = "There were errors creating the user."
-        render Views::Users::New.new(user: @user), status: :unprocessable_entity
+        render Views::Users::New.new(user: @user), status: :unprocessable_content
       end
     end
 
@@ -46,7 +46,7 @@ module Junction
         redirect_to @user, success: "User was successfully updated."
       else
         flash.now[:alert] = "There were errors updating the user."
-        render Views::Users::Edit.new(user: @user), status: :unprocessable_entity
+        render Views::Users::Edit.new(user: @user), status: :unprocessable_content
       end
     end
 
