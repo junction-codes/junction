@@ -143,11 +143,10 @@ def random_password(length: 64)
   end.join
 end
 
-org = "sample"
-path = Rails.root.join('db', 'seeds', org)
 if Rails.env.development?
   create_default_admin_user
 
+  path = Junction::Engine.seed_data_path(ENV.fetch("JUNCTION_SEED_ORG", "sample"))
   import_users(path)
   import_groups(path)
   import_domains(path)

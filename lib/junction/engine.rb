@@ -84,5 +84,18 @@ module Junction
       app.config.assets.paths << root.join("app/javascript")
       app.config.assets.paths << root.join("vendor/javascript")
     end
+
+    # Directory path where seed data files are located.
+    #
+    # @return [String] Path to the seed data directory.
+    def seed_data_path(org = "sample")
+      if Dir.exist?(Rails.root.join("db", "seeds", org))
+        return Rails.root.join("db", "seeds", org).to_s
+      elsif Dir.exist?(root.join("db", "seeds", org))
+        return root.join("db", "seeds", org).to_s
+      end
+
+      raise "Seed data path not found for organization '#{org}'"
+    end
   end
 end
