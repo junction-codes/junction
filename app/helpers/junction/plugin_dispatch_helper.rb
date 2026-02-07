@@ -39,7 +39,7 @@ module Junction
         tabs_component.content(value: tab[:title].parameterize) do
           h3(class: "text-xl font-semibold text-gray-800 dark:text-white mb-4") { tab[:title] }
 
-          turbo_frame_tag(tab[:target], src: main_app.send(tab[:action], context), loading: :lazy) do
+          turbo_frame_tag(tab[:target], src: resolve_plugin_route(tab[:action], context), loading: :lazy) do
             div(class: "p-4") { render Components::Skeleton(class: "h-20") }
           end
         end
@@ -52,13 +52,14 @@ module Junction
     # @param slot [Symbol] The slot to render components for
     def render_plugin_ui_components(context:, slot:)
       visible_components(context, slot).each do |component|
-        render component[:component].new(object: context)
+        render component[:component].new(entity: context)
       end
     end
 
     private
 
-    # Retrieves the UI components that are visible for the given context and slot.
+    # Retrieves the UI components that are visible for the given context and
+    # slot.
     #
     # @param context [ApplicationRecord] The record to check visibility against.
     # @param slot [Symbol] The slot to check components for.
@@ -77,6 +78,25 @@ module Junction
       Junction::PluginRegistry.tabs_for(context).select do |tab|
         tab[:if].nil? || tab[:if].call(context:)
       end
+    end
+
+    # Resolves a plugin route helper within the engine or host app.
+    #
+    # @param action [Symbol] The route helper method to call.
+    # @param args [Array] Arguments to pass to the route helper.
+    # @return [String] The resolved URL or path.
+    #
+    # @raise [ArgumentError] If the route helper cannot be found.
+    def resolve_plugin_route(action, *args)
+      if respond_to?(action)
+        return public_send(action, *args)
+      elsif respond_to?(:main_app) && main_app.respond_to?(action)
+        return main_app.public_send(action, *args)
+      elsif Junction::Engine.routes.url_helpers.respond_to?(action)
+        return Junction::Engine.routes.url_helpers.public_send(action, *args)
+      end
+
+      raise ArgumentError, "Unknown plugin route helper: #{action}"
     end
   end
 end

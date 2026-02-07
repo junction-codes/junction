@@ -19,3 +19,5 @@
   description: |
     Main web application for Junction, providing core functionality and user
     interface.
+  annotations:
+    github.com/project-slug: junction-codes/junction

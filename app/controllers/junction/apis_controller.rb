@@ -48,7 +48,7 @@ module Junction
         redirect_to @entity, success: "API was successfully created.", status: :see_other
       else
         flash.now[:alert] = "There were errors creating the API."
-        render Views::Apis::New.new(api: @entity, available_owners:, available_systems:), status: :unprocessable_entity
+        render Views::Apis::New.new(api: @entity, available_owners:, available_systems:), status: :unprocessable_content
       end
     end
 
@@ -58,7 +58,7 @@ module Junction
         redirect_to @entity, success: "API was successfully updated.", status: :see_other
       else
         flash.now[:alert] = "There were errors updating the API."
-        render Views::Apis::Edit.new(api: @entity, available_owners:, available_systems:), status: :unprocessable_entity
+        render Views::Apis::Edit.new(api: @entity, available_owners:, available_systems:), status: :unprocessable_content
       end
     end
 

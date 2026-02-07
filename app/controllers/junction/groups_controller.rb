@@ -40,7 +40,7 @@ module Junction
         redirect_to @group, success: "Group was successfully created."
       else
         flash.now[:alert] = "There were errors creating the group."
-        render Views::Groups::New.new(group: @group, available_parents:), status: :unprocessable_entity
+        render Views::Groups::New.new(group: @group, available_parents:), status: :unprocessable_content
       end
     end
 
@@ -50,7 +50,7 @@ module Junction
         redirect_to @group, success: "Group was successfully updated."
       else
         flash.now[:alert] = "There were errors updating the group."
-        render Views::Groups::Edit.new(group: @group, available_parents:), status: :unprocessable_entity
+        render Views::Groups::Edit.new(group: @group, available_parents:), status: :unprocessable_content
       end
     end
 

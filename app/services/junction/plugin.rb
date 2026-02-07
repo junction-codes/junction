@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "entity_scope"
+
 module Junction
   # Represents a plugin within the application.
   class Plugin

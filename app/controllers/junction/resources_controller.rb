@@ -55,7 +55,7 @@ module Junction
         redirect_to @entity, success: "Resource was successfully created."
       else
         flash.now[:alert] = "There were errors creating the resource."
-        render Views::Resources::New.new(resource: @entity, available_owners:, available_systems:), status: :unprocessable_entity
+        render Views::Resources::New.new(resource: @entity, available_owners:, available_systems:), status: :unprocessable_content
       end
     end
 
@@ -65,7 +65,7 @@ module Junction
         redirect_to @entity, success: "Resource was successfully updated."
       else
         flash.now[:alert] = "There were errors updating the resource."
-        render Views::Resources::Edit.new(resource: @entity, available_owners:, available_systems:), status: :unprocessable_entity
+        render Views::Resources::Edit.new(resource: @entity, available_owners:, available_systems:), status: :unprocessable_content
       end
     end
 

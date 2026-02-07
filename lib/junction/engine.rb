@@ -60,6 +60,7 @@ module Junction
       ActiveSupport.on_load(:action_controller_base) do
         helper Turbo::DriveHelper if defined?(Turbo::DriveHelper)
         helper Importmap::ImportmapTagsHelper if defined?(Importmap::ImportmapTagsHelper)
+        helper Junction::Engine.routes.url_helpers
       end
     end
 

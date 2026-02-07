@@ -48,7 +48,7 @@ module Junction
         redirect_to @deployment, success: "Deployment was successfully created."
       else
         flash.now[:alert] = "There were errors creating the deployment."
-        render Views::Deployments::New.new(deployment: @deployment, available_components:), status: :unprocessable_entity
+        render Views::Deployments::New.new(deployment: @deployment, available_components:), status: :unprocessable_content
       end
     end
 
@@ -58,7 +58,7 @@ module Junction
         redirect_to @deployment, success: "Deployment was successfully updated."
       else
         flash.now[:alert] = "There were errors updating the deployment."
-        render Views::Deployments::Edit.new(deployment: @deployment, available_components:), status: :unprocessable_entity
+        render Views::Deployments::Edit.new(deployment: @deployment, available_components:), status: :unprocessable_content
       end
     end
 

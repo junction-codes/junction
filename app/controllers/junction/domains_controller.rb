@@ -41,7 +41,7 @@ module Junction
         redirect_to @domain, success: "Domain was successfully created."
       else
         flash.now[:alert] = "There were errors creating the domain."
-        render Views::Domains::New.new(domain: @domain, available_owners:), status: :unprocessable_entity
+        render Views::Domains::New.new(domain: @domain, available_owners:), status: :unprocessable_content
       end
     end
 
@@ -51,7 +51,7 @@ module Junction
         redirect_to @domain, success: "Domain was successfully updated."
       else
         flash.now[:alert] = "There were errors updating the domain."
-        render Views::Domains::Edit.new(domain: @domain, available_owners:), status: :unprocessable_entity
+        render Views::Domains::Edit.new(domain: @domain, available_owners:), status: :unprocessable_content
       end
     end
 
