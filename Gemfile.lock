@@ -377,7 +377,7 @@ GEM
       lint_roller (~> 1.1)
       rubocop (~> 1.81)
     ruby-progressbar (1.13.0)
-    ruby_ui (1.0.2)
+    ruby_ui (1.1.0)
     securerandom (0.4.1)
     shoulda-matchers (7.0.1)
       activesupport (>= 7.1)
@@ -470,7 +470,7 @@ DEPENDENCIES
   rubocop-capybara (~> 2.22)
   rubocop-rails-omakase
   rubocop-rspec (~> 3.8)
-  ruby_ui (~> 1.0)
+  ruby_ui (~> 1.1)
   shoulda-matchers (~> 7.0)
   simplecov (~> 0.22)
   vcr (~> 6.3)
