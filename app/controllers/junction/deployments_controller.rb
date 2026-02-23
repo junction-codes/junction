@@ -14,6 +14,7 @@ module Junction
       render Views::Deployments::Index.new(
         deployments: @q.result,
         query: @q,
+        can_create: allowed_to?(:create?, Junction::Deployment),
         available_components:,
         available_environments:,
         available_platforms:
@@ -23,7 +24,11 @@ module Junction
     # GET /deployments/:id
     def show
       authorize! @deployment
-      render Views::Deployments::Show.new(deployment: @deployment)
+      render Views::Deployments::Show.new(
+        deployment: @deployment,
+        can_edit: allowed_to?(:update?, @deployment),
+        can_destroy: allowed_to?(:destroy?, @deployment)
+      )
     end
 
     # GET /deployments/new
@@ -40,6 +45,7 @@ module Junction
       authorize! @deployment
       render Views::Deployments::Edit.new(
         deployment: @deployment,
+        can_destroy: allowed_to?(:destroy?, @deployment),
         available_components:
       )
     end
@@ -65,8 +71,11 @@ module Junction
         redirect_to @deployment, success: "Deployment was successfully updated."
       else
         flash.now[:alert] = "There were errors updating the deployment."
-        render Views::Deployments::Edit.new(deployment: @deployment, available_components:),
-               status: :unprocessable_content
+        render Views::Deployments::Edit.new(
+          deployment: @deployment,
+          can_destroy: allowed_to?(:destroy?, @deployment),
+          available_components:
+        ), status: :unprocessable_content
       end
     end
 

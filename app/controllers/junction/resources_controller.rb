@@ -20,6 +20,7 @@ module Junction
       render Views::Resources::Index.new(
         resources: @q.result,
         query: @q,
+        can_create: allowed_to?(:create?, Junction::Resource),
         available_owners:,
         available_systems:,
         available_types:,
@@ -29,7 +30,13 @@ module Junction
     # GET /resources/:id
     def show
       authorize! @entity
-      render Views::Resources::Show.new(resource: @entity, dependencies:, dependents:)
+      render Views::Resources::Show.new(
+        resource: @entity,
+        can_edit: allowed_to?(:update?, @entity),
+        can_destroy: allowed_to?(:destroy?, @entity),
+        dependencies:,
+        dependents:
+      )
     end
 
     # GET /resources/new
@@ -47,6 +54,7 @@ module Junction
       authorize! @entity
       render Views::Resources::Edit.new(
         resource: @entity,
+        can_destroy: allowed_to?(:destroy?, @entity),
         available_owners:,
         available_systems:
       )
@@ -73,8 +81,12 @@ module Junction
         redirect_to @entity, success: "Resource was successfully updated."
       else
         flash.now[:alert] = "There were errors updating the resource."
-        render Views::Resources::Edit.new(resource: @entity, available_owners:, available_systems:),
-               status: :unprocessable_content
+        render Views::Resources::Edit.new(
+          resource: @entity,
+          can_destroy: allowed_to?(:destroy?, @entity),
+          available_owners:,
+          available_systems:
+        ), status: :unprocessable_content
       end
     end
 

@@ -6,7 +6,7 @@ module Junction
       # Index view for components.
       class Index < Views::Base
         attr_reader :available_lifecycles, :available_owners, :available_systems,
-                    :available_types, :components, :query
+                    :available_types, :can_create, :components, :query
 
         # Initializes the view.
         #
@@ -14,18 +14,20 @@ module Junction
         #   display.
         # @param query [Ransack::Search] Ransack query object for filtering and
         #   sorting.
-        # @param available_lifecycles [Array<Array>] Lifecycle options as [label,
-        #   value] pairs for filtering.
-        # @param available_owners [Array<Array>] Owner entity options with name and id
-        #   attributes.
-        # @param available_systems [Array<Array>] System entity options with name and
-        #   id attributes.
-        # @param available_types [Array<Array>] Type options as [label, value] pairs
-        #   for filtering.
+        # @param available_lifecycles [Array<Array>] Lifecycle options as
+        #   [label, value] pairs for filtering.
+        # @param available_owners [Array<Array>] Owner entity options with name
+        #   and id attributes.
+        # @param available_systems [Array<Array>] System entity options with
+        #   name and id attributes.
+        # @param available_types [Array<Array>] Type options as [label, value]
+        #   pairs for filtering.
+        # @param can_create [Boolean] Whether the user can create components.
         def initialize(components:, query:, available_lifecycles:, available_owners:,
-                      available_systems:, available_types:)
+                      available_systems:, available_types:, can_create: true)
           @components = components
           @query = query
+          @can_create = can_create
           @available_lifecycles = available_lifecycles
           @available_owners = available_owners
           @available_systems = available_systems
@@ -37,8 +39,8 @@ module Junction
             div(class: "p-6") do
               div(class: "flex justify-between items-center mb-6") do
                 h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { "Components" }
-                Link(variant: :primary, href: new_component_path) do
-                  "New Component"
+                if @can_create
+                  Link(variant: :primary, href: new_component_path) { "New Component" }
                 end
               end
 

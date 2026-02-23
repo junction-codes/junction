@@ -12,13 +12,21 @@ module Junction
       @q = Junction::Role.ransack(params[:q])
       @q.sorts = "name asc" if @q.sorts.empty?
 
-      render Views::Roles::Index.new(roles: @q.result, query: @q)
+      render Views::Roles::Index.new(
+        roles: @q.result,
+        query: @q,
+        can_create: allowed_to?(:create?, Junction::Role)
+      )
     end
 
     # GET /roles/:id
     def show
       authorize! @role
-      render Views::Roles::Show.new(role: @role)
+      render Views::Roles::Show.new(
+        role: @role,
+        can_edit: allowed_to?(:update?, @role),
+        can_destroy: allowed_to?(:destroy?, @role) && !@role.system?
+      )
     end
 
     # GET /roles/new
@@ -52,6 +60,7 @@ module Junction
       authorize! @role
       render Views::Roles::Edit.new(
         role: @role,
+        can_destroy: allowed_to?(:destroy?, @role) && !@role.system?,
         available_permissions: Junction::PluginRegistry.permissions
       )
     end
@@ -65,6 +74,7 @@ module Junction
       else
         render Views::Roles::Edit.new(
           role: @role,
+          can_destroy: allowed_to?(:destroy?, @role) && !@role.system?,
           available_permissions: Junction::PluginRegistry.permissions
         ), status: :unprocessable_content
       end

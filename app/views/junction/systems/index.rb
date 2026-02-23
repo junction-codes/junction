@@ -6,22 +6,26 @@ module Junction
       # Index view for Systems.
       class Index < Views::Base
         attr_reader :available_domains, :available_owners, :available_statuses,
-                    :query, :systems
+                    :can_create, :query, :systems
 
         # Initializes the view.
         #
-        # @param systems [ActiveRecord::Relation] Collection of systems to display.
+        # @param systems [ActiveRecord::Relation] Collection of systems to
+        #   display.
         # @param query [Ransack::Search] Ransack query object for filtering and
         #   sorting.
-        # @param available_domains [Array<Array>] Domain entity options with name and
-        #   id attributes.
-        # @param available_owners [Array<Array>] Owner entity options with name and id
-        #   attributes.
-        # @param available_statuses [Array<Array>] Status options as [label, value]
-        #   pairs for filtering.
-        def initialize(systems:, query:, available_domains:, available_owners:, available_statuses:)
+        # @param available_domains [Array<Array>] Domain entity options with
+        #   name and id attributes.
+        # @param available_owners [Array<Array>] Owner entity options with name
+        #   and id attributes.
+        # @param available_statuses [Array<Array>] Status options as [label,
+        #   value] pairs for filtering.
+        # @param can_create [Boolean] Whether the user can create systems.
+        def initialize(systems:, query:, available_domains:, available_owners:,
+                       available_statuses:, can_create: true)
           @systems = systems
           @query = query
+          @can_create = can_create
           @available_domains = available_domains
           @available_owners = available_owners
           @available_statuses = available_statuses
@@ -32,8 +36,8 @@ module Junction
             div(class: "p-6") do
               div(class: "flex justify-between items-center mb-6") do
                 h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { "Systems" }
-                Link(variant: :primary, href: new_system_path) do
-                  "New System"
+                if @can_create
+                  Link(variant: :primary, href: new_system_path) { "New System" }
                 end
               end
 

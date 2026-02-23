@@ -3,8 +3,9 @@
 module Junction
   module Components
     class GroupEditSidebar < Base
-      def initialize(group:)
+      def initialize(group:, can_destroy: true)
         @group = group
+        @can_destroy = can_destroy
       end
 
       def view_template
@@ -20,34 +21,36 @@ module Junction
         end
 
         # Danger zone for destructive actions.
-        render Components::Card.new(class: "border-red-500/50 dark:border-red-500/30") do |card|
-          card.header do
-            card.title(class: "text-red-700 dark:text-red-400") { "Danger Zone" }
-          end
+        if @can_destroy
+          render Components::Card.new(class: "border-red-500/50 dark:border-red-500/30") do |card|
+            card.header do
+              card.title(class: "text-red-700 dark:text-red-400") { "Danger Zone" }
+            end
 
-          card.content(class: "space-y-4") do
-            p(class: "text-sm text-gray-600 dark:text-gray-400") { "These actions are irreversible. Please be certain." }
+            card.content(class: "space-y-4") do
+              p(class: "text-sm text-gray-600 dark:text-gray-400") { "These actions are irreversible. Please be certain." }
 
-            render Dialog do |dialog|
-              dialog.trigger do
-                render Button.new(variant: :destructive, class: "w-full justify-center") do
-                  icon("trash", class: "w-4 h-4 mr-2")
-                  plain "Delete Group"
-                end
-              end
-
-              dialog.content do |content|
-                content.header do |header|
-                  header.title { "Are you absolutely sure?" }
+              render Dialog do |dialog|
+                dialog.trigger do
+                  render Button.new(variant: :destructive, class: "w-full justify-center") do
+                    icon("trash", class: "w-4 h-4 mr-2")
+                    plain "Delete Group"
+                  end
                 end
 
-                content.body do
-                  "This action cannot be undone. This will permanently remove the group and all of its associated data."
-                end
+                dialog.content do |content|
+                  content.header do |header|
+                    header.title { "Are you absolutely sure?" }
+                  end
 
-                content.footer do
-                  render Link.new(data: { action: "click->ruby-ui--dialog#dismiss" }) { "Cancel" }
-                  render Link.new(variant: :destructive, href: group_path(@group), data_turbo_method: :delete) { "Confirm Delete" }
+                  content.body do
+                    "This action cannot be undone. This will permanently remove the group and all of its associated data."
+                  end
+
+                  content.footer do
+                    render Link.new(data: { action: "click->ruby-ui--dialog#dismiss" }) { "Cancel" }
+                    render Link.new(variant: :destructive, href: group_path(@group), data_turbo_method: :delete) { "Confirm Delete" }
+                  end
                 end
               end
             end

@@ -5,18 +5,21 @@ module Junction
     module Groups
       # Index view for groups.
       class Index < Views::Base
-        attr_reader :available_types, :groups, :query
+        attr_reader :available_types, :can_create, :groups, :query
 
         # Initializes the view.
         #
-        # @param groups [ActiveRecord::Relation] Collection of groups to display.
+        # @param groups [ActiveRecord::Relation] Collection of groups to
+        #   display.
         # @param query [Ransack::Search] Ransack query object for filtering
         #   and sorting.
-        # @param available_types [Array<Array>] Type options as [label, value] pairs
-        #   for filtering.
-        def initialize(groups:, query:, available_types:)
+        # @param available_types [Array<Array>] Type options as [label, value]
+        #   pairs for filtering.
+        # @param can_create [Boolean] Whether the user can create groups.
+        def initialize(groups:, query:, available_types:, can_create: true)
           @groups = groups
           @query = query
+          @can_create = can_create
           @available_types = available_types
         end
 
@@ -25,8 +28,8 @@ module Junction
             div(class: "p-6") do
               div(class: "flex justify-between items-center mb-6") do
                 h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { "Groups" }
-                Link(variant: :primary, href: new_group_path) do
-                  "New Group"
+                if @can_create
+                  Link(variant: :primary, href: new_group_path) { "New Group" }
                 end
               end
 

@@ -5,16 +5,18 @@ module Junction
     module Roles
       # Edit view for a role.
       class Edit < Views::Base
-        attr_reader :role, :available_permissions
+        attr_reader :available_permissions, :can_destroy, :role
 
         # Initialize a new view.
         #
         # @param role [Junction::Role] The role being edited.
         # @param available_permissions [Array<Junction::Permission>] Available
         #   permissions to select from.
-        def initialize(role:, available_permissions:)
+        # @param can_destroy [Boolean] Whether the role can be destroyed.
+        def initialize(role:, available_permissions:, can_destroy:)
           @role = role
           @available_permissions = available_permissions
+          @can_destroy = can_destroy
         end
 
         def view_template
@@ -33,7 +35,7 @@ module Junction
                 end
 
                 aside(class: "space-y-6") do
-                  RoleEditSidebar(role:)
+                  RoleEditSidebar(role:, can_destroy:)
                 end
               end
             end

@@ -7,10 +7,12 @@ module Junction
       class Show < Views::Base
         include PluginDispatchHelper
 
-        def initialize(component:, dependencies:, dependents:)
+        def initialize(component:, dependencies:, dependents:, can_edit:, can_destroy:)
           @component = component
           @dependencies = dependencies
           @dependents = dependents
+          @can_edit = can_edit
+          @can_destroy = can_destroy
         end
 
         def view_template
@@ -73,9 +75,11 @@ module Junction
 
             # Right side: action buttons.
             div(class: "flex-shrink-0") do
-              Link(variant: :primary, href: edit_component_path(@component)) do
-                icon("pencil", class: "w-4 h-4 mr-2")
-                plain "Edit Component"
+              if @can_edit
+                Link(variant: :primary, href: edit_component_path(@component)) do
+                  icon("pencil", class: "w-4 h-4 mr-2")
+                  plain "Edit Component"
+                end
               end
             end
           end

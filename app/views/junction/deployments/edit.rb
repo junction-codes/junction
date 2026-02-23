@@ -5,16 +5,18 @@ module Junction
     module Deployments
       # Edit view for deployments.
       class Edit < Views::Base
-        attr_reader :available_components, :deployment
+        attr_reader :available_components, :can_destroy, :deployment
 
         # Initializes the view.
         #
         # @param deployment [Deployment] The deployment being modified.
-        # @param available_components [Array<Array>] Component entity options with
-        #   name and id attributes.
-        def initialize(deployment:, available_components:)
+        # @param available_components [Array<Array>] Component entity options
+        #   with name and id attributes.
+        # @param can_destroy [Boolean] Whether the deployment can be destroyed.
+        def initialize(deployment:, available_components:, can_destroy:)
           @deployment = deployment
           @available_components = available_components
+          @can_destroy = can_destroy
         end
 
         def view_template
@@ -36,7 +38,7 @@ module Junction
               end
 
               aside(class: "space-y-6") do
-                DeploymentEditSidebar(deployment:)
+                DeploymentEditSidebar(deployment:, can_destroy:)
               end
             end
           end

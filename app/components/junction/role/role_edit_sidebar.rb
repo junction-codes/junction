@@ -7,9 +7,11 @@ module Junction
       # Initialize a new component.
       #
       # @param role [Junction::Role] The role being edited.
+      # @param can_destroy [Boolean] Whether the role can be destroyed.
       # @param user_attrs [Hash] Additional HTML attributes for the component.
-      def initialize(role:, **user_attrs)
+      def initialize(role:, can_destroy: true, **user_attrs)
         @role = role
+        @can_destroy = can_destroy
 
         super(**user_attrs)
       end
@@ -27,36 +29,38 @@ module Junction
           end
         end
 
-        # Danger zone for destructive actions.
-        Card(class: "border-red-500/50 dark:border-red-500/30") do |card|
-          card.header do
-            card.title(class: "text-red-700 dark:text-red-400") { t("components.role_edit_sidebar.danger_zone") }
-          end
+        # Danger zone for destructive actions (only when allowed and not a system role).
+        if @can_destroy && !@role.system?
+          Card(class: "border-red-500/50 dark:border-red-500/30") do |card|
+            card.header do
+              card.title(class: "text-red-700 dark:text-red-400") { t("components.role_edit_sidebar.danger_zone") }
+            end
 
-          card.content(class: "space-y-4") do
-            p(class: "text-sm text-gray-600 dark:text-gray-400") { t("components.role_edit_sidebar.danger_zone_warning") }
+            card.content(class: "space-y-4") do
+              p(class: "text-sm text-gray-600 dark:text-gray-400") { t("components.role_edit_sidebar.danger_zone_warning") }
 
-            Dialog do |dialog|
-              dialog.trigger do
-                Button(variant: :destructive, class: "w-full justify-center") do
-                  icon("trash", class: "w-4 h-4 mr-2")
-                  plain t("components.role_edit_sidebar.delete_role")
-                end
-              end
-
-              dialog.content do |content|
-                content.header do |header|
-                  header.title { t("components.role_edit_sidebar.delete_confirm_title") }
+              Dialog do |dialog|
+                dialog.trigger do
+                  Button(variant: :destructive, class: "w-full justify-center") do
+                    icon("trash", class: "w-4 h-4 mr-2")
+                    plain t("components.role_edit_sidebar.delete_role")
+                  end
                 end
 
-                content.body do
-                  t("components.role_edit_sidebar.delete_confirm_body")
-                end
+                dialog.content do |content|
+                  content.header do |header|
+                    header.title { t("components.role_edit_sidebar.delete_confirm_title") }
+                  end
 
-                content.footer do
-                  Link(data: { action: "click->ruby-ui--dialog#dismiss" }) { t("components.role_edit_sidebar.cancel") }
-                  Link(variant: :destructive, href: role_path(@role), data_turbo_method: :delete) do
-                    t("components.role_edit_sidebar.confirm_delete")
+                  content.body do
+                    t("components.role_edit_sidebar.delete_confirm_body")
+                  end
+
+                  content.footer do
+                    Link(data: { action: "click->ruby-ui--dialog#dismiss" }) { t("components.role_edit_sidebar.cancel") }
+                    Link(variant: :destructive, href: role_path(@role), data_turbo_method: :delete) do
+                      t("components.role_edit_sidebar.confirm_delete")
+                    end
                   end
                 end
               end

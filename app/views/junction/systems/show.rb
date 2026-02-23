@@ -5,8 +5,10 @@ module Junction
     module Systems
       # Show view for Systems.
       class Show < Views::Base
-        def initialize(system:)
+        def initialize(system:, can_edit:, can_destroy:)
           @system = system
+          @can_edit = can_edit
+          @can_destroy = can_destroy
         end
 
         def view_template
@@ -71,9 +73,11 @@ module Junction
 
             # Right side: action buttons.
             div(class: "flex-shrink-0") do
-              Link(variant: :primary, href: edit_system_path(@system)) do
-                icon("pencil", class: "w-4 h-4 mr-2")
-                plain "Edit System"
+              if @can_edit
+                Link(variant: :primary, href: edit_system_path(@system)) do
+                  icon("pencil", class: "w-4 h-4 mr-2")
+                  plain "Edit System"
+                end
               end
             end
           end

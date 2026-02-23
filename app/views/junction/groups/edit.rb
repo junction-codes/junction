@@ -5,16 +5,18 @@ module Junction
     module Groups
       # Edit view for groups.
       class Edit < Views::Base
-        attr_reader :available_parents, :group
+        attr_reader :available_parents, :can_destroy, :group
 
         # Initializes the view.
         #
         # @param group [Group] The group being modified.
-        # @param available_parents [Array<Array>] Parent entity options with name and
-        #   id attributes.
-        def initialize(group:, available_parents:)
+        # @param available_parents [Array<Array>] Parent entity options with
+        #   name and id attributes.
+        # @param can_destroy [Boolean] Whether the group can be destroyed.
+        def initialize(group:, available_parents:, can_destroy:)
           @group = group
           @available_parents = available_parents
+          @can_destroy = can_destroy
         end
 
         def view_template
@@ -38,7 +40,7 @@ module Junction
               end
 
               aside(class: "space-y-6") do
-                GroupEditSidebar(group:)
+                GroupEditSidebar(group:, can_destroy:)
               end
             end
           end

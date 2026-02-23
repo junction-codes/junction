@@ -5,16 +5,18 @@ module Junction
     module Roles
       # Index view for Roles.
       class Index < Views::Base
-        attr_reader :query, :roles
+        attr_reader :query, :roles, :can_create
 
         # Initialize a new view.
         #
         # @param roles [ActiveRecord::Relation] Collection of roles to display.
         # @param query [Ransack::Search] Ransack query object for filtering and
         #   sorting.
-        def initialize(roles:, query:)
+        # @param can_create [Boolean] Whether the user can create roles.
+        def initialize(roles:, query:, can_create: true)
           @roles = roles
           @query = query
+          @can_create = can_create
         end
 
         def view_template
@@ -22,7 +24,9 @@ module Junction
             div(class: "p-6") do
               div(class: "flex justify-between items-center mb-6") do
                 h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { t("views.roles.index.title") }
-                Link(variant: :primary, href: new_role_path) { t("views.roles.index.new_role") }
+                if @can_create
+                  Link(variant: :primary, href: new_role_path) { t("views.roles.index.new_role") }
+                end
               end
 
               div(class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do

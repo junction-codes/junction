@@ -31,6 +31,8 @@ module Junction
 
     add_flash_types :success
 
+    helper_method :allowed_to?
+
     private
 
     # The class of the entity being managed.

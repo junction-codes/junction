@@ -5,18 +5,22 @@ module Junction
     module Resources
       # Edit view for resources.
       class Edit < Views::Base
-        attr_reader :available_owners, :available_systems, :resource
+        attr_reader :available_owners, :available_systems, :can_destroy,
+                     :resource
 
         # Initializes the view.
         #
         # @param resource [Resource] The resource being modified.
-        # @param available_owners [Array<Array>] Owner entity options with name and
-        #   id attributes.
-        # @param available_systems [Array<Array>] System entity options with name and
-        #  id attributes.
-        def initialize(resource:, available_owners:, available_systems:)
+        # @param available_owners [Array<Array>] Owner entity options with name
+        #   and id attributes.
+        # @param available_systems [Array<Array>] System entity options with name
+        #   and id attributes.
+        # @param can_destroy [Boolean] Whether the resource can be destroyed.
+        def initialize(resource:, available_owners:, available_systems:,
+                       can_destroy:)
           @resource = resource
           @available_owners = available_owners
+          @can_destroy = can_destroy
           @available_systems = available_systems
         end
 
@@ -39,7 +43,7 @@ module Junction
               end
 
               aside(class: "space-y-6") do
-                ResourceEditSidebar(resource:)
+                ResourceEditSidebar(resource:, can_destroy:)
               end
             end
           end

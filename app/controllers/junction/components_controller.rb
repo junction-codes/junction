@@ -20,6 +20,7 @@ module Junction
       render Views::Components::Index.new(
         components: @q.result,
         query: @q,
+        can_create: allowed_to?(:create?, Junction::Component),
         available_lifecycles:,
         available_owners:,
         available_systems:,
@@ -30,7 +31,13 @@ module Junction
     # GET /components/:id
     def show
       authorize! @entity
-      render Views::Components::Show.new(component: @entity, dependencies:, dependents:)
+      render Views::Components::Show.new(
+        component: @entity,
+        can_edit: allowed_to?(:update?, @entity),
+        can_destroy: allowed_to?(:destroy?, @entity),
+        dependencies:,
+        dependents:
+      )
     end
 
     # GET /components/new
@@ -48,6 +55,7 @@ module Junction
       authorize! @entity
       render Views::Components::Edit.new(
         component: @entity,
+        can_destroy: allowed_to?(:destroy?, @entity),
         available_owners:,
         available_systems:
       )
@@ -74,8 +82,12 @@ module Junction
         redirect_to @entity, success: "Component was successfully updated."
       else
         flash.now[:alert] = "There were errors updating the component."
-        render Views::Components::Edit.new(component: @entity, available_owners:, available_systems:),
-               status: :unprocessable_content
+        render Views::Components::Edit.new(
+          component: @entity,
+          can_destroy: allowed_to?(:destroy?, @entity),
+          available_owners:,
+          available_systems:
+        ), status: :unprocessable_content
       end
     end
 

@@ -16,6 +16,7 @@ module Junction
       render Views::Domains::Index.new(
         domains: @q.result,
         query: @q,
+        can_create: allowed_to?(:create?, Junction::Domain),
         available_owners:,
         available_statuses:
       )
@@ -24,7 +25,11 @@ module Junction
     # GET /domains/:id
     def show
       authorize! @domain
-      render Views::Domains::Show.new(domain: @domain)
+      render Views::Domains::Show.new(
+        domain: @domain,
+        can_edit: allowed_to?(:update?, @domain),
+        can_destroy: allowed_to?(:destroy?, @domain)
+      )
     end
 
     # GET /domains/new
@@ -36,7 +41,11 @@ module Junction
     # GET /domains/:id/edit
     def edit
       authorize! @domain
-      render Views::Domains::Edit.new(domain: @domain, available_owners:)
+      render Views::Domains::Edit.new(
+        domain: @domain,
+        can_destroy: allowed_to?(:destroy?, @domain),
+        available_owners:
+      )
     end
 
     # POST /domains
@@ -60,8 +69,11 @@ module Junction
         redirect_to @domain, success: "Domain was successfully updated."
       else
         flash.now[:alert] = "There were errors updating the domain."
-        render Views::Domains::Edit.new(domain: @domain, available_owners:),
-               status: :unprocessable_content
+        render Views::Domains::Edit.new(
+          domain: @domain,
+          can_destroy: allowed_to?(:destroy?, @domain),
+          available_owners:
+        ), status: :unprocessable_content
       end
     end
 

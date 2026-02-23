@@ -5,16 +5,18 @@ module Junction
     module Users
       # Index view for users.
       class Index < Views::Base
-        attr_reader :query, :users
+        attr_reader :can_create, :query, :users
 
         # Initializes the view.
         #
         # @param users [ActiveRecord::Relation] Collection of users to display.
         # @param query [Ransack::Search] Ransack query object for filtering and
         #   sorting.
-        def initialize(users:, query:)
+        # @param can_create [Boolean] Whether the user can create users.
+        def initialize(users:, query:, can_create: true)
           @users = users
           @query = query
+          @can_create = can_create
         end
 
         def view_template
@@ -22,8 +24,8 @@ module Junction
             div(class: "p-6") do
               div(class: "flex justify-between items-center mb-6") do
                 h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { "Users" }
-                Link(variant: :primary, href: new_user_path) do
-                  "New User"
+                if @can_create
+                  Link(variant: :primary, href: new_user_path) { "New User" }
                 end
               end
 

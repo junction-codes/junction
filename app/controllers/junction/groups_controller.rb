@@ -14,6 +14,7 @@ module Junction
       render Views::Groups::Index.new(
         groups: @q.result,
         query: @q,
+        can_create: allowed_to?(:create?, Junction::Group),
         available_types:,
       )
     end
@@ -21,7 +22,11 @@ module Junction
     # GET /groups/:id
     def show
       authorize! @group
-      render Views::Groups::Show.new(group: @group)
+      render Views::Groups::Show.new(
+        group: @group,
+        can_edit: allowed_to?(:update?, @group),
+        can_destroy: allowed_to?(:destroy?, @group)
+      )
     end
 
     # GET /groups/new
@@ -33,7 +38,11 @@ module Junction
     # GET /groups/:id/edit
     def edit
       authorize! @group
-      render Views::Groups::Edit.new(group: @group, available_parents:)
+      render Views::Groups::Edit.new(
+        group: @group,
+        can_destroy: allowed_to?(:destroy?, @group),
+        available_parents:
+      )
     end
 
     # POST /groups
@@ -57,8 +66,11 @@ module Junction
         redirect_to @group, success: "Group was successfully updated."
       else
         flash.now[:alert] = "There were errors updating the group."
-        render Views::Groups::Edit.new(group: @group, available_parents:),
-               status: :unprocessable_content
+        render Views::Groups::Edit.new(
+          group: @group,
+          can_destroy: allowed_to?(:destroy?, @group),
+          available_parents:
+        ), status: :unprocessable_content
       end
     end
 

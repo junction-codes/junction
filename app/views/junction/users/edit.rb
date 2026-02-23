@@ -5,13 +5,15 @@ module Junction
     module Users
       # Edit view for users.
       class Edit < Views::Base
-        attr_reader :user
+        attr_reader :can_destroy, :user
 
         # Initializes the view.
         #
         # @param user [User] The user being modified.
-        def initialize(user:)
+        # @param can_destroy [Boolean] Whether the user can be destroyed.
+        def initialize(user:, can_destroy:)
           @user = user
+          @can_destroy = can_destroy
         end
 
         def view_template
@@ -35,7 +37,7 @@ module Junction
               end
 
               aside(class: "space-y-6") do
-                UserEditSidebar(user:)
+                UserEditSidebar(user:, can_destroy:)
               end
             end
           end

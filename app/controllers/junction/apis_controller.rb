@@ -20,6 +20,7 @@ module Junction
       render Views::Apis::Index.new(
         apis: @q.result,
         query: @q,
+        can_create: allowed_to?(:create?, Junction::Api),
         available_lifecycles:,
         available_owners:,
         available_systems:,
@@ -30,7 +31,13 @@ module Junction
     # GET /api/:id
     def show
       authorize! @entity
-      render Views::Apis::Show.new(api: @entity, dependencies:, dependents:)
+      render Views::Apis::Show.new(
+        api: @entity,
+        can_edit: allowed_to?(:update?, @entity),
+        can_destroy: allowed_to?(:destroy?, @entity),
+        dependencies:,
+        dependents:
+      )
     end
 
     # GET /api/new
@@ -42,7 +49,12 @@ module Junction
     # GET /api/:id/edit
     def edit
       authorize! @entity
-      render Views::Apis::Edit.new(api: @entity, available_owners:, available_systems:)
+      render Views::Apis::Edit.new(
+        api: @entity,
+        can_destroy: allowed_to?(:destroy?, @entity),
+        available_owners:,
+        available_systems:
+      )
     end
 
     # POST /api
@@ -66,8 +78,12 @@ module Junction
         redirect_to @entity, success: "API was successfully updated.", status: :see_other
       else
         flash.now[:alert] = "There were errors updating the API."
-        render Views::Apis::Edit.new(api: @entity, available_owners:, available_systems:),
-               status: :unprocessable_content
+        render Views::Apis::Edit.new(
+          api: @entity,
+          can_destroy: allowed_to?(:destroy?, @entity),
+          available_owners:,
+          available_systems:
+        ), status: :unprocessable_content
       end
     end
 

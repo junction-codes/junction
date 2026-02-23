@@ -16,6 +16,7 @@ module Junction
       render Views::Systems::Index.new(
         systems: @q.result,
         query: @q,
+        can_create: allowed_to?(:create?, Junction::System),
         available_statuses:,
         available_owners:,
         available_domains:
@@ -27,6 +28,8 @@ module Junction
       authorize! @system
       render Views::Systems::Show.new(
         system: @system,
+        can_edit: allowed_to?(:update?, @system),
+        can_destroy: allowed_to?(:destroy?, @system)
       )
     end
 
@@ -39,7 +42,12 @@ module Junction
     # GET /systems/:id/edit
     def edit
       authorize! @system
-      render Views::Systems::Edit.new(system: @system, available_domains:, available_owners:)
+      render Views::Systems::Edit.new(
+        system: @system,
+        can_destroy: allowed_to?(:destroy?, @system),
+        available_domains:,
+        available_owners:
+      )
     end
 
     # POST /systems
@@ -63,8 +71,12 @@ module Junction
         redirect_to @system, success: "System was successfully updated."
       else
         flash.now[:alert] = "There were errors updating the system."
-        render Views::Systems::Edit.new(system: @system, available_domains:, available_owners:),
-               status: :unprocessable_content
+        render Views::Systems::Edit.new(
+          system: @system,
+          can_destroy: allowed_to?(:destroy?, @system),
+          available_domains:,
+          available_owners:
+        ), status: :unprocessable_content
       end
     end
 

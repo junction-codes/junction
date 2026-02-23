@@ -10,8 +10,12 @@ module Junction
         # Initialize a new view.
         #
         # @param role [Junction::Role] The role to display.
-        def initialize(role:)
+        # @param can_edit [Boolean] Whether the user can edit the role.
+        # @param can_destroy [Boolean] Whether the user can destroy the role.
+        def initialize(role:, can_edit:, can_destroy:)
           @role = role
+          @can_edit = can_edit
+          @can_destroy = can_destroy
         end
 
         def view_template
@@ -25,7 +29,7 @@ module Junction
                 end
 
                 div(class: "flex gap-2") do
-                  unless @role.system?
+                  if @can_edit && !@role.system?
                     Link(variant: :primary, href: edit_role_path(@role)) { t("views.roles.show.edit") }
                   end
                 end

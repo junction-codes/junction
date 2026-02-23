@@ -11,13 +11,21 @@ module Junction
       @q = Junction::User.ransack(params[:q])
       @q.sorts = "name asc" if @q.sorts.empty?
 
-      render Views::Users::Index.new(users: @q.result, query: @q)
+      render Views::Users::Index.new(
+        users: @q.result,
+        query: @q,
+        can_create: allowed_to?(:create?, Junction::User)
+      )
     end
 
     # GET /users/:id
     def show
       authorize! @user
-      render Views::Users::Show.new(user: @user)
+      render Views::Users::Show.new(
+        user: @user,
+        can_edit: allowed_to?(:update?, @user),
+        can_destroy: allowed_to?(:destroy?, @user)
+      )
     end
 
     # GET /users/new
@@ -29,7 +37,10 @@ module Junction
     # GET /users/:id/edit
     def edit
       authorize! @user
-      render Views::Users::Edit.new(user: @user)
+      render Views::Users::Edit.new(
+        user: @user,
+        can_destroy: allowed_to?(:destroy?, @user)
+      )
     end
 
     # POST /users
@@ -52,7 +63,10 @@ module Junction
         redirect_to @user, success: "User was successfully updated."
       else
         flash.now[:alert] = "There were errors updating the user."
-        render Views::Users::Edit.new(user: @user), status: :unprocessable_content
+        render Views::Users::Edit.new(
+          user: @user,
+          can_destroy: allowed_to?(:destroy?, @user)
+        ), status: :unprocessable_content
       end
     end
 

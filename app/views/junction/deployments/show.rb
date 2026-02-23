@@ -5,8 +5,10 @@ module Junction
     module Deployments
       # Show view for deployments.
       class Show < Views::Base
-        def initialize(deployment:)
+        def initialize(deployment:, can_edit:, can_destroy:)
           @deployment = deployment
+          @can_edit = can_edit
+          @can_destroy = can_destroy
         end
 
         def view_template
@@ -71,9 +73,11 @@ module Junction
 
             # Right side: action buttons.
             div(class: "flex-shrink-0") do
-              Link(variant: :primary, href: edit_deployment_path(@deployment)) do
-                icon("pencil", class: "w-4 h-4 mr-2")
-                plain "Edit Deployment"
+              if @can_edit
+                Link(variant: :primary, href: edit_deployment_path(@deployment)) do
+                  icon("pencil", class: "w-4 h-4 mr-2")
+                  plain "Edit Deployment"
+                end
               end
             end
           end
