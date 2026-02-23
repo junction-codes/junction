@@ -108,6 +108,13 @@ module Junction
       @entities[context].tabs
     end
 
+    # All permissions registered by this plugin, across all entity scopes.
+    #
+    # @return [Array<Junction::Permission>]
+    def permissions
+      @entities.values.flat_map(&:permissions)
+    end
+
     # Resolves a constant within the plugin's namespace.
     #
     # @param constant_name [String] The name of the constant to resolve.

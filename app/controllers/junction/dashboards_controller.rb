@@ -9,6 +9,7 @@ module Junction
 
     # GET /dashboard
     def show
+      authorize! :dashboard
       render Views::Dashboards::Show.new(
         user: @user,
         owned_entities:,

@@ -22,6 +22,9 @@ module Junction
       Rails.autoloaders.main.ignore(root.join("lib/junction/version.rb"))
     end
 
+    # Include app/values so value objects can be autoloaded.
+    config.autoload_paths << root.join("app/values").to_s
+
     initializer "junction.view_overrides" do |app|
       next if app.root.to_s == root.to_s
 
@@ -52,6 +55,25 @@ module Junction
       if File.exist?(app_config_path)
         Junction.config.merge!(app.config_for(app_config_path))
       end
+    end
+
+    ActiveSupport.on_load(:junction_plugins) do
+      require Junction::Engine.root.join("app/values/junction/permission.rb").to_s
+      require Junction::Engine.root.join("app/services/junction/core_plugin.rb").to_s
+      Junction::CorePlugin.register
+    end
+
+    # Register core plugin when the engine loads (so annotations/permissions are
+    # available even if config/initializers/omniauth.rb runs later or not at
+    # all).
+    initializer "junction.register_core_plugin", after: :load_config_initializers do
+      ActiveSupport.run_load_hooks(:junction_plugins)
+    end
+
+    # Re-register core plugin after code reload (development) so annotations and
+    # permissions remain available when PluginRegistry is reset.
+    config.to_prepare do
+      ActiveSupport.run_load_hooks(:junction_plugins)
     end
 
     initializer "junction.helpers", after: :load_config_initializers do |app|

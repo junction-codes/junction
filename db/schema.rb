@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_17_000000) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_07_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -123,6 +123,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_17_000000) do
     t.index ["system_id"], name: "index_junction_resources_on_system_id"
   end
 
+  create_table "junction_role_permissions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "permission", null: false
+    t.bigint "role_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["role_id", "permission"], name: "index_junction_role_permissions_on_role_id_and_permission", unique: true
+    t.index ["role_id"], name: "index_junction_role_permissions_on_role_id"
+  end
+
+  create_table "junction_roles", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.boolean "system", default: false, null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_junction_roles_on_name", unique: true
+  end
+
   create_table "junction_sessions", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "ip_address"
@@ -169,6 +186,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_17_000000) do
   add_foreign_key "junction_identities", "junction_users", column: "user_id"
   add_foreign_key "junction_resources", "junction_groups", column: "owner_id"
   add_foreign_key "junction_resources", "junction_systems", column: "system_id"
+  add_foreign_key "junction_role_permissions", "junction_roles", column: "role_id"
   add_foreign_key "junction_sessions", "junction_users", column: "user_id"
   add_foreign_key "junction_systems", "junction_domains", column: "domain_id"
   add_foreign_key "junction_systems", "junction_groups", column: "owner_id"

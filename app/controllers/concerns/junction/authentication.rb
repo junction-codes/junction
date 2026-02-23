@@ -7,6 +7,7 @@ module Junction
   included do
     before_action :require_authentication, unless: :demo_mode?
     helper_method :authenticated?
+    helper_method :current_user
     helper_method :demo_mode?
   end
 
@@ -28,6 +29,10 @@ module Junction
 
   def authenticated?
     resume_session
+  end
+
+  def current_user
+    Junction::Current.user
   end
 
   def require_authentication

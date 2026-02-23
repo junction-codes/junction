@@ -3,7 +3,8 @@
 module AuthenticationHelper
   def self.included(base)
     base.extend(ClassMethods)
-    base.fixtures "junction/users"
+    base.fixtures "junction/users", "junction/roles", "junction/groups",
+                  "junction/group_memberships"
   end
 
   def random_password

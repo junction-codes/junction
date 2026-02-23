@@ -1,0 +1,7 @@
+admin:
+  name: Admin
+  system: true
+
+read_all:
+  name: Read all
+  system: true

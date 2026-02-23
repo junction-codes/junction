@@ -7,6 +7,7 @@ module Junction
 
     # GET /users
     def index
+      authorize! Junction::User
       @q = Junction::User.ransack(params[:q])
       @q.sorts = "name asc" if @q.sorts.empty?
 
@@ -15,21 +16,25 @@ module Junction
 
     # GET /users/:id
     def show
+      authorize! @user
       render Views::Users::Show.new(user: @user)
     end
 
     # GET /users/new
     def new
+      authorize! Junction::User
       render Views::Users::New.new(user: Junction::User.new)
     end
 
     # GET /users/:id/edit
     def edit
+      authorize! @user
       render Views::Users::Edit.new(user: @user)
     end
 
     # POST /users
     def create
+      authorize! Junction::User
       @user = Junction::User.new(user_params)
 
       if @user.save
@@ -42,6 +47,7 @@ module Junction
 
     # PATCH/PUT /users/:id
     def update
+      authorize! @user
       if @user.update(user_update_params)
         redirect_to @user, success: "User was successfully updated."
       else
@@ -52,6 +58,7 @@ module Junction
 
     # DELETE /users/:id
     def destroy
+      authorize! @user
       @user.destroy!
 
       redirect_to users_path, status: :see_other, alert: "User was successfully deleted."
@@ -66,7 +73,11 @@ module Junction
 
     # Only allow a list of trusted parameters through.
     def user_params
-      params.expect(user: [ :display_name, :email_address, :email_address_confirmation, :image_url, :password, :password_challenge, :password_confirmation, :pronouns, annotations: {}  ])
+      params.expect(user: [
+        :display_name, :email_address, :email_address_confirmation, :image_url,
+        :password, :password_challenge, :password_confirmation, :pronouns,
+        :owner_id, annotations: {}
+      ])
     end
 
     def user_update_params

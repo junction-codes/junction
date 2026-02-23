@@ -20,6 +20,7 @@ module Junction
             item(href: "#{resources_path}", icon: "rows-4", title: "Resources")
             item(href: "#{groups_path}", icon: "users-round", title: "Groups")
             item(href: "#{users_path}", icon: "user-round", title: "Users")
+            item(href: "#{roles_path}", icon: "shield-check", title: "Roles")
             item(href: "#", icon: "book-open", title: "TechDocs", disabled: true)
             item(href: "#", icon: "dollar-sign", title: "Cost Explorer", disabled: true)
 

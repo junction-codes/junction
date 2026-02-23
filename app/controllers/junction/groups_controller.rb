@@ -7,6 +7,7 @@ module Junction
 
     # GET /groups
     def index
+      authorize! Junction::Group
       @q = Junction::Group.ransack(params[:q])
       @q.sorts = "name asc" if @q.sorts.empty?
 
@@ -19,43 +20,51 @@ module Junction
 
     # GET /groups/:id
     def show
+      authorize! @group
       render Views::Groups::Show.new(group: @group)
     end
 
     # GET /groups/new
     def new
+      authorize! Junction::Group
       render Views::Groups::New.new(group: Junction::Group.new, available_parents:)
     end
 
     # GET /groups/:id/edit
     def edit
+      authorize! @group
       render Views::Groups::Edit.new(group: @group, available_parents:)
     end
 
     # POST /groups
     def create
+      authorize! Junction::Group
       @group = Junction::Group.new(group_params)
 
       if @group.save
         redirect_to @group, success: "Group was successfully created."
       else
         flash.now[:alert] = "There were errors creating the group."
-        render Views::Groups::New.new(group: @group, available_parents:), status: :unprocessable_content
+        render Views::Groups::New.new(group: @group, available_parents:),
+               status: :unprocessable_content
       end
     end
 
     # PATCH/PUT /groups/:id
     def update
+      authorize! @group
       if @group.update(group_params)
         redirect_to @group, success: "Group was successfully updated."
       else
         flash.now[:alert] = "There were errors updating the group."
-        render Views::Groups::Edit.new(group: @group, available_parents:), status: :unprocessable_content
+        render Views::Groups::Edit.new(group: @group, available_parents:),
+               status: :unprocessable_content
       end
     end
 
     # DELETE /groups/:id
     def destroy
+      authorize! @group
       @group.destroy!
 
       redirect_to groups_path, status: :see_other, alert: "Group was successfully destroyed."
@@ -85,7 +94,9 @@ module Junction
 
     # Only allow a list of trusted parameters through.
     def group_params
-      params.expect(group: [ :description, :name, :email, :image_url, :parent_id, :type, annotations: {} ])
+      params.expect(group: [
+        :description, :name, :email, :image_url, :parent_id, :type, annotations: {}
+      ])
     end
   end
 end

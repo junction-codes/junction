@@ -6,12 +6,14 @@ module Junction
     include Junction::HasDependencies
     include Junction::HasDependencyGraph
     include Junction::HasDependents
+    include Junction::HasOwner
 
     before_action :set_entity, only: %i[ edit update destroy ]
     before_action :eager_load_dependencies, only: %i[ show dependency_graph ]
 
     # GET /components
     def index
+      authorize! Junction::Component
       @q = Junction::Component.ransack(params[:q])
       @q.sorts = "name asc" if @q.sorts.empty?
 
@@ -27,11 +29,13 @@ module Junction
 
     # GET /components/:id
     def show
+      authorize! @entity
       render Views::Components::Show.new(component: @entity, dependencies:, dependents:)
     end
 
     # GET /components/new
     def new
+      authorize! Junction::Component
       render Views::Components::New.new(
         component: Junction::Component.new,
         available_owners:,
@@ -41,6 +45,7 @@ module Junction
 
     # GET /components/:id/edit
     def edit
+      authorize! @entity
       render Views::Components::Edit.new(
         component: @entity,
         available_owners:,
@@ -50,28 +55,33 @@ module Junction
 
     # POST /components
     def create
+      authorize! Junction::Component
       @entity = Junction::Component.new(component_params)
 
       if @entity.save
         redirect_to @entity, success: "Component was successfully created."
       else
         flash.now[:alert] = "There were errors creating the component."
-        render Views::Components::New.new(component: @entity, available_owners:, available_systems:), status: :unprocessable_content
+        render Views::Components::New.new(component: @entity, available_owners:, available_systems:),
+               status: :unprocessable_content
       end
     end
 
     # PATCH/PUT /components/:id
     def update
+      authorize! @entity
       if @entity.update(component_params)
         redirect_to @entity, success: "Component was successfully updated."
       else
         flash.now[:alert] = "There were errors updating the component."
-        render Views::Components::Edit.new(component: @entity, available_owners:, available_systems:), status: :unprocessable_content
+        render Views::Components::Edit.new(component: @entity, available_owners:, available_systems:),
+               status: :unprocessable_content
       end
     end
 
     # DELETE /components/:id
     def destroy
+      authorize! @entity
       @entity.destroy!
 
       redirect_to components_path, status: :see_other, alert: "Component was successfully destroyed."
@@ -85,13 +95,6 @@ module Junction
     #   lifecycles.
     def available_lifecycles
       Junction::CatalogOptions.lifecycles.map { |key, opts| [ opts[:name], key ] }
-    end
-
-    # Returns a collection of available owners for components.
-    #
-    # @return [ActiveRecord::Relation] Collection of owners.
-    def available_owners
-      Group.select(:description, :id, :image_url, :name).order(:name)
     end
 
     # Returns a collection of available systems for components.
@@ -119,7 +122,10 @@ module Junction
     end
 
     def component_params
-      params.expect(component: [ :name, :description, :repository_url, :lifecycle, :type, :image_url, :owner_id, :system_id, annotations: {} ])
+      sanitize_owner_id(params.expect(component: [
+        :component_type, :name, :description, :repository_url, :lifecycle,
+        :type, :image_url, :owner_id, :system_id, annotations: {}
+      ]))
     end
   end
 end

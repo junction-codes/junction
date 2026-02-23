@@ -3,7 +3,7 @@
 module Junction
   # Plugin registration scope for a specific entity context.
   class EntityScope
-    attr_reader :actions, :annotations, :tabs
+    attr_reader :actions, :annotations, :permissions, :tabs
 
     # Initializes a new entity scope.
     #
@@ -18,8 +18,26 @@ module Junction
 
       @annotations = Hash.new { |h, k| h[k] = [] }
       @actions = []
+      @permissions = []
       @tabs = []
       @components = Hash.new { |h, k| h[k] = [] }
+    end
+
+    # Registers a permission for the entity.
+    #
+    # @param domain [String] Domain the permission belongs to.
+    # @param context [String] Context within the domain.
+    # @param ownership [String] Ownership scope of the permission.
+    # @param access [String] Access level granted by the permission.
+    # @param description [String] Human-readable description of the permission.
+    def permission(domain:, context:, ownership:, access:, description: "")
+      @permissions << Junction::Permission.new(
+        domain:,
+        context:,
+        ownership:,
+        access:,
+        description:
+      )
     end
 
     # Registers a routable action for the entity.

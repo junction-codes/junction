@@ -7,6 +7,7 @@ module Junction
 
     # GET /deployments
     def index
+      authorize! Junction::Deployment
       @q = Junction::Deployment.ransack(params[:q])
       @q.sorts = "name asc" if @q.sorts.empty?
 
@@ -21,11 +22,13 @@ module Junction
 
     # GET /deployments/:id
     def show
+      authorize! @deployment
       render Views::Deployments::Show.new(deployment: @deployment)
     end
 
     # GET /deployments/new
     def new
+      authorize! Junction::Deployment
       render Views::Deployments::New.new(
         deployment: Junction::Deployment.new,
         available_components:
@@ -34,6 +37,7 @@ module Junction
 
     # GET /deployments/:id/edit
     def edit
+      authorize! @deployment
       render Views::Deployments::Edit.new(
         deployment: @deployment,
         available_components:
@@ -42,28 +46,33 @@ module Junction
 
     # POST /deployments
     def create
+      authorize! Junction::Deployment
       @deployment = Junction::Deployment.new(deployment_params)
 
       if @deployment.save
         redirect_to @deployment, success: "Deployment was successfully created."
       else
         flash.now[:alert] = "There were errors creating the deployment."
-        render Views::Deployments::New.new(deployment: @deployment, available_components:), status: :unprocessable_content
+        render Views::Deployments::New.new(deployment: @deployment, available_components:),
+               status: :unprocessable_content
       end
     end
 
     # PATCH/PUT /deployments/:id
     def update
+      authorize! @deployment
       if @deployment.update(deployment_params)
         redirect_to @deployment, success: "Deployment was successfully updated."
       else
         flash.now[:alert] = "There were errors updating the deployment."
-        render Views::Deployments::Edit.new(deployment: @deployment, available_components:), status: :unprocessable_content
+        render Views::Deployments::Edit.new(deployment: @deployment, available_components:),
+               status: :unprocessable_content
       end
     end
 
     # DELETE /deployments/:id
     def destroy
+      authorize! @deployment
       @deployment.destroy!
 
       redirect_to deployments_path, status: :see_other, alert: "Deployment was successfully destroyed."
@@ -103,7 +112,9 @@ module Junction
 
     # Only allow a list of trusted parameters through.
     def deployment_params
-      params.expect(deployment: [ :environment, :platform, :location_identifier, :component_id ])
+      params.expect(deployment: [
+        :environment, :platform, :location_identifier, :component_id
+      ])
     end
   end
 end

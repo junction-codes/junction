@@ -23,6 +23,7 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = ">= 3.4"
 
+  s.add_dependency "action_policy", "~> 0.7"
   s.add_dependency "bcrypt", "~> 3.1"
   s.add_dependency "bootsnap", "~> 1.20"
   s.add_dependency "chartkick", "~> 5.2"

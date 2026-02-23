@@ -4,6 +4,7 @@ module Junction
   # Controller for managing user sessions.
   class SessionsController < Junction::ApplicationController
     allow_unauthenticated_access only: %i[ new create ]
+    skip_verify_authorized if respond_to?(:skip_verify_authorized, true)
     rate_limit to: 10, within: 3.minutes, only: :create, with: -> { redirect_to new_session_url, alert: "Try again later.", status: :too_many_requests }
 
     # GET /sessions/new
