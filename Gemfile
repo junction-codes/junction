@@ -8,6 +8,11 @@ gem "bcrypt"
 gem "chartkick"
 gem "propshaft"
 
+# TODO: Remove once https://github.com/Rails-Designer/icons/pull/5 has been
+# merged and released.
+gem "rails_icons", git: "https://github.com/Rails-Designer/rails_icons.git", ref: "07325b95f1ada4e233538583f0fa8f4707e1ee81"
+gem "icons", git: "https://github.com/jamesiarmes/icons.git", branch: "boxicons"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
