@@ -17,15 +17,15 @@ group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
 
-  gem "brakeman", "~> 8.0", require: false
-  gem "factory_bot_rails", "~> 6.5", require: false
-  gem "faker", "~> 3.5", require: false
-  gem "rspec-rails", "~> 8.0", require: false
-  gem "rubocop-capybara", "~> 2.22", require: false
-  gem "rubocop-rails-omakase", require: false
-  gem "rubocop-rspec", "~> 3.8", require: false
+  gem "brakeman", "~> 8.0"
+  gem "factory_bot_rails", "~> 6.5"
+  gem "faker", "~> 3.5"
+  gem "rspec-rails", "~> 8.0"
+  gem "rubocop-capybara", "~> 2.22"
+  gem "rubocop-rails-omakase"
+  gem "rubocop-rspec", "~> 3.8"
   gem "simplecov", "~> 0.22"
-  gem "shoulda-matchers", "~> 7.0", require: false
+  gem "shoulda-matchers", "~> 7.0"
   gem "vcr", "~> 6.3"
 end
 
