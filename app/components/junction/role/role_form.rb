@@ -4,6 +4,8 @@ module Junction
   module Components
     # Form for creating and editing roles.
     class RoleForm < Base
+      attr_reader :available_permissions, :role
+
       # Initialize a new component.
       #
       # @param role [Junction::Role] The role being created or updated.
@@ -26,8 +28,8 @@ module Junction
             end
 
             card.content(class: "space-y-4") do
-              render TextField.new(f, :name, t("components.role_form.role_name_label"), required: true)
-              render TextAreaField.new(f, :description, t("components.role_form.description_label"), required: true)
+              TextField(f, :name, t("components.role_form.role_name_label"), required: true)
+              TextAreaField(f, :description, t("components.role_form.description_label"), required: true)
             end
           end
 
@@ -38,25 +40,8 @@ module Junction
                 header.description { t("components.role_form.permissions_description") }
               end
 
-              card.content(class: "space-y-2 max-h-96 overflow-y-auto") do
-                selected = @role.role_permissions.pluck(:permission).to_set
-                @available_permissions.each do |perm|
-                  div(class: "flex items-center gap-2") do
-                    input(
-                      type: "checkbox",
-                      name: "role[permission_ids][]",
-                      id: "role_permission_#{perm.to_s.parameterize}",
-                      value: perm.to_s,
-                      checked: selected.include?(perm.to_s),
-                      class: "h-4 w-4 rounded border-gray-300"
-                    )
-
-                    label(for: "role_permission_#{perm.to_s.parameterize}",
-                          class: "text-sm text-gray-700 dark:text-gray-300") do
-                      plain perm.description.presence || perm.to_s
-                    end
-                  end
-                end
+              card.content do
+                PermissionsField(f, :permission_ids, nil, available_permissions:)
               end
             end
           end
