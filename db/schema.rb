@@ -96,8 +96,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_07_000000) do
     t.string "image_url"
     t.string "name", null: false
     t.bigint "parent_id"
+    t.bigint "role_id"
     t.datetime "updated_at", null: false
     t.index ["parent_id"], name: "index_junction_groups_on_parent_id"
+    t.index ["role_id"], name: "index_junction_groups_on_role_id"
   end
 
   create_table "junction_identities", force: :cascade do |t|
@@ -134,6 +136,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_07_000000) do
 
   create_table "junction_roles", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.text "description"
     t.string "name", null: false
     t.boolean "system", default: false, null: false
     t.datetime "updated_at", null: false
@@ -183,6 +186,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_07_000000) do
   add_foreign_key "junction_group_memberships", "junction_groups", column: "group_id"
   add_foreign_key "junction_group_memberships", "junction_users", column: "user_id"
   add_foreign_key "junction_groups", "junction_groups", column: "parent_id"
+  add_foreign_key "junction_groups", "junction_roles", column: "role_id"
   add_foreign_key "junction_identities", "junction_users", column: "user_id"
   add_foreign_key "junction_resources", "junction_groups", column: "owner_id"
   add_foreign_key "junction_resources", "junction_systems", column: "system_id"

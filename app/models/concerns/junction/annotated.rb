@@ -28,5 +28,16 @@ module Junction
     def annotations=(value)
       self[:annotations] = value.to_h
     end
+
+    # Determines whether a specific annotation has been changed.
+    #
+    # @param annotation [String] The annotation to check.
+    # @return [Boolean] Whether or not the annotation's value has changed.
+    def annotation_changed?(annotation)
+      return false unless annotations_changed?
+
+      old_values, new_values = annotations_change
+      old_values&.fetch(annotation, nil) != new_values&.fetch(annotation, nil)
+    end
   end
 end

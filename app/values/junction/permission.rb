@@ -15,14 +15,14 @@ module Junction
       READ = "read"
       WRITE = "write"
       DESTROY = "destroy"
-      ALL = [ READ, WRITE, DESTROY ].freeze
+      VALUES = [ READ, WRITE, DESTROY ].freeze
     end
 
     # Enumeration of supported ownership scopes.
     module Ownership
       ALL = "all"
       OWNED = "owned"
-      ALL = [ ALL, OWNED ].freeze
+      VALUES = [ ALL, OWNED ].freeze
     end
 
     attr_reader :domain, :context, :ownership, :access, :description

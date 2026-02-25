@@ -37,7 +37,7 @@ module Junction
       perm = permission.is_a?(Permission) ? permission : Permission.parse(permission)
       return true if perm.nil? || perm.all?
 
-      return false if !entity.respond_to?(:owner_id) || !entity.owner_id.blank?
+      return false if !entity.respond_to?(:owner_id) || entity.owner_id.blank?
 
       user.deep_group_ids.include?(entity.owner_id)
     end

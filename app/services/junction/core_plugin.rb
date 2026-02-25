@@ -39,7 +39,7 @@ module Junction
             s.annotation(key: ANNOTATION_GROUP_ROLE, title: "Role", placeholder: "Role name")
           end
 
-          Permission::Access::ALL.each do |access|
+          Permission::Access::VALUES.each do |access|
             s.permission(domain: DOMAIN, context:, ownership: "all",
                          access:, description: "#{access.titleize} access to all #{context.to_s.pluralize}")
             next unless options[:ownership]

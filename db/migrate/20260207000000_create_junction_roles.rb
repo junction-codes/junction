@@ -15,5 +15,7 @@ class CreateJunctionRoles < ActiveRecord::Migration[8.1]
       t.timestamps null: false
     end
     add_index :junction_role_permissions, [ :role_id, :permission ], unique: true
+
+    add_reference :junction_groups, :role, null: true, foreign_key: { to_table: :junction_roles }
   end
 end
