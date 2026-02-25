@@ -32,8 +32,9 @@ module Junction
     # @return [Hash] Sanitized parameters hash.
     def sanitize_owner_id(attrs)
       out = attrs.dup
-      id = (out[:owner_id] || out["owner_id"])&.to_i
+      return out unless out.key?("owner_id") || out.key?(:owner_id)
 
+      id = (out[:owner_id] || out["owner_id"])&.to_i
       out[:owner_id] = (id.present? && allowed_owner_ids.include?(id)) ? id : nil
       out["owner_id"] = out[:owner_id] if out.key?("owner_id")
       out

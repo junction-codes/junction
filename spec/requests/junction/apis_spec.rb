@@ -9,7 +9,7 @@ RSpec.describe "/apis", type: :request do
       description: "An API for testing purposes",
       definition: "{}",
       lifecycle: "experimental",
-      owner_id: create(:group).id,
+      owner_id: junction_groups(:one).id,
       system_id: create(:system).id,
       type: "openapi"
     }

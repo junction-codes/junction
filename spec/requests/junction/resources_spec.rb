@@ -9,7 +9,7 @@ RSpec.describe "/resources", type: :request do
       description: "A resource for testing purposes",
       type: "database",
       system_id: create(:system).id,
-      owner_id: create(:group).id,
+      owner_id: junction_groups(:one).id,
       image_url: "https://example.com/image.png"
     }
   }
