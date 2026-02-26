@@ -39,4 +39,5 @@ group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara", "~> 3.4"
   gem "cuprite", "~> 0.17"
+  gem "simplecov-cobertura", "~> 3.1"
 end
