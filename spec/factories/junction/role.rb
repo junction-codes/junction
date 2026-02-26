@@ -6,6 +6,16 @@ FactoryBot.define do
     description { Faker::Lorem.sentence }
     system { false }
 
+    transient do
+      permissions { [] }
+    end
+
+    after(:create) do |role, evaluator|
+      evaluator.permissions.each do |permission|
+        create(:role_permission, role: role, permission: permission)
+      end
+    end
+
     trait :system do
       system { true }
     end

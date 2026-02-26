@@ -5,7 +5,6 @@ module Junction
     # Resolves a user's effective permissions from group memberships and
     # group-linked roles, including ancestor inheritance.
     class UserPermissions
-      ROLE_ANNOTATION_KEY = "junction.codes/role"
       ADMIN_ROLE_NAME = "Admin"
       READ_ALL_ROLE_NAME = "Read all"
 
@@ -61,7 +60,7 @@ module Junction
 
         role_names = Junction::Group.where(id: group_ids).pluck(:annotations)
                                     .flat_map do |annotation|
-          annotation.is_a?(Hash) ? annotation[ROLE_ANNOTATION_KEY] : []
+          annotation.is_a?(Hash) ? annotation[CorePlugin::ANNOTATION_GROUP_ROLE] : []
         end.compact.uniq
         return [] if role_names.empty?
 
