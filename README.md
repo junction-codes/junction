@@ -2,6 +2,8 @@
 
 _(Where's your dysfunction?)_
 
+[![codecov][codecov-badge]][codecov-report]
+
 Junction is an internal developer portal inspired by [Backstage]. Built using
 [Ruby on Rails][rails], it aims to implement many of the same concepts while
 focusing on developer experience and ease of use.
@@ -73,5 +75,7 @@ in using the default username and password `admin@example.com` and `passWord1`.
 > available outside your local system.
 
 [backstage]: https://backstage.io/
+[codecov-badge]: https://codecov.io/github/junction-codes/junction/graph/badge.svg?token=RXGOZ8UNEM
+[codecov-report]: https://codecov.io/github/junction-codes/junction
 [database-config]: https://guides.rubyonrails.org/configuring.html#configuring-a-database
 [rails]: https://rubyonrails.org/
