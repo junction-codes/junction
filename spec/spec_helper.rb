@@ -7,7 +7,7 @@ SimpleCov.start 'rails' do
   add_filter '/test/'
 end
 
-# CodeCov doesn't support SimpleCov's native JSON formatter, we use the
+# Codecov doesn't support SimpleCov's native JSON formatter, we use the
 # Cobertura formatter instead.
 # See: https://docs.codecov.com/docs/supported-report-formats#ruby
 if ENV['CI']
