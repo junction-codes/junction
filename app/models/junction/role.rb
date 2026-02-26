@@ -6,6 +6,7 @@ module Junction
     validates :description, presence: true
     validates :name, presence: true, uniqueness: true
 
+    has_many :groups, class_name: "Junction::Group"
     has_many :role_permissions, dependent: :destroy, class_name: "Junction::RolePermission"
 
     before_destroy :prevent_system_role_deletion
