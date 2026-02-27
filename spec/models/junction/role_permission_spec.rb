@@ -4,7 +4,9 @@ require "rails_helper"
 
 RSpec.describe Junction::RolePermission, type: :model do
   describe "validations" do
-    subject(:role_permission) { build(:role_permission, role: create(:role)) }
+    subject(:role_permission) { build(:role_permission, role: create(:role), permission:) }
+
+    let(:permission) { "junction.codes/apis.all.read" }
 
     it "is valid with valid attributes" do
       expect(role_permission).to be_valid
@@ -12,6 +14,22 @@ RSpec.describe Junction::RolePermission, type: :model do
 
     it_behaves_like "validates presence of", :permission
     it_behaves_like "validates uniqueness of", :permission, "junction/codes.all.read", scope: :role_id
+
+    context "when permission format is invalid" do
+      let(:permission) { "not-valid" }
+
+      it "is invalid" do
+        expect(role_permission).not_to be_valid
+      end
+
+      it "adds an error explaining the expected format" do
+        role_permission.valid?
+
+        expect(role_permission.errors[:permission]).to include(
+          "is not a valid permission format (expected domain/context.ownership.access)"
+        )
+      end
+    end
   end
 
   describe "uniqueness scope" do

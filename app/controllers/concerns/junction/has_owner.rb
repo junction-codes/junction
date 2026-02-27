@@ -34,8 +34,8 @@ module Junction
       out = attrs.dup
       return out unless out.key?("owner_id") || out.key?(:owner_id)
 
-      id = (out[:owner_id] || out["owner_id"])&.to_i
-      out[:owner_id] = (id.present? && allowed_owner_ids.include?(id)) ? id : nil
+      id = (out[:owner_id] || out["owner_id"])
+      out[:owner_id] = (id.present? && allowed_owner_ids.include?(id.to_i)) ? id.to_i : nil
       out["owner_id"] = out[:owner_id] if out.key?("owner_id")
       out
     end

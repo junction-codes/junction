@@ -105,6 +105,11 @@ module Junction
     end
 
     # Only allow a list of trusted parameters through.
+    #
+    # @return [Hash] The permitted parameters.
+    #
+    # @todo We should support some sanitation of annotations, particularly those
+    # that are used for access controls.
     def group_params
       params.expect(group: [
         :description, :name, :email, :image_url, :parent_id, :type, annotations: {}

@@ -117,7 +117,7 @@ RSpec.describe Junction::Permission do
   end
 
   describe "#destroy?" do
-   context "when access is read" do
+    context "when access is read" do
       it "returns false" do
         expect(permission).not_to be_destroy
       end

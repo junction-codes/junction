@@ -25,10 +25,12 @@ RSpec.describe Junction::Role, type: :model do
   describe "#permission_strings" do
     it "returns permission strings in order" do
       %w[zebra alpha beta].each do |permission|
-        create(:role_permission, role:, permission:)
+        create(:role_permission, role:, permission: "junction.codes/#{permission}.all.read")
       end
 
-      expect(role.permission_strings).to eq(%w[alpha beta zebra])
+      expect(role.permission_strings).to eq(
+        %w[junction.codes/alpha.all.read junction.codes/beta.all.read junction.codes/zebra.all.read]
+      )
     end
 
     it "returns an empty array when the role has no permissions" do

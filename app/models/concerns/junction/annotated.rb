@@ -2,6 +2,8 @@
 
 module Junction
   # Provides specialized access to the 'annotations' jsonb field.
+  #
+  # @todo Support validation of annotations.
   module Annotated
     extend ActiveSupport::Concern
 

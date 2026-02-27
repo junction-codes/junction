@@ -52,6 +52,8 @@ module Junction
       # Collect the user's roles, including ancestor roles.
       #
       # @return [Array<Role>] The user's roles.
+      #
+      # @todo Review for performance.
       def user_roles
         group_ids = user.group_memberships.includes(group: :parent)
                         .map(&:group).flat_map(&:self_and_ancestors).map(&:id)

@@ -9,7 +9,6 @@ module Junction
 
     alias_rule :edit?, to: :update?
 
-
     # Context of the current policy.
     #
     # @return [String] Context of the current policy.
@@ -29,7 +28,6 @@ module Junction
     def allowed_permission?(permission, entity: nil)
       return false if user.nil?
 
-      permissions = Permissions::UserPermissions.new(user)
       return false unless permissions.has_permission?(permission)
 
       return true if entity.nil?
@@ -76,6 +74,15 @@ module Junction
 
     def update?
       allowed_access?(context, Permission::Access::WRITE, entity: record)
+    end
+
+    private
+
+    # Service object for resolving the user's effective permissions.
+    #
+    # @return [Permissions::UserPermissions] The user's permissions.
+    def permissions
+      @permissions ||= Permissions::UserPermissions.new(user)
     end
   end
 end

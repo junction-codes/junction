@@ -118,20 +118,23 @@ module Junction
     # - Remove permissions currently assigned to the role but not present in
     #   params.
     #
+    # The role is locked to prevent race conditions when multiple requests are
+    # updating the role's permissions at the same time.
+    #
     # This ensures the role's permissions exactly match those submitted.
     def sync_role_permissions
       return if @role.system?
 
-      permitted = Array(params.dig(:role, :permission_ids)).reject(&:blank?)
-      current = @role.role_permissions.pluck(:permission)
-      to_add = permitted - current
-      to_remove = current - permitted
+      @role.with_lock do
+        updated = Array(params.dig(:role, :permission_ids)).reject(&:blank?)
+        current = @role.role_permissions.pluck(:permission)
 
-      to_add.each do |permission|
-        @role.role_permissions.find_or_create_by!(permission:)
+        (updated - current).each do |permission|
+          @role.role_permissions.find_or_create_by!(permission:)
+        end
+
+        @role.role_permissions.where(permission: (current - updated)).destroy_all
       end
-
-      @role.role_permissions.where(permission: to_remove).destroy_all
     end
   end
 end

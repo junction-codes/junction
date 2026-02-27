@@ -45,10 +45,13 @@ module Junction
     # IDs of all groups this user is a member of, and all of their ancestors.
     #
     # @return [Array<Integer>] The IDs of the groups.
+    #
+    # @todo Review for performance.
     def deep_group_ids
-      group_memberships.includes(group: :parent)
-                      .map(&:group).flat_map(&:self_and_ancestors)
-                      .uniq.pluck(:id)
+      @deep_group_ids ||= group_memberships.includes(group: :parent)
+                                           .map(&:group)
+                                           .flat_map(&:self_and_ancestors)
+                                           .uniq.pluck(:id)
     end
 
     # Loads a user from an OmniAuth authentication callback.
