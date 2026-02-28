@@ -3,7 +3,7 @@
 require "rails_helper"
 
 RSpec.describe Junction::ApplicationPolicy, type: :policy do
-  subject(:policy) { Junction::RolePolicy.new(entity, user: user) }
+  subject(:policy) { Junction::RolePolicy.new(entity, user:) }
 
   let(:entity) { build_stubbed(:role) }
   let(:permission_strings) { [] }
@@ -53,7 +53,7 @@ RSpec.describe Junction::ApplicationPolicy, type: :policy do
       end
 
       context "when the entity has no owner_id" do
-        subject(:policy) { Junction::ComponentPolicy.new(entity, user: user) }
+        subject(:policy) { Junction::ComponentPolicy.new(entity, user:) }
 
         let(:permission_strings) { [ "junction.codes/components.all.read" ] }
         let(:entity) { build_stubbed(:component, owner_id: nil) }
@@ -75,7 +75,7 @@ RSpec.describe Junction::ApplicationPolicy, type: :policy do
       end
 
       context "when the entity has an owner_id not in the user's group hierarchy" do
-        subject(:policy) { Junction::ComponentPolicy.new(entity, user: user) }
+        subject(:policy) { Junction::ComponentPolicy.new(entity, user:) }
 
         let(:permission_strings) { [ "junction.codes/components.owned.read" ] }
         let(:entity) { build_stubbed(:component, owner_id: 999) }
@@ -127,28 +127,81 @@ RSpec.describe Junction::ApplicationPolicy, type: :policy do
   end
 
   describe "#index?" do
+    subject(:policy) { Junction::RolePolicy.new(Junction::Component, user:) }
+
     context "when the user has the all permission" do
       let(:permission_strings) { [ "junction.codes/roles.all.read" ] }
 
       it "access is granted" do
-        expect(policy.allowed_access?("roles", Junction::Permission::Access::READ)).to be(true)
+        expect(policy.index?).to be(true)
       end
     end
 
     context "when the user has the owned permission" do
-      let(:permission_strings) { [ "junction.codes/roles.owned.read" ] }
+      subject(:policy) { Junction::ComponentPolicy.new(Junction::Component, user:) }
+
+      let(:permission_strings) { [ "junction.codes/components.owned.read" ] }
 
       it "access is granted" do
-        # TODO: Users with owned permissions should be able to access the index,
-        # but it should be filtered by owner.
-        skip "Allow users with owned permissions to access the index, filtered by owner."
-        # expect(policy.allowed_access?("roles", Junction::Permission::Access::READ)).to be(true)
+        expect(policy.index?).to be(true)
       end
     end
 
     context "when the user does not have a required permission" do
       it "access is denied" do
-        expect(policy.allowed_access?("roles", Junction::Permission::Access::READ)).to be(false)
+        expect(policy.index?).to be(false)
+      end
+    end
+  end
+
+  describe "#index_all?" do
+    subject(:policy) { Junction::ComponentPolicy.new(Junction::Component, user:) }
+
+    context "when the user has the all permission" do
+      let(:permission_strings) { [ "junction.codes/components.all.read" ] }
+
+      it "access is granted" do
+        expect(policy.index_all?).to be(true)
+      end
+    end
+
+    context "when the user only has the owned permission" do
+      let(:permission_strings) { [ "junction.codes/components.owned.read" ] }
+
+      it "access is denied" do
+        expect(policy.index_all?).to be(false)
+      end
+    end
+
+    context "when the user has neither permission" do
+      it "access is denied" do
+        expect(policy.index_all?).to be(false)
+      end
+    end
+  end
+
+  describe "#index_owned?" do
+    subject(:policy) { Junction::ComponentPolicy.new(Junction::Component, user:) }
+
+    context "when the user has the all permission" do
+      let(:permission_strings) { [ "junction.codes/components.all.read" ] }
+
+      it "access is denied" do
+        expect(policy.index_owned?).to be(false)
+      end
+    end
+
+    context "when the user has the owned permission" do
+      let(:permission_strings) { [ "junction.codes/components.owned.read" ] }
+
+      it "access is granted" do
+        expect(policy.index_owned?).to be(true)
+      end
+    end
+
+    context "when the user has neither permission" do
+      it "access is denied" do
+        expect(policy.index_owned?).to be(false)
       end
     end
   end
@@ -158,7 +211,7 @@ RSpec.describe Junction::ApplicationPolicy, type: :policy do
       let(:permission_strings) { [ "junction.codes/roles.all.read" ] }
 
       it "access is granted" do
-        expect(policy.allowed_access?("roles", Junction::Permission::Access::READ)).to be(true)
+        expect(policy.show?).to be(true)
       end
     end
 
@@ -172,7 +225,7 @@ RSpec.describe Junction::ApplicationPolicy, type: :policy do
         let(:user_groups) { [ 99 ] }
 
         it "access is granted" do
-          expect(policy.allowed_access?("components", Junction::Permission::Access::READ, entity:)).to be(true)
+          expect(policy.show?).to be(true)
         end
       end
 
@@ -180,14 +233,14 @@ RSpec.describe Junction::ApplicationPolicy, type: :policy do
         let(:user_groups) { [ 999 ] }
 
         it "access is denied" do
-          expect(policy.allowed_access?("components", Junction::Permission::Access::READ, entity:)).to be(false)
+          expect(policy.show?).to be(false)
         end
       end
     end
 
     context "when the user does not have a required permission" do
       it "access is denied" do
-        expect(policy.allowed_access?("roles", Junction::Permission::Access::READ)).to be(false)
+        expect(policy.show?).to be(false)
       end
     end
   end
@@ -197,7 +250,7 @@ RSpec.describe Junction::ApplicationPolicy, type: :policy do
       let(:permission_strings) { [ "junction.codes/roles.all.write" ] }
 
       it "access is granted" do
-        expect(policy.allowed_access?("roles", Junction::Permission::Access::WRITE)).to be(true)
+        expect(policy.create?).to be(true)
       end
     end
 
@@ -214,7 +267,7 @@ RSpec.describe Junction::ApplicationPolicy, type: :policy do
 
     context "when the user does not have a required permission" do
       it "access is denied" do
-        expect(policy.allowed_access?("roles", Junction::Permission::Access::WRITE)).to be(false)
+        expect(policy.create?).to be(false)
       end
     end
   end
@@ -224,7 +277,7 @@ RSpec.describe Junction::ApplicationPolicy, type: :policy do
       let(:permission_strings) { [ "junction.codes/roles.all.write" ] }
 
       it "access is granted" do
-        expect(policy.allowed_access?("roles", Junction::Permission::Access::WRITE)).to be(true)
+        expect(policy.update?).to be(true)
       end
     end
 
@@ -238,7 +291,7 @@ RSpec.describe Junction::ApplicationPolicy, type: :policy do
         let(:user_groups) { [ 99 ] }
 
         it "access is granted" do
-          expect(policy.allowed_access?("components", Junction::Permission::Access::WRITE, entity:)).to be(true)
+          expect(policy.update?).to be(true)
         end
       end
 
@@ -246,14 +299,14 @@ RSpec.describe Junction::ApplicationPolicy, type: :policy do
         let(:user_groups) { [ 999 ] }
 
         it "access is denied" do
-          expect(policy.allowed_access?("components", Junction::Permission::Access::WRITE, entity:)).to be(false)
+          expect(policy.update?).to be(false)
         end
       end
     end
 
     context "when the user does not have a required permission" do
       it "access is denied" do
-        expect(policy.allowed_access?("roles", Junction::Permission::Access::WRITE)).to be(false)
+        expect(policy.update?).to be(false)
       end
     end
   end
@@ -263,7 +316,7 @@ RSpec.describe Junction::ApplicationPolicy, type: :policy do
       let(:permission_strings) { [ "junction.codes/roles.all.destroy" ] }
 
       it "access is granted" do
-        expect(policy.allowed_access?("roles", Junction::Permission::Access::DESTROY)).to be(true)
+        expect(policy.destroy?).to be(true)
       end
     end
 
@@ -277,7 +330,7 @@ RSpec.describe Junction::ApplicationPolicy, type: :policy do
         let(:user_groups) { [ 99 ] }
 
         it "access is granted" do
-          expect(policy.allowed_access?("components", Junction::Permission::Access::DESTROY, entity:)).to be(true)
+          expect(policy.destroy?).to be(true)
         end
       end
 
@@ -285,14 +338,14 @@ RSpec.describe Junction::ApplicationPolicy, type: :policy do
         let(:user_groups) { [ 999 ] }
 
         it "access is denied" do
-          expect(policy.allowed_access?("components", Junction::Permission::Access::DESTROY, entity:)).to be(false)
+          expect(policy.destroy?).to be(false)
         end
       end
     end
 
     context "when the user does not have a required permission" do
       it "access is denied" do
-        expect(policy.allowed_access?("roles", Junction::Permission::Access::DESTROY)).to be(false)
+        expect(policy.destroy?).to be(false)
       end
     end
   end

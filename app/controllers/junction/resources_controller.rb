@@ -14,7 +14,7 @@ module Junction
     # GET /resources
     def index
       authorize! Junction::Resource
-      @q = Junction::Resource.ransack(params[:q])
+      @q = index_scope_for(Junction::Resource).ransack(params[:q])
       @q.sorts = "name asc" if @q.sorts.empty?
 
       render Views::Resources::Index.new(

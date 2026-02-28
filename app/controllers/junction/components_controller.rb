@@ -14,7 +14,7 @@ module Junction
     # GET /components
     def index
       authorize! Junction::Component
-      @q = Junction::Component.ransack(params[:q])
+      @q = index_scope_for(Junction::Component).ransack(params[:q])
       @q.sorts = "name asc" if @q.sorts.empty?
 
       render Views::Components::Index.new(

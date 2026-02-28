@@ -7,6 +7,22 @@ module Junction
 
     private
 
+    # Scope for index actions of entities that have an owner.
+    #
+    # Returns the base relation if the user has access to read all entities.
+    # Otherwise, restricts to entities whose owner is in the user's group
+    # hierarchy.
+    #
+    # @param model [Class] ActiveRecord model class.
+    # @return [ActiveRecord::Relation] Scoped relation for the index action.
+    def index_scope_for(model)
+      if !allowed_to?(:index_all?, model) && allowed_to?(:index_owned?, model)
+        return model.where(owner_id: current_user.deep_group_ids)
+      end
+
+      model.all
+    end
+
     # Group IDs the current user may assign as owner of an entity.
     #
     # @return [Array<Integer>]

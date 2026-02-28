@@ -10,7 +10,7 @@ module Junction
     # GET /systems
     def index
       authorize! Junction::System
-      @q = Junction::System.ransack(params[:q])
+      @q = index_scope_for(Junction::System).ransack(params[:q])
       @q.sorts = "name asc" if @q.sorts.empty?
 
       render Views::Systems::Index.new(

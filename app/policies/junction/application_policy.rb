@@ -50,12 +50,10 @@ module Junction
     #   permissions.
     # @return [Boolean] Whether the user has the requested access.
     def allowed_access?(context, access, entity: nil)
-      prefix = "#{self.class::DOMAIN}/#{context}"
-
-      allow = allowed_permission?("#{prefix}.all.#{access}")
+      allow = allowed_permission?("#{permission_prefix}.all.#{access}")
       return allow if allow || entity.nil?
 
-      allowed_permission?("#{prefix}.owned.#{access}", entity:)
+      allowed_permission?("#{permission_prefix}.owned.#{access}", entity:)
     end
 
     def create?
@@ -67,7 +65,24 @@ module Junction
     end
 
     def index?
+      index_all? || index_owned?
+    end
+
+    # Whether the user may see all entities in the index (has .all.read).
+    #
+    # @return [Boolean]
+    def index_all?
       allowed_access?(context, Permission::Access::READ)
+    end
+
+    # Whether the user may see owned entities in the index (has .owned.read).
+    #
+    # When true and index_all? is false, the index list should be scoped to
+    # entities owned by the user's groups (for entities with an owner_id).
+    #
+    # @return [Boolean]
+    def index_owned?
+      allowed_permission?("#{permission_prefix}.owned.#{Permission::Access::READ}")
     end
 
     def show?
@@ -85,6 +100,13 @@ module Junction
     # @return [Permissions::UserPermissions] The user's permissions.
     def permissions
       @permissions ||= Permissions::UserPermissions.new(user)
+    end
+
+    # Prefix for permission strings for the current context.
+    #
+    # @return [String] Prefix for permission strings.
+    def permission_prefix
+      @permission_prefix ||= "#{self.class::DOMAIN}/#{context}"
     end
   end
 end

@@ -14,7 +14,7 @@ module Junction
     # GET /api
     def index
       authorize! Junction::Api
-      @q = Junction::Api.ransack(params[:q])
+      @q = index_scope_for(Junction::Api).ransack(params[:q])
       @q.sorts = "name asc" if @q.sorts.empty?
 
       render Views::Apis::Index.new(

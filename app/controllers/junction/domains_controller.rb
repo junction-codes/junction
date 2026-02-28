@@ -10,7 +10,7 @@ module Junction
     # GET /domains
     def index
       authorize! Junction::Domain
-      @q = Junction::Domain.ransack(params[:q])
+      @q = index_scope_for(Junction::Domain).ransack(params[:q])
       @q.sorts = "name asc" if @q.sorts.empty?
 
       render Views::Domains::Index.new(
