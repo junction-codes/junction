@@ -6,12 +6,13 @@ require "tailwind_merge"
 module Junction
   module Components
     class Base < Phlex::HTML
+      include Chartkick::Helper
       include Phlex::Rails::Helpers::FormWith
       include Phlex::Rails::Helpers::Routes
       include Phlex::Rails::Helpers::T
       include Phlex::Rails::Helpers::TurboFrameTag
       include IconHelper
-      include Chartkick::Helper
+      include ViewLinkHelper
 
       # Include engine and mounted helpers
       include Junction::Engine.routes.url_helpers
@@ -20,6 +21,9 @@ module Junction
       register_output_helper :icon
       register_output_helper :line_chart
       register_output_helper :pie_chart
+      register_output_helper :render_view_link
+
+      register_value_helper :allowed_to?
 
       DEFAULT_ATTRS = {}.freeze
       TAILWIND_MERGER = ::TailwindMerge::Merger.new.freeze unless defined?(TAILWIND_MERGER)
