@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative 'shared_examples/application_policy_examples'
 require_relative 'shared_examples/authentication_required_examples'
 require_relative 'shared_examples/dependable_examples'
 require_relative 'shared_examples/dependentable_examples'

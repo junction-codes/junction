@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "action_policy"
+
 module Junction
   # Base policy for all Junction authorization policies.
   #
