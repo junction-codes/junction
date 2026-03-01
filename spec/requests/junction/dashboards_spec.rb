@@ -72,8 +72,8 @@ RSpec.describe "/dashboard", type: :request do
 
       context "with no recent catalog items" do
         before do
-          [ Junction::Deployment, Junction::Api, Junction::Component,
-            Junction::Domain, Junction::Resource, Junction::System ].each(&:delete_all)
+          [ Junction::Api, Junction::Component, Junction::Domain,
+            Junction::Resource, Junction::System ].each(&:delete_all)
         end
 
         it "shows empty state for recent updates" do

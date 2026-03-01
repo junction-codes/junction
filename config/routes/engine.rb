@@ -4,7 +4,6 @@ Junction::Engine.routes.draw do
   resource :session, controller: "sessions"
   resource :dashboard, only: :show, controller: "dashboards"
   resources :passwords, param: :token, controller: "passwords"
-  resources :deployments, controller: "deployments"
   resources :domains, controller: "domains"
   resources :resources, controller: "resources"
   resources :groups, controller: "groups"

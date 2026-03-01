@@ -33,7 +33,6 @@ RSpec.describe Junction::Component, type: :model do
     it_behaves_like "a model that can be owned"
     it_behaves_like "a model with dependencies"
 
-    it { is_expected.to have_many(:deployments).dependent(:destroy) }
     it { is_expected.to belong_to(:system).optional }
   end
 

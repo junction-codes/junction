@@ -23,7 +23,6 @@ module Junction
         apis: { role: false, ownership: true },
         components: { role: false, ownership: true },
         dashboards: { role: false, ownership: false, class: "Dashboard" },
-        deployments: { role: false, ownership: true },
         domains: { role: false, ownership: true },
         groups: { role: true, ownership: false },
         resources: { role: false, ownership: true },

@@ -17,7 +17,6 @@ module Junction
     validates :name, presence: true, uniqueness: true
 
     belongs_to :system, optional: true, class_name: "Junction::System"
-    has_many :deployments, dependent: :destroy, class_name: "Junction::Deployment"
 
     def self.ransackable_associations(auth_object = nil)
       %w[owner system]

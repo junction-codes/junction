@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_07_000000) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_01_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -55,16 +55,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_07_000000) do
     t.datetime "updated_at", null: false
     t.index ["source_type", "source_id"], name: "index_junction_dependencies_on_source"
     t.index ["target_type", "target_id"], name: "index_junction_dependencies_on_target"
-  end
-
-  create_table "junction_deployments", force: :cascade do |t|
-    t.bigint "component_id", null: false
-    t.datetime "created_at", null: false
-    t.string "environment"
-    t.string "location_identifier"
-    t.string "platform"
-    t.datetime "updated_at", null: false
-    t.index ["component_id"], name: "index_junction_deployments_on_component_id"
   end
 
   create_table "junction_domains", force: :cascade do |t|
@@ -181,7 +171,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_07_000000) do
   add_foreign_key "junction_apis", "junction_systems", column: "system_id"
   add_foreign_key "junction_components", "junction_groups", column: "owner_id"
   add_foreign_key "junction_components", "junction_systems", column: "system_id"
-  add_foreign_key "junction_deployments", "junction_components", column: "component_id"
   add_foreign_key "junction_domains", "junction_groups", column: "owner_id"
   add_foreign_key "junction_group_memberships", "junction_groups", column: "group_id"
   add_foreign_key "junction_group_memberships", "junction_users", column: "user_id"
