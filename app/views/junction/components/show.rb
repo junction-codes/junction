@@ -54,10 +54,12 @@ module Junction
                     span { plain "NO OWNER" }
                   end
                 end
+
                 div(class: "mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400") do
                   span(class: "font-semibold mr-2") { "Type:" }
                   span { plain @component.type }
                 end
+
                 div(class: "mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400") do
                   span(class: "font-semibold mr-2") { "Repository:" }
                   span { Link(href: @component.repository_url, class: "p-0 text-blue-600 hover:underline dark:text-blue-400 inline") { @component.repository_url } }
@@ -65,10 +67,12 @@ module Junction
               end
 
               div do
-                if @component.system.present?
-                  Link(href: system_path(@component.system), class: "text-sm text-blue-600 hover:underline dark:text-blue-400") do
-                    "Part of the '#{@component.system.name}' System"
-                  end
+                break unless @component.system.present?
+
+                if allowed_to?(:show?, @component.system)
+                  Link(href: system_path(@component.system)) { "Part of the '#{@component.system.name}' System" }
+                else
+                  Link(variant: :disabled) { "Part of the '#{@component.system.name}' System" }
                 end
               end
             end

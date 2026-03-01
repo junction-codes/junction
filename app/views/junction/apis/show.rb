@@ -52,6 +52,7 @@ module Junction
                     span { plain "NO OWNER" }
                   end
                 end
+
                 div(class: "mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400") do
                   span(class: "font-semibold mr-2") { "Type:" }
                   span { plain @api.type }
@@ -59,10 +60,12 @@ module Junction
               end
 
               div do
-                if @api.system.present?
-                  Link(href: system_path(@api.system), class: "text-sm text-blue-600 hover:underline dark:text-blue-400") do
-                    "Part of the '#{@api.system.name}' System"
-                  end
+                break unless @api.system.present?
+
+                if allowed_to?(:show?, @api.system)
+                  Link(href: system_path(@api.system)) { "Part of the '#{@api.system.name}' System" }
+                else
+                  Link(variant: :disabled) { "Part of the '#{@api.system.name}' System" }
                 end
               end
             end

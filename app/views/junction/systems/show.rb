@@ -61,10 +61,12 @@ module Junction
               end
 
               div do
-                if @system.domain
-                  Link(href: domain_path(@system.domain), class: "text-sm text-blue-600 hover:underline dark:text-blue-400") do
-                    "Part of the '#{@system.domain.name}' Domain"
-                  end
+                break unless @system.domain.present?
+
+                if allowed_to?(:show?, @system.domain)
+                  Link(href: domain_path(@system.domain)) { "Part of the '#{@system.domain.name}' Domain" }
+                else
+                  Link(variant: :disabled) { "Part of the '#{@system.domain.name}' Domain" }
                 end
               end
             end

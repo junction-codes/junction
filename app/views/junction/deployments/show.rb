@@ -65,8 +65,12 @@ module Junction
               end
 
               div do
-                Link(href: component_path(@deployment.component), class: "text-sm text-blue-600 hover:underline dark:text-blue-400") do
-                  "A deployment of the '#{@deployment.component.name}' Component"
+                break unless @deployment.component.present?
+
+                if allowed_to?(:show?, @deployment.component)
+                  Link(href: component_path(@deployment.component)) { "A deployment of the '#{@deployment.component.name}' Component" }
+                else
+                  Link(variant: :disabled) { "A deployment of the '#{@deployment.component.name}' Component" }
                 end
               end
             end

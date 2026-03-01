@@ -45,10 +45,12 @@ module Junction
               end
 
               div do
-                if @group.parent
-                  Link(href: group_path(@group.parent), class: "text-sm text-blue-600 hover:underline dark:text-blue-400") do
-                    "Child of the '#{@group.parent.name}' Group"
-                  end
+                break unless @group.parent.present?
+
+                if allowed_to?(:show?, @group.parent)
+                  Link(href: group_path(@group.parent)) { "Child of the '#{@group.parent.name}' Group" }
+                else
+                  Link(variant: :disabled) { "Child of the '#{@group.parent.name}' Group" }
                 end
               end
             end
