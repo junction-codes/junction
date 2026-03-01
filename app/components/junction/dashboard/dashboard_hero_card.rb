@@ -15,7 +15,7 @@ module Junction
       end
 
       def view_template(&)
-        Components::Card(**attrs) do |card|
+        Card(**attrs) do |card|
           card.header do |header|
             header.title(class: "text-2xl font-bold text-gray-900 dark:text-white") do
               t("dashboard.hero_card.welcome_title", name: @user.display_name)
@@ -40,7 +40,7 @@ module Junction
       # Displays a summary of the current user.
       def user_summary
         div(class: "flex items-center gap-4") do
-          Components::UserAvatar(user: @user, size: :xl)
+          UserAvatar(user: @user, size: :xl)
 
           div do
             h3(class: "text-lg font-semibold text-gray-900 dark:text-white") { @user.display_name }
