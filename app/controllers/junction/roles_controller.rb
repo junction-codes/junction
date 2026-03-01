@@ -90,7 +90,7 @@ module Junction
       end
 
       @role.destroy!
-      redirect_to roles_path, alert: "Role was successfully deleted.",
+      redirect_to roles_path, success: "Role was successfully deleted.",
                               status: :see_other
     end
 
