@@ -44,6 +44,8 @@ module Junction
                 div(class: "min-w-0") do
                   div(class: "flex items-center gap-2") do
                     icon(entity.icon, class: "h-4 w-4 text-gray-500 shrink-0")
+                    # We've already checked access to the entity, so we can
+                    # safely render the entity's link here.
                     Link(href: url_for(entity), class: "p-0") do
                       span(class: "inline-block max-w-[10em] truncate", title: entity.name) do
                         entity.name
