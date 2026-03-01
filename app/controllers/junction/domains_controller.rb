@@ -24,11 +24,11 @@ module Junction
 
     # GET /domains/:id
     def show
-      authorize! @domain
+      authorize! @entity
       render Views::Domains::Show.new(
-        domain: @domain,
-        can_edit: allowed_to?(:update?, @domain),
-        can_destroy: allowed_to?(:destroy?, @domain)
+        domain: @entity,
+        can_edit: allowed_to?(:update?, @entity),
+        can_destroy: allowed_to?(:destroy?, @entity)
       )
     end
 
@@ -40,10 +40,10 @@ module Junction
 
     # GET /domains/:id/edit
     def edit
-      authorize! @domain
+      authorize! @entity
       render Views::Domains::Edit.new(
-        domain: @domain,
-        can_destroy: allowed_to?(:destroy?, @domain),
+        domain: @entity,
+        can_destroy: allowed_to?(:destroy?, @entity),
         available_owners:
       )
     end
@@ -51,27 +51,27 @@ module Junction
     # POST /domains
     def create
       authorize! Junction::Domain
-      @domain = Junction::Domain.new(domain_params)
+      @entity = Junction::Domain.new(domain_params)
 
-      if @domain.save
-        redirect_to @domain, success: "Domain was successfully created."
+      if @entity.save
+        redirect_to @entity, success: "Domain was successfully created."
       else
         flash.now[:alert] = "There were errors creating the domain."
-        render Views::Domains::New.new(domain: @domain, available_owners:),
+        render Views::Domains::New.new(domain: @entity, available_owners:),
                status: :unprocessable_content
       end
     end
 
     # PATCH/PUT /domains/:id
     def update
-      authorize! @domain
-      if @domain.update(domain_params)
-        redirect_to @domain, success: "Domain was successfully updated."
+      authorize! @entity
+      if @entity.update(domain_params)
+        redirect_to @entity, success: "Domain was successfully updated."
       else
         flash.now[:alert] = "There were errors updating the domain."
         render Views::Domains::Edit.new(
-          domain: @domain,
-          can_destroy: allowed_to?(:destroy?, @domain),
+          domain: @entity,
+          can_destroy: allowed_to?(:destroy?, @entity),
           available_owners:
         ), status: :unprocessable_content
       end
@@ -79,8 +79,8 @@ module Junction
 
     # DELETE /domains/:id
     def destroy
-      authorize! @domain
-      @domain.destroy!
+      authorize! @entity
+      @entity.destroy!
 
       redirect_to domains_path, status: :see_other, success: "Domain was successfully destroyed."
     end
@@ -98,7 +98,7 @@ module Junction
     end
 
     def set_entity
-      @domain = Junction::Domain.find(params.expect(:id))
+      @entity = Junction::Domain.find(params.expect(:id))
     end
 
     def domain_params

@@ -35,6 +35,10 @@ module Junction
 
     private
 
+    def entity
+      set_entity
+    end
+
     # The class of the entity being managed.
     #
     # @return [Class<ApplicationRecord>] The entity class.

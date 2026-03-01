@@ -50,11 +50,12 @@ module Junction
     # @return [Array<ApplicationRecord>] List of recent catalog items.
     def recent_catalog_items(limit: 5)
       CATALOG_ENTITIES.flat_map do |model|
-        q = index_scope_for(model).includes(:owner)
+        q = index_scope_for(model)
+        next [] if q.blank?
 
         q = q.includes(:domain) if model.reflect_on_association(:domain)
         q = q.includes(:system) if model.reflect_on_association(:system)
-        q.order(updated_at: :desc).limit(limit).to_a
+        q.includes(:owner).order(updated_at: :desc).limit(limit).to_a
       end.sort_by(&:updated_at).reverse.first(limit)
     end
   end

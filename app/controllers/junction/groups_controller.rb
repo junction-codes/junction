@@ -21,11 +21,11 @@ module Junction
 
     # GET /groups/:id
     def show
-      authorize! @group
+      authorize! @entity
       render Views::Groups::Show.new(
-        group: @group,
-        can_edit: allowed_to?(:update?, @group),
-        can_destroy: allowed_to?(:destroy?, @group)
+        group: @entity,
+        can_edit: allowed_to?(:update?, @entity),
+        can_destroy: allowed_to?(:destroy?, @entity)
       )
     end
 
@@ -37,10 +37,10 @@ module Junction
 
     # GET /groups/:id/edit
     def edit
-      authorize! @group
+      authorize! @entity
       render Views::Groups::Edit.new(
-        group: @group,
-        can_destroy: allowed_to?(:destroy?, @group),
+        group: @entity,
+        can_destroy: allowed_to?(:destroy?, @entity),
         available_parents:
       )
     end
@@ -48,27 +48,27 @@ module Junction
     # POST /groups
     def create
       authorize! Junction::Group
-      @group = Junction::Group.new(group_params)
+      @entity = Junction::Group.new(group_params)
 
-      if @group.save
-        redirect_to @group, success: "Group was successfully created."
+      if @entity.save
+        redirect_to @entity, success: "Group was successfully created."
       else
         flash.now[:alert] = "There were errors creating the group."
-        render Views::Groups::New.new(group: @group, available_parents:),
+        render Views::Groups::New.new(group: @entity, available_parents:),
                status: :unprocessable_content
       end
     end
 
     # PATCH/PUT /groups/:id
     def update
-      authorize! @group
-      if @group.update(group_params)
-        redirect_to @group, success: "Group was successfully updated."
+      authorize! @entity
+      if @entity.update(group_params)
+        redirect_to @entity, success: "Group was successfully updated."
       else
         flash.now[:alert] = "There were errors updating the group."
         render Views::Groups::Edit.new(
-          group: @group,
-          can_destroy: allowed_to?(:destroy?, @group),
+          group: @entity,
+          can_destroy: allowed_to?(:destroy?, @entity),
           available_parents:
         ), status: :unprocessable_content
       end
@@ -76,8 +76,8 @@ module Junction
 
     # DELETE /groups/:id
     def destroy
-      authorize! @group
-      @group.destroy!
+      authorize! @entity
+      @entity.destroy!
 
       redirect_to groups_path, status: :see_other, success: "Group was successfully destroyed."
     end
@@ -101,7 +101,7 @@ module Junction
 
     # Use callbacks to share common setup or constraints between actions.
     def set_entity
-      @group = Junction::Group.find(params.expect(:id))
+      @entity = Junction::Group.find(params.expect(:id))
     end
 
     # Only allow a list of trusted parameters through.

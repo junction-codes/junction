@@ -3,7 +3,7 @@
 module Junction
   # Controller for managing Deployments.
   class DeploymentsController < Junction::ApplicationController
-    before_action :set_deployment, only: %i[ show edit update destroy ]
+    before_action :set_entity, only: %i[ show edit update destroy ]
 
     # GET /deployments
     def index
@@ -23,11 +23,11 @@ module Junction
 
     # GET /deployments/:id
     def show
-      authorize! @deployment
+      authorize! @entity
       render Views::Deployments::Show.new(
-        deployment: @deployment,
-        can_edit: allowed_to?(:update?, @deployment),
-        can_destroy: allowed_to?(:destroy?, @deployment)
+        deployment: @entity,
+        can_edit: allowed_to?(:update?, @entity),
+        can_destroy: allowed_to?(:destroy?, @entity)
       )
     end
 
@@ -42,10 +42,10 @@ module Junction
 
     # GET /deployments/:id/edit
     def edit
-      authorize! @deployment
+      authorize! @entity
       render Views::Deployments::Edit.new(
-        deployment: @deployment,
-        can_destroy: allowed_to?(:destroy?, @deployment),
+        deployment: @entity,
+        can_destroy: allowed_to?(:destroy?, @entity),
         available_components:
       )
     end
@@ -53,27 +53,27 @@ module Junction
     # POST /deployments
     def create
       authorize! Junction::Deployment
-      @deployment = Junction::Deployment.new(deployment_params)
+      @entity = Junction::Deployment.new(deployment_params)
 
-      if @deployment.save
-        redirect_to @deployment, success: "Deployment was successfully created."
+      if @entity.save
+        redirect_to @entity, success: "Deployment was successfully created."
       else
         flash.now[:alert] = "There were errors creating the deployment."
-        render Views::Deployments::New.new(deployment: @deployment, available_components:),
+        render Views::Deployments::New.new(deployment: @entity, available_components:),
                status: :unprocessable_content
       end
     end
 
     # PATCH/PUT /deployments/:id
     def update
-      authorize! @deployment
-      if @deployment.update(deployment_params)
-        redirect_to @deployment, success: "Deployment was successfully updated."
+      authorize! @entity
+      if @entity.update(deployment_params)
+        redirect_to @entity, success: "Deployment was successfully updated."
       else
         flash.now[:alert] = "There were errors updating the deployment."
         render Views::Deployments::Edit.new(
-          deployment: @deployment,
-          can_destroy: allowed_to?(:destroy?, @deployment),
+          deployment: @entity,
+          can_destroy: allowed_to?(:destroy?, @entity),
           available_components:
         ), status: :unprocessable_content
       end
@@ -81,8 +81,8 @@ module Junction
 
     # DELETE /deployments/:id
     def destroy
-      authorize! @deployment
-      @deployment.destroy!
+      authorize! @entity
+      @entity.destroy!
 
       redirect_to deployments_path, status: :see_other, success: "Deployment was successfully destroyed."
     end
@@ -114,9 +114,8 @@ module Junction
       Junction::CatalogOptions.platforms.map { |key, opts| [ opts[:name], key ] }
     end
 
-    # Use callbacks to share common setup or constraints between actions.
-    def set_deployment
-      @deployment = Junction::Deployment.find(params.expect(:id))
+    def set_entity
+      @entity = Junction::Deployment.find(params.expect(:id))
     end
 
     # Only allow a list of trusted parameters through.

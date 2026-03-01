@@ -20,11 +20,11 @@ module Junction
 
     # GET /users/:id
     def show
-      authorize! @user
+      authorize! @entity
       render Views::Users::Show.new(
-        user: @user,
-        can_edit: allowed_to?(:update?, @user),
-        can_destroy: allowed_to?(:destroy?, @user)
+        user: @entity,
+        can_edit: allowed_to?(:update?, @entity),
+        can_destroy: allowed_to?(:destroy?, @entity)
       )
     end
 
@@ -36,44 +36,44 @@ module Junction
 
     # GET /users/:id/edit
     def edit
-      authorize! @user
+      authorize! @entity
       render Views::Users::Edit.new(
-        user: @user,
-        can_destroy: allowed_to?(:destroy?, @user)
+        user: @entity,
+        can_destroy: allowed_to?(:destroy?, @entity)
       )
     end
 
     # POST /users
     def create
       authorize! Junction::User
-      @user = Junction::User.new(user_params)
+      @entity = Junction::User.new(user_params)
 
-      if @user.save
-        redirect_to @user, success: "User was successfully created."
+      if @entity.save
+        redirect_to @entity, success: "User was successfully created."
       else
         flash.now[:alert] = "There were errors creating the user."
-        render Views::Users::New.new(user: @user), status: :unprocessable_content
+        render Views::Users::New.new(user: @entity), status: :unprocessable_content
       end
     end
 
     # PATCH/PUT /users/:id
     def update
-      authorize! @user
-      if @user.update(user_update_params)
-        redirect_to @user, success: "User was successfully updated."
+      authorize! @entity
+      if @entity.update(user_update_params)
+        redirect_to @entity, success: "User was successfully updated."
       else
         flash.now[:alert] = "There were errors updating the user."
         render Views::Users::Edit.new(
-          user: @user,
-          can_destroy: allowed_to?(:destroy?, @user)
+          user: @entity,
+          can_destroy: allowed_to?(:destroy?, @entity)
         ), status: :unprocessable_content
       end
     end
 
     # DELETE /users/:id
     def destroy
-      authorize! @user
-      @user.destroy!
+      authorize! @entity
+      @entity.destroy!
 
       redirect_to users_path, status: :see_other, success: "User was successfully destroyed."
     end
@@ -82,7 +82,7 @@ module Junction
 
     # Use callbacks to share common setup or constraints between actions.
     def set_entity
-      @user = Junction::User.find(params.expect(:id))
+      @entity = Junction::User.find(params.expect(:id))
     end
 
     # Only allow a list of trusted parameters through.

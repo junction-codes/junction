@@ -25,11 +25,11 @@ module Junction
 
     # GET /systems/:id
     def show
-      authorize! @system
+      authorize! @entity
       render Views::Systems::Show.new(
-        system: @system,
-        can_edit: allowed_to?(:update?, @system),
-        can_destroy: allowed_to?(:destroy?, @system)
+        system: @entity,
+        can_edit: allowed_to?(:update?, @entity),
+        can_destroy: allowed_to?(:destroy?, @entity)
       )
     end
 
@@ -41,10 +41,10 @@ module Junction
 
     # GET /systems/:id/edit
     def edit
-      authorize! @system
+      authorize! @entity
       render Views::Systems::Edit.new(
-        system: @system,
-        can_destroy: allowed_to?(:destroy?, @system),
+        system: @entity,
+        can_destroy: allowed_to?(:destroy?, @entity),
         available_domains:,
         available_owners:
       )
@@ -53,27 +53,27 @@ module Junction
     # POST /systems
     def create
       authorize! Junction::System
-      @system = Junction::System.new(system_params)
+      @entity = Junction::System.new(system_params)
 
-      if @system.save
-        redirect_to @system, success: "System was successfully created."
+      if @entity.save
+        redirect_to @entity, success: "System was successfully created."
       else
         flash.now[:alert] = "There were errors creating the system."
-        render Views::Systems::New.new(system: @system, available_domains:, available_owners:),
+        render Views::Systems::New.new(system: @entity, available_domains:, available_owners:),
                status: :unprocessable_content
       end
     end
 
     # PATCH/PUT /systems/:id
     def update
-      authorize! @system
-      if @system.update(system_params)
-        redirect_to @system, success: "System was successfully updated."
+      authorize! @entity
+      if @entity.update(system_params)
+        redirect_to @entity, success: "System was successfully updated."
       else
         flash.now[:alert] = "There were errors updating the system."
         render Views::Systems::Edit.new(
-          system: @system,
-          can_destroy: allowed_to?(:destroy?, @system),
+          system: @entity,
+          can_destroy: allowed_to?(:destroy?, @entity),
           available_domains:,
           available_owners:
         ), status: :unprocessable_content
@@ -82,8 +82,8 @@ module Junction
 
     # DELETE /systems/:id
     def destroy
-      authorize! @system
-      @system.destroy!
+      authorize! @entity
+      @entity.destroy!
 
       redirect_to systems_path, status: :see_other, success: "System was successfully destroyed."
     end
@@ -92,8 +92,8 @@ module Junction
     #
     # @todo Break this up into smaller methods for better readability.
     def dependency_graph
-      authorize! @system
-      graph_data = DependencyGraphService.new(model: @system).build
+      authorize! @entity
+      graph_data = DependencyGraphService.new(model: @entity).build
       render json: graph_data
     end
 
@@ -118,7 +118,7 @@ module Junction
     end
 
     def set_entity
-      @system = Junction::System.find(params.expect(:id))
+      @entity = Junction::System.find(params.expect(:id))
     end
 
     def system_params

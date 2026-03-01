@@ -16,11 +16,9 @@ module Junction
     # @param model [Class] ActiveRecord model class.
     # @return [ActiveRecord::Relation] Scoped relation for the index action.
     def index_scope_for(model)
-      if !allowed_to?(:index_all?, model) && allowed_to?(:index_owned?, model)
-        return model.where(owner_id: current_user.deep_group_ids)
-      end
+      return model.all if allowed_to?(:index_all?, model)
 
-      model.all
+      model.where(owner_id: current_user.deep_group_ids) if allowed_to?(:index_owned?, model)
     end
 
     # Group IDs the current user may assign as owner of an entity.

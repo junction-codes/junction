@@ -3,7 +3,7 @@
 module Junction
   # Controller for managing Roles.
   class RolesController < Junction::ApplicationController
-    before_action :set_role, only: %i[ edit update destroy ]
+    before_action :set_entity, only: %i[ edit update destroy ]
     before_action :eager_load_dependencies, only: %i[ show ]
 
     # GET /roles
@@ -21,21 +21,21 @@ module Junction
 
     # GET /roles/:id
     def show
-      authorize! @role
+      authorize! @entity
       render Views::Roles::Show.new(
-        role: @role,
-        can_edit: allowed_to?(:update?, @role),
-        can_destroy: allowed_to?(:destroy?, @role) && !@role.system?
+        role: @entity,
+        can_edit: allowed_to?(:update?, @entity),
+        can_destroy: allowed_to?(:destroy?, @entity) && !@entity.system?
       )
     end
 
     # GET /roles/new
     def new
       authorize! Junction::Role
-      @role = Junction::Role.new
+      @entity = Junction::Role.new
 
       render Views::Roles::New.new(
-        role: @role,
+        role: @entity,
         available_permissions: Junction::PluginRegistry.permissions
       )
     end
@@ -43,13 +43,13 @@ module Junction
     # POST /roles
     def create
       authorize! Junction::Role
-      @role = Junction::Role.new(role_params.except(:permission_ids))
-      if @role.save
+      @entity = Junction::Role.new(role_params.except(:permission_ids))
+      if @entity.save
         sync_role_permissions
-        redirect_to @role, success: "Role was successfully created."
+        redirect_to @entity, success: "Role was successfully created."
       else
         render Views::Roles::New.new(
-          role: @role,
+          role: @entity,
           available_permissions: Junction::PluginRegistry.permissions
         ), status: :unprocessable_content
       end
@@ -57,24 +57,24 @@ module Junction
 
     # GET /roles/:id/edit
     def edit
-      authorize! @role
+      authorize! @entity
       render Views::Roles::Edit.new(
-        role: @role,
-        can_destroy: allowed_to?(:destroy?, @role) && !@role.system?,
+        role: @entity,
+        can_destroy: allowed_to?(:destroy?, @entity) && !@entity.system?,
         available_permissions: Junction::PluginRegistry.permissions
       )
     end
 
     # PATCH/PUT /roles/:id
     def update
-      authorize! @role
-      if @role.update(role_params.except(:permission_ids))
-        sync_role_permissions unless @role.system?
-        redirect_to @role, success: "Role was successfully updated."
+      authorize! @entity
+      if @entity.update(role_params.except(:permission_ids))
+        sync_role_permissions unless @entity.system?
+        redirect_to @entity, success: "Role was successfully updated."
       else
         render Views::Roles::Edit.new(
-          role: @role,
-          can_destroy: allowed_to?(:destroy?, @role) && !@role.system?,
+          role: @entity,
+          can_destroy: allowed_to?(:destroy?, @entity) && !@entity.system?,
           available_permissions: Junction::PluginRegistry.permissions
         ), status: :unprocessable_content
       end
@@ -82,26 +82,26 @@ module Junction
 
     # DELETE /roles/:id
     def destroy
-      authorize! @role
-      if @role.system?
+      authorize! @entity
+      if @entity.system?
         redirect_to roles_path, alert: "System roles cannot be deleted.",
                                 status: :unprocessable_content
         return
       end
 
-      @role.destroy!
+      @entity.destroy!
       redirect_to roles_path, success: "Role was successfully deleted.",
                               status: :see_other
     end
 
     private
 
-    def set_role
-      @role = Role.find(params[:id])
+    def set_entity
+      @entity = Junction::Role.find(params.expect(:id))
     end
 
     def eager_load_dependencies
-      @role = Role.includes(:role_permissions).find(params.expect(:id))
+      @entity = Junction::Role.includes(:role_permissions).find(params.expect(:id))
     end
 
     def role_params
@@ -123,17 +123,17 @@ module Junction
     #
     # This ensures the role's permissions exactly match those submitted.
     def sync_role_permissions
-      return if @role.system?
+      return if @entity.system?
 
-      @role.with_lock do
+      @entity.with_lock do
         updated = Array(role_params[:permission_ids]).reject(&:blank?)
-        current = @role.role_permissions.pluck(:permission)
+        current = @entity.role_permissions.pluck(:permission)
 
         (updated - current).each do |permission|
-          @role.role_permissions.find_or_create_by!(permission:)
+          @entity.role_permissions.find_or_create_by!(permission:)
         end
 
-        @role.role_permissions.where(permission: (current - updated)).destroy_all
+        @entity.role_permissions.where(permission: (current - updated)).destroy_all
       end
     end
   end
