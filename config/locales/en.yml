@@ -48,7 +48,6 @@ en:
       system:
         one: System
         other: Systems
-        app:
       user:
         one: User
         other: Users
