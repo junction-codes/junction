@@ -82,7 +82,7 @@ module Junction
       authorize! @domain
       @domain.destroy!
 
-      redirect_to domains_path, status: :see_other, alert: "Domain was successfully destroyed."
+      redirect_to domains_path, status: :see_other, success: "Domain was successfully destroyed."
     end
 
     private

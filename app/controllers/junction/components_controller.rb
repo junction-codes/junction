@@ -96,7 +96,7 @@ module Junction
       authorize! @entity
       @entity.destroy!
 
-      redirect_to components_path, status: :see_other, alert: "Component was successfully destroyed."
+      redirect_to components_path, status: :see_other, success: "Component was successfully destroyed."
     end
 
     private

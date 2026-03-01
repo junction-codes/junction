@@ -85,7 +85,7 @@ module Junction
       authorize! @role
       if @role.system?
         redirect_to roles_path, alert: "System roles cannot be deleted.",
-                                status: :unprocessable_entity
+                                status: :unprocessable_content
         return
       end
 
@@ -126,7 +126,7 @@ module Junction
       return if @role.system?
 
       @role.with_lock do
-        updated = Array(params.dig(:role, :permission_ids)).reject(&:blank?)
+        updated = Array(role_params[:permission_ids]).reject(&:blank?)
         current = @role.role_permissions.pluck(:permission)
 
         (updated - current).each do |permission|

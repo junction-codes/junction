@@ -95,7 +95,7 @@ module Junction
       authorize! @entity
       @entity.destroy!
 
-      redirect_to resources_path, status: :see_other, alert: "Resource was successfully destroyed."
+      redirect_to resources_path, status: :see_other, success: "Resource was successfully destroyed."
     end
 
     private

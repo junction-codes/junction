@@ -85,7 +85,7 @@ module Junction
       authorize! @system
       @system.destroy!
 
-      redirect_to systems_path, status: :see_other, alert: "System was successfully destroyed."
+      redirect_to systems_path, status: :see_other, success: "System was successfully destroyed."
     end
 
     # GET /systems/:id/dependency_graph

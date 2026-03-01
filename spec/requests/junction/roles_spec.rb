@@ -202,10 +202,10 @@ RSpec.describe "Junction::RolesController", type: :request do
           }.not_to change(Junction::Role, :count)
         end
 
-        it "returns 422 Unprocessable Entity" do
+        it "returns a 422 status" do
           delete role_url(role)
 
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:unprocessable_content)
         end
       end
     end

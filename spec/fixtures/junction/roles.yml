@@ -1,7 +1,9 @@
 admin:
   name: Admin
+  description: Super user role with all permissions.
   system: true
 
 read_all:
   name: Read all
+  description: Read-only role with all read permissions.
   system: true

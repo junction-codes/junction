@@ -13,7 +13,7 @@ RSpec.shared_examples "an action that requires permission" do |http_method, path
       )
     end
 
-    it "returns a forbidden status" do
+    it "returns a 303 status" do
       expect(response).to have_http_status(:see_other)
     end
 

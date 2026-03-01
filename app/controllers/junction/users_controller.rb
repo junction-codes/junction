@@ -75,7 +75,7 @@ module Junction
       authorize! @user
       @user.destroy!
 
-      redirect_to users_path, status: :see_other, alert: "User was successfully deleted."
+      redirect_to users_path, status: :see_other, success: "User was successfully deleted."
     end
 
     private

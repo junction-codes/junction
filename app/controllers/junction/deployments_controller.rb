@@ -84,7 +84,7 @@ module Junction
       authorize! @deployment
       @deployment.destroy!
 
-      redirect_to deployments_path, status: :see_other, alert: "Deployment was successfully destroyed."
+      redirect_to deployments_path, status: :see_other, success: "Deployment was successfully destroyed."
     end
 
     private

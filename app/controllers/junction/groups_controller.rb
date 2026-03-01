@@ -79,7 +79,7 @@ module Junction
       authorize! @group
       @group.destroy!
 
-      redirect_to groups_path, status: :see_other, alert: "Group was successfully destroyed."
+      redirect_to groups_path, status: :see_other, success: "Group was successfully destroyed."
     end
 
     private

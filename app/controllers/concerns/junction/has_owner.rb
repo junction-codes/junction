@@ -51,7 +51,10 @@ module Junction
       return out unless out.key?("owner_id") || out.key?(:owner_id)
 
       id = (out[:owner_id] || out["owner_id"])
-      out[:owner_id] = (id.present? && allowed_owner_ids.include?(id.to_i)) ? id.to_i : nil
+      out[:owner_id] = if id.present?
+        (allowed_owner_ids.include?(id.to_i) || id.to_i == entity.owner_id) ? id.to_i : nil
+      end
+
       out["owner_id"] = out[:owner_id] if out.key?("owner_id")
       out
     end

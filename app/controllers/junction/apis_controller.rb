@@ -92,7 +92,7 @@ module Junction
       authorize! @entity
       @entity.destroy!
 
-      redirect_to apis_path, status: :see_other, alert: "API was successfully destroyed."
+      redirect_to apis_path, status: :see_other, success: "API was successfully destroyed."
     end
 
     private

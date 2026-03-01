@@ -7,7 +7,7 @@ module AuthenticationHelper
                   "junction/group_memberships"
   end
 
-  # Returns the currently signed in user, if any/
+  # Returns the currently signed in user, if any.
   #
   # @return [Junction::User, nil] The currently signed in user, or nil if no
   #   user has been signed in.
