@@ -56,6 +56,9 @@ RSpec.describe "Junction::RolesController", type: :request do
     requires_authentication
 
     describe "GET /roles" do
+      it_behaves_like "an action that requires permission",
+        :get, -> { roles_path }, %w[junction.codes/roles.all.read]
+
       it "renders a successful response" do
         get roles_url
 
@@ -64,6 +67,9 @@ RSpec.describe "Junction::RolesController", type: :request do
     end
 
     describe "GET /roles/:id" do
+      it_behaves_like "an action that requires permission",
+        :get, -> { role_path(role) }, %w[junction.codes/roles.all.read]
+
       it "renders a successful response" do
         get role_url(role)
 
@@ -72,6 +78,9 @@ RSpec.describe "Junction::RolesController", type: :request do
     end
 
     describe "GET /roles/new" do
+      it_behaves_like "an action that requires permission",
+        :get, -> { new_role_path }, %w[junction.codes/roles.all.write]
+
       it "renders a successful response" do
         get new_role_url
 
@@ -80,6 +89,9 @@ RSpec.describe "Junction::RolesController", type: :request do
     end
 
     describe "GET /roles/:id/edit" do
+      it_behaves_like "an action that requires permission",
+        :get, -> { edit_role_path(role) }, %w[junction.codes/roles.all.write]
+
       it "renders a successful response" do
         get edit_role_url(role)
 
@@ -88,6 +100,11 @@ RSpec.describe "Junction::RolesController", type: :request do
     end
 
     describe "POST /roles" do
+      it_behaves_like "an action that requires permission",
+        :post, -> { roles_path },
+        %w[junction.codes/roles.all.write junction.codes/roles.owned.write],
+        -> { { role: valid_attributes } }
+
       context "with valid parameters" do
         it "creates a new role" do
           expect {
@@ -118,6 +135,11 @@ RSpec.describe "Junction::RolesController", type: :request do
     end
 
     describe "PATCH /roles/:id" do
+      it_behaves_like "an action that requires permission",
+        :patch, -> { role_path(role) },
+        %w[junction.codes/roles.all.write junction.codes/roles.owned.write],
+        { role: { name: "Updated Role Name", description: "Updated description", permission_ids: [] } }
+
       context "with valid parameters" do
         let(:new_attributes) do
           { name: "Updated Role Name", description: "Updated description", permission_ids: [] }
@@ -147,6 +169,10 @@ RSpec.describe "Junction::RolesController", type: :request do
     end
 
     describe "DELETE /roles/:id" do
+      it_behaves_like "an action that requires permission",
+        :delete, -> { role_path(role) },
+        %w[junction.codes/roles.all.destroy junction.codes/roles.owned.destroy]
+
       context "when the role is not a system role" do
         it "destroys the requested role" do
           expect {

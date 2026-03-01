@@ -37,7 +37,7 @@ RSpec.shared_examples "an action that requires permission" do |http_method, path
     end
 
     it "returns a successful status" do
-      expect(response).to be_successful.or have_http_status(:see_other)
+      expect(response).to be_successful.or have_http_status(:see_other).or have_http_status(:found)
     end
   end
 end

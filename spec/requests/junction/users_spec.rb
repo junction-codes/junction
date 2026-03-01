@@ -59,6 +59,9 @@ RSpec.describe "/users", type: :request do
     requires_authentication
 
     describe "GET /index" do
+      it_behaves_like "an action that requires permission",
+        :get, -> { users_path }, %w[junction.codes/users.all.read]
+
       it "renders a successful response" do
         get users_url
         expect(response).to be_successful
@@ -66,6 +69,9 @@ RSpec.describe "/users", type: :request do
     end
 
     describe "GET /show" do
+      it_behaves_like "an action that requires permission",
+        :get, -> { user_path(user) }, %w[junction.codes/users.all.read]
+
       it "renders a successful response" do
         get user_url(user)
         expect(response).to be_successful
@@ -73,6 +79,9 @@ RSpec.describe "/users", type: :request do
     end
 
     describe "GET /new" do
+      it_behaves_like "an action that requires permission",
+        :get, -> { new_user_path }, %w[junction.codes/users.all.write]
+
       it "renders a successful response" do
         get new_user_url
         expect(response).to be_successful
@@ -80,6 +89,9 @@ RSpec.describe "/users", type: :request do
     end
 
     describe "GET /edit" do
+      it_behaves_like "an action that requires permission",
+        :get, -> { edit_user_path(user) }, %w[junction.codes/users.all.write]
+
       it "renders a successful response" do
         get edit_user_url(user)
         expect(response).to be_successful
@@ -87,6 +99,11 @@ RSpec.describe "/users", type: :request do
     end
 
     describe "POST /create" do
+      it_behaves_like "an action that requires permission",
+        :post, -> { users_path },
+        %w[junction.codes/users.all.write junction.codes/users.owned.write],
+        -> { { user: valid_attributes } }
+
       context "with valid parameters" do
         it "creates a new User" do
           expect {
@@ -115,6 +132,11 @@ RSpec.describe "/users", type: :request do
     end
 
     describe "PATCH /update" do
+      it_behaves_like "an action that requires permission",
+        :patch, -> { user_path(user) },
+        %w[junction.codes/users.all.write junction.codes/users.owned.write],
+        { user: { display_name: "Updated Name" } }
+
       context "with valid parameters" do
         let(:new_attributes) { { display_name: "Updated Name" } }
 
@@ -140,6 +162,12 @@ RSpec.describe "/users", type: :request do
     end
 
     describe "DELETE /destroy" do
+      let(:user_to_delete) { create(:user) }
+
+      it_behaves_like "an action that requires permission",
+        :delete, -> { user_path(user_to_delete) },
+        %w[junction.codes/users.all.destroy junction.codes/users.owned.destroy]
+
       it "destroys the requested user" do
         user_to_delete = create(:user)
         expect {

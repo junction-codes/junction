@@ -15,7 +15,7 @@ require 'rails_helper'
 RSpec.describe "/systems", type: :request do
   fixtures "junction/domains"
 
-  requires_authentication
+  subject!(:system) { create(:system) }
 
   let(:valid_attributes) {
     {
@@ -35,109 +35,161 @@ RSpec.describe "/systems", type: :request do
     }
   }
 
-  describe "GET /index" do
-    it "renders a successful response" do
-      Junction::System.create! valid_attributes
-      get systems_url
-      expect(response).to be_successful
+  context "when the user is not authenticated" do
+    describe "GET /index" do
+      it_behaves_like "an action that requires authentication", :get, -> { systems_path }
+    end
+
+    describe "GET /show" do
+      it_behaves_like "an action that requires authentication", :get, -> { system_path(system) }
+    end
+
+    describe "GET /new" do
+      it_behaves_like "an action that requires authentication", :get, -> { new_system_path }
+    end
+
+    describe "GET /edit" do
+      it_behaves_like "an action that requires authentication", :get, -> { edit_system_path(system) }
+    end
+
+    describe "POST /create" do
+      it_behaves_like "an action that requires authentication", :post, -> { systems_path }
+    end
+
+    describe "PATCH /update" do
+      it_behaves_like "an action that requires authentication", :patch, -> { system_path(system) }
+    end
+
+    describe "DELETE /destroy" do
+      it_behaves_like "an action that requires authentication", :delete, -> { system_path(system) }
     end
   end
 
-  describe "GET /show" do
-    it "renders a successful response" do
-      system = Junction::System.create! valid_attributes
-      get system_url(system)
-      expect(response).to be_successful
-    end
-  end
+  context "when the user is authenticated" do
+    requires_authentication
 
-  describe "GET /new" do
-    it "renders a successful response" do
-      get new_system_url
-      expect(response).to be_successful
-    end
-  end
+    describe "GET /index" do
+      it_behaves_like "an action that requires permission",
+        :get, -> { systems_path }, %w[junction.codes/systems.all.read]
 
-  describe "GET /edit" do
-    it "renders a successful response" do
-      system = Junction::System.create! valid_attributes
-      get edit_system_url(system)
-      expect(response).to be_successful
+      it "renders a successful response" do
+        get systems_url
+        expect(response).to be_successful
+      end
     end
-  end
 
-  describe "POST /create" do
-    context "with valid parameters" do
-      it "creates a new System" do
-        expect {
+    describe "GET /show" do
+      it_behaves_like "an action that requires permission",
+        :get, -> { system_path(system) }, %w[junction.codes/systems.all.read]
+
+      it "renders a successful response" do
+        get system_url(system)
+        expect(response).to be_successful
+      end
+    end
+
+    describe "GET /new" do
+      it_behaves_like "an action that requires permission",
+        :get, -> { new_system_path }, %w[junction.codes/systems.all.write]
+
+      it "renders a successful response" do
+        get new_system_url
+        expect(response).to be_successful
+      end
+    end
+
+    describe "GET /edit" do
+      it_behaves_like "an action that requires permission",
+        :get, -> { edit_system_path(system) }, %w[junction.codes/systems.all.write]
+
+      it "renders a successful response" do
+        get edit_system_url(system)
+        expect(response).to be_successful
+      end
+    end
+
+    describe "POST /create" do
+      it_behaves_like "an action that requires permission",
+        :post, -> { systems_path },
+        %w[junction.codes/systems.all.write junction.codes/systems.owned.write],
+        -> { { system: valid_attributes.merge(owner_id: current_user.groups.first&.id) } }
+
+      context "with valid parameters" do
+        it "creates a new System" do
+          expect {
+            post systems_url, params: { system: valid_attributes }
+          }.to change(Junction::System, :count).by(1)
+        end
+
+        it "redirects to the created system" do
           post systems_url, params: { system: valid_attributes }
-        }.to change(Junction::System, :count).by(1)
+          expect(response).to redirect_to(system_url(Junction::System.last))
+        end
       end
 
-      it "redirects to the created system" do
-        post systems_url, params: { system: valid_attributes }
-        expect(response).to redirect_to(system_url(Junction::System.last))
-      end
-    end
+      context "with invalid parameters" do
+        it "does not create a new System" do
+          expect {
+            post systems_url, params: { system: invalid_attributes }
+          }.not_to change(Junction::System, :count)
+        end
 
-    context "with invalid parameters" do
-      it "does not create a new System" do
-        expect {
+        it "renders a response with 422 status (i.e. to display the 'new' template)" do
           post systems_url, params: { system: invalid_attributes }
-        }.not_to change(Junction::System, :count)
-      end
-
-      it "renders a response with 422 status (i.e. to display the 'new' template)" do
-        post systems_url, params: { system: invalid_attributes }
-        expect(response).to have_http_status(:unprocessable_content)
+          expect(response).to have_http_status(:unprocessable_content)
+        end
       end
     end
-  end
 
-  describe "PATCH /update" do
-    context "with valid parameters" do
-      let(:new_attributes) {
-        {
-          status: "closed"
+    describe "PATCH /update" do
+      it_behaves_like "an action that requires permission",
+        :patch, -> { system_path(system) },
+        %w[junction.codes/systems.all.write junction.codes/systems.owned.write],
+        { system: { status: "closed" } }
+
+      context "with valid parameters" do
+        let(:new_attributes) {
+          {
+            status: "closed"
+          }
         }
-      }
 
-      it "updates the requested system" do
-        system = Junction::System.create! valid_attributes
-        patch system_url(system), params: { system: new_attributes }
-        system.reload
-        expect(system.status).to eq("closed")
+        it "updates the requested system" do
+          patch system_url(system), params: { system: new_attributes }
+          system.reload
+          expect(system.status).to eq("closed")
+        end
+
+        it "redirects to the system" do
+          patch system_url(system), params: { system: new_attributes }
+          system.reload
+          expect(response).to redirect_to(system_url(system))
+        end
       end
 
-      it "redirects to the system" do
-        system = Junction::System.create! valid_attributes
-        patch system_url(system), params: { system: new_attributes }
-        system.reload
-        expect(response).to redirect_to(system_url(system))
-      end
-    end
-
-    context "with invalid parameters" do
-      it "renders a response with 422 status (i.e. to display the 'edit' template)" do
-        system = Junction::System.create! valid_attributes
-        patch system_url(system), params: { system: invalid_attributes }
-        expect(response).to have_http_status(:unprocessable_content)
+      context "with invalid parameters" do
+        it "renders a response with 422 status (i.e. to display the 'edit' template)" do
+          patch system_url(system), params: { system: invalid_attributes }
+          expect(response).to have_http_status(:unprocessable_content)
+        end
       end
     end
-  end
 
-  describe "DELETE /destroy" do
-    it "destroys the requested system" do
-      system = Junction::System.create! valid_attributes
-      expect {
+    describe "DELETE /destroy" do
+      it_behaves_like "an action that requires permission",
+        :delete, -> { system_path(system) },
+        %w[junction.codes/systems.all.destroy junction.codes/systems.owned.destroy]
+
+      it "destroys the requested system" do
+        expect {
+          delete system_url(system)
+        }.to change(Junction::System, :count).by(-1)
+      end
+
+      it "redirects to the systems list" do
         delete system_url(system)
-      }.to change(Junction::System, :count).by(-1)
-    end
-
-    it "redirects to the systems list" do
-      system = Junction::System.create! valid_attributes
-      delete system_url(system)
-      expect(response).to redirect_to(systems_url)
+        expect(response).to redirect_to(systems_url)
+      end
     end
   end
 end

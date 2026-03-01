@@ -17,7 +17,7 @@ require 'rails_helper'
 RSpec.describe "/deployments", type: :request do
   fixtures "junction/components"
 
-  requires_authentication
+  subject!(:deployment) { create(:deployment) }
 
   let(:valid_attributes) {
     {
@@ -35,109 +35,161 @@ RSpec.describe "/deployments", type: :request do
     }
   }
 
-  describe "GET /index" do
-    it "renders a successful response" do
-      Junction::Deployment.create! valid_attributes
-      get deployments_url
-      expect(response).to be_successful
+  context "when the user is not authenticated" do
+    describe "GET /deployments" do
+      it_behaves_like "an action that requires authentication", :get, -> { deployments_path }
+    end
+
+    describe "GET /deployments/:id" do
+      it_behaves_like "an action that requires authentication", :get, -> { deployment_path(deployment) }
+    end
+
+    describe "GET /deployments/new" do
+      it_behaves_like "an action that requires authentication", :get, -> { new_deployment_path }
+    end
+
+    describe "GET /deployments/:id/edit" do
+      it_behaves_like "an action that requires authentication", :get, -> { edit_deployment_path(deployment) }
+    end
+
+    describe "POST /deployments" do
+      it_behaves_like "an action that requires authentication", :post, -> { deployments_path }
+    end
+
+    describe "PATCH /deployments/:id" do
+      it_behaves_like "an action that requires authentication", :patch, -> { deployment_path(deployment) }
+    end
+
+    describe "DELETE /deployments/:id" do
+      it_behaves_like "an action that requires authentication", :delete, -> { deployment_path(deployment) }
     end
   end
 
-  describe "GET /show" do
-    it "renders a successful response" do
-      deployment = Junction::Deployment.create! valid_attributes
-      get deployment_url(deployment)
-      expect(response).to be_successful
-    end
-  end
+  context "when the user is authenticated" do
+    requires_authentication
 
-  describe "GET /new" do
-    it "renders a successful response" do
-      get new_deployment_url
-      expect(response).to be_successful
-    end
-  end
+    describe "GET /deployments" do
+      it_behaves_like "an action that requires permission",
+        :get, -> { deployments_path }, %w[junction.codes/deployments.all.read]
 
-  describe "GET /edit" do
-    it "renders a successful response" do
-      deployment = Junction::Deployment.create! valid_attributes
-      get edit_deployment_url(deployment)
-      expect(response).to be_successful
+      it "renders a successful response" do
+        get deployments_url
+        expect(response).to be_successful
+      end
     end
-  end
 
-  describe "POST /create" do
-    context "with valid parameters" do
-      it "creates a new Deployment" do
-        expect {
+    describe "GET /deployments/:id" do
+      it_behaves_like "an action that requires permission",
+        :get, -> { deployment_path(deployment) }, %w[junction.codes/deployments.all.read]
+
+      it "renders a successful response" do
+        get deployment_url(deployment)
+        expect(response).to be_successful
+      end
+    end
+
+    describe "GET /deployments/new" do
+      it_behaves_like "an action that requires permission",
+        :get, -> { new_deployment_path }, %w[junction.codes/deployments.all.write]
+
+      it "renders a successful response" do
+        get new_deployment_url
+        expect(response).to be_successful
+      end
+    end
+
+    describe "GET /deployments/:id/edit" do
+      it_behaves_like "an action that requires permission",
+        :get, -> { edit_deployment_path(deployment) }, %w[junction.codes/deployments.all.write]
+
+      it "renders a successful response" do
+        get edit_deployment_url(deployment)
+        expect(response).to be_successful
+      end
+    end
+
+    describe "POST /deployments" do
+      it_behaves_like "an action that requires permission",
+        :post, -> { deployments_path },
+        %w[junction.codes/deployments.all.write junction.codes/deployments.owned.write],
+        -> { { deployment: valid_attributes } }
+
+      context "with valid parameters" do
+        it "creates a new Deployment" do
+          expect {
+            post deployments_url, params: { deployment: valid_attributes }
+          }.to change(Junction::Deployment, :count).by(1)
+        end
+
+        it "redirects to the created deployment" do
           post deployments_url, params: { deployment: valid_attributes }
-        }.to change(Junction::Deployment, :count).by(1)
+          expect(response).to redirect_to(deployment_url(Junction::Deployment.last))
+        end
       end
 
-      it "redirects to the created deployment" do
-        post deployments_url, params: { deployment: valid_attributes }
-        expect(response).to redirect_to(deployment_url(Junction::Deployment.last))
-      end
-    end
+      context "with invalid parameters" do
+        it "does not create a new Deployment" do
+          expect {
+            post deployments_url, params: { deployment: invalid_attributes }
+          }.not_to change(Junction::Deployment, :count)
+        end
 
-    context "with invalid parameters" do
-      it "does not create a new Deployment" do
-        expect {
+        it "renders a response with 422 status (i.e. to display the 'new' template)" do
           post deployments_url, params: { deployment: invalid_attributes }
-        }.not_to change(Junction::Deployment, :count)
-      end
-
-      it "renders a response with 422 status (i.e. to display the 'new' template)" do
-        post deployments_url, params: { deployment: invalid_attributes }
-        expect(response).to have_http_status(:unprocessable_content)
+          expect(response).to have_http_status(:unprocessable_content)
+        end
       end
     end
-  end
 
-  describe "PATCH /update" do
-    context "with valid parameters" do
-      let(:new_attributes) {
-        {
-          platform: "aptible"
+    describe "PATCH /deployments/:id" do
+      it_behaves_like "an action that requires permission",
+        :patch, -> { deployment_path(deployment) },
+        %w[junction.codes/deployments.all.write junction.codes/deployments.owned.write],
+        { deployment: { platform: "aptible" } }
+
+      context "with valid parameters" do
+        let(:new_attributes) {
+          {
+            platform: "aptible"
+          }
         }
-      }
 
-      it "updates the requested deployment" do
-        deployment = Junction::Deployment.create! valid_attributes
-        patch deployment_url(deployment), params: { deployment: new_attributes }
-        deployment.reload
-        expect(deployment.platform).to eq("aptible")
+        it "updates the requested deployment" do
+          patch deployment_url(deployment), params: { deployment: new_attributes }
+          deployment.reload
+          expect(deployment.platform).to eq("aptible")
+        end
+
+        it "redirects to the deployment" do
+          patch deployment_url(deployment), params: { deployment: new_attributes }
+          deployment.reload
+          expect(response).to redirect_to(deployment_url(deployment))
+        end
       end
 
-      it "redirects to the deployment" do
-        deployment = Junction::Deployment.create! valid_attributes
-        patch deployment_url(deployment), params: { deployment: new_attributes }
-        deployment.reload
-        expect(response).to redirect_to(deployment_url(deployment))
-      end
-    end
-
-    context "with invalid parameters" do
-      it "renders a response with 422 status (i.e. to display the 'edit' template)" do
-        deployment = Junction::Deployment.create! valid_attributes
-        patch deployment_url(deployment), params: { deployment: invalid_attributes }
-        expect(response).to have_http_status(:unprocessable_content)
+      context "with invalid parameters" do
+        it "renders a response with 422 status (i.e. to display the 'edit' template)" do
+          patch deployment_url(deployment), params: { deployment: invalid_attributes }
+          expect(response).to have_http_status(:unprocessable_content)
+        end
       end
     end
-  end
 
-  describe "DELETE /destroy" do
-    it "destroys the requested deployment" do
-      deployment = Junction::Deployment.create! valid_attributes
-      expect {
+    describe "DELETE /destroy" do
+      it_behaves_like "an action that requires permission",
+        :delete, -> { deployment_path(deployment) },
+        %w[junction.codes/deployments.all.destroy junction.codes/deployments.owned.destroy]
+
+      it "destroys the requested deployment" do
+        expect {
+          delete deployment_url(deployment)
+        }.to change(Junction::Deployment, :count).by(-1)
+      end
+
+      it "redirects to the deployments list" do
         delete deployment_url(deployment)
-      }.to change(Junction::Deployment, :count).by(-1)
-    end
-
-    it "redirects to the deployments list" do
-      deployment = Junction::Deployment.create! valid_attributes
-      delete deployment_url(deployment)
-      expect(response).to redirect_to(deployments_url)
+        expect(response).to redirect_to(deployments_url)
+      end
     end
   end
 end

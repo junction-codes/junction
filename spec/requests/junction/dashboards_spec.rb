@@ -16,6 +16,9 @@ RSpec.describe "/dashboard", type: :request do
     requires_authentication
 
     describe "GET /dashboard" do
+      it_behaves_like "an action that requires permission",
+        :get, -> { dashboard_path }, %w[junction.codes/dashboards.all.read]
+
       it "returns a success response" do
         get dashboard_path
         expect(response).to have_http_status(:success)

@@ -56,6 +56,9 @@ RSpec.describe "/resources", type: :request do
     requires_authentication
 
     describe "GET /resources" do
+      it_behaves_like "an action that requires permission",
+        :get, -> { resources_path }, %w[junction.codes/resources.all.read]
+
       it "returns http success" do
         get resources_url
         expect(response).to have_http_status(:success)
@@ -63,6 +66,9 @@ RSpec.describe "/resources", type: :request do
     end
 
     describe "GET /resources/:id" do
+      it_behaves_like "an action that requires permission",
+        :get, -> { resource_path(resource.id) }, %w[junction.codes/resources.all.read]
+
       it "returns http success" do
         get resource_url(resource.id)
         expect(response).to have_http_status(:success)
@@ -70,6 +76,9 @@ RSpec.describe "/resources", type: :request do
     end
 
     describe "GET /resources/new" do
+      it_behaves_like "an action that requires permission",
+        :get, -> { new_resource_path }, %w[junction.codes/resources.all.write]
+
       it "returns http success" do
         get new_resource_url
         expect(response).to have_http_status(:success)
@@ -77,6 +86,9 @@ RSpec.describe "/resources", type: :request do
     end
 
     describe "GET /resources/:id/edit" do
+      it_behaves_like "an action that requires permission",
+        :get, -> { edit_resource_path(resource.id) }, %w[junction.codes/resources.all.write]
+
       it "returns http success" do
         get edit_resource_url(resource)
         expect(response).to have_http_status(:success)
@@ -84,6 +96,11 @@ RSpec.describe "/resources", type: :request do
     end
 
     describe "POST /resources" do
+      it_behaves_like "an action that requires permission",
+        :post, -> { resources_path },
+        %w[junction.codes/resources.all.write junction.codes/resources.owned.write],
+        -> { { resource: valid_attributes.merge(owner_id: current_user.groups.first&.id) } }
+
       context "with valid parameters" do
         it "creates a new resource" do
           expect {
@@ -112,6 +129,11 @@ RSpec.describe "/resources", type: :request do
     end
 
     describe "PATCH /resources/:id" do
+      it_behaves_like "an action that requires permission",
+        :patch, -> { resource_path(resource.id) },
+        %w[junction.codes/resources.all.write junction.codes/resources.owned.write],
+        { resource: { type: "bucket" } }
+
       context "with valid parameters" do
         let(:new_attributes) {
           {
@@ -141,6 +163,10 @@ RSpec.describe "/resources", type: :request do
     end
 
     describe "DELETE /resources/:id" do
+      it_behaves_like "an action that requires permission",
+        :delete, -> { resource_path(resource.id) },
+        %w[junction.codes/resources.all.destroy junction.codes/resources.owned.destroy]
+
       it "returns http success" do
         delete resource_url(resource)
         expect(response).to have_http_status(:see_other)

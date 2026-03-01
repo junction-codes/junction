@@ -13,7 +13,7 @@ require 'rails_helper'
 # sticking to rails and rspec-rails APIs to keep things simple and stable.
 
 RSpec.describe "/groups", type: :request do
-  requires_authentication
+  subject!(:group) { create(:group) }
 
   let(:valid_attributes) {
     {
@@ -30,109 +30,161 @@ RSpec.describe "/groups", type: :request do
     }
   }
 
-  describe "GET /index" do
-    it "renders a successful response" do
-      Junction::Group.create! valid_attributes
-      get groups_url
-      expect(response).to be_successful
+  context "when the user is not authenticated" do
+    describe "GET /index" do
+      it_behaves_like "an action that requires authentication", :get, -> { groups_path }
+    end
+
+    describe "GET /show" do
+      it_behaves_like "an action that requires authentication", :get, -> { group_path(group) }
+    end
+
+    describe "GET /new" do
+      it_behaves_like "an action that requires authentication", :get, -> { new_group_path }
+    end
+
+    describe "GET /edit" do
+      it_behaves_like "an action that requires authentication", :get, -> { edit_group_path(group) }
+    end
+
+    describe "POST /create" do
+      it_behaves_like "an action that requires authentication", :post, -> { groups_path }
+    end
+
+    describe "PATCH /update" do
+      it_behaves_like "an action that requires authentication", :patch, -> { group_path(group) }
+    end
+
+    describe "DELETE /destroy" do
+      it_behaves_like "an action that requires authentication", :delete, -> { group_path(group) }
     end
   end
 
-  describe "GET /show" do
-    it "renders a successful response" do
-      group = Junction::Group.create! valid_attributes
-      get group_url(group)
-      expect(response).to be_successful
-    end
-  end
+  context "when the user is authenticated" do
+    requires_authentication
 
-  describe "GET /new" do
-    it "renders a successful response" do
-      get new_group_url
-      expect(response).to be_successful
-    end
-  end
+    describe "GET /index" do
+      it_behaves_like "an action that requires permission",
+        :get, -> { groups_path }, %w[junction.codes/groups.all.read]
 
-  describe "GET /edit" do
-    it "renders a successful response" do
-      group = Junction::Group.create! valid_attributes
-      get edit_group_url(group)
-      expect(response).to be_successful
+      it "renders a successful response" do
+        get groups_url
+        expect(response).to be_successful
+      end
     end
-  end
 
-  describe "POST /create" do
-    context "with valid parameters" do
-      it "creates a new Group" do
-        expect {
+    describe "GET /show" do
+      it_behaves_like "an action that requires permission",
+        :get, -> { group_path(group) }, %w[junction.codes/groups.all.read]
+
+      it "renders a successful response" do
+        get group_url(group)
+        expect(response).to be_successful
+      end
+    end
+
+    describe "GET /new" do
+      it_behaves_like "an action that requires permission",
+        :get, -> { new_group_path }, %w[junction.codes/groups.all.write]
+
+      it "renders a successful response" do
+        get new_group_url
+        expect(response).to be_successful
+      end
+    end
+
+    describe "GET /edit" do
+      it_behaves_like "an action that requires permission",
+        :get, -> { edit_group_path(group) }, %w[junction.codes/groups.all.write]
+
+      it "renders a successful response" do
+        get edit_group_url(group)
+        expect(response).to be_successful
+      end
+    end
+
+    describe "POST /create" do
+      it_behaves_like "an action that requires permission",
+        :post, -> { groups_path },
+        %w[junction.codes/groups.all.write junction.codes/groups.owned.write],
+        -> { { group: valid_attributes } }
+
+      context "with valid parameters" do
+        it "creates a new Group" do
+          expect {
+            post groups_url, params: { group: valid_attributes }
+          }.to change(Junction::Group, :count).by(1)
+        end
+
+        it "redirects to the created group" do
           post groups_url, params: { group: valid_attributes }
-        }.to change(Junction::Group, :count).by(1)
+          expect(response).to redirect_to(group_url(Junction::Group.last))
+        end
       end
 
-      it "redirects to the created group" do
-        post groups_url, params: { group: valid_attributes }
-        expect(response).to redirect_to(group_url(Junction::Group.last))
-      end
-    end
+      context "with invalid parameters" do
+        it "does not create a new Group" do
+          expect {
+            post groups_url, params: { group: invalid_attributes }
+          }.not_to change(Junction::Group, :count)
+        end
 
-    context "with invalid parameters" do
-      it "does not create a new Group" do
-        expect {
+        it "renders a response with 422 status (i.e. to display the 'new' template)" do
           post groups_url, params: { group: invalid_attributes }
-        }.not_to change(Junction::Group, :count)
-      end
-
-      it "renders a response with 422 status (i.e. to display the 'new' template)" do
-        post groups_url, params: { group: invalid_attributes }
-        expect(response).to have_http_status(:unprocessable_content)
+          expect(response).to have_http_status(:unprocessable_content)
+        end
       end
     end
-  end
 
-  describe "PATCH /update" do
-    context "with valid parameters" do
-      let(:new_attributes) {
-        {
-          type: "business_unit"
+    describe "PATCH /update" do
+      it_behaves_like "an action that requires permission",
+        :patch, -> { group_path(group) },
+        %w[junction.codes/groups.all.write junction.codes/groups.owned.write],
+        { group: { type: "business_unit" } }
+
+      context "with valid parameters" do
+        let(:new_attributes) {
+          {
+            type: "business_unit"
+          }
         }
-      }
 
-      it "updates the requested group" do
-        group = Junction::Group.create! valid_attributes
-        patch group_url(group), params: { group: new_attributes }
-        group.reload
-        expect(group.type).to eq("business_unit")
+        it "updates the requested group" do
+          patch group_url(group), params: { group: new_attributes }
+          group.reload
+          expect(group.type).to eq("business_unit")
+        end
+
+        it "redirects to the group" do
+          patch group_url(group), params: { group: new_attributes }
+          group.reload
+          expect(response).to redirect_to(group_url(group))
+        end
       end
 
-      it "redirects to the group" do
-        group = Junction::Group.create! valid_attributes
-        patch group_url(group), params: { group: new_attributes }
-        group.reload
-        expect(response).to redirect_to(group_url(group))
-      end
-    end
-
-    context "with invalid parameters" do
-      it "renders a response with 422 status (i.e. to display the 'edit' template)" do
-        group = Junction::Group.create! valid_attributes
-        patch group_url(group), params: { group: invalid_attributes }
-        expect(response).to have_http_status(:unprocessable_content)
+      context "with invalid parameters" do
+        it "renders a response with 422 status (i.e. to display the 'edit' template)" do
+          patch group_url(group), params: { group: invalid_attributes }
+          expect(response).to have_http_status(:unprocessable_content)
+        end
       end
     end
-  end
 
-  describe "DELETE /destroy" do
-    it "destroys the requested group" do
-      group = Junction::Group.create! valid_attributes
-      expect {
+    describe "DELETE /destroy" do
+      it_behaves_like "an action that requires permission",
+        :delete, -> { group_path(group) },
+        %w[junction.codes/groups.all.destroy junction.codes/groups.owned.destroy]
+
+      it "destroys the requested group" do
+        expect {
+          delete group_url(group)
+        }.to change(Junction::Group, :count).by(-1)
+      end
+
+      it "redirects to the groups list" do
         delete group_url(group)
-      }.to change(Junction::Group, :count).by(-1)
-    end
-
-    it "redirects to the groups list" do
-      group = Junction::Group.create! valid_attributes
-      delete group_url(group)
-      expect(response).to redirect_to(groups_url)
+        expect(response).to redirect_to(groups_url)
+      end
     end
   end
 end

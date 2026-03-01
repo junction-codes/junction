@@ -71,6 +71,9 @@ RSpec.describe "/components", type: :request do
     requires_authentication
 
     describe "GET /components" do
+      it_behaves_like "an action that requires permission",
+        :get, -> { components_path }, %w[junction.codes/components.all.read]
+
       it "renders a successful response" do
         get components_url
         expect(response).to be_successful
@@ -78,6 +81,9 @@ RSpec.describe "/components", type: :request do
     end
 
     describe "GET /components/:id" do
+      it_behaves_like "an action that requires permission",
+        :get, -> { component_path(component) }, %w[junction.codes/components.all.read]
+
       it "renders a successful response" do
         get component_url(component)
         expect(response).to be_successful
@@ -85,6 +91,9 @@ RSpec.describe "/components", type: :request do
     end
 
     describe "GET /components/new" do
+      it_behaves_like "an action that requires permission",
+        :get, -> { new_component_path }, %w[junction.codes/components.all.write]
+
       it "renders a successful response" do
         get new_component_url
         expect(response).to be_successful
@@ -92,6 +101,9 @@ RSpec.describe "/components", type: :request do
     end
 
     describe "GET /components/:id/edit" do
+      it_behaves_like "an action that requires permission",
+        :get, -> { edit_component_path(component) }, %w[junction.codes/components.all.write]
+
       it "renders a successful response" do
         get edit_component_url(component)
         expect(response).to be_successful
@@ -99,6 +111,11 @@ RSpec.describe "/components", type: :request do
     end
 
     describe "POST /components" do
+      it_behaves_like "an action that requires permission",
+        :post, -> { components_path },
+        %w[junction.codes/components.all.write junction.codes/components.owned.write],
+        -> { { component: valid_attributes.merge(owner_id: current_user.groups.first&.id) } }
+
       context "with valid parameters" do
         it "creates a new component" do
           expect {
@@ -127,6 +144,11 @@ RSpec.describe "/components", type: :request do
     end
 
     describe "PATCH /components/:id" do
+      it_behaves_like "an action that requires permission",
+        :patch, -> { component_path(component) },
+        %w[junction.codes/components.all.write junction.codes/components.owned.write],
+        { component: { lifecycle: "production" } }
+
       context "with valid parameters" do
         let(:new_attributes) {
           {
@@ -156,6 +178,10 @@ RSpec.describe "/components", type: :request do
     end
 
     describe "DELETE /components/:id" do
+      it_behaves_like "an action that requires permission",
+        :delete, -> { component_path(component) },
+        %w[junction.codes/components.all.destroy junction.codes/components.owned.destroy]
+
       it "destroys the requested component" do
         expect {
           delete component_url(component)
