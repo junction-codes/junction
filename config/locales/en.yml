@@ -36,9 +36,6 @@ en:
       component:
         one: Component
         other: Components
-      deployment:
-        one: Deployment
-        other: Deployments
       domain:
         one: Domain
         other: Domains
