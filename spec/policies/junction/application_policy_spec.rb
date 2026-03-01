@@ -258,16 +258,65 @@ RSpec.describe Junction::ApplicationPolicy, type: :policy do
       let(:permission_strings) { [ "junction.codes/roles.owned.write" ] }
 
       it "access is granted" do
-        # TODO: Users with owned permissions should be able to create entities,
-        # but the must set it to their own group.
-        skip "Allow users with owned permissions to create entities, but they must set it to their own group."
-        # expect(policy.allowed_access?("roles", Junction::Permission::Access::WRITE)).to be(true)
+        expect(policy.create?).to be(true)
       end
     end
 
     context "when the user does not have a required permission" do
       it "access is denied" do
         expect(policy.create?).to be(false)
+      end
+    end
+  end
+
+  describe "#create_all?" do
+    subject(:policy) { Junction::ComponentPolicy.new(Junction::Component, user:) }
+
+    context "when the user has the all permission" do
+      let(:permission_strings) { [ "junction.codes/components.all.write" ] }
+
+      it "access is granted" do
+        expect(policy.create_all?).to be(true)
+      end
+    end
+
+    context "when the user only has the owned permission" do
+      let(:permission_strings) { [ "junction.codes/components.owned.write" ] }
+
+      it "access is denied" do
+        expect(policy.create_all?).to be(false)
+      end
+    end
+
+    context "when the user has neither permission" do
+      it "access is denied" do
+        expect(policy.create_all?).to be(false)
+      end
+    end
+  end
+
+  describe "#create_owned?" do
+    subject(:policy) { Junction::ComponentPolicy.new(Junction::Component, user:) }
+
+    context "when the user has the all permission" do
+      let(:permission_strings) { [ "junction.codes/components.all.write" ] }
+
+      it "access is denied" do
+        expect(policy.create_owned?).to be(false)
+      end
+    end
+
+    context "when the user has the owned permission" do
+      let(:permission_strings) { [ "junction.codes/components.owned.write" ] }
+
+      it "access is granted" do
+        expect(policy.create_owned?).to be(true)
+      end
+    end
+
+    context "when the user has neither permission" do
+      it "access is denied" do
+        expect(policy.create_owned?).to be(false)
       end
     end
   end

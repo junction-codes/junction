@@ -57,7 +57,24 @@ module Junction
     end
 
     def create?
-      allowed_access?(context, Permission::Access::WRITE)
+      create_all? || create_owned?
+    end
+
+    # Whether the user may create entities that they don't own.
+    #
+    # @return [Boolean]
+    def create_all?
+      allowed_permission?("#{permission_prefix}.all.#{Permission::Access::WRITE}")
+    end
+
+    # Whether the user may create entities that they will own.
+    #
+    # When true and create_all? is false, the new entity's owner should be
+    # restricted to the groups in the user's group hierarchy.
+    #
+    # @return [Boolean]
+    def create_owned?
+      allowed_permission?("#{permission_prefix}.owned.#{Permission::Access::WRITE}")
     end
 
     def destroy?
