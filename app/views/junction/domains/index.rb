@@ -83,7 +83,7 @@ module Junction
                     # Domain details.
                     div do
                       div(class: "text-sm font-medium text-gray-900 dark:text-white") do
-                        a(href: domain_path(domain)) { domain.name }
+                        render_view_link(domain, class: "ps-0")
                       end
 
                       div(class: "text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs") { domain.description }
@@ -92,13 +92,11 @@ module Junction
                 end
 
                 row.cell do
-                  render Badge.new(variant: domain.status&.to_sym) { domain.status&.capitalize }
+                  Badge(variant: domain.status&.to_sym) { domain.status&.titleize }
                 end
 
                 row.cell do
-                  if domain.owner.present?
-                    render Link(href: group_path(domain.owner)) { domain.owner.name }
-                  end
+                  render_view_link(domain.owner, class: "ps-0")
                 end
               end
             end

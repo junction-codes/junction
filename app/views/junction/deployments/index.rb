@@ -79,15 +79,11 @@ module Junction
             @deployments.each do |deployment|
               body.row do |row|
                 row.cell do
-                  Link(href: component_path(deployment.component), class: "ps-0") do
-                    deployment.component.name
-                  end
+                  render_view_link(deployment.component, class: "ps-0")
                 end
 
                 row.cell do
-                  if deployment.component.owner.present?
-                    render Link(href: group_path(deployment.component.owner)) { deployment.component.owner.name }
-                  end
+                  render_view_link(deployment.component.owner, class: "ps-0")
                 end
 
                 row.cell { deployment.environment }

@@ -9,16 +9,20 @@ module Junction
     # disabled.
     #
     # @param entity [ApplicationRecord] The entity to link to.
+    # @param user_attrs [Hash] Additional HTML attributes for the link.
     #
     # @todo Add a proper tooltip to the disabled link.
-    def render_view_link(entity)
+    def render_view_link(entity, **user_attrs)
+      return if entity.blank?
+
       if allowed_to?(:show?, entity)
-        Components::Link(href: url_for(entity), variant: :link) { entity.name }
+        Components::Link(href: url_for(entity), variant: :link, **user_attrs) { entity.name }
       else
         Components::Link(
           href: nil,
           variant: :disabled,
-          title: "You do not have access to this #{entity.class.model_name.human}"
+          title: "You do not have access to this #{entity.class.model_name.human}",
+          **user_attrs
         ) { entity.name }
       end
     end

@@ -133,19 +133,15 @@ module Junction
                   tr do
                     th(scope: "col", class: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider") { "Name" }
                     th(scope: "col", class: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider") { "Email" }
-                    th(scope: "col", class: "relative px-6 py-3") { span(class: "sr-only") { "View" } }
                   end
                 end
 
                 tbody(class: "bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700") do
                   @group.members.each do |user|
                     tr(class: "hover:bg-gray-50 dark:hover:bg-gray-700/50") do
-                      td(class: "px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white") { user.display_name }
+                      td(class: "px-6 py-4 whitespace-nowrap") { render_view_link(user, class: "ps-0") }
                       td(class: "px-6 py-4 whitespace-nowrap") do
-                        render Link(href: "mailto:#{user.email_address}") { user.email_address }
-                      end
-                      td(class: "px-6 py-4 whitespace-nowrap text-right text-sm font-medium") do
-                        a(href: "#{user_path(user)}", class: "text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300") { "View" }
+                        Link(href: "mailto:#{user.email_address}") { user.email_address }
                       end
                     end
                   end

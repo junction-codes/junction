@@ -41,7 +41,7 @@ module Junction
 
                   if @deployment.component.owner.present?
                     span do
-                      Link(href: group_path(@deployment.component.owner), class: "p-0 inline") { @deployment.component.owner.name }
+                      render_view_link(@deployment.component.owner, class: "p-0 inline")
                     end
                   else
                     span { plain "NO OWNER" }

@@ -4,6 +4,8 @@ module Junction
   class User < Junction::ApplicationRecord
     include Annotated
 
+    alias_attribute :name, :display_name
+
     has_secure_password
 
     validates :display_name, presence: true

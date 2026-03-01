@@ -43,7 +43,7 @@ module Junction
                     @roles.each do |role|
                       body.row do |row|
                         row.cell do
-                          Link(href: role_path(role)) { role.name }
+                          render_view_link(role, class: "ps-0")
                         end
 
                         row.cell { role.description }

@@ -77,7 +77,7 @@ module Junction
 
                     div do
                       div(class: "text-sm font-medium text-gray-900 dark:text-white") do
-                        a(href: group_path(group)) { group.name }
+                        render_view_link(group, class: "ps-0")
                       end
 
                       div(class: "text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs") { group.description }
@@ -101,9 +101,7 @@ module Junction
 
                 row.cell do
                   if group.parent
-                    Link(href: group_path(group.parent), class: "ps-0") do
-                      group.parent.name
-                    end
+                    render_view_link(group.parent, class: "ps-0")
                   end
                 end
               end

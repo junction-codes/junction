@@ -89,7 +89,7 @@ module Junction
 
                     div do
                       div(class: "text-sm font-medium text-gray-900 dark:text-white") do
-                         a(href: api_path(api)) { api.name }
+                        render_view_link(api, class: "ps-0")
                       end
                       div(class: "text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs") { api.description }
                     end
@@ -97,11 +97,11 @@ module Junction
                 end
 
                 row.cell do
-                  Link(href: system_path(api.system), class: "ps-0") { api.system.name } if api.system.present?
+                  render_view_link(api.system, class: "ps-0")
                 end
 
                 row.cell do
-                  Link(href: group_path(api.owner)) { api.owner.name } if api.owner.present?
+                  render_view_link(api.owner, class: "ps-0")
                 end
 
                 row.cell do
@@ -115,7 +115,7 @@ module Junction
                 end
 
                 row.cell do
-                  Badge(variant: api.lifecycle) { api.lifecycle&.capitalize }
+                  Badge(variant: api.lifecycle&.to_sym) { api.lifecycle&.titleize }
                 end
               end
             end

@@ -86,7 +86,7 @@ module Junction
 
                     div do
                       div(class: "text-sm font-medium text-gray-900 dark:text-white") do
-                        a(href: resource_path(resource)) { resource.name }
+                        render_view_link(resource, class: "ps-0")
                       end
 
                       div(class: "text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs") { resource.description }
@@ -95,11 +95,11 @@ module Junction
                 end
 
                 row.cell do
-                  Link(href: system_path(resource.system), class: "ps-0") { resource.system.name } if resource.system.present?
+                  render_view_link(resource.system, class: "ps-0")
                 end
 
                 row.cell do
-                  Link(href: group_path(resource.owner)) { resource.owner.name } if resource.owner.present?
+                  render_view_link(resource.owner, class: "ps-0")
                 end
 
                 row.cell do

@@ -46,7 +46,7 @@ module Junction
 
                   if @resource.owner.present?
                     span do
-                      Link(href: group_path(@resource.owner), class: "p-0 inline") { @resource.owner.name }
+                      render_view_link(@resource.owner, class: "p-0 inline")
                     end
                   else
                     span { plain "NO OWNER" }

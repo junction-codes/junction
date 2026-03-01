@@ -53,9 +53,7 @@ module Junction
                   span(class: "font-semibold mr-2") { "Owner:" }
 
                   if @system.owner.present?
-                    span do
-                      Link(href: group_path(@system.owner), class: "p-0 inline") { @system.owner.name }
-                    end
+                    span { render_view_link(@system.owner, class: "p-0 inline") }
                   else
                     span { plain "NO OWNER" }
                   end
@@ -116,19 +114,15 @@ module Junction
               tr do
                 th(scope: "col", class: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider") { "Component Name" }
                 th(scope: "col", class: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider") { "Lifecycle" }
-                th(scope: "col", class: "relative px-6 py-3") { span(class: "sr-only") { "View" } }
               end
             end
 
             tbody(class: "bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700") do
               @system.components.each do |component|
                 tr(class: "hover:bg-gray-50 dark:hover:bg-gray-700/50") do
-                  td(class: "px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white") { component.name }
+                  td(class: "px-6 py-4 whitespace-nowrap") { render_view_link(component, class: "ps-0") }
                   td(class: "px-6 py-4 whitespace-nowrap") do
-                    render Badge.new(variant: component.lifecycle&.to_sym) { component.lifecycle&.capitalize }
-                  end
-                  td(class: "px-6 py-4 whitespace-nowrap text-right text-sm font-medium") do
-                    a(href: "/components/#{component.id}", class: "text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300") { "View" }
+                    Badge(variant: component.lifecycle&.to_sym) { component.lifecycle&.titleize }
                   end
                 end
               end
