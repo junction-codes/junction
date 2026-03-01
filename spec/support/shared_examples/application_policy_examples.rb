@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# Shared examples for policies that only define #context and inherit all rules
-# from Junction::ApplicationPolicy.
 RSpec.shared_examples "an application policy with context" do |context_value|
   describe "#context" do
     it "returns #{context_value.inspect}" do
