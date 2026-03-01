@@ -47,9 +47,7 @@ module Junction
                 div(class: "flex-1") do
                   div(class: "flex items-center gap-2") do
                     icon(entity.icon, class: "h-4 w-4 text-gray-500")
-                    Link(href: polymorphic_path(entity), class: "p-0 font-medium text-gray-900 dark:text-white") do
-                      entity.name
-                    end
+                    render_view_link(entity, class: "ps-0")
                   end
 
                   div(class: "mt-1") do

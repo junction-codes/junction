@@ -7,58 +7,79 @@ module Junction
 
     # GET /groups
     def index
+      authorize! Junction::Group
       @q = Junction::Group.ransack(params[:q])
       @q.sorts = "name asc" if @q.sorts.empty?
 
       render Views::Groups::Index.new(
         groups: @q.result,
         query: @q,
+        can_create: allowed_to?(:create?, Junction::Group),
         available_types:,
       )
     end
 
     # GET /groups/:id
     def show
-      render Views::Groups::Show.new(group: @group)
+      authorize! @entity
+      render Views::Groups::Show.new(
+        group: @entity,
+        can_edit: allowed_to?(:update?, @entity),
+        can_destroy: allowed_to?(:destroy?, @entity)
+      )
     end
 
     # GET /groups/new
     def new
+      authorize! Junction::Group
       render Views::Groups::New.new(group: Junction::Group.new, available_parents:)
     end
 
     # GET /groups/:id/edit
     def edit
-      render Views::Groups::Edit.new(group: @group, available_parents:)
+      authorize! @entity
+      render Views::Groups::Edit.new(
+        group: @entity,
+        can_destroy: allowed_to?(:destroy?, @entity),
+        available_parents:
+      )
     end
 
     # POST /groups
     def create
-      @group = Junction::Group.new(group_params)
+      authorize! Junction::Group
+      @entity = Junction::Group.new(group_params)
 
-      if @group.save
-        redirect_to @group, success: "Group was successfully created."
+      if @entity.save
+        redirect_to @entity, success: "Group was successfully created."
       else
         flash.now[:alert] = "There were errors creating the group."
-        render Views::Groups::New.new(group: @group, available_parents:), status: :unprocessable_content
+        render Views::Groups::New.new(group: @entity, available_parents:),
+               status: :unprocessable_content
       end
     end
 
     # PATCH/PUT /groups/:id
     def update
-      if @group.update(group_params)
-        redirect_to @group, success: "Group was successfully updated."
+      authorize! @entity
+      if @entity.update(group_params)
+        redirect_to @entity, success: "Group was successfully updated."
       else
         flash.now[:alert] = "There were errors updating the group."
-        render Views::Groups::Edit.new(group: @group, available_parents:), status: :unprocessable_content
+        render Views::Groups::Edit.new(
+          group: @entity,
+          can_destroy: allowed_to?(:destroy?, @entity),
+          available_parents:
+        ), status: :unprocessable_content
       end
     end
 
     # DELETE /groups/:id
     def destroy
-      @group.destroy!
+      authorize! @entity
+      @entity.destroy!
 
-      redirect_to groups_path, status: :see_other, alert: "Group was successfully destroyed."
+      redirect_to groups_path, status: :see_other, success: "Group was successfully destroyed."
     end
 
     private
@@ -80,12 +101,19 @@ module Junction
 
     # Use callbacks to share common setup or constraints between actions.
     def set_entity
-      @group = Junction::Group.find(params.expect(:id))
+      @entity = Junction::Group.find(params.expect(:id))
     end
 
     # Only allow a list of trusted parameters through.
+    #
+    # @return [Hash] The permitted parameters.
+    #
+    # @todo We should support some sanitation of annotations, particularly those
+    # that are used for access controls.
     def group_params
-      params.expect(group: [ :description, :name, :email, :image_url, :parent_id, :type, annotations: {} ])
+      params.expect(group: [
+        :description, :name, :email, :image_url, :parent_id, :type, annotations: {}
+      ])
     end
   end
 end

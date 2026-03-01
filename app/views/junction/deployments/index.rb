@@ -6,12 +6,12 @@ module Junction
       # Index view for deployments.
       class Index < Views::Base
         attr_reader :available_components, :available_environments,
-                    :available_platforms, :deployments, :query
+                    :available_platforms, :can_create, :deployments, :query
 
         # Initializes the view.
         #
-        # @param deployments [ActiveRecord::Relation] Collection of deployments to
-        #  display.
+        # @param deployments [ActiveRecord::Relation] Collection of deployments
+        #   to display.
         # @param query [Ransack::Search] Ransack query object for filtering and
         #   sorting.
         # @param available_components [ActiveRecord::Relation] Component entity
@@ -20,10 +20,12 @@ module Junction
         #   [label, value] pairs for filtering.
         # @param available_platforms [Array<Array>] Platform options as [label,
         #   value] pairs for filtering.
+        # @param can_create [Boolean] Whether the user can create deployments.
         def initialize(deployments:, query:, available_components:,
-          available_environments:, available_platforms:)
+          available_environments:, available_platforms:, can_create: true)
           @deployments = deployments
           @query = query
+          @can_create = can_create
           @available_components = available_components
           @available_environments = available_environments
           @available_platforms = available_platforms
@@ -34,8 +36,8 @@ module Junction
             div(class: "p-6") do
               div(class: "flex justify-between items-center mb-6") do
                 h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { "Deployments" }
-                Link(variant: :primary, href: new_deployment_path) do
-                  "New Deployment"
+                if @can_create
+                  Link(variant: :primary, href: new_deployment_path) { "New Deployment" }
                 end
               end
 
@@ -77,15 +79,11 @@ module Junction
             @deployments.each do |deployment|
               body.row do |row|
                 row.cell do
-                  Link(href: component_path(deployment.component), class: "ps-0") do
-                    deployment.component.name
-                  end
+                  render_view_link(deployment.component, class: "ps-0")
                 end
 
                 row.cell do
-                  if deployment.component.owner.present?
-                    render Link(href: group_path(deployment.component.owner)) { deployment.component.owner.name }
-                  end
+                  render_view_link(deployment.component.owner, class: "ps-0")
                 end
 
                 row.cell { deployment.environment }

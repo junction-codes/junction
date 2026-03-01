@@ -5,16 +5,18 @@ module Junction
     module Domains
       # Edit view for domains.
       class Edit < Views::Base
-        attr_reader :available_owners, :domain
+        attr_reader :available_owners, :can_destroy, :domain
 
         # Initializes the view.
         #
         # @param domain [Domain] The domain being modified.
-        # @param available_owners [Array<Array>] Owner entity options with name and id
-        #   attributes.
-        def initialize(domain:, available_owners:)
+        # @param available_owners [Array<Array>] Owner entity options with name
+        #   and id attributes.
+        # @param can_destroy [Boolean] Whether the domain can be destroyed.
+        def initialize(domain:, available_owners:, can_destroy:)
           @domain = domain
           @available_owners = available_owners
+          @can_destroy = can_destroy
         end
 
         def view_template
@@ -38,7 +40,7 @@ module Junction
               end
 
               aside(class: "space-y-6") do
-                DomainEditSidebar(domain:)
+                DomainEditSidebar(domain:, can_destroy:)
               end
             end
           end

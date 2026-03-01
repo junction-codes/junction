@@ -6,7 +6,7 @@ module Junction
       # Index view for resources.
       class Index < Views::Base
         attr_reader :available_owners, :available_systems, :available_types,
-                    :query, :resources
+                    :can_create, :query, :resources
 
         # Initializes the view.
         #
@@ -16,14 +16,16 @@ module Junction
         #   sorting.
         # @param available_owners [Array<Array>] Owner entity options with name
         #   and id attributes.
-        # @param available_systems [Array<Array>] System entity options with name
-        #   and id attributes.
+        # @param available_systems [Array<Array>] System entity options with
+        #   name and id attributes.
         # @param available_types [Array<Array>] Type options as [label, value]
         #   pairs for filtering.
+        # @param can_create [Boolean] Whether the user can create resources.
         def initialize(resources:, query:, available_owners:, available_systems:,
-                      available_types:)
+                      available_types:, can_create: true)
           @resources = resources
           @query = query
+          @can_create = can_create
           @available_owners = available_owners
           @available_systems = available_systems
           @available_types = available_types
@@ -34,8 +36,8 @@ module Junction
             div(class: "p-6") do
               div(class: "flex justify-between items-center mb-6") do
                 h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { "Resources" }
-                Link(variant: :primary, href: new_resource_path) do
-                  "New Resource"
+                if @can_create
+                  Link(variant: :primary, href: new_resource_path) { "New Resource" }
                 end
               end
 
@@ -84,7 +86,7 @@ module Junction
 
                     div do
                       div(class: "text-sm font-medium text-gray-900 dark:text-white") do
-                        a(href: resource_path(resource)) { resource.name }
+                        render_view_link(resource, class: "ps-0")
                       end
 
                       div(class: "text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs") { resource.description }
@@ -93,11 +95,11 @@ module Junction
                 end
 
                 row.cell do
-                  Link(href: system_path(resource.system), class: "ps-0") { resource.system.name } if resource.system.present?
+                  render_view_link(resource.system, class: "ps-0")
                 end
 
                 row.cell do
-                  Link(href: group_path(resource.owner)) { resource.owner.name } if resource.owner.present?
+                  render_view_link(resource.owner, class: "ps-0")
                 end
 
                 row.cell do

@@ -20,12 +20,11 @@ module Junction
                 (e.g. monitoring, incident management, etc.).
               EOT
             end
+          end
 
-            # TODO: Support adding/editing arbitrary annotations.
-            card.content(class: "space-y-4") do
-              annotations.each_value do |annotation|
-                render_field_for(annotation)
-              end
+          card.content(class: "space-y-4") do
+            annotations.each_value do |annotation|
+              render_field_for(annotation)
             end
           end
         end
@@ -35,7 +34,7 @@ module Junction
 
       # TODO: Support arbitrary annotations.
       def annotations
-        @annotations ||= Junction::PluginRegistry.instance.annotations_for(@context.class)
+        @annotations ||= Junction::PluginRegistry.annotations_for(@context.class)
       end
 
       def render_field_for(annotation)

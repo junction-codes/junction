@@ -5,6 +5,8 @@ one:
   email: MyString
   image_url: https://example.com/image.png
   parent:
+  annotations:
+    "junction.codes/role": "Admin"
 
 two:
   name: MyString

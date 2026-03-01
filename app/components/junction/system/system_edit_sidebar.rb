@@ -3,8 +3,9 @@
 module Junction
   module Components
     class SystemEditSidebar < Base
-      def initialize(system:)
+      def initialize(system:, can_destroy: true)
         @system = system
+        @can_destroy = can_destroy
       end
 
       def view_template
@@ -20,28 +21,30 @@ module Junction
         end
 
         # Danger zone for destructive actions.
-        render Components::Card.new(class: "border-red-500/50 dark:border-red-500/30") do |card|
-          card.header do
-            card.title(class: "text-red-700 dark:text-red-400") { "Danger Zone" }
-          end
+        if @can_destroy
+          render Components::Card.new(class: "border-red-500/50 dark:border-red-500/30") do |card|
+            card.header do
+              card.title(class: "text-red-700 dark:text-red-400") { "Danger Zone" }
+            end
 
-          card.content(class: "space-y-4") do
-            p(class: "text-sm text-gray-600 dark:text-gray-400") { "This action is irreversible. Please be certain." }
+            card.content(class: "space-y-4") do
+              p(class: "text-sm text-gray-600 dark:text-gray-400") { "This action is irreversible. Please be certain." }
 
-            render Dialog do |dialog|
-              dialog.trigger do
-                render Button.new(variant: :destructive, class: "w-full justify-center") do
-                  icon("trash", class: "w-4 h-4 mr-2")
-                  plain "Delete System"
+              render Dialog do |dialog|
+                dialog.trigger do
+                  render Button.new(variant: :destructive, class: "w-full justify-center") do
+                    icon("trash", class: "w-4 h-4 mr-2")
+                    plain "Delete System"
+                  end
                 end
-              end
 
-              dialog.content do |content|
-                content.header { |h| h.title { "Are you absolutely sure?" } }
-                content.body { "This will permanently remove the system." }
-                content.footer do
-                  render Link.new(data: { action: "click->ruby-ui--dialog#dismiss" }) { "Cancel" }
-                  render Link.new(variant: :destructive, href: system_path(@system), data_turbo_method: :delete) { "Confirm Delete" }
+                dialog.content do |content|
+                  content.header { |h| h.title { "Are you absolutely sure?" } }
+                  content.body { "This will permanently remove the system." }
+                  content.footer do
+                    render Link.new(data: { action: "click->ruby-ui--dialog#dismiss" }) { "Cancel" }
+                    render Link.new(variant: :destructive, href: system_path(@system), data_turbo_method: :delete) { "Confirm Delete" }
+                  end
                 end
               end
             end

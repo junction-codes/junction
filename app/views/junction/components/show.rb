@@ -7,10 +7,12 @@ module Junction
       class Show < Views::Base
         include PluginDispatchHelper
 
-        def initialize(component:, dependencies:, dependents:)
+        def initialize(component:, dependencies:, dependents:, can_edit:, can_destroy:)
           @component = component
           @dependencies = dependencies
           @dependents = dependents
+          @can_edit = can_edit
+          @can_destroy = can_destroy
         end
 
         def view_template
@@ -46,16 +48,18 @@ module Junction
 
                   if @component.owner.present?
                     span do
-                      Link(href: group_path(@component.owner), class: "p-0 inline") { @component.owner.name }
+                      render_view_link(@component.owner, class: "p-0 inline")
                     end
                   else
                     span { plain "NO OWNER" }
                   end
                 end
+
                 div(class: "mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400") do
                   span(class: "font-semibold mr-2") { "Type:" }
                   span { plain @component.type }
                 end
+
                 div(class: "mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400") do
                   span(class: "font-semibold mr-2") { "Repository:" }
                   span { Link(href: @component.repository_url, class: "p-0 text-blue-600 hover:underline dark:text-blue-400 inline") { @component.repository_url } }
@@ -63,19 +67,23 @@ module Junction
               end
 
               div do
-                if @component.system.present?
-                  Link(href: system_path(@component.system), class: "text-sm text-blue-600 hover:underline dark:text-blue-400") do
-                    "Part of the '#{@component.system.name}' System"
-                  end
+                break unless @component.system.present?
+
+                if allowed_to?(:show?, @component.system)
+                  Link(href: system_path(@component.system)) { "Part of the '#{@component.system.name}' System" }
+                else
+                  Link(variant: :disabled) { "Part of the '#{@component.system.name}' System" }
                 end
               end
             end
 
             # Right side: action buttons.
             div(class: "flex-shrink-0") do
-              Link(variant: :primary, href: edit_component_path(@component)) do
-                icon("pencil", class: "w-4 h-4 mr-2")
-                plain "Edit Component"
+              if @can_edit
+                Link(variant: :primary, href: edit_component_path(@component)) do
+                  icon("pencil", class: "w-4 h-4 mr-2")
+                  plain "Edit Component"
+                end
               end
             end
           end
@@ -147,18 +155,14 @@ module Junction
               tr do
                 th(scope: "col", class: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider") { "Name" }
                 th(scope: "col", class: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider") { "Type" }
-                th(scope: "col", class: "relative px-6 py-3") { span(class: "sr-only") { "View" } }
               end
             end
 
             tbody(class: "bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700") do
               @dependencies.each do |dependency|
                 tr(class: "hover:bg-gray-50 dark:hover:bg-gray-700/50") do
-                  td(class: "px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white") { dependency.name }
+                  td(class: "px-6 py-4 whitespace-nowrap") { render_view_link(dependency) }
                   td(class: "px-6 py-4 whitespace-nowrap") { dependency.type }
-                  td(class: "px-6 py-4 whitespace-nowrap text-right text-sm font-medium") do
-                    a(href: url_for(dependency), class: "text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300") { "View" }
-                  end
                 end
               end
             end
@@ -171,18 +175,14 @@ module Junction
               tr do
                 th(scope: "col", class: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider") { "Component Name" }
                 th(scope: "col", class: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider") { "Type" }
-                th(scope: "col", class: "relative px-6 py-3") { span(class: "sr-only") { "View" } }
               end
             end
 
             tbody(class: "bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700") do
               @dependents.each do |dependent|
                 tr(class: "hover:bg-gray-50 dark:hover:bg-gray-700/50") do
-                  td(class: "px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white") { dependent.name }
+                  td(class: "px-6 py-4 whitespace-nowrap") { render_view_link(dependent) }
                   td(class: "px-6 py-4 whitespace-nowrap") { dependent.type }
-                  td(class: "px-6 py-4 whitespace-nowrap text-right text-sm font-medium") do
-                    a(href: url_for(dependent), class: "text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300") { "View" }
-                  end
                 end
               end
             end
@@ -220,7 +220,7 @@ module Junction
                       td(class: "px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white") { deployment.platform }
                       td(class: "px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white") { deployment.location_identifier }
                       td(class: "px-6 py-4 whitespace-nowrap text-right text-sm font-medium") do
-                        a(href: deployment_path(deployment), class: "text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300") { "View" }
+                        render_view_link(deployment)
                       end
                     end
                   end

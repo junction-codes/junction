@@ -3,12 +3,15 @@
 module Junction
   # Controller for user dashboards.
   class DashboardsController < ApplicationController
+    include Junction::HasOwner
+
     CATALOG_ENTITIES = [ Api, Component, Domain, Resource, System ].freeze
 
     before_action :set_user
 
     # GET /dashboard
     def show
+      authorize! :dashboard
       render Views::Dashboards::Show.new(
         user: @user,
         owned_entities:,
@@ -40,18 +43,20 @@ module Junction
 
     # Fetch recent updates to catalog entities.
     #
-    # Results includes eager loaded associations for owner, domain, and system
-    # where applicable.
+    # When fetching entities, access is checked to ensure we only include
+    # entities that the user has permission to read.
     #
     # @param limit [Integer] Number of recent items to fetch.
     # @return [Array<ApplicationRecord>] List of recent catalog items.
     def recent_catalog_items(limit: 5)
-      CATALOG_ENTITIES.map do |model|
-        q = model.includes(:owner)
+      CATALOG_ENTITIES.flat_map do |model|
+        q = index_scope_for(model)
+        next [] if q.blank?
+
         q = q.includes(:domain) if model.reflect_on_association(:domain)
         q = q.includes(:system) if model.reflect_on_association(:system)
-        q.order(updated_at: :desc).limit(limit).to_a
-      end.flatten.sort_by(&:updated_at).reverse.first(limit)
+        q.includes(:owner).order(updated_at: :desc).limit(limit).to_a
+      end.sort_by(&:updated_at).reverse.first(limit)
     end
   end
 end

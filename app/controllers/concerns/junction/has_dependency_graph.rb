@@ -6,6 +6,8 @@ module Junction
 
     # GET /:entity/:id/dependency_graph
     def dependency_graph
+      authorize! @entity
+
       graph_data = DependencyGraphService.new(model: @entity).build
       render json: graph_data
     end

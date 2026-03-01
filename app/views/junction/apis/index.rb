@@ -6,7 +6,7 @@ module Junction
       # Index view for APIs.
       class Index < Views::Base
         attr_reader :apis, :available_lifecycles, :available_owners,
-                    :available_systems, :available_types, :query
+                    :available_systems, :available_types, :can_create, :query
 
         # Initializes the view.
         #
@@ -21,14 +21,16 @@ module Junction
         #   name and id attributes.
         # @param available_types [Array<Array>] Type options as [label, value] pairs
         #   for filtering.
+        # @param can_create [Boolean] Whether the user can create APIs.
         def initialize(apis:, query:, available_lifecycles:, available_owners:,
-                       available_systems:, available_types:)
+                       available_systems:, available_types:, can_create: true)
           @apis = apis
           @query = query
           @available_lifecycles = available_lifecycles
           @available_owners = available_owners
           @available_systems = available_systems
           @available_types = available_types
+          @can_create = can_create
         end
 
         def view_template
@@ -36,8 +38,8 @@ module Junction
             div(class: "p-6") do
               div(class: "flex justify-between items-center mb-6") do
                 h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { "APIs" }
-                Link(variant: :primary, href: new_api_path) do
-                  "New API"
+                if @can_create
+                  Link(variant: :primary, href: new_api_path) { "New API" }
                 end
               end
 
@@ -87,7 +89,7 @@ module Junction
 
                     div do
                       div(class: "text-sm font-medium text-gray-900 dark:text-white") do
-                         a(href: api_path(api)) { api.name }
+                        render_view_link(api, class: "ps-0")
                       end
                       div(class: "text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs") { api.description }
                     end
@@ -95,11 +97,11 @@ module Junction
                 end
 
                 row.cell do
-                  Link(href: system_path(api.system), class: "ps-0") { api.system.name } if api.system.present?
+                  render_view_link(api.system, class: "ps-0")
                 end
 
                 row.cell do
-                  Link(href: group_path(api.owner)) { api.owner.name } if api.owner.present?
+                  render_view_link(api.owner, class: "ps-0")
                 end
 
                 row.cell do
@@ -113,7 +115,7 @@ module Junction
                 end
 
                 row.cell do
-                  Badge(variant: api.lifecycle) { api.lifecycle&.capitalize }
+                  Badge(variant: api.lifecycle&.to_sym) { api.lifecycle&.titleize }
                 end
               end
             end

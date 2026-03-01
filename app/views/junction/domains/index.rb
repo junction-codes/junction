@@ -5,20 +5,24 @@ module Junction
     module Domains
       # Index view for domains.
       class Index < Views::Base
-        attr_reader :available_owners, :available_statuses, :domains, :query
+        attr_reader :available_owners, :available_statuses, :can_create, :domains, :query
 
         # Initializes the view.
         #
-        # @param domains [ActiveRecord::Relation] Collection of domains to display.
+        # @param domains [ActiveRecord::Relation] Collection of domains to
+        #   display.
         # @param query [Ransack::Search] Ransack query object for filtering and
         #   sorting.
-        # @param available_owners [Array<Array>] Owner entity options with name and id
-        #   attributes.
-        # @param available_statuses [Array<Array>] Status options as [label, value]
-        #   pairs for filtering.
-        def initialize(domains:, query:, available_owners:, available_statuses:)
+        # @param available_owners [Array<Array>] Owner entity options with name
+        #   and id attributes.
+        # @param available_statuses [Array<Array>] Status options as [label,
+        #   value] pairs for filtering.
+        # @param can_create [Boolean] Whether the user can create domains.
+        def initialize(domains:, query:, available_owners:, available_statuses:,
+                       can_create: true)
           @domains = domains
           @query = query
+          @can_create = can_create
           @available_owners = available_owners
           @available_statuses = available_statuses
         end
@@ -29,8 +33,8 @@ module Junction
               # Page header.
               div(class: "flex justify-between items-center mb-6") do
                 h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { "Domains" }
-                Link(variant: :primary, href: new_domain_path) do
-                  "New Domain"
+                if @can_create
+                  Link(variant: :primary, href: new_domain_path) { "New Domain" }
                 end
               end
 
@@ -79,7 +83,7 @@ module Junction
                     # Domain details.
                     div do
                       div(class: "text-sm font-medium text-gray-900 dark:text-white") do
-                        a(href: domain_path(domain)) { domain.name }
+                        render_view_link(domain, class: "ps-0")
                       end
 
                       div(class: "text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs") { domain.description }
@@ -88,13 +92,11 @@ module Junction
                 end
 
                 row.cell do
-                  render Badge.new(variant: domain.status&.to_sym) { domain.status&.capitalize }
+                  Badge(variant: domain.status&.to_sym) { domain.status&.titleize }
                 end
 
                 row.cell do
-                  if domain.owner.present?
-                    render Link(href: group_path(domain.owner)) { domain.owner.name }
-                  end
+                  render_view_link(domain.owner, class: "ps-0")
                 end
               end
             end

@@ -16,14 +16,14 @@ module Junction
 
       def view_template(&)
         div(**attrs) do
-          Components::Badge(variant: :primary) { @entity.model_name.human }
+          Badge(variant: :primary) { @entity.model_name.human }
 
           if @entity.respond_to?(:lifecycle) && @entity.lifecycle.present?
-            Components::Badge(variant: @entity.lifecycle) { @entity.lifecycle.titleize }
+            Badge(variant: @entity.lifecycle) { @entity.lifecycle.titleize }
           end
 
           if @entity.respond_to?(:status) && @entity.status.present?
-            Components::Badge(variant: @entity.status) { @entity.status.titleize }
+            Badge(variant: @entity.status) { @entity.status.titleize }
           end
         end
 
@@ -45,12 +45,9 @@ module Junction
       def association_link(association, label)
         return unless @entity.respond_to?(association) && @entity.public_send(association).present?
 
-        record = @entity.public_send(association)
         div(class: "text-sm text-gray-600 dark:text-gray-400 flex items-center gap-1 min-w-[15em]") do
           span(class: "shrink-0") { label }
-          Link(href: polymorphic_path(record), class: "p-0 flex-1 min-w-0 justify-start") do
-            span(class: "inline-block truncate", title: record.name) { record.name }
-          end
+          render_view_link(@entity.public_send(association), class: "ps-0")
         end
       end
     end

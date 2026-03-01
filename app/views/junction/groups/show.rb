@@ -5,8 +5,10 @@ module Junction
     module Groups
       # Show view for groups.
       class Show < Views::Base
-        def initialize(group:)
+        def initialize(group:, can_edit:, can_destroy:)
           @group = group
+          @can_edit = can_edit
+          @can_destroy = can_destroy
         end
 
         def view_template
@@ -43,19 +45,23 @@ module Junction
               end
 
               div do
-                if @group.parent
-                  Link(href: group_path(@group.parent), class: "text-sm text-blue-600 hover:underline dark:text-blue-400") do
-                    "Child of the '#{@group.parent.name}' Group"
-                  end
+                break unless @group.parent.present?
+
+                if allowed_to?(:show?, @group.parent)
+                  Link(href: group_path(@group.parent)) { "Child of the '#{@group.parent.name}' Group" }
+                else
+                  Link(variant: :disabled) { "Child of the '#{@group.parent.name}' Group" }
                 end
               end
             end
 
             # Right side: action buttons.
             div(class: "flex-shrink-0") do
-              Link(variant: :primary, href: edit_group_path(@group)) do
-                icon("pencil", class: "w-4 h-4 mr-2")
-                plain "Edit Group"
+              if @can_edit
+                Link(variant: :primary, href: edit_group_path(@group)) do
+                  icon("pencil", class: "w-4 h-4 mr-2")
+                  plain "Edit Group"
+                end
               end
             end
           end
@@ -129,19 +135,15 @@ module Junction
                   tr do
                     th(scope: "col", class: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider") { "Name" }
                     th(scope: "col", class: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider") { "Email" }
-                    th(scope: "col", class: "relative px-6 py-3") { span(class: "sr-only") { "View" } }
                   end
                 end
 
                 tbody(class: "bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700") do
                   @group.members.each do |user|
                     tr(class: "hover:bg-gray-50 dark:hover:bg-gray-700/50") do
-                      td(class: "px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white") { user.display_name }
+                      td(class: "px-6 py-4 whitespace-nowrap") { render_view_link(user, class: "ps-0") }
                       td(class: "px-6 py-4 whitespace-nowrap") do
-                        render Link(href: "mailto:#{user.email_address}") { user.email_address }
-                      end
-                      td(class: "px-6 py-4 whitespace-nowrap text-right text-sm font-medium") do
-                        a(href: "#{user_path(user)}", class: "text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300") { "View" }
+                        Link(href: "mailto:#{user.email_address}") { user.email_address }
                       end
                     end
                   end

@@ -3,16 +3,18 @@
 module Junction
   # Controller for managing Deployments.
   class DeploymentsController < Junction::ApplicationController
-    before_action :set_deployment, only: %i[ show edit update destroy ]
+    before_action :set_entity, only: %i[ show edit update destroy ]
 
     # GET /deployments
     def index
+      authorize! Junction::Deployment
       @q = Junction::Deployment.ransack(params[:q])
       @q.sorts = "name asc" if @q.sorts.empty?
 
       render Views::Deployments::Index.new(
         deployments: @q.result,
         query: @q,
+        can_create: allowed_to?(:create?, Junction::Deployment),
         available_components:,
         available_environments:,
         available_platforms:
@@ -21,11 +23,17 @@ module Junction
 
     # GET /deployments/:id
     def show
-      render Views::Deployments::Show.new(deployment: @deployment)
+      authorize! @entity
+      render Views::Deployments::Show.new(
+        deployment: @entity,
+        can_edit: allowed_to?(:update?, @entity),
+        can_destroy: allowed_to?(:destroy?, @entity)
+      )
     end
 
     # GET /deployments/new
     def new
+      authorize! Junction::Deployment
       render Views::Deployments::New.new(
         deployment: Junction::Deployment.new,
         available_components:
@@ -34,39 +42,49 @@ module Junction
 
     # GET /deployments/:id/edit
     def edit
+      authorize! @entity
       render Views::Deployments::Edit.new(
-        deployment: @deployment,
+        deployment: @entity,
+        can_destroy: allowed_to?(:destroy?, @entity),
         available_components:
       )
     end
 
     # POST /deployments
     def create
-      @deployment = Junction::Deployment.new(deployment_params)
+      authorize! Junction::Deployment
+      @entity = Junction::Deployment.new(deployment_params)
 
-      if @deployment.save
-        redirect_to @deployment, success: "Deployment was successfully created."
+      if @entity.save
+        redirect_to @entity, success: "Deployment was successfully created."
       else
         flash.now[:alert] = "There were errors creating the deployment."
-        render Views::Deployments::New.new(deployment: @deployment, available_components:), status: :unprocessable_content
+        render Views::Deployments::New.new(deployment: @entity, available_components:),
+               status: :unprocessable_content
       end
     end
 
     # PATCH/PUT /deployments/:id
     def update
-      if @deployment.update(deployment_params)
-        redirect_to @deployment, success: "Deployment was successfully updated."
+      authorize! @entity
+      if @entity.update(deployment_params)
+        redirect_to @entity, success: "Deployment was successfully updated."
       else
         flash.now[:alert] = "There were errors updating the deployment."
-        render Views::Deployments::Edit.new(deployment: @deployment, available_components:), status: :unprocessable_content
+        render Views::Deployments::Edit.new(
+          deployment: @entity,
+          can_destroy: allowed_to?(:destroy?, @entity),
+          available_components:
+        ), status: :unprocessable_content
       end
     end
 
     # DELETE /deployments/:id
     def destroy
-      @deployment.destroy!
+      authorize! @entity
+      @entity.destroy!
 
-      redirect_to deployments_path, status: :see_other, alert: "Deployment was successfully destroyed."
+      redirect_to deployments_path, status: :see_other, success: "Deployment was successfully destroyed."
     end
 
     private
@@ -96,14 +114,15 @@ module Junction
       Junction::CatalogOptions.platforms.map { |key, opts| [ opts[:name], key ] }
     end
 
-    # Use callbacks to share common setup or constraints between actions.
-    def set_deployment
-      @deployment = Junction::Deployment.find(params.expect(:id))
+    def set_entity
+      @entity = Junction::Deployment.find(params.expect(:id))
     end
 
     # Only allow a list of trusted parameters through.
     def deployment_params
-      params.expect(deployment: [ :environment, :platform, :location_identifier, :component_id ])
+      params.expect(deployment: [
+        :environment, :platform, :location_identifier, :component_id
+      ])
     end
   end
 end

@@ -72,7 +72,7 @@ RSpec.describe Junction::User, type: :model do
       child = create(:group, parent: parent)
       user = create(:user, groups: [ child ])
 
-      expect(user.deep_group_ids.map(&:id)).to contain_exactly(child.id, parent.id, grandparent.id)
+      expect(user.deep_group_ids).to contain_exactly(child.id, parent.id, grandparent.id)
     end
   end
 

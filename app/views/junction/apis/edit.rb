@@ -5,7 +5,7 @@ module Junction
     module Apis
       # Edit view for APIs.
       class Edit < Views::Base
-        attr_reader :api, :available_owners, :available_systems
+        attr_reader :api, :available_owners, :available_systems, :can_destroy
 
         # Initializes the view.
         #
@@ -14,10 +14,12 @@ module Junction
         #   attributes.
         # @param available_systems [Array<Array>] System entity options with name and
         #   id attributes.
-        def initialize(api:, available_owners:, available_systems:)
+        # @param can_destroy [Boolean] Whether the API can be destroyed.
+        def initialize(api:, available_owners:, available_systems:, can_destroy:)
           @api = api
           @available_owners = available_owners
           @available_systems = available_systems
+          @can_destroy = can_destroy
         end
 
         def view_template
@@ -39,7 +41,7 @@ module Junction
               end
 
               aside(class: "space-y-6") do
-                ApiEditSidebar(api:)
+                ApiEditSidebar(api:, can_destroy:)
               end
             end
           end

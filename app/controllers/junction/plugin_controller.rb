@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "action_policy"
+
 module Junction
   # Base controller for plugin controllers.
   #
@@ -8,9 +10,19 @@ module Junction
   #
   # @abstract
   class PluginController < ActionController::Base
+    include ActionPolicy::Controller
     include Authentication
     include PluginDispatchHelper
     include Engine.routes.url_helpers
+
+    authorize :user, through: :current_user
+    verify_authorized
+
+    rescue_from ActionPolicy::Unauthorized do
+      redirect_to (request.referer.presence || root_path),
+                  alert: "You are not authorized to perform this action.",
+                  status: :see_other
+    end
 
     allow_browser versions: :modern
 
@@ -19,7 +31,13 @@ module Junction
 
     add_flash_types :success
 
+    helper_method :allowed_to?
+
     private
+
+    def entity
+      set_entity
+    end
 
     # The class of the entity being managed.
     #

@@ -7,66 +7,91 @@ module Junction
 
     # GET /users
     def index
+      authorize! Junction::User
       @q = Junction::User.ransack(params[:q])
       @q.sorts = "name asc" if @q.sorts.empty?
 
-      render Views::Users::Index.new(users: @q.result, query: @q)
+      render Views::Users::Index.new(
+        users: @q.result,
+        query: @q,
+        can_create: allowed_to?(:create?, Junction::User)
+      )
     end
 
     # GET /users/:id
     def show
-      render Views::Users::Show.new(user: @user)
+      authorize! @entity
+      render Views::Users::Show.new(
+        user: @entity,
+        can_edit: allowed_to?(:update?, @entity),
+        can_destroy: allowed_to?(:destroy?, @entity)
+      )
     end
 
     # GET /users/new
     def new
+      authorize! Junction::User
       render Views::Users::New.new(user: Junction::User.new)
     end
 
     # GET /users/:id/edit
     def edit
-      render Views::Users::Edit.new(user: @user)
+      authorize! @entity
+      render Views::Users::Edit.new(
+        user: @entity,
+        can_destroy: allowed_to?(:destroy?, @entity)
+      )
     end
 
     # POST /users
     def create
-      @user = Junction::User.new(user_params)
+      authorize! Junction::User
+      @entity = Junction::User.new(user_params)
 
-      if @user.save
-        redirect_to @user, success: "User was successfully created."
+      if @entity.save
+        redirect_to @entity, success: "User was successfully created."
       else
         flash.now[:alert] = "There were errors creating the user."
-        render Views::Users::New.new(user: @user), status: :unprocessable_content
+        render Views::Users::New.new(user: @entity), status: :unprocessable_content
       end
     end
 
     # PATCH/PUT /users/:id
     def update
-      if @user.update(user_update_params)
-        redirect_to @user, success: "User was successfully updated."
+      authorize! @entity
+      if @entity.update(user_update_params)
+        redirect_to @entity, success: "User was successfully updated."
       else
         flash.now[:alert] = "There were errors updating the user."
-        render Views::Users::Edit.new(user: @user), status: :unprocessable_content
+        render Views::Users::Edit.new(
+          user: @entity,
+          can_destroy: allowed_to?(:destroy?, @entity)
+        ), status: :unprocessable_content
       end
     end
 
     # DELETE /users/:id
     def destroy
-      @user.destroy!
+      authorize! @entity
+      @entity.destroy!
 
-      redirect_to users_path, status: :see_other, alert: "User was successfully deleted."
+      redirect_to users_path, status: :see_other, success: "User was successfully destroyed."
     end
 
     private
 
     # Use callbacks to share common setup or constraints between actions.
     def set_entity
-      @user = Junction::User.find(params.expect(:id))
+      @entity = Junction::User.find(params.expect(:id))
     end
 
     # Only allow a list of trusted parameters through.
     def user_params
-      params.expect(user: [ :display_name, :email_address, :email_address_confirmation, :image_url, :password, :password_challenge, :password_confirmation, :pronouns, annotations: {}  ])
+      params.expect(user: [
+        :display_name, :email_address, :email_address_confirmation, :image_url,
+        :password, :password_challenge, :password_confirmation, :pronouns,
+        :owner_id, annotations: {}
+      ])
     end
 
     def user_update_params

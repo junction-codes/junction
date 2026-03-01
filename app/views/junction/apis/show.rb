@@ -7,10 +7,12 @@ module Junction
       class Show < Views::Base
         include PluginDispatchHelper
 
-        def initialize(api:, dependencies:, dependents:)
+        def initialize(api:, dependencies:, dependents:, can_edit:, can_destroy:)
           @api = api
           @dependencies = dependencies
           @dependents = dependents
+          @can_edit = can_edit
+          @can_destroy = can_destroy
         end
 
         def view_template
@@ -45,13 +47,12 @@ module Junction
                   span(class: "font-semibold mr-2") { "Owner:" }
 
                   if @api.owner.present?
-                    span do
-                      Link(href: group_path(@api.owner), class: "p-0 inline") { @api.owner.name }
-                    end
+                    span { render_view_link(@api.owner, class: "p-0 inline") }
                   else
                     span { plain "NO OWNER" }
                   end
                 end
+
                 div(class: "mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400") do
                   span(class: "font-semibold mr-2") { "Type:" }
                   span { plain @api.type }
@@ -59,19 +60,23 @@ module Junction
               end
 
               div do
-                if @api.system.present?
-                  Link(href: system_path(@api.system), class: "text-sm text-blue-600 hover:underline dark:text-blue-400") do
-                    "Part of the '#{@api.system.name}' System"
-                  end
+                break unless @api.system.present?
+
+                if allowed_to?(:show?, @api.system)
+                  Link(href: system_path(@api.system)) { "Part of the '#{@api.system.name}' System" }
+                else
+                  Link(variant: :disabled) { "Part of the '#{@api.system.name}' System" }
                 end
               end
             end
 
             # Right side: action buttons.
             div(class: "flex-shrink-0") do
-              Link(variant: :primary, href: edit_api_path(@api)) do
-                icon("pencil", class: "w-4 h-4 mr-2")
-                plain "Edit API"
+              if @can_edit
+                Link(variant: :primary, href: edit_api_path(@api)) do
+                  icon("pencil", class: "w-4 h-4 mr-2")
+                  plain "Edit API"
+                end
               end
             end
           end
@@ -145,18 +150,14 @@ module Junction
               tr do
                 th(scope: "col", class: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider") { "Name" }
                 th(scope: "col", class: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider") { "Type" }
-                th(scope: "col", class: "relative px-6 py-3") { span(class: "sr-only") { "View" } }
               end
             end
 
             tbody(class: "bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700") do
               @dependencies.each do |dependency|
                 tr(class: "hover:bg-gray-50 dark:hover:bg-gray-700/50") do
-                  td(class: "px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white") { dependency.name }
+                  td(class: "px-6 py-4 whitespace-nowrap") { render_view_link(dependency) }
                   td(class: "px-6 py-4 whitespace-nowrap") { dependency.type }
-                  td(class: "px-6 py-4 whitespace-nowrap text-right text-sm font-medium") do
-                    a(href: url_for(dependency), class: "text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300") { "View" }
-                  end
                 end
               end
             end
@@ -167,20 +168,16 @@ module Junction
           table(class: "min-w-full divide-y divide-gray-200 dark:divide-gray-700") do
             thead(class: "bg-gray-50 dark:bg-gray-700") do
               tr do
-                th(scope: "col", class: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider") { "Component Name" }
+                th(scope: "col", class: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider") { "Name" }
                 th(scope: "col", class: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider") { "Type" }
-                th(scope: "col", class: "relative px-6 py-3") { span(class: "sr-only") { "View" } }
               end
             end
 
             tbody(class: "bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700") do
               @dependents.each do |dependent|
                 tr(class: "hover:bg-gray-50 dark:hover:bg-gray-700/50") do
-                  td(class: "px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white") { dependent.name }
+                  td(class: "px-6 py-4 whitespace-nowrap") { render_view_link(dependent) }
                   td(class: "px-6 py-4 whitespace-nowrap") { dependent.type }
-                  td(class: "px-6 py-4 whitespace-nowrap text-right text-sm font-medium") do
-                    a(href: url_for(dependent), class: "text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300") { "View" }
-                  end
                 end
               end
             end

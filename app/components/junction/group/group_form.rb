@@ -2,9 +2,8 @@
 
 module Junction
   module Components
+    # Form for creating and editing groups.
     class GroupForm < Base
-      include Phlex::Rails::Helpers::FormWith
-
       def initialize(group:, available_parents:)
         @group = group
         @available_parents = available_parents
@@ -31,8 +30,13 @@ module Junction
               render TextField.new(f, :image_url, "Image URL", placeholder: "https://example.com/logo.png")
               render TextAreaField.new(f, :description, "Description", required: true, help_text: "A brief, high-level summary of the group's mission.")
             end
+          end
 
-            annotations(f)
+          f.fields_for :annotations, @group.annotations do |annotations_form|
+            render(AnnotationsForm.new(
+              form: annotations_form,
+              context: @group
+            ))
           end
 
           # Form actions.
@@ -50,12 +54,6 @@ module Junction
 
       def cancel_path
         @group.id.nil? ? groups_path : group_path(@group)
-      end
-
-      def annotations(form)
-        form.fields_for :annotations, @group.annotations do |annotations_form|
-          render AnnotationsForm.new(form: annotations_form, context: @group)
-        end
       end
     end
   end

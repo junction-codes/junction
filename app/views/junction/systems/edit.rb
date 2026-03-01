@@ -5,19 +5,22 @@ module Junction
     module Systems
       # Edit view for Systems.
       class Edit < Views::Base
-        attr_reader :available_domains, :available_owners, :system
+        attr_reader :available_domains, :available_owners, :can_destroy, :system
 
         # Initializes the view.
         #
         # @param system [System] The system being modified.
-        # @param available_domains [Array<Array>] Domain entity options with name and
-        #   id attributes.
-        # @param available_owners [Array<Array>] Owner entity options with name and id
-        #   attributes.
-        def initialize(system:, available_domains:, available_owners:)
+        # @param available_domains [Array<Array>] Domain entity options with name
+        #   and id attributes.
+        # @param available_owners [Array<Array>] Owner entity options with name
+        #   and id attributes.
+        # @param can_destroy [Boolean] Whether the system can be destroyed.
+        def initialize(system:, available_domains:, available_owners:,
+                       can_destroy:)
           @system = system
           @available_domains = available_domains
           @available_owners = available_owners
+          @can_destroy = can_destroy
         end
 
         def view_template
@@ -39,7 +42,7 @@ module Junction
               end
 
               aside(class: "space-y-6") do
-                SystemEditSidebar(system:)
+                SystemEditSidebar(system:, can_destroy:)
               end
             end
           end

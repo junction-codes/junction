@@ -5,10 +5,12 @@ module Junction
     module Resources
       # Show view for resources.
       class Show < Views::Base
-        def initialize(resource:, dependencies:, dependents:)
+        def initialize(resource:, dependencies:, dependents:, can_edit:, can_destroy:)
           @resource = resource
           @dependencies = dependencies
           @dependents = dependents
+          @can_edit = can_edit
+          @can_destroy = can_destroy
         end
 
         def view_template
@@ -44,12 +46,13 @@ module Junction
 
                   if @resource.owner.present?
                     span do
-                      Link(href: group_path(@resource.owner), class: "p-0 inline") { @resource.owner.name }
+                      render_view_link(@resource.owner, class: "p-0 inline")
                     end
                   else
                     span { plain "NO OWNER" }
                   end
                 end
+
                 div(class: "mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400") do
                   span(class: "font-semibold mr-2") { "Type:" }
                   span { plain @resource.type }
@@ -57,19 +60,23 @@ module Junction
               end
 
               div do
-                if @resource.system.present?
-                  Link(href: system_path(@resource.system), class: "text-sm text-blue-600 hover:underline dark:text-blue-400") do
-                    "Part of the '#{@resource.system.name}' System"
-                  end
+                break unless @resource.system.present?
+
+                if allowed_to?(:show?, @resource.system)
+                  Link(href: system_path(@resource.system)) { "Part of the '#{@resource.system.name}' System" }
+                else
+                  Link(variant: :disabled) { "Part of the '#{@resource.system.name}' System" }
                 end
               end
             end
 
             # Right side: action buttons.
             div(class: "flex-shrink-0") do
-              Link(variant: :primary, href: edit_resource_path(@resource)) do
-                icon("pencil", class: "w-4 h-4 mr-2")
-                plain "Edit Resource"
+              if @can_edit
+                Link(variant: :primary, href: edit_resource_path(@resource)) do
+                  icon("pencil", class: "w-4 h-4 mr-2")
+                  plain "Edit Resource"
+                end
               end
             end
           end
@@ -131,18 +138,14 @@ module Junction
               tr do
                 th(scope: "col", class: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider") { "Name" }
                 th(scope: "col", class: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider") { "Type" }
-                th(scope: "col", class: "relative px-6 py-3") { span(class: "sr-only") { "View" } }
               end
             end
 
             tbody(class: "bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700") do
               @dependencies.each do |dependency|
                 tr(class: "hover:bg-gray-50 dark:hover:bg-gray-700/50") do
-                  td(class: "px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white") { dependency.name }
-                  td(class: "px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white") { dependency.type }
-                  td(class: "px-6 py-4 whitespace-nowrap text-right text-sm font-medium") do
-                    a(href: url_for(dependency), class: "text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300") { "View" }
-                  end
+                  td(class: "px-6 py-4 whitespace-nowrap") { render_view_link(dependency) }
+                  td(class: "px-6 py-4 whitespace-nowrap") { dependency.type }
                 end
               end
             end
@@ -155,18 +158,14 @@ module Junction
               tr do
                 th(scope: "col", class: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider") { "Name" }
                 th(scope: "col", class: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider") { "Type" }
-                th(scope: "col", class: "relative px-6 py-3") { span(class: "sr-only") { "View" } }
               end
             end
 
             tbody(class: "bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700") do
               @dependents.each do |dependent|
                 tr(class: "hover:bg-gray-50 dark:hover:bg-gray-700/50") do
-                  td(class: "px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white") { dependent.name }
-                  td(class: "px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white") { dependent.type }
-                  td(class: "px-6 py-4 whitespace-nowrap text-right text-sm font-medium") do
-                    a(href: url_for(dependent), class: "text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300") { "View" }
-                  end
+                  td(class: "px-6 py-4 whitespace-nowrap") { render_view_link(dependent) }
+                  td(class: "px-6 py-4 whitespace-nowrap") { dependent.type }
                 end
               end
             end

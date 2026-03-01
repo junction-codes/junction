@@ -9,7 +9,7 @@ RSpec.describe "/apis", type: :request do
       description: "An API for testing purposes",
       definition: "{}",
       lifecycle: "experimental",
-      owner_id: create(:group).id,
+      owner_id: junction_groups(:one).id,
       system_id: create(:system).id,
       type: "openapi"
     }
@@ -56,6 +56,9 @@ RSpec.describe "/apis", type: :request do
     requires_authentication
 
     describe "GET /apis" do
+      it_behaves_like "an action that requires permission",
+        :get, -> { apis_path }, %w[junction.codes/apis.all.read]
+
       it "returns http success" do
         get "/apis"
         expect(response).to have_http_status(:success)
@@ -63,6 +66,9 @@ RSpec.describe "/apis", type: :request do
     end
 
     describe "GET /apis/:id" do
+      it_behaves_like "an action that requires permission",
+        :get, -> { api_path(api) }, %w[junction.codes/apis.all.read]
+
       it "returns http success" do
         get "/apis/#{api.id}"
         expect(response).to have_http_status(:success)
@@ -70,6 +76,9 @@ RSpec.describe "/apis", type: :request do
     end
 
     describe "GET /apis/new" do
+      it_behaves_like "an action that requires permission",
+        :get, -> { new_api_path }, %w[junction.codes/apis.all.write]
+
       it "returns http success" do
         get "/apis/new"
         expect(response).to have_http_status(:success)
@@ -77,6 +86,9 @@ RSpec.describe "/apis", type: :request do
     end
 
     describe "GET /apis/:id/edit" do
+      it_behaves_like "an action that requires permission",
+        :get, -> { edit_api_path(api) }, %w[junction.codes/apis.all.write]
+
       it "returns http success" do
         get "/apis/#{api.id}/edit"
         expect(response).to have_http_status(:success)
@@ -84,6 +96,11 @@ RSpec.describe "/apis", type: :request do
     end
 
     describe "POST /apis" do
+      it_behaves_like "an action that requires permission",
+        :post, -> { apis_path },
+        %w[junction.codes/apis.all.write junction.codes/apis.owned.write],
+        -> { { api: valid_attributes.merge(owner_id: current_user.groups.first&.id) } }
+
       context "with valid parameters" do
         it "creates a new api" do
           expect {
@@ -112,6 +129,11 @@ RSpec.describe "/apis", type: :request do
     end
 
     describe "PATCH /apis/:id" do
+      it_behaves_like "an action that requires permission",
+        :patch, -> { api_path(api) },
+        %w[junction.codes/apis.all.write junction.codes/apis.owned.write],
+        { api: { lifecycle: "production" } }
+
       context "with valid parameters" do
         let(:new_attributes) {
           {
@@ -141,6 +163,10 @@ RSpec.describe "/apis", type: :request do
     end
 
     describe "DELETE /apis/:id" do
+      it_behaves_like "an action that requires permission",
+        :delete, -> { api_path(api) },
+        %w[junction.codes/apis.all.destroy junction.codes/apis.owned.destroy]
+
       it "destroys the requested api" do
         expect {
           delete api_url(api)

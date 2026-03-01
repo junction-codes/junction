@@ -5,8 +5,10 @@ module Junction
     module Deployments
       # Show view for deployments.
       class Show < Views::Base
-        def initialize(deployment:)
+        def initialize(deployment:, can_edit:, can_destroy:)
           @deployment = deployment
+          @can_edit = can_edit
+          @can_destroy = can_destroy
         end
 
         def view_template
@@ -39,7 +41,7 @@ module Junction
 
                   if @deployment.component.owner.present?
                     span do
-                      Link(href: group_path(@deployment.component.owner), class: "p-0 inline") { @deployment.component.owner.name }
+                      render_view_link(@deployment.component.owner, class: "p-0 inline")
                     end
                   else
                     span { plain "NO OWNER" }
@@ -63,17 +65,23 @@ module Junction
               end
 
               div do
-                Link(href: component_path(@deployment.component), class: "text-sm text-blue-600 hover:underline dark:text-blue-400") do
-                  "A deployment of the '#{@deployment.component.name}' Component"
+                break unless @deployment.component.present?
+
+                if allowed_to?(:show?, @deployment.component)
+                  Link(href: component_path(@deployment.component)) { "A deployment of the '#{@deployment.component.name}' Component" }
+                else
+                  Link(variant: :disabled) { "A deployment of the '#{@deployment.component.name}' Component" }
                 end
               end
             end
 
             # Right side: action buttons.
             div(class: "flex-shrink-0") do
-              Link(variant: :primary, href: edit_deployment_path(@deployment)) do
-                icon("pencil", class: "w-4 h-4 mr-2")
-                plain "Edit Deployment"
+              if @can_edit
+                Link(variant: :primary, href: edit_deployment_path(@deployment)) do
+                  icon("pencil", class: "w-4 h-4 mr-2")
+                  plain "Edit Deployment"
+                end
               end
             end
           end

@@ -4,8 +4,10 @@ module Junction
   module Views
     module Domains
       class Show < Views::Base
-        def initialize(domain:)
+        def initialize(domain:, can_edit:, can_destroy:)
           @domain = domain
+          @can_edit = can_edit
+          @can_destroy = can_destroy
         end
 
         def view_template
@@ -40,7 +42,7 @@ module Junction
 
                   if @domain.owner.present?
                     span do
-                      Link(href: group_path(@domain.owner), class: "p-0 inline") { @domain.owner.name }
+                      render_view_link(@domain.owner, class: "p-0 inline")
                     end
                   else
                     span { plain "NO OWNER" }
@@ -51,9 +53,11 @@ module Junction
 
             # Right side: action buttons.
             div(class: "flex-shrink-0") do
-              Link(variant: :primary, href: edit_domain_path(@domain)) do
-                icon("pencil", class: "w-4 h-4 mr-2")
-                plain "Edit Domain"
+              if @can_edit
+                Link(variant: :primary, href: edit_domain_path(@domain)) do
+                  icon("pencil", class: "w-4 h-4 mr-2")
+                  plain "Edit Domain"
+                end
               end
             end
           end
@@ -75,19 +79,15 @@ module Junction
                   tr do
                     th(scope: "col", class: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider") { "System Name" }
                     th(scope: "col", class: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider") { "Status" }
-                    th(scope: "col", class: "relative px-6 py-3") { span(class: "sr-only") { "View" } }
                   end
                 end
 
                 tbody(class: "bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700") do
                   @domain.systems.each do |system|
                     tr(class: "hover:bg-gray-50 dark:hover:bg-gray-700/50") do
-                      td(class: "px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white") { system.name }
+                      td(class: "px-6 py-4 whitespace-nowrap") { render_view_link(system, class: "ps-0") }
                       td(class: "px-6 py-4 whitespace-nowrap") do
-                        render Badge.new(variant: system.status.to_sym) { system.status.capitalize }
-                      end
-                      td(class: "px-6 py-4 whitespace-nowrap text-right text-sm font-medium") do
-                        a(href: "#{system_path(system)}", class: "text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300") { "View" }
+                        Badge(variant: system.status.to_sym) { system.status.titleize }
                       end
                     end
                   end

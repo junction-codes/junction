@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "set"
 require "singleton"
 
 module Junction
@@ -14,8 +15,8 @@ module Junction
   class << self
     # Delegate class methods to the singleton instance.
     delegate :actions, :annotations_for, :auth_providers, :components_for,
-             :plugin, :plugins, :register_plugin, :reset!, :sidebar_links,
-             :tabs_for,
+             :permissions, :plugin, :plugins, :register_plugin, :reset!,
+             :sidebar_links, :tabs_for,
              to: :instance
   end
 
@@ -44,7 +45,12 @@ module Junction
     actions = Hash.new { |h, k| h[k] = [] }
     @plugins.each_value do |plugin|
       plugin.actions.each do |context, definitions|
-        actions[context.constantize] += definitions
+        klass = context.constantize
+        actions[klass] += definitions
+      rescue NameError
+        # Context may be a non-constantizable key (e.g. "Dashboard") when only
+        # permissions are registered.
+        next
       end
     end
 
@@ -94,6 +100,14 @@ module Junction
     raise PluginNotFoundError, "Plugin not found: #{name}" unless @plugins.key?(name)
 
     @plugins[name]
+  end
+
+  # All permissions from all registered plugins.
+  #
+  # @return [Array<Junction::Permission>]
+  def permissions
+    seen = Set.new
+    @plugins.values.flat_map(&:permissions).select { |p| seen.add?(p.to_s) }
   end
 
   # Retrieves all registered sidebar links.

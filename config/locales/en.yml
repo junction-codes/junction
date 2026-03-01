@@ -67,6 +67,26 @@ en:
         warning: Warning
     dialog:
       close: Close
+    role_form:
+      basic_info_title: "Basic Information"
+      basic_info_description: "This information is used to identify the role."
+      role_name_label: "Role name"
+      description_label: "Description"
+      permissions_title: "Permissions"
+      permissions_description: "Select the permissions this role grants."
+      cancel: "Cancel"
+      save: "Save"
+    role_edit_sidebar:
+      metadata: "Metadata"
+      created_at: "Created At"
+      last_updated: "Last Updated"
+      danger_zone: "Danger Zone"
+      danger_zone_warning: "These actions are irreversible. Please be certain."
+      delete_role: "Delete Role"
+      delete_confirm_title: "Are you absolutely sure?"
+      delete_confirm_body: "This action cannot be undone. This will permanently remove the role and all of its associated data."
+      cancel: "Cancel"
+      confirm_delete: "Confirm Delete"
   dashboard:
     hero_card:
       new_component: "New component"
@@ -85,3 +105,23 @@ en:
       description: "Latest changes across APIs, components, domains, resources, and systems."
       empty: "No catalog updates yet."
       title: "Recent catalog updates"
+  views:
+    roles:
+      index:
+        description: "Description"
+        title: "Roles"
+        new_role: "New Role"
+        name: "Name"
+        permissions: "Permissions"
+        permissions_all: "All"
+        permissions_all_read: "All read"
+      new:
+        title: "New Role"
+        description: "Create a role and assign permissions."
+      edit:
+        title: "Edit Role"
+        description: "Update the role '%{name}'."
+      show:
+        edit: "Edit"
+        back_to_roles: "Back to roles"
+        permissions: "Permissions"

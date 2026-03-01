@@ -5,8 +5,10 @@ module Junction
     module Systems
       # Show view for Systems.
       class Show < Views::Base
-        def initialize(system:)
+        def initialize(system:, can_edit:, can_destroy:)
           @system = system
+          @can_edit = can_edit
+          @can_destroy = can_destroy
         end
 
         def view_template
@@ -51,9 +53,7 @@ module Junction
                   span(class: "font-semibold mr-2") { "Owner:" }
 
                   if @system.owner.present?
-                    span do
-                      Link(href: group_path(@system.owner), class: "p-0 inline") { @system.owner.name }
-                    end
+                    span { render_view_link(@system.owner, class: "p-0 inline") }
                   else
                     span { plain "NO OWNER" }
                   end
@@ -61,19 +61,23 @@ module Junction
               end
 
               div do
-                if @system.domain
-                  Link(href: domain_path(@system.domain), class: "text-sm text-blue-600 hover:underline dark:text-blue-400") do
-                    "Part of the '#{@system.domain.name}' Domain"
-                  end
+                break unless @system.domain.present?
+
+                if allowed_to?(:show?, @system.domain)
+                  Link(href: domain_path(@system.domain)) { "Part of the '#{@system.domain.name}' Domain" }
+                else
+                  Link(variant: :disabled) { "Part of the '#{@system.domain.name}' Domain" }
                 end
               end
             end
 
             # Right side: action buttons.
             div(class: "flex-shrink-0") do
-              Link(variant: :primary, href: edit_system_path(@system)) do
-                icon("pencil", class: "w-4 h-4 mr-2")
-                plain "Edit System"
+              if @can_edit
+                Link(variant: :primary, href: edit_system_path(@system)) do
+                  icon("pencil", class: "w-4 h-4 mr-2")
+                  plain "Edit System"
+                end
               end
             end
           end
@@ -112,19 +116,15 @@ module Junction
               tr do
                 th(scope: "col", class: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider") { "Component Name" }
                 th(scope: "col", class: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider") { "Lifecycle" }
-                th(scope: "col", class: "relative px-6 py-3") { span(class: "sr-only") { "View" } }
               end
             end
 
             tbody(class: "bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700") do
               @system.components.each do |component|
                 tr(class: "hover:bg-gray-50 dark:hover:bg-gray-700/50") do
-                  td(class: "px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white") { component.name }
+                  td(class: "px-6 py-4 whitespace-nowrap") { render_view_link(component, class: "ps-0") }
                   td(class: "px-6 py-4 whitespace-nowrap") do
-                    render Badge.new(variant: component.lifecycle&.to_sym) { component.lifecycle&.capitalize }
-                  end
-                  td(class: "px-6 py-4 whitespace-nowrap text-right text-sm font-medium") do
-                    a(href: "/components/#{component.id}", class: "text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300") { "View" }
+                    Badge(variant: component.lifecycle&.to_sym) { component.lifecycle&.titleize }
                   end
                 end
               end

@@ -5,7 +5,7 @@ module Junction
     module Components
       # Edit view for components.
       class Edit < Views::Base
-        attr_reader :available_owners, :available_systems, :component
+        attr_reader :available_owners, :available_systems, :can_destroy, :component
 
         # Initializes the view.
         #
@@ -14,10 +14,12 @@ module Junction
         #   attributes.
         # @param available_systems [Array<Array>] System entity options with name and
         #   id attributes.
-        def initialize(component:, available_owners:, available_systems:)
+        # @param can_destroy [Boolean] Whether the component can be destroyed.
+        def initialize(component:, available_owners:, available_systems:, can_destroy:)
           @component = component
           @available_owners = available_owners
           @available_systems = available_systems
+          @can_destroy = can_destroy
         end
 
         def view_template
@@ -39,7 +41,7 @@ module Junction
               end
 
               aside(class: "space-y-6") do
-                ComponentEditSidebar(component:)
+                ComponentEditSidebar(component:, can_destroy:)
               end
             end
           end

@@ -10,6 +10,22 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
+def create_system_roles
+  [
+    {
+      name: Junction::Permissions::UserPermissions::ADMIN_ROLE_NAME,
+      description: "Super user role with all permissions."
+    },
+    {
+      name: Junction::Permissions::UserPermissions::READ_ALL_ROLE_NAME,
+      description: "Global read-only role with all read permissions."
+    }
+  ].each do |role|
+    role[:system] = true
+    Junction::Role.find_or_initialize_by(name: role[:name]).update!(role)
+  end
+end
+
 # Ensure default admin user exists (for standalone Junction installation)
 def create_default_admin_user
   return if Junction::User.exists?(email_address: "admin@example.com")
@@ -22,6 +38,29 @@ def create_default_admin_user
   )
 
   puts "✓ Created default admin user: admin@example.com (password: passWord1!)"
+end
+
+def create_default_role_groups
+  admin_name = Junction::Permissions::UserPermissions::ADMIN_ROLE_NAME
+  read_all_name = Junction::Permissions::UserPermissions::READ_ALL_ROLE_NAME
+
+  Junction::Group.find_or_create_by!(name: "Junction Admins") do |g|
+    g.description = "Default group for administrators. Members receive the Admin role."
+    g.annotations = { "junction.codes/role" => admin_name }
+  end
+
+  Junction::Group.find_or_create_by!(name: "Junction Readers") do |g|
+    g.description = "Default group for read-only access. Members receive the Read all role."
+    g.annotations = { "junction.codes/role" => read_all_name }
+  end
+end
+
+def add_default_admin_to_junction_admins
+  admin_user = Junction::User.find_by(email_address: "admin@example.com")
+  junction_admins = Junction::Group.find_by(name: "Junction Admins")
+  return unless admin_user && junction_admins
+
+  Junction::GroupMembership.find_or_create_by!(user: admin_user, group: junction_admins)
 end
 
 # TODO: Create an importer server to handle this logic in a more robust way.
@@ -143,8 +182,12 @@ def random_password(length: 64)
   end.join
 end
 
+create_system_roles
+
 if Rails.env.development?
   create_default_admin_user
+  create_default_role_groups
+  add_default_admin_to_junction_admins
 
   path = Junction::Engine.seed_data_path(ENV.fetch("JUNCTION_SEED_ORG", "sample"))
   import_users(path)

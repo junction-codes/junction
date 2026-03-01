@@ -8,6 +8,7 @@ Junction::Engine.routes.draw do
   resources :domains, controller: "domains"
   resources :resources, controller: "resources"
   resources :groups, controller: "groups"
+  resources :roles, controller: "roles"
   resources :users, controller: "users"
 
   resources :apis, controller: "apis" do
