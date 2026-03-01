@@ -42,14 +42,13 @@ module Junction
       user.deep_group_ids.include?(entity.owner_id)
     end
 
-    # Determine if the user has the given access level for the given context.
+    # Determine if the user has the given access.
     #
-    # @param context [String] Context to check access for.
-    # @param access [String] Access level to check.
+    # @param access [Junction::Permission::Access] Access level to check.
     # @param entity [ApplicationRecord] Entity to validate ownership for "owned"
     #   permissions.
     # @return [Boolean] Whether the user has the requested access.
-    def allowed_access?(context, access, entity: nil)
+    def allowed_access?(access, entity: nil)
       allow = allowed_permission?("#{permission_prefix}.all.#{access}")
       return allow if allow || entity.nil?
 
@@ -78,7 +77,7 @@ module Junction
     end
 
     def destroy?
-      allowed_access?(context, Permission::Access::DESTROY, entity: record)
+      allowed_access?(Permission::Access::DESTROY, entity: record)
     end
 
     def index?
@@ -89,7 +88,7 @@ module Junction
     #
     # @return [Boolean]
     def index_all?
-      allowed_access?(context, Permission::Access::READ)
+      allowed_access?(Permission::Access::READ)
     end
 
     # Whether the user may see owned entities in the index (has .owned.read).
@@ -103,11 +102,11 @@ module Junction
     end
 
     def show?
-      allowed_access?(context, Permission::Access::READ, entity: record)
+      allowed_access?(Permission::Access::READ, entity: record)
     end
 
     def update?
-      allowed_access?(context, Permission::Access::WRITE, entity: record)
+      allowed_access?(Permission::Access::WRITE, entity: record)
     end
 
     private
