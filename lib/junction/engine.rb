@@ -59,7 +59,7 @@ module Junction
 
     ActiveSupport.on_load(:junction_plugins) do
       require Junction::Engine.root.join("app/values/junction/permission.rb").to_s
-      require Junction::Engine.root.join("app/services/junction/core_plugin.rb").to_s
+      require Junction::Engine.root.join("lib/junction/core_plugin.rb").to_s
       Junction::CorePlugin.register
     end
 

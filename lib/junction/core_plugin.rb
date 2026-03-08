@@ -6,10 +6,11 @@ module Junction
     ANNOTATION_GROUP_ROLE = "junction.codes/role"
     DOMAIN = "junction.codes"
 
-    plugin_name "junction"
     domain DOMAIN
-    title "Junction"
+    description "Junction Core plugin"
     icon "layout-grid"
+    title "Junction Core"
+    plugin_name "junction"
 
     {
       apis:        { role: false, ownership: true },
