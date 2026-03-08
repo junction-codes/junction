@@ -43,6 +43,26 @@ RSpec.describe Junction::PluginRegistry do
         expect(registry.actions).to eq({ Junction::Domain => [ { method: :domain_path } ] })
       end
     end
+
+    context "with an unknown context class" do
+      let(:actions) { { "Unknown::Ghost" => [ { method: :ghost_path } ] } }
+      let(:methods) { super().merge(actions:) }
+
+      it "skips the unknown context" do
+        registry.register_plugin(plugin)
+
+        expect(registry.actions).not_to have_key("Unknown::Ghost")
+      end
+
+      it "logs an error for the unknown context" do
+        allow(Rails.logger).to receive(:error)
+        registry.register_plugin(plugin)
+        registry.actions
+
+        expect(Rails.logger).to have_received(:error)
+          .with(/test_plugin.*Unknown::Ghost/i)
+      end
+    end
   end
 
   describe "#annotations_for" do
