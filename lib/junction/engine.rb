@@ -59,7 +59,7 @@ module Junction
 
     ActiveSupport.on_load(:junction_plugins) do
       require Junction::Engine.root.join("app/values/junction/permission.rb").to_s
-      require Junction::Engine.root.join("app/services/junction/core_plugin.rb").to_s
+      require Junction::Engine.root.join("lib/junction/core_plugin.rb").to_s
       Junction::CorePlugin.register
     end
 
@@ -73,6 +73,7 @@ module Junction
     # Re-register core plugin after code reload (development) so annotations and
     # permissions remain available when PluginRegistry is reset.
     config.to_prepare do
+      Junction::PluginRegistry.reset!
       ActiveSupport.run_load_hooks(:junction_plugins)
     end
 

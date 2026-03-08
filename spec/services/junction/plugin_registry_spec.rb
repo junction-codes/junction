@@ -7,12 +7,11 @@ RSpec.describe Junction::PluginRegistry do
 
   let(:methods) do
     { actions: {}, annotations_for: {}, auth_providers: {}, components_for: [],
-      sidebar_links: [], tabs_for: []  }
+      permissions: [], sidebar_links: [], tabs_for: [] }
   end
 
-
   let(:plugin) do
-    instance_double(Junction::Plugin, name: "test_plugin", **methods)
+    class_double(Junction::ApplicationPlugin, plugin_name: "test_plugin", **methods)
   end
 
   before { registry.reset! }
@@ -42,6 +41,26 @@ RSpec.describe Junction::PluginRegistry do
         registry.register_plugin(plugin)
 
         expect(registry.actions).to eq({ Junction::Domain => [ { method: :domain_path } ] })
+      end
+    end
+
+    context "with an unknown context class" do
+      let(:actions) { { "Unknown::Ghost" => [ { method: :ghost_path } ] } }
+      let(:methods) { super().merge(actions:) }
+
+      it "skips the unknown context" do
+        registry.register_plugin(plugin)
+
+        expect(registry.actions).not_to have_key("Unknown::Ghost")
+      end
+
+      it "logs an error for the unknown context" do
+        allow(Rails.logger).to receive(:error)
+        registry.register_plugin(plugin)
+        registry.actions
+
+        expect(Rails.logger).to have_received(:error)
+          .with(/test_plugin.*Unknown::Ghost/i)
       end
     end
   end
@@ -118,6 +137,21 @@ RSpec.describe Junction::PluginRegistry do
       let(:methods) { super().merge(tabs_for: tabs) }
 
       it_behaves_like "context type handling", :tabs_for, [ { title: "Details", action: :domain_path } ], {}
+    end
+  end
+
+  describe "#resolve" do
+    it "delegates to the plugin's resolve method" do
+      klass = Class.new
+      allow(plugin).to receive(:resolve).with("MyClass").and_return(klass)
+      registry.register_plugin(plugin)
+
+      expect(registry.resolve("test_plugin", "MyClass")).to eq(klass)
+    end
+
+    it "raises PluginNotFoundError for unknown plugin name" do
+      expect { registry.resolve("unknown", "MyClass") }.to \
+        raise_error(Junction::PluginRegistry::PluginNotFoundError)
     end
   end
 end

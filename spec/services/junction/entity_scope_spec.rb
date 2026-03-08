@@ -5,7 +5,7 @@ require "rails_helper"
 RSpec.describe Junction::EntityScope do
   subject(:entity_scope) { described_class.new(plugin, context, condition) }
 
-  let(:plugin) { instance_double(Junction::Plugin) }
+  let(:plugin) { class_double(Junction::ApplicationPlugin) }
   let(:context) { "Domain" }
   let(:condition) { nil }
 
@@ -123,7 +123,9 @@ RSpec.describe Junction::EntityScope do
         action: :domain_path,
         icon: nil,
         if: nil,
-        target: "domain"
+        target: "domain",
+        access: nil,
+        plugin: plugin
       })
     end
 
@@ -135,8 +137,33 @@ RSpec.describe Junction::EntityScope do
         action: :domain_path,
         icon: "info-icon",
         if: nil,
-        target: "details-frame"
+        target: "details-frame",
+        access: nil,
+        plugin: plugin
       })
+    end
+
+    it "registers a tab with a symbol access check" do
+      entity_scope.tab(**required_params, access: :manage?)
+
+      expect(entity_scope.tabs.first[:access]).to eq(:manage?)
+    end
+
+    it "registers a tab with a hash access check" do
+      policy = Class.new
+      entity_scope.tab(**required_params,
+                       access: { action: :manage?, with: policy })
+
+      expect(entity_scope.tabs.first[:access]).to \
+        eq({ action: :manage?, with: policy })
+    end
+
+    it "registers a tab with a string policy name in a hash access check" do
+      entity_scope.tab(**required_params,
+                       access: { action: :manage?, with: "ApplicationPolicy" })
+
+      expect(entity_scope.tabs.first[:access]).to \
+        eq({ action: :manage?, with: "ApplicationPolicy" })
     end
 
     it "generates target from title when action is nil" do
