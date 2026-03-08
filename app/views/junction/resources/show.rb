@@ -16,6 +16,7 @@ module Junction
         def view_template
           render Junction::Layouts::Application.new do
             div(class: "p-6 space-y-8") do
+              breadcrumbs
               resource_header
               resource_stats
               resource_tabs
@@ -24,6 +25,14 @@ module Junction
         end
 
         private
+
+        def breadcrumbs
+          render BreadcrumbTrail.new(items: [
+            { label: "Home", href: root_path },
+            { label: "Resources", href: resources_path },
+            { label: @resource.name }
+          ])
+        end
 
         def resource_header
           div(class: "flex justify-between items-start") do

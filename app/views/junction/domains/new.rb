@@ -23,8 +23,12 @@ module Junction
           end
         end
 
+        private
+
         def template
           div(class: "p-6") do
+            breadcrumbs
+
             div(class: "max-w-2xl mx-auto") do
               h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { "Create a New Domain" }
               p(class: "mt-1 text-sm text-gray-600 dark:text-gray-400") { "Start by providing the basic details for your new domain." }
@@ -34,6 +38,14 @@ module Junction
               DomainForm(domain:, available_owners:)
             end
           end
+        end
+
+        def breadcrumbs
+          render BreadcrumbTrail.new(items: [
+            { label: "Home", href: root_path },
+            { label: "Domains", href: domains_path },
+            { label: "New Domain" }
+          ])
         end
       end
     end

@@ -14,6 +14,7 @@ module Junction
         def view_template
           render Junction::Layouts::Application.new do
             div(class: "p-6 space-y-8") do
+              breadcrumbs
               user_header
               user_stats
             end
@@ -21,6 +22,14 @@ module Junction
         end
 
         private
+
+        def breadcrumbs
+          render BreadcrumbTrail.new(items: [
+            { label: "Home", href: root_path },
+            { label: "Users", href: users_path },
+            { label: @user.display_name }
+          ])
+        end
 
         def user_header
           div(class: "flex justify-between items-start") do

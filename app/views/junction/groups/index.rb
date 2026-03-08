@@ -26,6 +26,8 @@ module Junction
         def view_template
           render Junction::Layouts::Application.new do
             div(class: "p-6") do
+              breadcrumbs
+
               div(class: "flex justify-between items-center mb-6") do
                 h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { "Groups" }
                 if @can_create
@@ -46,6 +48,13 @@ module Junction
         end
 
         private
+
+        def breadcrumbs
+          render BreadcrumbTrail.new(items: [
+            { label: "Home", href: root_path },
+            { label: "Groups" }
+          ])
+        end
 
         def table_header(table)
           table.header do |header|

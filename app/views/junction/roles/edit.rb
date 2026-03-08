@@ -19,9 +19,13 @@ module Junction
           @can_destroy = can_destroy
         end
 
+        private
+
         def view_template
           render Layouts::Application do
             div(class: "p-6 space-y-6") do
+              breadcrumbs
+
               div do
                 h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { t("views.roles.edit.title") }
                 p(class: "mt-1 text-sm text-gray-600 dark:text-gray-400") do
@@ -40,6 +44,15 @@ module Junction
               end
             end
           end
+        end
+
+        def breadcrumbs
+          render BreadcrumbTrail.new(items: [
+            { label: "Home", href: root_path },
+            { label: "Roles", href: roles_path },
+            { label: @role.name, href: role_path(@role) },
+            { label: "Edit" }
+          ])
         end
       end
     end

@@ -30,8 +30,12 @@ module Junction
           end
         end
 
+        private
+
         def template
           div(class: "p-6 space-y-6") do
+            breadcrumbs
+
             div do
               h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { "Edit Resource" }
               p(class: "mt-1 text-sm text-gray-600 dark:text-gray-400") { "Update the details for the '#{@resource.name}' resrouce." }
@@ -47,6 +51,15 @@ module Junction
               end
             end
           end
+        end
+
+        def breadcrumbs
+          render BreadcrumbTrail.new(items: [
+            { label: "Home", href: root_path },
+            { label: "Resources", href: resources_path },
+            { label: @resource.name, href: resource_path(@resource) },
+            { label: "Edit" }
+          ])
         end
       end
     end

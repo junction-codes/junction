@@ -22,8 +22,12 @@ module Junction
           end
         end
 
+        private
+
         def template
           div(class: "p-6 space-y-6") do
+            breadcrumbs
+
             # Page header.
             div do
               h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { "Edit User" }
@@ -41,6 +45,15 @@ module Junction
               end
             end
           end
+        end
+
+        def breadcrumbs
+          render BreadcrumbTrail.new(items: [
+            { label: "Home", href: root_path },
+            { label: "Users", href: users_path },
+            { label: @user.display_name, href: user_path(@user) },
+            { label: "Edit" }
+          ])
         end
       end
     end

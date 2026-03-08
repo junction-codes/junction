@@ -14,6 +14,7 @@ module Junction
         def view_template
           render Junction::Layouts::Application.new do
             div(class: "p-6 space-y-8") do
+              breadcrumbs
               system_header
               system_stats
               dependencies_section
@@ -22,6 +23,14 @@ module Junction
         end
 
         private
+
+        def breadcrumbs
+          render BreadcrumbTrail.new(items: [
+            { label: "Home", href: root_path },
+            { label: "Systems", href: systems_path },
+            { label: @system.name }
+          ])
+        end
 
         def dependency_graph
           div do

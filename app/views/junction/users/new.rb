@@ -20,8 +20,12 @@ module Junction
           end
         end
 
+        private
+
         def template
           div(class: "p-6") do
+            breadcrumbs
+
             # Page header.
             div(class: "max-w-2xl mx-auto") do
               h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { "Create a New User" }
@@ -32,6 +36,14 @@ module Junction
               UserForm(user:)
             end
           end
+        end
+
+        def breadcrumbs
+          render BreadcrumbTrail.new(items: [
+            { label: "Home", href: root_path },
+            { label: "Users", href: users_path },
+            { label: "New User" }
+          ])
         end
       end
     end

@@ -17,9 +17,13 @@ module Junction
           @available_permissions = available_permissions
         end
 
+        private
+
         def view_template
           render Layouts::Application do
             div(class: "p-6") do
+              breadcrumbs
+
               div(class: "max-w-2xl mx-auto") do
                 h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { t("views.roles.new.title") }
                 p(class: "mt-1 text-sm text-gray-600 dark:text-gray-400") { t("views.roles.new.description") }
@@ -30,6 +34,14 @@ module Junction
               end
             end
           end
+        end
+
+        def breadcrumbs
+          render BreadcrumbTrail.new(items: [
+            { label: "Home", href: root_path },
+            { label: "Roles", href: roles_path },
+            { label: "New Role" }
+          ])
         end
       end
     end

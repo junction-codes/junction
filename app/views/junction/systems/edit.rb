@@ -29,8 +29,12 @@ module Junction
           end
         end
 
+        private
+
         def template
           div(class: "p-6 space-y-6") do
+            breadcrumbs
+
             div do
               h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { "Edit System" }
               p(class: "mt-1 text-sm text-gray-600 dark:text-gray-400") { "Update the details for the '#{@system.name}' system." }
@@ -46,6 +50,15 @@ module Junction
               end
             end
           end
+        end
+
+        def breadcrumbs
+          render BreadcrumbTrail.new(items: [
+            { label: "Home", href: root_path },
+            { label: "Systems", href: systems_path },
+            { label: @system.name, href: system_path(@system) },
+            { label: "Edit" }
+          ])
         end
       end
     end

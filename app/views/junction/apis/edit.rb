@@ -28,8 +28,12 @@ module Junction
           end
         end
 
+        private
+
         def template
           div(class: "p-6 space-y-6") do
+            breadcrumbs
+
             div do
               h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { "Edit API" }
               p(class: "mt-1 text-sm text-gray-600 dark:text-gray-400") { "Update the details for the '#{@api.name}' API." }
@@ -45,6 +49,15 @@ module Junction
               end
             end
           end
+        end
+
+        def breadcrumbs
+          render BreadcrumbTrail.new(items: [
+            { label: "Home", href: root_path },
+            { label: "APIs", href: apis_path },
+            { label: @api.name, href: api_path(@api) },
+            { label: "Edit" }
+          ])
         end
       end
     end

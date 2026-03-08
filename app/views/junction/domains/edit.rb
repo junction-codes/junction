@@ -25,8 +25,12 @@ module Junction
           end
         end
 
+        private
+
         def template
           div(class: "p-6 space-y-6") do
+            breadcrumbs
+
             # Page header.
             div do
               h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { "Edit Domain" }
@@ -44,6 +48,15 @@ module Junction
               end
             end
           end
+        end
+
+        def breadcrumbs
+          render BreadcrumbTrail.new(items: [
+            { label: "Home", href: root_path },
+            { label: "Domains", href: domains_path },
+            { label: @domain.name, href: domain_path(@domain) },
+            { label: "Edit" }
+          ])
         end
       end
     end
