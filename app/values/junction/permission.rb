@@ -30,15 +30,15 @@ module Junction
     # Initializes a new permission.
     #
     # @param domain [String] Domain the permission belongs to.
-    # @param context [String] Context within the domain.
-    # @param ownership [String] Ownership scope of the permission.
-    # @param access [String] Access level granted by the permission.
+    # @param context [String, Symbol] Context within the domain.
+    # @param ownership [String, Symbol] Ownership scope of the permission.
+    # @param access [String, Symbol] Access level granted by the permission.
     # @param description [String] Human-readable description of the permission.
     def initialize(domain:, context:, ownership:, access:, description: "")
       @domain = domain
-      @context = context
-      @ownership = ownership
-      @access = access
+      @context = context.to_s
+      @ownership = ownership.to_s
+      @access = access.to_s
       @description = description
     end
 

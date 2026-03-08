@@ -7,12 +7,11 @@ RSpec.describe Junction::PluginRegistry do
 
   let(:methods) do
     { actions: {}, annotations_for: {}, auth_providers: {}, components_for: [],
-      sidebar_links: [], tabs_for: []  }
+      permissions: [], sidebar_links: [], tabs_for: [] }
   end
 
-
   let(:plugin) do
-    instance_double(Junction::Plugin, name: "test_plugin", **methods)
+    class_double(Junction::ApplicationPlugin, plugin_name: "test_plugin", **methods)
   end
 
   before { registry.reset! }
@@ -118,6 +117,21 @@ RSpec.describe Junction::PluginRegistry do
       let(:methods) { super().merge(tabs_for: tabs) }
 
       it_behaves_like "context type handling", :tabs_for, [ { title: "Details", action: :domain_path } ], {}
+    end
+  end
+
+  describe "#resolve" do
+    it "delegates to the plugin's resolve method" do
+      klass = Class.new
+      allow(plugin).to receive(:resolve).with("MyClass").and_return(klass)
+      registry.register_plugin(plugin)
+
+      expect(registry.resolve("test_plugin", "MyClass")).to eq(klass)
+    end
+
+    it "raises PluginNotFoundError for unknown plugin name" do
+      expect { registry.resolve("unknown", "MyClass") }.to \
+        raise_error(Junction::PluginRegistry::PluginNotFoundError)
     end
   end
 end

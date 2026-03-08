@@ -5,7 +5,7 @@ require "rails_helper"
 RSpec.describe Junction::EntityScope do
   subject(:entity_scope) { described_class.new(plugin, context, condition) }
 
-  let(:plugin) { instance_double(Junction::Plugin) }
+  let(:plugin) { class_double(Junction::ApplicationPlugin) }
   let(:context) { "Domain" }
   let(:condition) { nil }
 
