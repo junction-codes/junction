@@ -123,7 +123,7 @@ module Junction
     # Registers a sidebar link for the application.
     #
     # @param action [String] Rails route helper method for the action.
-    # @param title [String] ink title; defaults to plugin title.
+    # @param title [String] Link title; defaults to plugin title.
     # @param icon [String] Link icon; defaults to plugin icon.
     # @param disabled [Boolean] Whether the link is disabled.
     def self.sidebar_link(action:, title: nil, icon: nil, disabled: false)

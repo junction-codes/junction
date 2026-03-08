@@ -70,13 +70,34 @@ module Junction
       end
     end
 
-    # Retrieves the tabes that are visible for the given context.
+    # Retrieves the tabs that are visible for the given context.
     #
     # @param context [ApplicationRecord] The record to check visibility against.
     # @return [Array<Hash>] Definitions for the visible tabs.
     def visible_tabs(context)
       Junction::PluginRegistry.tabs_for(context).select do |tab|
+        next false unless tab_accessible?(tab[:access], context, tab[:plugin])
+
         tab[:if].nil? || tab[:if].call(context:)
+      end
+    end
+
+    # Checks whether a tab's access requirement is satisfied for the context.
+    #
+    # @param access [Symbol, Hash, nil] Access to test, if any. Use a symbol to
+    #   test against the entity's implicit policy. Use a hash to test against a
+    #   custom policy class.
+    # @param context [ApplicationRecord] The record to test access against.
+    # @param plugin [Class<ApplicationPlugin>] The plugin the tab belongs to.
+    def tab_accessible?(access, context, plugin)
+      return true unless access
+
+      if access.is_a?(Hash)
+        policy = access[:with]
+        policy = plugin.resolve(policy) if policy.is_a?(String)
+        allowed_to?(access[:action], context, with: policy)
+      else
+        allowed_to?(access, context)
       end
     end
 

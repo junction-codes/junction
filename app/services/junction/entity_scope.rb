@@ -3,7 +3,7 @@
 module Junction
   # Plugin registration scope for a specific entity context.
   class EntityScope
-    attr_reader :actions, :annotations, :tabs
+    attr_reader :actions, :annotations, :plugin, :tabs
 
     # Initializes a new entity scope.
     #
@@ -51,14 +51,34 @@ module Junction
 
     # Registers a tab for the entity.
     #
+    # Access control can be specified in two ways:
+    # - A symbol is evaluated against the entity's implicit policy
+    # - A hash of `{ action:, with: }` specifies a custom policy class; `with:`
+    #   may be a class or a string that is resolved at render time
+    #
+    # @example Registering a tab with an implicit policy:
+    #   plugin.for_entity("Junction::Domain") do |s|
+    #     s.tab(title: "Details", action: :domain_path, access: :show?)
+    #   end
+    #
+    # @example Registering a tab with a custom policy class:
+    #   plugin.for_entity("Junction::Domain") do |s|
+    #     s.tab(
+    #       title: "Details",
+    #       action: :domain_path,
+    #       access: { action: :manage?, with: "MyPlugin::DomainPolicy" }
+    #     )
+    #   end
+    #
     # @param title [String] Title of the tab.
     # @param action [Symbol] Rails route helper method for the tab.
     # @param icon [String] Optional icon for the tab.
     # @param target [String] Optional target identifier for the turbo frame
     #   within the tab.
-    def tab(title:, action:, icon: nil, target: nil)
+    # @param access [Symbol, Hash] Optional access check.
+    def tab(title:, action:, icon: nil, target: nil, access: nil)
       target ||= action&.to_s&.gsub("_path", "")&.gsub("_", "-") || title.parameterize
-      @tabs << { title:, action:, icon:, if: @condition, target: }
+      @tabs << { title:, action:, icon:, if: @condition, target:, access:, plugin: }
     end
 
     # Retrieves all registered UI components for the given slot.

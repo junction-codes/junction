@@ -162,8 +162,6 @@ module Junction
     # @param key [Symbol] The key to memoize the result by.
     # @return [Object] The memoized result.
     def memoize(key)
-      return @cache[key] if @cache.key?(key)
-
       @mutex.synchronize do
         return @cache[key] if @cache.key?(key)
 
