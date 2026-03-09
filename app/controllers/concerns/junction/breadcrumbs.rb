@@ -47,9 +47,10 @@ module Junction
 
     # Get the model name from the controller name using I18n.
     #
+    # @param key [String] The translation key to use for the model name.
     # @return [String] The model name.
-    def model_name
-      t("activerecord.models.#{controller_name.singularize.to_sym}.other")
+    def model_name(key = "other")
+      t("activerecord.models.#{controller_name.singularize.to_sym}.#{key}")
     end
 
     # Build the breadcrumb item for the home page.
@@ -91,7 +92,7 @@ module Junction
     # @return [Hash] The breadcrumb item.
     def breadcrumb_new
       {
-        label: t("breadcrumbs.new", model: model_name)
+        label: t("breadcrumbs.new", model: model_name("one"))
       }
     end
   end

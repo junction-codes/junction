@@ -118,7 +118,7 @@ RSpec.describe "Junction::Breadcrumbs concern", type: :request do
 
     it "includes breadcrumb for the new page" do
       expect_breadcrumb_to_include(
-        I18n.t("breadcrumbs.new", model: I18n.t("activerecord.models.component.other"))
+        I18n.t("breadcrumbs.new", model: I18n.t("activerecord.models.component.one"))
       )
     end
 
@@ -159,7 +159,7 @@ RSpec.describe "Junction::Breadcrumbs concern", type: :request do
 
       it "includes breadcrumb for the new page" do
         expect_breadcrumb_to_include(
-          I18n.t("breadcrumbs.new", model: I18n.t("activerecord.models.component.other"))
+          I18n.t("breadcrumbs.new", model: I18n.t("activerecord.models.component.one"))
         )
       end
     end
