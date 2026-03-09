@@ -12,9 +12,8 @@ module Junction
 
       def default_attrs
         {
-          aria: { disabled: true, current: "page" },
-          class: "font-normal text-foreground",
-          role: "link"
+          aria: { current: "page" },
+          class: "font-normal text-foreground"
         }
       end
     end

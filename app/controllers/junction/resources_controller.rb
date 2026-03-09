@@ -2,28 +2,28 @@
 
 module Junction
   # Controller for managing Resource catalog entities.
-  class ResourcesController < Junction::ApplicationController
-    include Breadcrumbs
-    include Junction::HasDependencies
-    include Junction::HasDependencyGraph
-    include Junction::HasDependents
-    include Junction::HasOwner
+  class ResourcesController < ApplicationController
+    # Make sure the entity is set before any other helper methods are called.
+    before_action :set_entity, only: %i[ edit update destroy ]
+    before_action :eager_load_dependencies, only: %i[ show dependency_graph ]
 
-    # Make sure we set the entity before any other helper methods are called.
-    prepend_before_action :set_entity, only: %i[ edit update destroy ]
-    prepend_before_action :eager_load_dependencies, only: %i[ show dependency_graph ]
+    include Breadcrumbs
+    include HasDependencies
+    include HasDependencyGraph
+    include HasDependents
+    include HasOwner
 
     # GET /resources
     def index
-      authorize! Junction::Resource
-      @q = index_scope_for(Junction::Resource).ransack(params[:q])
+      authorize! Resource
+      @q = index_scope_for(Resource).ransack(params[:q])
       @q.sorts = "name asc" if @q.sorts.empty?
 
       render Views::Resources::Index.new(
         resources: @q.result,
         query: @q,
         breadcrumbs:,
-        can_create: allowed_to?(:create?, Junction::Resource),
+        can_create: allowed_to?(:create?, Resource),
         available_owners:,
         available_systems:,
         available_types:,
@@ -45,9 +45,9 @@ module Junction
 
     # GET /resources/new
     def new
-      authorize! Junction::Resource
+      authorize! Resource
       render Views::Resources::New.new(
-        resource: Junction::Resource.new,
+        resource: Resource.new,
         breadcrumbs:,
         available_owners:,
         available_systems:
@@ -68,8 +68,8 @@ module Junction
 
     # POST /resources
     def create
-      authorize! Junction::Resource
-      @entity = Junction::Resource.new(resource_params)
+      authorize! Resource
+      @entity = Resource.new(resource_params)
 
       if @entity.save
         redirect_to @entity, success: "Resource was successfully created."
@@ -118,16 +118,16 @@ module Junction
     #
     # @return [Array<Array(String, String)>] Array of [name, key] pairs for types.
     def available_types
-      Junction::CatalogOptions.resources.map { |key, opts| [ opts[:name], key ] }
+      CatalogOptions.resources.map { |key, opts| [ opts[:name], key ] }
     end
 
     def set_entity
-      @entity = Junction::Resource.find(params.expect(:id))
+      @entity = Resource.find(params.expect(:id))
     end
 
     def eager_load_dependencies
       @entity = Resource.includes(:dependencies, :dependents)
-                          .find(params.expect(:id))
+                        .find(params.expect(:id))
     end
 
     def resource_params

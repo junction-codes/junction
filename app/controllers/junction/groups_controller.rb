@@ -2,23 +2,23 @@
 
 module Junction
   # Controller for managing Groups.
-  class GroupsController < Junction::ApplicationController
-    include Breadcrumbs
+  class GroupsController < ApplicationController
+    # Make sure the entity is set before any other helper methods are called.
+    before_action :set_entity, only: %i[ show edit update destroy ]
 
-    # Make sure we set the entity before any other helper methods are called.
-    prepend_before_action :set_entity, only: %i[ show edit update destroy ]
+    include Breadcrumbs
 
     # GET /groups
     def index
-      authorize! Junction::Group
-      @q = Junction::Group.ransack(params[:q])
+      authorize! Group
+      @q = Group.ransack(params[:q])
       @q.sorts = "name asc" if @q.sorts.empty?
 
       render Views::Groups::Index.new(
         groups: @q.result,
         query: @q,
         breadcrumbs:,
-        can_create: allowed_to?(:create?, Junction::Group),
+        can_create: allowed_to?(:create?, Group),
         available_types:,
       )
     end
@@ -36,8 +36,8 @@ module Junction
 
     # GET /groups/new
     def new
-      authorize! Junction::Group
-      render Views::Groups::New.new(group: Junction::Group.new, breadcrumbs:, available_parents:)
+      authorize! Group
+      render Views::Groups::New.new(group: Group.new, breadcrumbs:, available_parents:)
     end
 
     # GET /groups/:id/edit
@@ -53,8 +53,8 @@ module Junction
 
     # POST /groups
     def create
-      authorize! Junction::Group
-      @entity = Junction::Group.new(group_params)
+      authorize! Group
+      @entity = Group.new(group_params)
 
       if @entity.save
         redirect_to @entity, success: "Group was successfully created."
@@ -103,12 +103,12 @@ module Junction
     # @return [Array<Array(String, String)>] Array of [name, key] pairs for
     #   types.
     def available_types
-      Junction::CatalogOptions.group_types.map { |key, opts| [ opts[:name], key ] }
+      CatalogOptions.group_types.map { |key, opts| [ opts[:name], key ] }
     end
 
     # Use callbacks to share common setup or constraints between actions.
     def set_entity
-      @entity = Junction::Group.find(params.expect(:id))
+      @entity = Group.find(params.expect(:id))
     end
 
     # Only allow a list of trusted parameters through.

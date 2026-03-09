@@ -2,28 +2,28 @@
 
 module Junction
   # Controller for managing API catalog entities.
-  class ApisController < Junction::ApplicationController
-    include Breadcrumbs
-    include Junction::HasDependencies
-    include Junction::HasDependencyGraph
-    include Junction::HasDependents
-    include Junction::HasOwner
+  class ApisController < ApplicationController
+    # Make sure the entity is set before any other helper methods are called.
+    before_action :set_entity, only: %i[ edit update destroy ]
+    before_action :eager_load_dependencies, only: %i[ show dependency_graph ]
 
-    # Make sure we set the entity before any other helper methods are called.
-    prepend_before_action :set_entity, only: %i[ edit update destroy ]
-    prepend_before_action :eager_load_dependencies, only: %i[ show dependency_graph ]
+    include Breadcrumbs
+    include HasDependencies
+    include HasDependencyGraph
+    include HasDependents
+    include HasOwner
 
     # GET /api
     def index
-      authorize! Junction::Api
-      @q = index_scope_for(Junction::Api).ransack(params[:q])
+      authorize! Api
+      @q = index_scope_for(Api).ransack(params[:q])
       @q.sorts = "name asc" if @q.sorts.empty?
 
       render Views::Apis::Index.new(
         apis: @q.result,
         query: @q,
         breadcrumbs:,
-        can_create: allowed_to?(:create?, Junction::Api),
+        can_create: allowed_to?(:create?, Api),
         available_lifecycles:,
         available_owners:,
         available_systems:,
@@ -46,8 +46,9 @@ module Junction
 
     # GET /api/new
     def new
-      authorize! Junction::Api
-      render Views::Apis::New.new(api: Junction::Api.new, breadcrumbs:, available_owners:, available_systems:)
+      authorize! Api
+      render Views::Apis::New.new(api: Api.new, breadcrumbs:, available_owners:,
+                                  available_systems:)
     end
 
     # GET /api/:id/edit
@@ -64,8 +65,8 @@ module Junction
 
     # POST /api
     def create
-      authorize! Junction::Api
-      @entity = Junction::Api.new(api_params)
+      authorize! Api
+      @entity = Api.new(api_params)
 
       if @entity.save
         redirect_to @entity, success: "API was successfully created.", status: :see_other
@@ -127,7 +128,7 @@ module Junction
     end
 
     def set_entity
-      @entity = Junction::Api.find(params.expect(:id))
+      @entity = Api.find(params.expect(:id))
     end
 
     def eager_load_dependencies

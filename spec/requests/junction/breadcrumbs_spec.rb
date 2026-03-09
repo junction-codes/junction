@@ -7,11 +7,11 @@ RSpec.describe "Junction::Breadcrumbs concern", type: :request do
 
   subject(:component) { create(:component) }
 
-  let(:components_write_permission) do
+  let(:permissions) do
     %w[junction.codes/components.all.read junction.codes/components.all.write]
   end
 
-  before { sign_in_user_with_permissions(components_write_permission) }
+  before { sign_in_user_with_permissions(permissions) }
 
   # Assert that the given string appears inside the breadcrumb nav tag.
   #
@@ -92,6 +92,20 @@ RSpec.describe "Junction::Breadcrumbs concern", type: :request do
     it "does not link the component name (current page)" do
       expect(breadcrumb_nav.css("a[href]").map { |a| a["href"] }).to \
         eq([ root_path, components_path ])
+    end
+
+    context "when the entity has a display name" do
+      subject(:user) { create(:user, display_name: "John Doe") }
+
+      let(:permissions) do
+        %w[junction.codes/users.all.read]
+      end
+
+      before { get user_path(user) }
+
+      it "includes the display name in the breadcrumb" do
+        expect_breadcrumb_to_include(user.display_name)
+      end
     end
   end
 

@@ -2,24 +2,24 @@
 
 module Junction
   # Controller for managing System catalog entities.
-  class SystemsController < Junction::ApplicationController
-    include Breadcrumbs
-    include Junction::HasOwner
+  class SystemsController < ApplicationController
+    # Make sure the entity is set before any other helper methods are called.
+    before_action :set_entity, only: %i[ show edit update destroy dependency_graph ]
 
-    # Make sure we set the entity before any other helper methods are called.
-    prepend_before_action :set_entity, only: %i[ show edit update destroy dependency_graph ]
+    include Breadcrumbs
+    include HasOwner
 
     # GET /systems
     def index
-      authorize! Junction::System
-      @q = index_scope_for(Junction::System).ransack(params[:q])
+      authorize! System
+      @q = index_scope_for(System).ransack(params[:q])
       @q.sorts = "name asc" if @q.sorts.empty?
 
       render Views::Systems::Index.new(
         systems: @q.result,
         query: @q,
         breadcrumbs:,
-        can_create: allowed_to?(:create?, Junction::System),
+        can_create: allowed_to?(:create?, System),
         available_statuses:,
         available_owners:,
         available_domains:
@@ -39,8 +39,8 @@ module Junction
 
     # GET /systems/new
     def new
-      authorize! Junction::System
-      render Views::Systems::New.new(system: Junction::System.new, breadcrumbs:, available_domains:, available_owners:)
+      authorize! System
+      render Views::Systems::New.new(system: System.new, breadcrumbs:, available_domains:, available_owners:)
     end
 
     # GET /systems/:id/edit
@@ -57,8 +57,8 @@ module Junction
 
     # POST /systems
     def create
-      authorize! Junction::System
-      @entity = Junction::System.new(system_params)
+      authorize! System
+      @entity = System.new(system_params)
 
       if @entity.save
         redirect_to @entity, success: "System was successfully created."
@@ -124,7 +124,7 @@ module Junction
     end
 
     def set_entity
-      @entity = Junction::System.find(params.expect(:id))
+      @entity = System.find(params.expect(:id))
     end
 
     def system_params
