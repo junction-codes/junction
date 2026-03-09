@@ -5,16 +5,18 @@ module Junction
     module Users
       # Show view for Users.
       class Show < Views::Base
-        def initialize(user:, can_edit:, can_destroy:)
+        attr_reader :breadcrumbs
+
+        def initialize(user:, can_edit:, can_destroy:, breadcrumbs: [])
           @user = user
           @can_edit = can_edit
           @can_destroy = can_destroy
+          @breadcrumbs = breadcrumbs
         end
 
         def view_template
-          render Junction::Layouts::Application.new do
-            div(class: "p-6 space-y-8") do
-              breadcrumbs
+          render Junction::Layouts::Application.new(breadcrumbs:) do
+            div(class: "px-6 py-3 space-y-8") do
               user_header
               user_stats
             end
@@ -22,14 +24,6 @@ module Junction
         end
 
         private
-
-        def breadcrumbs
-          render BreadcrumbTrail.new(items: [
-            { label: "Home", href: root_path },
-            { label: "Users", href: users_path },
-            { label: @user.display_name }
-          ])
-        end
 
         def user_header
           div(class: "flex justify-between items-start") do

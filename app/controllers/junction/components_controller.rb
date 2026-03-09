@@ -3,13 +3,15 @@
 module Junction
   # Controller for managing Component catalog entities.
   class ComponentsController < Junction::ApplicationController
+    include Breadcrumbs
     include Junction::HasDependencies
     include Junction::HasDependencyGraph
     include Junction::HasDependents
     include Junction::HasOwner
 
-    before_action :set_entity, only: %i[ edit update destroy ]
-    before_action :eager_load_dependencies, only: %i[ show dependency_graph ]
+    # Make sure we set the entity before any other helper methods are called.
+    prepend_before_action :set_entity, only: %i[ edit update destroy ]
+    prepend_before_action :eager_load_dependencies, only: %i[ show dependency_graph ]
 
     # GET /components
     def index
@@ -20,6 +22,7 @@ module Junction
       render Views::Components::Index.new(
         components: @q.result,
         query: @q,
+        breadcrumbs:,
         can_create: allowed_to?(:create?, Junction::Component),
         available_lifecycles:,
         available_owners:,
@@ -33,6 +36,7 @@ module Junction
       authorize! @entity
       render Views::Components::Show.new(
         component: @entity,
+        breadcrumbs:,
         can_edit: allowed_to?(:update?, @entity),
         can_destroy: allowed_to?(:destroy?, @entity),
         dependencies:,
@@ -45,6 +49,7 @@ module Junction
       authorize! Junction::Component
       render Views::Components::New.new(
         component: Junction::Component.new,
+        breadcrumbs:,
         available_owners:,
         available_systems:
       )
@@ -55,6 +60,7 @@ module Junction
       authorize! @entity
       render Views::Components::Edit.new(
         component: @entity,
+        breadcrumbs:,
         can_destroy: allowed_to?(:destroy?, @entity),
         available_owners:,
         available_systems:
@@ -70,7 +76,7 @@ module Junction
         redirect_to @entity, success: "Component was successfully created."
       else
         flash.now[:alert] = "There were errors creating the component."
-        render Views::Components::New.new(component: @entity, available_owners:, available_systems:),
+        render Views::Components::New.new(component: @entity, breadcrumbs:, available_owners:, available_systems:),
                status: :unprocessable_content
       end
     end
@@ -84,6 +90,7 @@ module Junction
         flash.now[:alert] = "There were errors updating the component."
         render Views::Components::Edit.new(
           component: @entity,
+          breadcrumbs:,
           can_destroy: allowed_to?(:destroy?, @entity),
           available_owners:,
           available_systems:

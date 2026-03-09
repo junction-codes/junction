@@ -3,9 +3,11 @@
 module Junction
   # Controller for managing System catalog entities.
   class SystemsController < Junction::ApplicationController
+    include Breadcrumbs
     include Junction::HasOwner
 
-    before_action :set_entity, only: %i[ show edit update destroy dependency_graph ]
+    # Make sure we set the entity before any other helper methods are called.
+    prepend_before_action :set_entity, only: %i[ show edit update destroy dependency_graph ]
 
     # GET /systems
     def index
@@ -16,6 +18,7 @@ module Junction
       render Views::Systems::Index.new(
         systems: @q.result,
         query: @q,
+        breadcrumbs:,
         can_create: allowed_to?(:create?, Junction::System),
         available_statuses:,
         available_owners:,
@@ -28,6 +31,7 @@ module Junction
       authorize! @entity
       render Views::Systems::Show.new(
         system: @entity,
+        breadcrumbs:,
         can_edit: allowed_to?(:update?, @entity),
         can_destroy: allowed_to?(:destroy?, @entity)
       )
@@ -36,7 +40,7 @@ module Junction
     # GET /systems/new
     def new
       authorize! Junction::System
-      render Views::Systems::New.new(system: Junction::System.new, available_domains:, available_owners:)
+      render Views::Systems::New.new(system: Junction::System.new, breadcrumbs:, available_domains:, available_owners:)
     end
 
     # GET /systems/:id/edit
@@ -44,6 +48,7 @@ module Junction
       authorize! @entity
       render Views::Systems::Edit.new(
         system: @entity,
+        breadcrumbs:,
         can_destroy: allowed_to?(:destroy?, @entity),
         available_domains:,
         available_owners:
@@ -59,7 +64,7 @@ module Junction
         redirect_to @entity, success: "System was successfully created."
       else
         flash.now[:alert] = "There were errors creating the system."
-        render Views::Systems::New.new(system: @entity, available_domains:, available_owners:),
+        render Views::Systems::New.new(system: @entity, breadcrumbs:, available_domains:, available_owners:),
                status: :unprocessable_content
       end
     end
@@ -73,6 +78,7 @@ module Junction
         flash.now[:alert] = "There were errors updating the system."
         render Views::Systems::Edit.new(
           system: @entity,
+          breadcrumbs:,
           can_destroy: allowed_to?(:destroy?, @entity),
           available_domains:,
           available_owners:

@@ -12,7 +12,8 @@ module Junction
 
       def default_attrs
         {
-          aria: { label: "breadcrumb" }
+          aria: { label: "breadcrumb" },
+          class: "px-6 pt-3"
         }
       end
     end

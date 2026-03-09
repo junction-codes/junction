@@ -3,9 +3,11 @@
 module Junction
   # Controller for managing Domain catalog entities.
   class DomainsController < Junction::ApplicationController
+    include Breadcrumbs
     include Junction::HasOwner
 
-    before_action :set_entity, only: %i[show edit update destroy]
+    # Make sure we set the entity before any other helper methods are called.
+    prepend_before_action :set_entity, only: %i[show edit update destroy]
 
     # GET /domains
     def index
@@ -16,6 +18,7 @@ module Junction
       render Views::Domains::Index.new(
         domains: @q.result,
         query: @q,
+        breadcrumbs:,
         can_create: allowed_to?(:create?, Junction::Domain),
         available_owners:,
         available_statuses:
@@ -27,6 +30,7 @@ module Junction
       authorize! @entity
       render Views::Domains::Show.new(
         domain: @entity,
+        breadcrumbs:,
         can_edit: allowed_to?(:update?, @entity),
         can_destroy: allowed_to?(:destroy?, @entity)
       )
@@ -35,7 +39,7 @@ module Junction
     # GET /domains/new
     def new
       authorize! Junction::Domain
-      render Views::Domains::New.new(domain: Junction::Domain.new, available_owners:)
+      render Views::Domains::New.new(domain: Junction::Domain.new, breadcrumbs:, available_owners:)
     end
 
     # GET /domains/:id/edit
@@ -43,6 +47,7 @@ module Junction
       authorize! @entity
       render Views::Domains::Edit.new(
         domain: @entity,
+        breadcrumbs:,
         can_destroy: allowed_to?(:destroy?, @entity),
         available_owners:
       )
@@ -57,7 +62,7 @@ module Junction
         redirect_to @entity, success: "Domain was successfully created."
       else
         flash.now[:alert] = "There were errors creating the domain."
-        render Views::Domains::New.new(domain: @entity, available_owners:),
+        render Views::Domains::New.new(domain: @entity, breadcrumbs:, available_owners:),
                status: :unprocessable_content
       end
     end
@@ -71,6 +76,7 @@ module Junction
         flash.now[:alert] = "There were errors updating the domain."
         render Views::Domains::Edit.new(
           domain: @entity,
+          breadcrumbs:,
           can_destroy: allowed_to?(:destroy?, @entity),
           available_owners:
         ), status: :unprocessable_content

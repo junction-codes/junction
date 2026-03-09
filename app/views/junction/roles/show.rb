@@ -7,24 +7,26 @@ module Junction
       #
       # @todo Display all groups and users with this role.
       class Show < Views::Base
+        attr_reader :breadcrumbs
+
         # Initialize a new view.
         #
         # @param role [Junction::Role] The role to display.
         # @param can_edit [Boolean] Whether the user can edit the role.
         # @param can_destroy [Boolean] Whether the user can destroy the role.
-        def initialize(role:, can_edit:, can_destroy:)
+        # @param breadcrumbs [Array<Hash>] Breadcrumb items from the controller.
+        def initialize(role:, can_edit:, can_destroy:, breadcrumbs: [])
           @role = role
           @can_edit = can_edit
           @can_destroy = can_destroy
+          @breadcrumbs = breadcrumbs
         end
 
         private
 
         def view_template
-          render Junction::Layouts::Application do
-            div(class: "p-6 space-y-6") do
-              breadcrumbs
-
+          render Junction::Layouts::Application.new(breadcrumbs:) do
+            div(class: "px-6 py-3 space-y-6") do
               div(class: "flex justify-between items-start") do
                 div do
                   h2(class: "text-3xl font-bold text-gray-900 dark:text-white") { @role.name }
@@ -55,14 +57,6 @@ module Junction
               end
             end
           end
-        end
-
-        def breadcrumbs
-          render BreadcrumbTrail.new(items: [
-            { label: "Home", href: root_path },
-            { label: "Roles", href: roles_path },
-            { label: @role.name }
-          ])
         end
       end
     end

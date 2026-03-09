@@ -5,8 +5,9 @@ module Junction
     module Components
       # Index view for components.
       class Index < Views::Base
-        attr_reader :available_lifecycles, :available_owners, :available_systems,
-                    :available_types, :can_create, :components, :query
+        attr_reader :available_lifecycles, :available_owners,
+                    :available_systems, :available_types, :breadcrumbs,
+                    :can_create, :components, :query
 
         # Initializes the view.
         #
@@ -23,8 +24,10 @@ module Junction
         # @param available_types [Array<Array>] Type options as [label, value]
         #   pairs for filtering.
         # @param can_create [Boolean] Whether the user can create components.
-        def initialize(components:, query:, available_lifecycles:, available_owners:,
-                      available_systems:, available_types:, can_create: true)
+        # @param breadcrumbs [Array<Hash>] Breadcrumb items from the controller.
+        def initialize(components:, query:, available_lifecycles:,
+                       available_owners:, available_systems:, available_types:,
+                       can_create: true, breadcrumbs: [])
           @components = components
           @query = query
           @can_create = can_create
@@ -32,13 +35,12 @@ module Junction
           @available_owners = available_owners
           @available_systems = available_systems
           @available_types = available_types
+          @breadcrumbs = breadcrumbs
         end
 
         def view_template
-          render Junction::Layouts::Application do
-            div(class: "p-6") do
-              breadcrumbs
-
+          render Junction::Layouts::Application.new(breadcrumbs:) do
+            div(class: "px-6 py-3") do
               div(class: "flex justify-between items-center mb-6") do
                 h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { "Components" }
                 if @can_create
@@ -61,13 +63,6 @@ module Junction
         end
 
         private
-
-        def breadcrumbs
-          render BreadcrumbTrail.new(items: [
-            { label: "Home", href: root_path },
-            { label: "Components" }
-          ])
-        end
 
         def table_header(table)
           table.header do |header|

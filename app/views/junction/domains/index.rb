@@ -5,7 +5,8 @@ module Junction
     module Domains
       # Index view for domains.
       class Index < Views::Base
-        attr_reader :available_owners, :available_statuses, :can_create, :domains, :query
+        attr_reader :available_owners, :available_statuses, :breadcrumbs,
+                     :can_create, :domains, :query
 
         # Initializes the view.
         #
@@ -18,20 +19,20 @@ module Junction
         # @param available_statuses [Array<Array>] Status options as [label,
         #   value] pairs for filtering.
         # @param can_create [Boolean] Whether the user can create domains.
+        # @param breadcrumbs [Array<Hash>] Breadcrumb items from the controller.
         def initialize(domains:, query:, available_owners:, available_statuses:,
-                       can_create: true)
+                       can_create: true, breadcrumbs: [])
           @domains = domains
           @query = query
           @can_create = can_create
           @available_owners = available_owners
           @available_statuses = available_statuses
+          @breadcrumbs = breadcrumbs
         end
 
         def view_template
-          render Junction::Layouts::Application.new do
-            div(class: "p-6") do
-              breadcrumbs
-
+          render Junction::Layouts::Application.new(breadcrumbs:) do
+            div(class: "px-6 py-3") do
               # Page header.
               div(class: "flex justify-between items-center mb-6") do
                 h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { "Domains" }
@@ -54,13 +55,6 @@ module Junction
         end
 
         private
-
-        def breadcrumbs
-          render BreadcrumbTrail.new(items: [
-            { label: "Home", href: root_path },
-            { label: "Domains" }
-          ])
-        end
 
         def table_header(table)
           table.header do |header|

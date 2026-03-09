@@ -5,7 +5,7 @@ module Junction
     module Domains
       # Edit view for domains.
       class Edit < Views::Base
-        attr_reader :available_owners, :can_destroy, :domain
+        attr_reader :available_owners, :breadcrumbs, :can_destroy, :domain
 
         # Initializes the view.
         #
@@ -13,24 +13,23 @@ module Junction
         # @param available_owners [Array<Array>] Owner entity options with name
         #   and id attributes.
         # @param can_destroy [Boolean] Whether the domain can be destroyed.
-        def initialize(domain:, available_owners:, can_destroy:)
+        # @param breadcrumbs [Array<Hash>] Breadcrumb items from the controller.
+        def initialize(domain:, available_owners:, can_destroy:,
+                       breadcrumbs: [])
           @domain = domain
           @available_owners = available_owners
           @can_destroy = can_destroy
+          @breadcrumbs = breadcrumbs
         end
 
         def view_template
-          render Junction::Layouts::Application do
-            template
-          end
+          render Junction::Layouts::Application.new(breadcrumbs:) { template }
         end
 
         private
 
         def template
-          div(class: "p-6 space-y-6") do
-            breadcrumbs
-
+          div(class: "px-6 py-3 space-y-6") do
             # Page header.
             div do
               h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { "Edit Domain" }
@@ -48,15 +47,6 @@ module Junction
               end
             end
           end
-        end
-
-        def breadcrumbs
-          render BreadcrumbTrail.new(items: [
-            { label: "Home", href: root_path },
-            { label: "Domains", href: domains_path },
-            { label: @domain.name, href: domain_path(@domain) },
-            { label: "Edit" }
-          ])
         end
       end
     end

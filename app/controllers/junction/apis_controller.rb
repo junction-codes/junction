@@ -3,13 +3,15 @@
 module Junction
   # Controller for managing API catalog entities.
   class ApisController < Junction::ApplicationController
+    include Breadcrumbs
     include Junction::HasDependencies
     include Junction::HasDependencyGraph
     include Junction::HasDependents
     include Junction::HasOwner
 
-    before_action :set_entity, only: %i[ edit update destroy ]
-    before_action :eager_load_dependencies, only: %i[ show dependency_graph ]
+    # Make sure we set the entity before any other helper methods are called.
+    prepend_before_action :set_entity, only: %i[ edit update destroy ]
+    prepend_before_action :eager_load_dependencies, only: %i[ show dependency_graph ]
 
     # GET /api
     def index
@@ -20,6 +22,7 @@ module Junction
       render Views::Apis::Index.new(
         apis: @q.result,
         query: @q,
+        breadcrumbs:,
         can_create: allowed_to?(:create?, Junction::Api),
         available_lifecycles:,
         available_owners:,
@@ -33,6 +36,7 @@ module Junction
       authorize! @entity
       render Views::Apis::Show.new(
         api: @entity,
+        breadcrumbs:,
         can_edit: allowed_to?(:update?, @entity),
         can_destroy: allowed_to?(:destroy?, @entity),
         dependencies:,
@@ -43,7 +47,7 @@ module Junction
     # GET /api/new
     def new
       authorize! Junction::Api
-      render Views::Apis::New.new(api: Junction::Api.new, available_owners:, available_systems:)
+      render Views::Apis::New.new(api: Junction::Api.new, breadcrumbs:, available_owners:, available_systems:)
     end
 
     # GET /api/:id/edit
@@ -51,6 +55,7 @@ module Junction
       authorize! @entity
       render Views::Apis::Edit.new(
         api: @entity,
+        breadcrumbs:,
         can_destroy: allowed_to?(:destroy?, @entity),
         available_owners:,
         available_systems:
@@ -66,7 +71,7 @@ module Junction
         redirect_to @entity, success: "API was successfully created.", status: :see_other
       else
         flash.now[:alert] = "There were errors creating the API."
-        render Views::Apis::New.new(api: @entity, available_owners:, available_systems:),
+        render Views::Apis::New.new(api: @entity, breadcrumbs:, available_owners:, available_systems:),
                status: :unprocessable_content
       end
     end
@@ -80,6 +85,7 @@ module Junction
         flash.now[:alert] = "There were errors updating the API."
         render Views::Apis::Edit.new(
           api: @entity,
+          breadcrumbs:,
           can_destroy: allowed_to?(:destroy?, @entity),
           available_owners:,
           available_systems:

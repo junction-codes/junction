@@ -6,24 +6,27 @@ module Junction
       # Index view for APIs.
       class Index < Views::Base
         attr_reader :apis, :available_lifecycles, :available_owners,
-                    :available_systems, :available_types, :can_create, :query
+                    :available_systems, :available_types, :breadcrumbs,
+                    :can_create, :query
 
         # Initializes the view.
         #
         # @param apis [ActiveRecord::Relation] Collection of APIs to display.
         # @param query [Ransack::Search] Ransack query object for filtering and
         #   sorting.
-        # @param available_lifecycles [Array<Array>] Lifecycle options as [label,
-        #   value] pairs for filtering.
-        # @param available_owners [ActiveRecord::Relation] Owner entity options with
-        #   name and id attributes.
-        # @param available_systems [ActiveRecord::Relation] System entity options with
-        #   name and id attributes.
-        # @param available_types [Array<Array>] Type options as [label, value] pairs
-        #   for filtering.
+        # @param available_lifecycles [Array<Array>] Lifecycle options as
+        #   [label, value] pairs for filtering.
+        # @param available_owners [Array<Array>] Owner entity options with name
+        #   and id attributes.
+        # @param available_systems [Array<Array>] System entity options with name
+        #   and id attributes.
+        # @param available_types [Array<Array>] Type options as [label, value]
+        #   pairs for filtering.
         # @param can_create [Boolean] Whether the user can create APIs.
+        # @param breadcrumbs [Array<Hash>] Breadcrumb items from the controller.
         def initialize(apis:, query:, available_lifecycles:, available_owners:,
-                       available_systems:, available_types:, can_create: true)
+                       available_systems:, available_types:, can_create: true,
+                       breadcrumbs: [])
           @apis = apis
           @query = query
           @available_lifecycles = available_lifecycles
@@ -31,13 +34,12 @@ module Junction
           @available_systems = available_systems
           @available_types = available_types
           @can_create = can_create
+          @breadcrumbs = breadcrumbs
         end
 
         def view_template
-          render Junction::Layouts::Application do
-            div(class: "p-6") do
-              breadcrumbs
-
+          render Junction::Layouts::Application.new(breadcrumbs:) do
+            div(class: "px-6 py-3") do
               div(class: "flex justify-between items-center mb-6") do
                 h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { "APIs" }
                 if @can_create
@@ -59,13 +61,6 @@ module Junction
         end
 
         private
-
-        def breadcrumbs
-          render BreadcrumbTrail.new(items: [
-            { label: "Home", href: root_path },
-            { label: "APIs" }
-          ])
-        end
 
         def table_header(table)
           table.header do |header|

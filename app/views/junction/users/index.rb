@@ -5,7 +5,7 @@ module Junction
     module Users
       # Index view for users.
       class Index < Views::Base
-        attr_reader :can_create, :query, :users
+        attr_reader :breadcrumbs, :can_create, :query, :users
 
         # Initializes the view.
         #
@@ -13,17 +13,17 @@ module Junction
         # @param query [Ransack::Search] Ransack query object for filtering and
         #   sorting.
         # @param can_create [Boolean] Whether the user can create users.
-        def initialize(users:, query:, can_create: true)
+        # @param breadcrumbs [Array<Hash>] Breadcrumb items from the controller.
+        def initialize(users:, query:, can_create: true, breadcrumbs: [])
           @users = users
           @query = query
           @can_create = can_create
+          @breadcrumbs = breadcrumbs
         end
 
         def view_template
-          render Junction::Layouts::Application do
-            div(class: "p-6") do
-              breadcrumbs
-
+          render Junction::Layouts::Application.new(breadcrumbs:) do
+            div(class: "px-6 py-3") do
               div(class: "flex justify-between items-center mb-6") do
                 h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { "Users" }
                 if @can_create
@@ -44,13 +44,6 @@ module Junction
         end
 
         private
-
-        def breadcrumbs
-          render BreadcrumbTrail.new(items: [
-            { label: "Home", href: root_path },
-            { label: "Users" }
-          ])
-        end
 
         def table_header(table)
           table.header do |header|

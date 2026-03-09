@@ -5,35 +5,34 @@ module Junction
     module Components
       # Edit view for components.
       class Edit < Views::Base
-        attr_reader :available_owners, :available_systems, :can_destroy, :component
+        attr_reader :available_owners, :available_systems, :breadcrumbs,
+                     :can_destroy, :component
 
         # Initializes the view.
         #
         # @param component [Component] The component being modified.
-        # @param available_owners [Array<Array>] Owner entity options with name and id
-        #   attributes.
-        # @param available_systems [Array<Array>] System entity options with name and
-        #   id attributes.
+        # @param available_owners [Array<Array>] Owner entity options with name
+        #   and id attributes.
+        # @param available_systems [Array<Array>] System entity options with
+        #   name and id attributes.
         # @param can_destroy [Boolean] Whether the component can be destroyed.
-        def initialize(component:, available_owners:, available_systems:, can_destroy:)
+        # @param breadcrumbs [Array<Hash>] Breadcrumb items from the controller.
+        def initialize(component:, available_owners:, available_systems:,
+                       can_destroy:, breadcrumbs: [])
           @component = component
           @available_owners = available_owners
           @available_systems = available_systems
           @can_destroy = can_destroy
+          @breadcrumbs = breadcrumbs
         end
 
         def view_template
-          render Junction::Layouts::Application do
-            template
-          end
+          render Junction::Layouts::Application.new(breadcrumbs:) { template }
         end
 
         private
-
         def template
-          div(class: "p-6 space-y-6") do
-            breadcrumbs
-
+          div(class: "px-6 py-3 space-y-6") do
             div do
               h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { "Edit Component" }
               p(class: "mt-1 text-sm text-gray-600 dark:text-gray-400") { "Update the details for the '#{@component.name}' component." }
@@ -49,15 +48,6 @@ module Junction
               end
             end
           end
-        end
-
-        def breadcrumbs
-          render BreadcrumbTrail.new(items: [
-            { label: "Home", href: root_path },
-            { label: "Components", href: components_path },
-            { label: @component.name, href: component_path(@component) },
-            { label: "Edit" }
-          ])
         end
       end
     end

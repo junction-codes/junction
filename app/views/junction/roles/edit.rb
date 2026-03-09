@@ -5,7 +5,7 @@ module Junction
     module Roles
       # Edit view for a role.
       class Edit < Views::Base
-        attr_reader :available_permissions, :can_destroy, :role
+        attr_reader :available_permissions, :breadcrumbs, :can_destroy, :role
 
         # Initialize a new view.
         #
@@ -13,19 +13,20 @@ module Junction
         # @param available_permissions [Array<Junction::Permission>] Available
         #   permissions to select from.
         # @param can_destroy [Boolean] Whether the role can be destroyed.
-        def initialize(role:, available_permissions:, can_destroy:)
+        # @param breadcrumbs [Array<Hash>] Breadcrumb items from the controller.
+        def initialize(role:, available_permissions:, can_destroy:,
+                       breadcrumbs: [])
           @role = role
           @available_permissions = available_permissions
           @can_destroy = can_destroy
+          @breadcrumbs = breadcrumbs
         end
 
         private
 
         def view_template
-          render Layouts::Application do
-            div(class: "p-6 space-y-6") do
-              breadcrumbs
-
+          render Junction::Layouts::Application.new(breadcrumbs:) do
+            div(class: "px-6 py-3 space-y-6") do
               div do
                 h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { t("views.roles.edit.title") }
                 p(class: "mt-1 text-sm text-gray-600 dark:text-gray-400") do
@@ -44,15 +45,6 @@ module Junction
               end
             end
           end
-        end
-
-        def breadcrumbs
-          render BreadcrumbTrail.new(items: [
-            { label: "Home", href: root_path },
-            { label: "Roles", href: roles_path },
-            { label: @role.name, href: role_path(@role) },
-            { label: "Edit" }
-          ])
         end
       end
     end

@@ -3,7 +3,10 @@
 module Junction
   # Controller for managing Groups.
   class GroupsController < Junction::ApplicationController
-    before_action :set_entity, only: %i[ show edit update destroy ]
+    include Breadcrumbs
+
+    # Make sure we set the entity before any other helper methods are called.
+    prepend_before_action :set_entity, only: %i[ show edit update destroy ]
 
     # GET /groups
     def index
@@ -14,6 +17,7 @@ module Junction
       render Views::Groups::Index.new(
         groups: @q.result,
         query: @q,
+        breadcrumbs:,
         can_create: allowed_to?(:create?, Junction::Group),
         available_types:,
       )
@@ -24,6 +28,7 @@ module Junction
       authorize! @entity
       render Views::Groups::Show.new(
         group: @entity,
+        breadcrumbs:,
         can_edit: allowed_to?(:update?, @entity),
         can_destroy: allowed_to?(:destroy?, @entity)
       )
@@ -32,7 +37,7 @@ module Junction
     # GET /groups/new
     def new
       authorize! Junction::Group
-      render Views::Groups::New.new(group: Junction::Group.new, available_parents:)
+      render Views::Groups::New.new(group: Junction::Group.new, breadcrumbs:, available_parents:)
     end
 
     # GET /groups/:id/edit
@@ -40,6 +45,7 @@ module Junction
       authorize! @entity
       render Views::Groups::Edit.new(
         group: @entity,
+        breadcrumbs:,
         can_destroy: allowed_to?(:destroy?, @entity),
         available_parents:
       )
@@ -54,7 +60,7 @@ module Junction
         redirect_to @entity, success: "Group was successfully created."
       else
         flash.now[:alert] = "There were errors creating the group."
-        render Views::Groups::New.new(group: @entity, available_parents:),
+        render Views::Groups::New.new(group: @entity, breadcrumbs:, available_parents:),
                status: :unprocessable_content
       end
     end
@@ -68,6 +74,7 @@ module Junction
         flash.now[:alert] = "There were errors updating the group."
         render Views::Groups::Edit.new(
           group: @entity,
+          breadcrumbs:,
           can_destroy: allowed_to?(:destroy?, @entity),
           available_parents:
         ), status: :unprocessable_content

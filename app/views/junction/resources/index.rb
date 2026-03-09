@@ -6,7 +6,7 @@ module Junction
       # Index view for resources.
       class Index < Views::Base
         attr_reader :available_owners, :available_systems, :available_types,
-                    :can_create, :query, :resources
+                    :breadcrumbs, :can_create, :query, :resources
 
         # Initializes the view.
         #
@@ -21,21 +21,21 @@ module Junction
         # @param available_types [Array<Array>] Type options as [label, value]
         #   pairs for filtering.
         # @param can_create [Boolean] Whether the user can create resources.
+        # @param breadcrumbs [Array<Hash>] Breadcrumb items from the controller.
         def initialize(resources:, query:, available_owners:, available_systems:,
-                      available_types:, can_create: true)
+                       available_types:, can_create: true, breadcrumbs: [])
           @resources = resources
           @query = query
           @can_create = can_create
           @available_owners = available_owners
           @available_systems = available_systems
           @available_types = available_types
+          @breadcrumbs = breadcrumbs
         end
 
         def view_template
-          render Junction::Layouts::Application do
-            div(class: "p-6") do
-              breadcrumbs
-
+          render Junction::Layouts::Application.new(breadcrumbs:) do
+            div(class: "px-6 py-3") do
               div(class: "flex justify-between items-center mb-6") do
                 h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { "Resources" }
                 if @can_create
@@ -57,13 +57,6 @@ module Junction
         end
 
         private
-
-        def breadcrumbs
-          render BreadcrumbTrail.new(items: [
-            { label: "Home", href: root_path },
-            { label: "Resources" }
-          ])
-        end
 
         def table_header(table)
           table.header do |header|

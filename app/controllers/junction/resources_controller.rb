@@ -3,13 +3,15 @@
 module Junction
   # Controller for managing Resource catalog entities.
   class ResourcesController < Junction::ApplicationController
+    include Breadcrumbs
     include Junction::HasDependencies
     include Junction::HasDependencyGraph
     include Junction::HasDependents
     include Junction::HasOwner
 
-    before_action :set_entity, only: %i[ edit update destroy ]
-    before_action :eager_load_dependencies, only: %i[ show dependency_graph ]
+    # Make sure we set the entity before any other helper methods are called.
+    prepend_before_action :set_entity, only: %i[ edit update destroy ]
+    prepend_before_action :eager_load_dependencies, only: %i[ show dependency_graph ]
 
     # GET /resources
     def index
@@ -20,6 +22,7 @@ module Junction
       render Views::Resources::Index.new(
         resources: @q.result,
         query: @q,
+        breadcrumbs:,
         can_create: allowed_to?(:create?, Junction::Resource),
         available_owners:,
         available_systems:,
@@ -32,6 +35,7 @@ module Junction
       authorize! @entity
       render Views::Resources::Show.new(
         resource: @entity,
+        breadcrumbs:,
         can_edit: allowed_to?(:update?, @entity),
         can_destroy: allowed_to?(:destroy?, @entity),
         dependencies:,
@@ -44,6 +48,7 @@ module Junction
       authorize! Junction::Resource
       render Views::Resources::New.new(
         resource: Junction::Resource.new,
+        breadcrumbs:,
         available_owners:,
         available_systems:
       )
@@ -54,6 +59,7 @@ module Junction
       authorize! @entity
       render Views::Resources::Edit.new(
         resource: @entity,
+        breadcrumbs:,
         can_destroy: allowed_to?(:destroy?, @entity),
         available_owners:,
         available_systems:
@@ -69,7 +75,7 @@ module Junction
         redirect_to @entity, success: "Resource was successfully created."
       else
         flash.now[:alert] = "There were errors creating the resource."
-        render Views::Resources::New.new(resource: @entity, available_owners:, available_systems:),
+        render Views::Resources::New.new(resource: @entity, breadcrumbs:, available_owners:, available_systems:),
                status: :unprocessable_content
       end
     end
@@ -83,6 +89,7 @@ module Junction
         flash.now[:alert] = "There were errors updating the resource."
         render Views::Resources::Edit.new(
           resource: @entity,
+          breadcrumbs:,
           can_destroy: allowed_to?(:destroy?, @entity),
           available_owners:,
           available_systems:

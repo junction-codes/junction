@@ -5,29 +5,27 @@ module Junction
     module Users
       # Edit view for users.
       class Edit < Views::Base
-        attr_reader :can_destroy, :user
+        attr_reader :breadcrumbs, :can_destroy, :user
 
         # Initializes the view.
         #
         # @param user [User] The user being modified.
         # @param can_destroy [Boolean] Whether the user can be destroyed.
-        def initialize(user:, can_destroy:)
+        # @param breadcrumbs [Array<Hash>] Breadcrumb items from the controller.
+        def initialize(user:, can_destroy:, breadcrumbs: [])
           @user = user
           @can_destroy = can_destroy
+          @breadcrumbs = breadcrumbs
         end
 
         def view_template
-          render Junction::Layouts::Application do
-            template
-          end
+          render Junction::Layouts::Application.new(breadcrumbs:) { template }
         end
 
         private
 
         def template
-          div(class: "p-6 space-y-6") do
-            breadcrumbs
-
+          div(class: "px-6 py-3 space-y-6") do
             # Page header.
             div do
               h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { "Edit User" }
@@ -45,15 +43,6 @@ module Junction
               end
             end
           end
-        end
-
-        def breadcrumbs
-          render BreadcrumbTrail.new(items: [
-            { label: "Home", href: root_path },
-            { label: "Users", href: users_path },
-            { label: @user.display_name, href: user_path(@user) },
-            { label: "Edit" }
-          ])
         end
       end
     end

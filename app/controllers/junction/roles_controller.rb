@@ -3,8 +3,11 @@
 module Junction
   # Controller for managing Roles.
   class RolesController < Junction::ApplicationController
-    before_action :set_entity, only: %i[ edit update destroy ]
-    before_action :eager_load_dependencies, only: %i[ show ]
+    include Breadcrumbs
+
+    # Make sure we set the entity before any other helper methods are called.
+    prepend_before_action :set_entity, only: %i[ edit update destroy ]
+    prepend_before_action :eager_load_dependencies, only: %i[ show ]
 
     # GET /roles
     def index
@@ -15,6 +18,7 @@ module Junction
       render Views::Roles::Index.new(
         roles: @q.result,
         query: @q,
+        breadcrumbs:,
         can_create: allowed_to?(:create?, Junction::Role)
       )
     end
@@ -24,6 +28,7 @@ module Junction
       authorize! @entity
       render Views::Roles::Show.new(
         role: @entity,
+        breadcrumbs:,
         can_edit: allowed_to?(:update?, @entity),
         can_destroy: allowed_to?(:destroy?, @entity) && !@entity.system?
       )
@@ -36,6 +41,7 @@ module Junction
 
       render Views::Roles::New.new(
         role: @entity,
+        breadcrumbs:,
         available_permissions: Junction::PluginRegistry.permissions
       )
     end
@@ -50,6 +56,7 @@ module Junction
       else
         render Views::Roles::New.new(
           role: @entity,
+          breadcrumbs:,
           available_permissions: Junction::PluginRegistry.permissions
         ), status: :unprocessable_content
       end
@@ -60,6 +67,7 @@ module Junction
       authorize! @entity
       render Views::Roles::Edit.new(
         role: @entity,
+        breadcrumbs:,
         can_destroy: allowed_to?(:destroy?, @entity) && !@entity.system?,
         available_permissions: Junction::PluginRegistry.permissions
       )
@@ -74,6 +82,7 @@ module Junction
       else
         render Views::Roles::Edit.new(
           role: @entity,
+          breadcrumbs:,
           can_destroy: allowed_to?(:destroy?, @entity) && !@entity.system?,
           available_permissions: Junction::PluginRegistry.permissions
         ), status: :unprocessable_content
