@@ -5,23 +5,25 @@ module Junction
     module Users
       # Creation view for users.
       class New < Views::Base
-        attr_reader :user
+        attr_reader :breadcrumbs, :user
 
         # Initializes the view.
         #
         # @param user [User] The user being created.
-        def initialize(user:)
+        # @param breadcrumbs [Array<Hash>] Breadcrumb items from the controller.
+        def initialize(user:, breadcrumbs: [])
           @user = user
+          @breadcrumbs = breadcrumbs
         end
 
         def view_template
-          render Junction::Layouts::Application do
-            template
-          end
+          render Junction::Layouts::Application.new(breadcrumbs:) { template }
         end
 
+        private
+
         def template
-          div(class: "p-6") do
+          div(class: "px-6 py-3") do
             # Page header.
             div(class: "max-w-2xl mx-auto") do
               h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { "Create a New User" }

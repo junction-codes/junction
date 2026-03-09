@@ -3,7 +3,7 @@
 module Junction
   # Controller for user dashboards.
   class DashboardsController < ApplicationController
-    include Junction::HasOwner
+    include HasOwner
 
     CATALOG_ENTITIES = [ Api, Component, Domain, Resource, System ].freeze
 

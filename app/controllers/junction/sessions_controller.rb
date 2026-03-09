@@ -2,7 +2,7 @@
 
 module Junction
   # Controller for managing user sessions.
-  class SessionsController < Junction::ApplicationController
+  class SessionsController < ApplicationController
     allow_unauthenticated_access only: %i[ new create ]
     skip_verify_authorized if respond_to?(:skip_verify_authorized, true)
     rate_limit to: 10, within: 3.minutes, only: :create, with: -> { redirect_to new_session_url, alert: "Try again later.", status: :too_many_requests }
@@ -14,7 +14,7 @@ module Junction
 
     # POST /sessions
     def create
-      user = Junction::User.authenticate_by(params.permit(:email_address, :password))
+      user = User.authenticate_by(params.permit(:email_address, :password))
       if user
         start_new_session_for user
         redirect_to after_authentication_url

@@ -2,25 +2,28 @@
 
 module Junction
   # Controller for managing Component catalog entities.
-  class ComponentsController < Junction::ApplicationController
-    include Junction::HasDependencies
-    include Junction::HasDependencyGraph
-    include Junction::HasDependents
-    include Junction::HasOwner
-
+  class ComponentsController < ApplicationController
+    # Make sure the entity is set before any other helper methods are called.
     before_action :set_entity, only: %i[ edit update destroy ]
     before_action :eager_load_dependencies, only: %i[ show dependency_graph ]
 
+    include Breadcrumbs
+    include HasDependencies
+    include HasDependencyGraph
+    include HasDependents
+    include HasOwner
+
     # GET /components
     def index
-      authorize! Junction::Component
-      @q = index_scope_for(Junction::Component).ransack(params[:q])
+      authorize! Component
+      @q = index_scope_for(Component).ransack(params[:q])
       @q.sorts = "name asc" if @q.sorts.empty?
 
       render Views::Components::Index.new(
         components: @q.result,
         query: @q,
-        can_create: allowed_to?(:create?, Junction::Component),
+        breadcrumbs:,
+        can_create: allowed_to?(:create?, Component),
         available_lifecycles:,
         available_owners:,
         available_systems:,
@@ -33,6 +36,7 @@ module Junction
       authorize! @entity
       render Views::Components::Show.new(
         component: @entity,
+        breadcrumbs:,
         can_edit: allowed_to?(:update?, @entity),
         can_destroy: allowed_to?(:destroy?, @entity),
         dependencies:,
@@ -42,9 +46,10 @@ module Junction
 
     # GET /components/new
     def new
-      authorize! Junction::Component
+      authorize! Component
       render Views::Components::New.new(
-        component: Junction::Component.new,
+        component: Component.new,
+        breadcrumbs:,
         available_owners:,
         available_systems:
       )
@@ -55,6 +60,7 @@ module Junction
       authorize! @entity
       render Views::Components::Edit.new(
         component: @entity,
+        breadcrumbs:,
         can_destroy: allowed_to?(:destroy?, @entity),
         available_owners:,
         available_systems:
@@ -63,14 +69,14 @@ module Junction
 
     # POST /components
     def create
-      authorize! Junction::Component
-      @entity = Junction::Component.new(component_params)
+      authorize! Component
+      @entity = Component.new(component_params)
 
       if @entity.save
         redirect_to @entity, success: "Component was successfully created."
       else
         flash.now[:alert] = "There were errors creating the component."
-        render Views::Components::New.new(component: @entity, available_owners:, available_systems:),
+        render Views::Components::New.new(component: @entity, breadcrumbs:, available_owners:, available_systems:),
                status: :unprocessable_content
       end
     end
@@ -84,6 +90,7 @@ module Junction
         flash.now[:alert] = "There were errors updating the component."
         render Views::Components::Edit.new(
           component: @entity,
+          breadcrumbs:,
           can_destroy: allowed_to?(:destroy?, @entity),
           available_owners:,
           available_systems:
@@ -125,7 +132,7 @@ module Junction
     end
 
     def set_entity
-      @entity = Junction::Component.find(params.expect(:id))
+      @entity = Component.find(params.expect(:id))
     end
 
     def eager_load_dependencies

@@ -2,20 +2,24 @@
 
 module Junction
   # Controller for managing Roles.
-  class RolesController < Junction::ApplicationController
+  class RolesController < ApplicationController
+    # Make sure the entity is set before any other helper methods are called.
     before_action :set_entity, only: %i[ edit update destroy ]
     before_action :eager_load_dependencies, only: %i[ show ]
 
+    include Breadcrumbs
+
     # GET /roles
     def index
-      authorize! Junction::Role
-      @q = Junction::Role.ransack(params[:q])
+      authorize! Role
+      @q = Role.ransack(params[:q])
       @q.sorts = "name asc" if @q.sorts.empty?
 
       render Views::Roles::Index.new(
         roles: @q.result,
         query: @q,
-        can_create: allowed_to?(:create?, Junction::Role)
+        breadcrumbs:,
+        can_create: allowed_to?(:create?, Role)
       )
     end
 
@@ -24,6 +28,7 @@ module Junction
       authorize! @entity
       render Views::Roles::Show.new(
         role: @entity,
+        breadcrumbs:,
         can_edit: allowed_to?(:update?, @entity),
         can_destroy: allowed_to?(:destroy?, @entity) && !@entity.system?
       )
@@ -31,26 +36,28 @@ module Junction
 
     # GET /roles/new
     def new
-      authorize! Junction::Role
-      @entity = Junction::Role.new
+      authorize! Role
+      @entity = Role.new
 
       render Views::Roles::New.new(
         role: @entity,
-        available_permissions: Junction::PluginRegistry.permissions
+        breadcrumbs:,
+        available_permissions: PluginRegistry.permissions
       )
     end
 
     # POST /roles
     def create
-      authorize! Junction::Role
-      @entity = Junction::Role.new(role_params.except(:permission_ids))
+      authorize! Role
+      @entity = Role.new(role_params.except(:permission_ids))
       if @entity.save
         sync_role_permissions
         redirect_to @entity, success: "Role was successfully created."
       else
         render Views::Roles::New.new(
           role: @entity,
-          available_permissions: Junction::PluginRegistry.permissions
+          breadcrumbs:,
+          available_permissions: PluginRegistry.permissions
         ), status: :unprocessable_content
       end
     end
@@ -60,8 +67,9 @@ module Junction
       authorize! @entity
       render Views::Roles::Edit.new(
         role: @entity,
+        breadcrumbs:,
         can_destroy: allowed_to?(:destroy?, @entity) && !@entity.system?,
-        available_permissions: Junction::PluginRegistry.permissions
+        available_permissions: PluginRegistry.permissions
       )
     end
 
@@ -74,8 +82,9 @@ module Junction
       else
         render Views::Roles::Edit.new(
           role: @entity,
+          breadcrumbs:,
           can_destroy: allowed_to?(:destroy?, @entity) && !@entity.system?,
-          available_permissions: Junction::PluginRegistry.permissions
+          available_permissions: PluginRegistry.permissions
         ), status: :unprocessable_content
       end
     end
@@ -97,11 +106,11 @@ module Junction
     private
 
     def set_entity
-      @entity = Junction::Role.find(params.expect(:id))
+      @entity = Role.find(params.expect(:id))
     end
 
     def eager_load_dependencies
-      @entity = Junction::Role.includes(:role_permissions).find(params.expect(:id))
+      @entity = Role.includes(:role_permissions).find(params.expect(:id))
     end
 
     def role_params

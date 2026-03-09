@@ -7,17 +7,21 @@ module Junction
       class Show < Views::Base
         include PluginDispatchHelper
 
-        def initialize(api:, dependencies:, dependents:, can_edit:, can_destroy:)
+        attr_reader :breadcrumbs
+
+        def initialize(api:, dependencies:, dependents:, can_edit:,
+                       can_destroy:, breadcrumbs: [])
           @api = api
           @dependencies = dependencies
           @dependents = dependents
           @can_edit = can_edit
           @can_destroy = can_destroy
+          @breadcrumbs = breadcrumbs
         end
 
         def view_template
-          render Junction::Layouts::Application.new do
-            div(class: "p-6 space-y-8") do
+          render Junction::Layouts::Application.new(breadcrumbs:) do
+            div(class: "px-6 py-3 space-y-8") do
               api_header
               api_stats
               api_tabs

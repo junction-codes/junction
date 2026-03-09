@@ -2,7 +2,20 @@
 
 module Junction
   module Layouts
+    # Main layout for the application.
     class Application < Base
+      attr_reader :breadcrumbs
+
+      # Initializes a new layout.
+      #
+      # @param breadcrumbs [Array<Hash>] Breadcrumb items to display.
+      # @param user_attrs [Hash] Additional HTML attributes for the layout.
+      def initialize(breadcrumbs: [], **user_attrs)
+        @breadcrumbs = breadcrumbs
+
+        super(**user_attrs)
+      end
+
       def view_template(&block)
         doctype
 
@@ -30,6 +43,8 @@ module Junction
                 render Components::Sidebar.new
 
                 main(data_sidebar_target: "content", class: "flex-1 overflow-y-auto transition-all duration-300 md:mx-10") do
+                  BreadcrumbTrail(items: breadcrumbs) if breadcrumbs.present?
+
                   yield
                 end
               end

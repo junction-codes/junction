@@ -48,11 +48,18 @@ en:
       system:
         one: System
         other: Systems
+      role:
+        one: Role
+        other: Roles
       user:
         one: User
         other: Users
   app:
     title: Junction
+  breadcrumbs:
+    edit: Edit
+    home: Home
+    new: "New %{model}"
   components:
     alert:
       close: Close

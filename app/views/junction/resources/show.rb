@@ -5,17 +5,21 @@ module Junction
     module Resources
       # Show view for resources.
       class Show < Views::Base
-        def initialize(resource:, dependencies:, dependents:, can_edit:, can_destroy:)
+        attr_reader :breadcrumbs
+
+        def initialize(resource:, dependencies:, dependents:, can_edit:,
+                       can_destroy:, breadcrumbs: [])
           @resource = resource
           @dependencies = dependencies
           @dependents = dependents
           @can_edit = can_edit
           @can_destroy = can_destroy
+          @breadcrumbs = breadcrumbs
         end
 
         def view_template
-          render Junction::Layouts::Application.new do
-            div(class: "p-6 space-y-8") do
+          render Junction::Layouts::Application.new(breadcrumbs:) do
+            div(class: "px-6 py-3 space-y-8") do
               resource_header
               resource_stats
               resource_tabs

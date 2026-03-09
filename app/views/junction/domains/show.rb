@@ -4,15 +4,18 @@ module Junction
   module Views
     module Domains
       class Show < Views::Base
-        def initialize(domain:, can_edit:, can_destroy:)
+        attr_reader :breadcrumbs
+
+        def initialize(domain:, can_edit:, can_destroy:, breadcrumbs: [])
           @domain = domain
           @can_edit = can_edit
           @can_destroy = can_destroy
+          @breadcrumbs = breadcrumbs
         end
 
         def view_template
-          render Junction::Layouts::Application.new do
-            div(class: "p-6 space-y-8") do
+          render Junction::Layouts::Application.new(breadcrumbs:) do
+            div(class: "px-6 py-3 space-y-8") do
               domain_header
               domain_stats
               systems_table

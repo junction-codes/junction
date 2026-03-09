@@ -2,19 +2,23 @@
 
 module Junction
   # Controller for managing Users.
-  class UsersController < Junction::ApplicationController
+  class UsersController < ApplicationController
+    # Make sure the entity is set before any other helper methods are called.
     before_action :set_entity, only: %i[ show edit update destroy ]
+
+    include Breadcrumbs
 
     # GET /users
     def index
-      authorize! Junction::User
-      @q = Junction::User.ransack(params[:q])
+      authorize! User
+      @q = User.ransack(params[:q])
       @q.sorts = "name asc" if @q.sorts.empty?
 
       render Views::Users::Index.new(
         users: @q.result,
         query: @q,
-        can_create: allowed_to?(:create?, Junction::User)
+        breadcrumbs:,
+        can_create: allowed_to?(:create?, User)
       )
     end
 
@@ -23,6 +27,7 @@ module Junction
       authorize! @entity
       render Views::Users::Show.new(
         user: @entity,
+        breadcrumbs:,
         can_edit: allowed_to?(:update?, @entity),
         can_destroy: allowed_to?(:destroy?, @entity)
       )
@@ -30,8 +35,8 @@ module Junction
 
     # GET /users/new
     def new
-      authorize! Junction::User
-      render Views::Users::New.new(user: Junction::User.new)
+      authorize! User
+      render Views::Users::New.new(user: User.new, breadcrumbs:)
     end
 
     # GET /users/:id/edit
@@ -39,20 +44,21 @@ module Junction
       authorize! @entity
       render Views::Users::Edit.new(
         user: @entity,
+        breadcrumbs:,
         can_destroy: allowed_to?(:destroy?, @entity)
       )
     end
 
     # POST /users
     def create
-      authorize! Junction::User
-      @entity = Junction::User.new(user_params)
+      authorize! User
+      @entity = User.new(user_params)
 
       if @entity.save
         redirect_to @entity, success: "User was successfully created."
       else
         flash.now[:alert] = "There were errors creating the user."
-        render Views::Users::New.new(user: @entity), status: :unprocessable_content
+        render Views::Users::New.new(user: @entity, breadcrumbs:), status: :unprocessable_content
       end
     end
 
@@ -65,6 +71,7 @@ module Junction
         flash.now[:alert] = "There were errors updating the user."
         render Views::Users::Edit.new(
           user: @entity,
+          breadcrumbs:,
           can_destroy: allowed_to?(:destroy?, @entity)
         ), status: :unprocessable_content
       end
@@ -82,7 +89,7 @@ module Junction
 
     # Use callbacks to share common setup or constraints between actions.
     def set_entity
-      @entity = Junction::User.find(params.expect(:id))
+      @entity = User.find(params.expect(:id))
     end
 
     # Only allow a list of trusted parameters through.

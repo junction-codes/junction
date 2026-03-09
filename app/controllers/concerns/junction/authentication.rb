@@ -5,7 +5,7 @@ module Junction
     extend ActiveSupport::Concern
 
   included do
-    before_action :require_authentication, unless: :demo_mode?
+    prepend_before_action :require_authentication, unless: :demo_mode?
     helper_method :authenticated?
     helper_method :current_user
     helper_method :demo_mode?
