@@ -7,7 +7,9 @@ module Junction
   #
   # @abstract
   class ApplicationPolicy < ActionPolicy::Base
-    DOMAIN = "junction.codes"
+    include InstrumentationHelper
+
+    DOMAIN = CorePlugin::DOMAIN
 
     alias_rule :edit?, to: :update?
 
@@ -28,18 +30,12 @@ module Junction
     #   permissions.
     # @return [Boolean]
     def allowed_permission?(permission, entity: nil)
-      return false if user.nil?
-
-      return false unless permissions.has_permission?(permission)
-
-      return true if entity.nil?
-
-      perm = permission.is_a?(Permission) ? permission : Permission.parse(permission)
-      return true if perm.nil? || perm.all?
-
-      return false if !entity.respond_to?(:owner_id) || entity.owner_id.blank?
-
-      user.deep_group_ids.include?(entity.owner_id)
+      trace "junction.policy.allowed_permission", "junction.policy.class" => self.class.name,
+                                                  "junction.permission" => permission.to_s do |span|
+        result = resolve_permission(permission, entity:)
+        span.set_attribute("junction.permission.granted", result)
+        result
+      end
     end
 
     # Determine if the user has the given access.
@@ -110,6 +106,27 @@ module Junction
     end
 
     private
+
+    # Resolve a permission check.
+    #
+    # @param permission [Junction::Permission, String] Permission to check.
+    # @param entity [ApplicationRecord] Entity to validate ownership for "owned"
+    #   permissions.
+    # @return [Boolean] Whether the user has the requested permission.
+    def resolve_permission(permission, entity: nil)
+      return false if user.nil?
+
+      return false unless permissions.has_permission?(permission)
+
+      return true if entity.nil?
+
+      perm = permission.is_a?(Permission) ? permission : Permission.parse(permission)
+      return true if perm.nil? || perm.all?
+
+      return false if !entity.respond_to?(:owner_id) || entity.owner_id.blank?
+
+      user.deep_group_ids.include?(entity.owner_id)
+    end
 
     # Service object for resolving the user's effective permissions.
     #
