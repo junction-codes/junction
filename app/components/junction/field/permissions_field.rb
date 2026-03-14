@@ -127,12 +127,15 @@ module Junction
             class: "h-4 w-4 rounded border-gray-300"
           )
 
-          label(
-            for: "role_permission_#{permission.to_s.parameterize}",
-            title: permission.description.presence || permission.to_s,
-            class: "cursor-help text-sm text-gray-700 dark:text-gray-300"
-          ) do
-            plain permission.access.capitalize
+          Tooltip do |t|
+            t.trigger do
+              label(
+                for: "role_permission_#{permission.to_s.parameterize}",
+                class: "cursor-help text-sm text-gray-700 dark:text-gray-300"
+              ) { permission.access.capitalize }
+            end
+
+            t.content { permission.description.presence || permission.to_s }
           end
         end
       end

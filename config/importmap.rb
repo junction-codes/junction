@@ -18,10 +18,10 @@ pin "lodash.isplainobject"
 pin "lodash.merge"
 pin "postcss-selector-parser"
 pin "util-deprecate"
-pin "@floating-ui/dom", to: "@floating-ui--dom.js"
-pin "@floating-ui/core", to: "@floating-ui--core.js"
-pin "@floating-ui/utils", to: "@floating-ui--utils.js"
-pin "@floating-ui/utils/dom", to: "@floating-ui--utils--dom.js"
+pin "@floating-ui/dom", to: "@floating-ui--dom.js" # @1.7.5
+pin "@floating-ui/core", to: "@floating-ui--core.js" # @1.7.5
+pin "@floating-ui/utils", to: "@floating-ui--utils.js" # @0.2.11
+pin "@floating-ui/utils/dom", to: "@floating-ui--utils--dom.js" # @0.2.11
 pin "cytoscape"
 pin "chartkick", to: "chartkick.js"
 pin "Chart.bundle", to: "Chart.bundle.js"
