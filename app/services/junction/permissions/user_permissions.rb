@@ -30,8 +30,7 @@ module Junction
       def has_permission?(permission)
         return false if user.nil?
 
-        trace "junction.permissions.check", "user.id" => user.id.to_s,
-                                            "junction.permission" => permission.to_s do |span|
+        trace "junction.permissions.check", "junction.permission" => permission.to_s do |span|
           result = permission_set.include?(permission.to_s)
           span.set_attribute("junction.permission.granted", result)
           result
@@ -49,7 +48,7 @@ module Junction
       def build_permission_set
         return Set.new if user.nil?
 
-        trace "junction.permissions.build", "user.id" => user.id.to_s do |span|
+        trace "junction.permissions.build" do |span|
           result = user_roles.each_with_object(Set.new) do |role, set|
             set.merge(role_permissions(role))
           end
