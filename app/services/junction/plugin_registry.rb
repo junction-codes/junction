@@ -3,9 +3,12 @@
 require "set"
 require "singleton"
 
+require_relative "../../helpers/junction/instrumentation_helper"
+
 module Junction
   # Registry for managing plugin hooks into the application.
   class PluginRegistry
+    include InstrumentationHelper
     include Singleton
 
     class PluginNotFoundError < ArgumentError; end
@@ -31,9 +34,11 @@ module Junction
     #
     # @param plugin [Class<ApplicationPlugin>] The plugin to register.
     def register_plugin(plugin)
-      @mutex.synchronize do
-        @plugins[plugin.plugin_name] = plugin
-        @cache = {}
+      trace "junction.plugin.register", "junction.plugin.name" => plugin.plugin_name do
+        @mutex.synchronize do
+          @plugins[plugin.plugin_name] = plugin
+          @cache = {}
+        end
       end
     end
 
@@ -50,18 +55,21 @@ module Junction
     # @return [Hash<Class, Array>] A hash mapping context classes to arrays of
     #   action definitions.
     def actions
-      memoize(:actions) do
-        result = Hash.new { |h, k| h[k] = [] }
-        @plugins.each_value do |plugin|
-          plugin.actions.each do |context, definitions|
-            result[context.constantize] += definitions
-          rescue NameError
-            Rails.logger.error "Plugin \"#{plugin.plugin_name}\" registered actions for unknown context: #{context}"
-            next
+      trace "junction.registry.actions" do
+        memoize(:actions) do
+          result = Hash.new { |h, k| h[k] = [] }
+          @plugins.each_value do |plugin|
+            plugin.actions.each do |context, definitions|
+              result[context.constantize] += definitions
+            rescue NameError
+              Rails.logger.error \
+                "Plugin \"#{plugin.plugin_name}\" registered actions for unknown context: #{context}"
+              next
+            end
           end
-        end
 
-        result
+          result
+        end
       end
     end
 
@@ -72,9 +80,11 @@ module Junction
     # @return [Hash<String, Hash>] A hash of annotation definitions.
     def annotations_for(context)
       ctx = context_string(context)
-      memoize([ :annotations_for, ctx ]) do
-        @plugins.each_value.with_object({}) do |plugin, annotations|
-          annotations.merge!(plugin.annotations_for(ctx))
+      trace "junction.registry.annotations_for", "junction.plugin.context" => ctx do
+        memoize([ :annotations_for, ctx ]) do
+          @plugins.each_value.with_object({}) do |plugin, annotations|
+            annotations.merge!(plugin.annotations_for(ctx))
+          end
         end
       end
     end
@@ -84,9 +94,11 @@ module Junction
     # @return [Hash<Symbol, Hash>] A hash mapping provider names to their
     #   configuration.
     def auth_providers
-      memoize(:auth_providers) do
-        @plugins.each_value.with_object({}) do |plugin, providers|
-          providers.merge!(plugin.auth_providers)
+      trace "junction.registry.auth_providers" do
+        memoize(:auth_providers) do
+          @plugins.each_value.with_object({}) do |plugin, providers|
+            providers.merge!(plugin.auth_providers)
+          end
         end
       end
     end
@@ -99,8 +111,12 @@ module Junction
     # @return [Array<Hash>] An array of component definitions.
     def components_for(context:, slot:)
       ctx = context_string(context)
-      memoize([ :components_for, ctx, slot ]) do
-        @plugins.flat_map { |_, plugin| plugin.components_for(ctx, slot) }
+      trace "junction.registry.components_for",
+            "junction.plugin.context" => ctx,
+            "junction.plugin.slot" => slot.to_s do
+        memoize([ :components_for, ctx, slot ]) do
+          @plugins.flat_map { |_, plugin| plugin.components_for(ctx, slot) }
+        end
       end
     end
 
@@ -120,9 +136,11 @@ module Junction
     #
     # @return [Array<Junction::Permission>]
     def permissions
-      memoize(:permissions) do
-        seen = Set.new
-        @plugins.values.flat_map(&:permissions).select { |p| seen.add?(p.to_s) }
+      trace "junction.registry.permissions" do
+        memoize(:permissions) do
+          seen = Set.new
+          @plugins.values.flat_map(&:permissions).select { |p| seen.add?(p.to_s) }
+        end
       end
     end
 
@@ -132,15 +150,21 @@ module Junction
     # @param constant [String] The constant name to resolve.
     # @return [Class, Module]
     def resolve(plugin_name, constant)
-      plugin(plugin_name).resolve(constant)
+      trace "junction.plugin.resolve",
+            "junction.plugin.name" => plugin_name.to_s,
+            "junction.plugin.constant" => constant.to_s do
+        plugin(plugin_name).resolve(constant)
+      end
     end
 
     # Retrieves all registered sidebar links.
     #
     # @return [Array<Hash>] An array of sidebar link definitions.
     def sidebar_links
-      memoize(:sidebar_links) do
-        @plugins.values.flat_map(&:sidebar_links)
+      trace "junction.registry.sidebar_links" do
+        memoize(:sidebar_links) do
+          @plugins.values.flat_map(&:sidebar_links)
+        end
       end
     end
 
@@ -150,8 +174,10 @@ module Junction
     # @return [Array<Hash>] An array of tab definitions.
     def tabs_for(context)
       ctx = context_string(context)
-      memoize([ :tabs_for, ctx ]) do
-        @plugins.values.flat_map { |plugin| plugin.tabs_for(ctx) }
+      trace "junction.registry.tabs_for", "junction.plugin.context" => ctx do
+        memoize([ :tabs_for, ctx ]) do
+          @plugins.values.flat_map { |plugin| plugin.tabs_for(ctx) }
+        end
       end
     end
 
@@ -163,8 +189,12 @@ module Junction
     # @return [Object] The memoized result.
     def memoize(key)
       @mutex.synchronize do
-        return @cache[key] if @cache.key?(key)
+        if @cache.key?(key)
+          span_attribute("junction.registry.cache_hit", true)
+          return @cache[key]
+        end
 
+        span_attribute("junction.registry.cache_hit", false)
         @cache[key] = yield
       end
     end

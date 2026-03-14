@@ -5,6 +5,8 @@ module Junction
     # Resolves a user's effective permissions from group memberships and
     # group-linked roles, including ancestor inheritance.
     class UserPermissions
+      include InstrumentationHelper
+
       ADMIN_ROLE_NAME = "Admin"
       READ_ALL_ROLE_NAME = "Read all"
 
@@ -28,7 +30,11 @@ module Junction
       def has_permission?(permission)
         return false if user.nil?
 
-        permission_set.include?(permission.to_s)
+        trace "junction.permissions.check", "junction.permission" => permission.to_s do |span|
+          result = permission_set.include?(permission.to_s)
+          span.set_attribute("junction.permission.granted", result)
+          result
+        end
       end
 
       private
@@ -42,11 +48,14 @@ module Junction
       def build_permission_set
         return Set.new if user.nil?
 
-        set = Set.new
-        user_roles.each do |role|
-          set.merge(role_permissions(role))
+        trace "junction.permissions.build" do |span|
+          result = user_roles.each_with_object(Set.new) do |role, set|
+            set.merge(role_permissions(role))
+          end
+
+          span.set_attribute("junction.permission.count", result.size)
+          result
         end
-        set
       end
 
       # Collect the user's roles, including ancestor roles.
