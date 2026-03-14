@@ -18,8 +18,12 @@ module Junction
       end
 
       def view_template
-        time(**attrs) do
-          "#{time_ago_in_words(@time)} ago"
+        Tooltip do |t|
+          t.trigger do
+            time(**attrs) { plain "#{time_ago_in_words(@time)} ago" }
+          end
+
+          t.content { plain @time.to_formatted_s(@format) }
         end
       end
 
@@ -27,8 +31,7 @@ module Junction
 
       def default_attrs
         {
-          datetime: @time.to_formatted_s(@format),
-          title: @time.to_formatted_s(@format)
+          datetime: @time.to_formatted_s(@format)
         }
       end
     end
