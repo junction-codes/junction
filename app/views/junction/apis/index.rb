@@ -7,13 +7,14 @@ module Junction
       class Index < Views::Base
         attr_reader :apis, :available_lifecycles, :available_owners,
                     :available_systems, :available_types, :breadcrumbs,
-                    :can_create, :query
+                    :can_create, :pagy, :query, :query_params
 
         # Initializes the view.
         #
         # @param apis [ActiveRecord::Relation] Collection of APIs to display.
         # @param query [Ransack::Search] Ransack query object for filtering and
         #   sorting.
+        # @param pagy [Pagy] Pagy pagination metadata.
         # @param available_lifecycles [Array<Array>] Lifecycle options as
         #   [label, value] pairs for filtering.
         # @param available_owners [Array<Array>] Owner entity options with name
@@ -24,11 +25,14 @@ module Junction
         #   pairs for filtering.
         # @param can_create [Boolean] Whether the user can create APIs.
         # @param breadcrumbs [Array<Hash>] Breadcrumb items from the controller.
-        def initialize(apis:, query:, available_lifecycles:, available_owners:,
-                       available_systems:, available_types:, can_create: true,
-                       breadcrumbs: [])
+        # @param query_params [Hash] Query parameters from the controller.
+        def initialize(apis:, query:, pagy:, available_lifecycles:,
+                       available_owners:, available_systems:, available_types:,
+                       can_create: true, breadcrumbs: [], query_params: {})
           @apis = apis
           @query = query
+          @query_params = query_params
+          @pagy = pagy
           @available_lifecycles = available_lifecycles
           @available_owners = available_owners
           @available_systems = available_systems
@@ -56,6 +60,12 @@ module Junction
                   table_body(table)
                 end
               end
+
+              PaginationNav(
+                pagy: @pagy,
+                page_url: ->(page) { apis_path(q: @query_params, page:, per_page: @pagy.options[:limit]) },
+                per_page_url: ->(per_page) { apis_path(q: @query_params, per_page:) }
+              )
             end
           end
         end
@@ -65,7 +75,12 @@ module Junction
         def table_header(table)
           table.header do |header|
             header.row do |row|
-              sort_url = ->(field, direction) { apis_path(q: { s: "#{field} #{direction}" }) }
+              sort_url = ->(field, direction) {
+                apis_path(
+                  q: @query_params.merge(s: "#{field} #{direction}"),
+                  per_page: @pagy.options[:limit]
+                )
+              }
 
               row.sortable_head(query:, field: "name", sort_url:) { "API" }
               row.sortable_head(query:, field: "system_id", sort_url:) { "System" }

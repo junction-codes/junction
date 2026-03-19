@@ -5,7 +5,8 @@ module Junction
     module Groups
       # Index view for groups.
       class Index < Views::Base
-        attr_reader :available_types, :breadcrumbs, :can_create, :groups, :query
+        attr_reader :available_types, :breadcrumbs, :can_create, :groups,
+                    :pagy, :query, :query_params
 
         # Initializes the view.
         #
@@ -13,14 +14,18 @@ module Junction
         #   display.
         # @param query [Ransack::Search] Ransack query object for filtering
         #   and sorting.
+        # @param pagy [Pagy] Pagy pagination metadata.
         # @param available_types [Array<Array>] Type options as [label, value]
         #   pairs for filtering.
         # @param can_create [Boolean] Whether the user can create groups.
         # @param breadcrumbs [Array<Hash>] Breadcrumb items from the controller.
-        def initialize(groups:, query:, available_types:, can_create: true,
-                       breadcrumbs: [])
+        # @param query_params [Hash] Query parameters from the controller.
+        def initialize(groups:, query:, pagy:, available_types:,
+                       can_create: true, breadcrumbs: [], query_params: {})
           @groups = groups
           @query = query
+          @query_params = query_params
+          @pagy = pagy
           @can_create = can_create
           @available_types = available_types
           @breadcrumbs = breadcrumbs
@@ -44,6 +49,12 @@ module Junction
                   table_body(table)
                 end
               end
+
+              PaginationNav(
+                pagy: @pagy,
+                page_url: ->(page) { groups_path(q: @query_params, page:, per_page: @pagy.options[:limit]) },
+                per_page_url: ->(per_page) { groups_path(q: @query_params, per_page:) }
+              )
             end
           end
         end
@@ -53,7 +64,12 @@ module Junction
         def table_header(table)
           table.header do |header|
             header.row do |row|
-              sort_url = ->(field, direction) { groups_path(q: { s: "#{field} #{direction}" }) }
+              sort_url = ->(field, direction) {
+                groups_path(
+                  q: @query_params.merge(s: "#{field} #{direction}"),
+                  per_page: @pagy.options[:limit]
+                )
+              }
 
               row.sortable_head(query:, field: "name", sort_url:) { "Group" }
               row.sortable_head(query:, field: "type", sort_url:) { "Type" }

@@ -12,16 +12,20 @@ module Junction
     include HasDependencyGraph
     include HasDependents
     include HasOwner
+    include Paginatable
 
     # GET /api
     def index
       authorize! Api
       @q = index_scope_for(Api).ransack(params[:q])
       @q.sorts = "name asc" if @q.sorts.empty?
+      @pagy, apis = paginate(@q.result)
 
       render Views::Apis::Index.new(
-        apis: @q.result,
+        apis:,
+        pagy: @pagy,
         query: @q,
+        query_params: params[:q]&.to_unsafe_h || {},
         breadcrumbs:,
         can_create: allowed_to?(:create?, Api),
         available_lifecycles:,

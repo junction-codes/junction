@@ -8,16 +8,20 @@ module Junction
 
     include Breadcrumbs
     include HasOwner
+    include Paginatable
 
     # GET /systems
     def index
       authorize! System
       @q = index_scope_for(System).ransack(params[:q])
       @q.sorts = "name asc" if @q.sorts.empty?
+      @pagy, systems = paginate(@q.result)
 
       render Views::Systems::Index.new(
-        systems: @q.result,
+        systems:,
+        pagy: @pagy,
         query: @q,
+        query_params: params[:q]&.to_unsafe_h || {},
         breadcrumbs:,
         can_create: allowed_to?(:create?, System),
         available_statuses:,

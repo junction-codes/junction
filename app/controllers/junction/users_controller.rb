@@ -7,16 +7,20 @@ module Junction
     before_action :set_entity, only: %i[ show edit update destroy ]
 
     include Breadcrumbs
+    include Paginatable
 
     # GET /users
     def index
       authorize! User
       @q = User.ransack(params[:q])
       @q.sorts = "name asc" if @q.sorts.empty?
+      @pagy, users = paginate(@q.result)
 
       render Views::Users::Index.new(
-        users: @q.result,
+        users:,
+        pagy: @pagy,
         query: @q,
+        query_params: params[:q]&.to_unsafe_h || {},
         breadcrumbs:,
         can_create: allowed_to?(:create?, User)
       )

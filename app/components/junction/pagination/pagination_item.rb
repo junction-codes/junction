@@ -7,23 +7,26 @@ module Junction
       def initialize(href: "#", active: false, **attrs)
         @href = href
         @active = active
+
         super(**attrs)
       end
 
       def view_template(&block)
-        li do
-          a(href: @href, **attrs, &block)
-        end
+        li { Link(**attrs, &block) }
       end
 
       private
 
       def default_attrs
         {
-          aria: { current: @active ? "page" : nil },
-          class: [
-            RubyUI::Button.new(variant: @active ? :outline : :ghost).attrs[:class]
-          ]
+          aria: {
+            current: @active ? "page" : nil,
+            disabled: @active ? "true" : nil
+          },
+          class: [],
+          data: { turbo_action: "advance" },
+          href: @active ? "#" : @href,
+          variant: @active ? :disabled : :ghost
         }
       end
     end

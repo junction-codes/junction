@@ -5,18 +5,24 @@ module Junction
     module Users
       # Index view for users.
       class Index < Views::Base
-        attr_reader :breadcrumbs, :can_create, :query, :users
+        attr_reader :breadcrumbs, :can_create, :pagy, :query, :query_params,
+                    :users
 
         # Initializes the view.
         #
         # @param users [ActiveRecord::Relation] Collection of users to display.
         # @param query [Ransack::Search] Ransack query object for filtering and
         #   sorting.
+        # @param pagy [Pagy] Pagy pagination metadata.
         # @param can_create [Boolean] Whether the user can create users.
         # @param breadcrumbs [Array<Hash>] Breadcrumb items from the controller.
-        def initialize(users:, query:, can_create: true, breadcrumbs: [])
+        # @param query_params [Hash] Query parameters from the controller.
+        def initialize(users:, query:, pagy:, can_create: true, breadcrumbs: [],
+                       query_params: {})
           @users = users
           @query = query
+          @query_params = query_params
+          @pagy = pagy
           @can_create = can_create
           @breadcrumbs = breadcrumbs
         end
@@ -39,6 +45,12 @@ module Junction
                   table_body(table)
                 end
               end
+
+              PaginationNav(
+                pagy: @pagy,
+                page_url: ->(page) { users_path(q: @query_params, page:, per_page: @pagy.options[:limit]) },
+                per_page_url: ->(per_page) { users_path(q: @query_params, per_page:) }
+              )
             end
           end
         end
@@ -48,7 +60,12 @@ module Junction
         def table_header(table)
           table.header do |header|
             header.row do |row|
-              sort_url = ->(field, direction) { users_path(q: { s: "#{field} #{direction}" }) }
+              sort_url = ->(field, direction) {
+                users_path(
+                  q: @query_params.merge(s: "#{field} #{direction}"),
+                  per_page: @pagy.options[:limit]
+                )
+              }
 
               row.sortable_head(query:, field: "display_name", sort_url:) { "User" }
               row.sortable_head(query:, field: "email_address", sort_url:) { "Email" }

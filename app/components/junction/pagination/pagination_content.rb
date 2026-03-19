@@ -12,8 +12,24 @@ module Junction
         PaginationEllipsis(*, **, &)
       end
 
+      def first(*, **, &)
+        PaginationFirst(*, **, &)
+      end
+
       def item(*, **, &)
         PaginationItem(*, **, &)
+      end
+
+      def last(*, **, &)
+        PaginationLast(*, **, &)
+      end
+
+      def next(*, **, &)
+        PaginationNext(*, **, &)
+      end
+
+      def previous(*, **, &)
+        PaginationPrevious(*, **, &)
       end
 
       private
