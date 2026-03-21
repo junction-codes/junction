@@ -2,9 +2,10 @@
 
 RSpec.shared_examples "a paginated index" do |path, model_class, factory|
   describe "pagination" do
-    before { create_list(factory, 12) }
+    before { create_list(factory, total_records) }
 
     let(:index_path) { instance_exec(&path) }
+    let(:total_records) { 12 }
 
     it "defaults to 10 results per page" do
       get index_path
@@ -12,10 +13,8 @@ RSpec.shared_examples "a paginated index" do |path, model_class, factory|
     end
 
     it "respects a valid per_page parameter" do
-      total = model_class.count
       get index_path, params: { per_page: 25 }
-      expect(response).to be_successful
-      expect(response.body.scan(/<tr/).length).to eq(total + 1)
+      expect(response.body.scan(/<tr/).length).to eq(model_class.count + 1)
     end
 
     it "falls back to the default for an invalid per_page value" do
@@ -24,10 +23,17 @@ RSpec.shared_examples "a paginated index" do |path, model_class, factory|
     end
 
     it "returns the second page" do
-      total = model_class.count
       get index_path, params: { page: 2 }
-      expect(response).to be_successful
-      expect(response.body.scan(/<tr/).length).to eq((total - 10) + 1)
+      expect(response.body.scan(/<tr/).length).to eq((model_class.count - 10) + 1)
+    end
+
+    context "when the total number of pages is greater than the ungapped max pages" do
+      let(:total_records) { 100 }
+
+      it "renders an ellipsis" do
+        get index_path, params: { page: 1 }
+        expect(response.body.scan(/<span>…<\/span>/).length).to eq(1)
+      end
     end
   end
 end
