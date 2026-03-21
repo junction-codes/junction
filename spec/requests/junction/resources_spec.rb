@@ -59,6 +59,9 @@ RSpec.describe "/resources", type: :request do
       it_behaves_like "an action that requires permission",
         :get, -> { resources_path }, %w[junction.codes/resources.all.read]
 
+      it_behaves_like "a paginated index",
+        -> { resources_url }, Junction::Resource, :resource
+
       it "returns http success" do
         get resources_url
         expect(response).to have_http_status(:success)

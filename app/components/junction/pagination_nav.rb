@@ -124,7 +124,6 @@ module Junction
         if current > right_clamp
           [ *1..HEAD_SIZE, :gap, *(right_clamp + 1)..total ]
         else
-          left  = [ current - WINDOW_HALF, 1 ].max
           right = [ current + WINDOW_HALF, right_clamp ].min
           left  = [ right - 2 * WINDOW_HALF, 1 ].max
           right = [ left  + 2 * WINDOW_HALF, right_clamp ].min

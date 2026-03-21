@@ -20,6 +20,8 @@ module Junction
       # Ignore our gems entrypoint file to avoid Zeitwerk warnings.
       Rails.autoloaders.main.ignore(root.join("lib/junction-codes.rb"))
       Rails.autoloaders.main.ignore(root.join("lib/junction/version.rb"))
+      Rails.autoloaders.main.ignore(root.join("lib/junction/testing.rb"))
+      Rails.autoloaders.main.ignore(root.join("lib/junction/testing"))
     end
 
     # Include app/values so value objects can be autoloaded.
