@@ -12,16 +12,20 @@ module Junction
     include HasDependencyGraph
     include HasDependents
     include HasOwner
+    include Paginatable
 
     # GET /resources
     def index
       authorize! Resource
       @q = index_scope_for(Resource).ransack(params[:q])
       @q.sorts = "name asc" if @q.sorts.empty?
+      @pagy, resources = paginate(@q.result)
 
       render Views::Resources::Index.new(
-        resources: @q.result,
+        resources:,
+        pagy: @pagy,
         query: @q,
+        query_params: params[:q]&.to_unsafe_h || {},
         breadcrumbs:,
         can_create: allowed_to?(:create?, Resource),
         available_owners:,

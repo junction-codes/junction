@@ -12,16 +12,20 @@ module Junction
     include HasDependencyGraph
     include HasDependents
     include HasOwner
+    include Paginatable
 
     # GET /components
     def index
       authorize! Component
       @q = index_scope_for(Component).ransack(params[:q])
       @q.sorts = "name asc" if @q.sorts.empty?
+      @pagy, components = paginate(@q.result)
 
       render Views::Components::Index.new(
-        components: @q.result,
+        components:,
+        pagy: @pagy,
         query: @q,
+        query_params: params[:q]&.to_unsafe_h || {},
         breadcrumbs:,
         can_create: allowed_to?(:create?, Component),
         available_lifecycles:,

@@ -4,7 +4,7 @@ module Junction
   module Components
     # UI component to display a tooltip content.
     class TooltipContent < Base
-      TAILWIND_CLASSES = %w[
+      BASE_CLASSES = %w[
         invisible
         peer-hover:visible
         peer-focus:visible
@@ -55,7 +55,7 @@ module Junction
           data: {
             ruby_ui__tooltip_target: "content"
           },
-          class: TAILWIND_CLASSES
+          class: BASE_CLASSES
         }
       end
     end

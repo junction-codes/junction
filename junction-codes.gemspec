@@ -33,6 +33,7 @@ Gem::Specification.new do |s|
   s.add_dependency "omniauth", "~> 2.1"
   s.add_dependency "opentelemetry-api", "~> 1.4"
   s.add_dependency "omniauth-rails_csrf_protection", "~> 2.0"
+  s.add_dependency "pagy", "~> 43.3"
   s.add_dependency "pg", "~> 1.6"
   s.add_dependency "phlex-rails", "~> 2.3"
   s.add_dependency "propshaft"

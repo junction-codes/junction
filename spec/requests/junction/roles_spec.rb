@@ -59,6 +59,9 @@ RSpec.describe "Junction::RolesController", type: :request do
       it_behaves_like "an action that requires permission",
         :get, -> { roles_path }, %w[junction.codes/roles.all.read]
 
+      it_behaves_like "a paginated index",
+        -> { roles_url }, Junction::Role, :role
+
       it "renders a successful response" do
         get roles_url
 

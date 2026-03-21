@@ -7,16 +7,20 @@ module Junction
     before_action :set_entity, only: %i[ show edit update destroy ]
 
     include Breadcrumbs
+    include Paginatable
 
     # GET /groups
     def index
       authorize! Group
       @q = Group.ransack(params[:q])
       @q.sorts = "name asc" if @q.sorts.empty?
+      @pagy, groups = paginate(@q.result)
 
       render Views::Groups::Index.new(
-        groups: @q.result,
+        groups:,
+        pagy: @pagy,
         query: @q,
+        query_params: params[:q]&.to_unsafe_h || {},
         breadcrumbs:,
         can_create: allowed_to?(:create?, Group),
         available_types:,

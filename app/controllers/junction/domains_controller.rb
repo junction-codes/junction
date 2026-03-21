@@ -8,16 +8,20 @@ module Junction
 
     include Breadcrumbs
     include HasOwner
+    include Paginatable
 
     # GET /domains
     def index
       authorize! Domain
       @q = index_scope_for(Domain).ransack(params[:q])
       @q.sorts = "name asc" if @q.sorts.empty?
+      @pagy, domains = paginate(@q.result)
 
       render Views::Domains::Index.new(
-        domains: @q.result,
+        domains:,
+        pagy: @pagy,
         query: @q,
+        query_params: params[:q]&.to_unsafe_h || {},
         breadcrumbs:,
         can_create: allowed_to?(:create?, Domain),
         available_owners:,

@@ -70,6 +70,14 @@ en:
         warning: Warning
     dialog:
       close: Close
+    pagination:
+      first: First
+      previous: Previous
+      next: Next
+      last: Last
+      more_pages: More pages
+      rows_per_page: "Rows per page:"
+      total_results: "Total results: %{count}"
     role_form:
       basic_info_title: "Basic Information"
       basic_info_description: "This information is used to identify the role."

@@ -59,6 +59,8 @@ RSpec.describe "/apis", type: :request do
       it_behaves_like "an action that requires permission",
         :get, -> { apis_path }, %w[junction.codes/apis.all.read]
 
+      it_behaves_like "a paginated index", -> { apis_url }, Junction::Api, :api
+
       it "returns http success" do
         get "/apis"
         expect(response).to have_http_status(:success)

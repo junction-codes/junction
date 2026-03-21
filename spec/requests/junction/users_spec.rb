@@ -62,6 +62,9 @@ RSpec.describe "/users", type: :request do
       it_behaves_like "an action that requires permission",
         :get, -> { users_path }, %w[junction.codes/users.all.read]
 
+      it_behaves_like "a paginated index",
+        -> { users_url }, Junction::User, :user
+
       it "renders a successful response" do
         get users_url
         expect(response).to be_successful

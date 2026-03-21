@@ -5,18 +5,24 @@ module Junction
     module Roles
       # Index view for Roles.
       class Index < Views::Base
-        attr_reader :query, :breadcrumbs, :can_create, :roles
+        attr_reader :breadcrumbs, :can_create, :pagy, :query, :query_params,
+                    :roles
 
         # Initialize a new view.
         #
         # @param roles [ActiveRecord::Relation] Collection of roles to display.
         # @param query [Ransack::Search] Ransack query object for filtering and
         #   sorting.
+        # @param pagy [Pagy] Pagy pagination metadata.
         # @param can_create [Boolean] Whether the user can create roles.
         # @param breadcrumbs [Array<Hash>] Breadcrumb items from the controller.
-        def initialize(roles:, query:, can_create: true, breadcrumbs: [])
+        # @param query_params [Hash] Query parameters from the controller.
+        def initialize(roles:, query:, pagy:, can_create: true, breadcrumbs: [],
+                       query_params: {})
           @roles = roles
           @query = query
+          @query_params = query_params
+          @pagy = pagy
           @can_create = can_create
           @breadcrumbs = breadcrumbs
         end
@@ -66,6 +72,12 @@ module Junction
                   end
                 end
               end
+
+              PaginationNav(
+                pagy: @pagy,
+                page_url: ->(page) { roles_path(q: @query_params, page:, per_page: @pagy.options[:limit]) },
+                per_page_url: ->(per_page) { roles_path(q: @query_params, per_page:) }
+              )
             end
           end
         end

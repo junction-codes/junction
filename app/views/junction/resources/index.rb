@@ -6,7 +6,8 @@ module Junction
       # Index view for resources.
       class Index < Views::Base
         attr_reader :available_owners, :available_systems, :available_types,
-                    :breadcrumbs, :can_create, :query, :resources
+                    :breadcrumbs, :can_create, :pagy, :query, :query_params,
+                    :resources
 
         # Initializes the view.
         #
@@ -14,6 +15,7 @@ module Junction
         #   display.
         # @param query [Ransack::Search] Ransack query object for filtering and
         #   sorting.
+        # @param pagy [Pagy] Pagy pagination metadata.
         # @param available_owners [Array<Array>] Owner entity options with name
         #   and id attributes.
         # @param available_systems [Array<Array>] System entity options with
@@ -22,10 +24,14 @@ module Junction
         #   pairs for filtering.
         # @param can_create [Boolean] Whether the user can create resources.
         # @param breadcrumbs [Array<Hash>] Breadcrumb items from the controller.
-        def initialize(resources:, query:, available_owners:, available_systems:,
-                       available_types:, can_create: true, breadcrumbs: [])
+        # @param query_params [Hash] Query parameters from the controller.
+        def initialize(resources:, query:, pagy:, available_owners:,
+                       available_systems:, available_types:, can_create: true,
+                       breadcrumbs: [], query_params: {})
           @resources = resources
           @query = query
+          @query_params = query_params
+          @pagy = pagy
           @can_create = can_create
           @available_owners = available_owners
           @available_systems = available_systems
@@ -52,6 +58,12 @@ module Junction
                   table_body(table)
                 end
               end
+
+              PaginationNav(
+                pagy: @pagy,
+                page_url: ->(page) { resources_path(q: @query_params, page:, per_page: @pagy.options[:limit]) },
+                per_page_url: ->(per_page) { resources_path(q: @query_params, per_page:) }
+              )
             end
           end
         end
@@ -61,7 +73,12 @@ module Junction
         def table_header(table)
           table.header do |header|
             header.row do |row|
-              sort_url = ->(field, direction) { resources_path(q: { s: "#{field} #{direction}" }) }
+              sort_url = ->(field, direction) {
+                resources_path(
+                  q: @query_params.merge(s: "#{field} #{direction}"),
+                  per_page: @pagy.options[:limit]
+                )
+              }
 
               row.sortable_head(query:, field: "name", sort_url:) { "Resource" }
               row.sortable_head(query:, field: "system_id", sort_url:) { "System" }

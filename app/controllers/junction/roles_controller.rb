@@ -8,16 +8,20 @@ module Junction
     before_action :eager_load_dependencies, only: %i[ show ]
 
     include Breadcrumbs
+    include Paginatable
 
     # GET /roles
     def index
       authorize! Role
       @q = Role.ransack(params[:q])
       @q.sorts = "name asc" if @q.sorts.empty?
+      @pagy, roles = paginate(@q.result)
 
       render Views::Roles::Index.new(
-        roles: @q.result,
+        roles:,
+        pagy: @pagy,
         query: @q,
+        query_params: params[:q]&.to_unsafe_h || {},
         breadcrumbs:,
         can_create: allowed_to?(:create?, Role)
       )

@@ -7,7 +7,7 @@ module Junction
       class Index < Views::Base
         attr_reader :available_lifecycles, :available_owners,
                     :available_systems, :available_types, :breadcrumbs,
-                    :can_create, :components, :query
+                    :can_create, :components, :pagy, :query, :query_params
 
         # Initializes the view.
         #
@@ -15,6 +15,7 @@ module Junction
         #   display.
         # @param query [Ransack::Search] Ransack query object for filtering and
         #   sorting.
+        # @param pagy [Pagy] Pagy pagination metadata.
         # @param available_lifecycles [Array<Array>] Lifecycle options as
         #   [label, value] pairs for filtering.
         # @param available_owners [Array<Array>] Owner entity options with name
@@ -25,11 +26,14 @@ module Junction
         #   pairs for filtering.
         # @param can_create [Boolean] Whether the user can create components.
         # @param breadcrumbs [Array<Hash>] Breadcrumb items from the controller.
-        def initialize(components:, query:, available_lifecycles:,
+        # @param query_params [Hash] Query parameters from the controller.
+        def initialize(components:, query:, pagy:, available_lifecycles:,
                        available_owners:, available_systems:, available_types:,
-                       can_create: true, breadcrumbs: [])
+                       can_create: true, breadcrumbs: [], query_params: {})
           @components = components
           @query = query
+          @query_params = query_params
+          @pagy = pagy
           @can_create = can_create
           @available_lifecycles = available_lifecycles
           @available_owners = available_owners
@@ -58,6 +62,12 @@ module Junction
                   table_body(table)
                 end
               end
+
+              PaginationNav(
+                pagy: @pagy,
+                page_url: ->(page) { components_path(q: @query_params, page:, per_page: @pagy.options[:limit]) },
+                per_page_url: ->(per_page) { components_path(q: @query_params, per_page:) }
+              )
             end
           end
         end
@@ -67,7 +77,12 @@ module Junction
         def table_header(table)
           table.header do |header|
             header.row do |row|
-              sort_url = ->(field, direction) { components_path(q: { s: "#{field} #{direction}" }) }
+              sort_url = ->(field, direction) {
+                components_path(
+                  q: @query_params.merge(s: "#{field} #{direction}"),
+                  per_page: @pagy.options[:limit]
+                )
+              }
 
               row.sortable_head(query:, field: "name", sort_url:) { "Component" }
               row.sortable_head(query:, field: "system_id", sort_url:) { "System" }

@@ -15,6 +15,7 @@ require 'rspec/rails'
 require 'faker'
 
 # Include additional support.
+require "junction/testing"
 require_relative 'support/factorybot'
 require_relative 'support/shared_examples'
 require_relative 'support/shoulda'
