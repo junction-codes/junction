@@ -35,7 +35,6 @@ Junction::Engine.routes.draw do
   end
 
   resources :systems, controller: "systems" do
-    get :dependency_graph, on: :member
     get :apis, on: :member
     get :components, on: :member
     get :resources, on: :member

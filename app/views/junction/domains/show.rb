@@ -82,7 +82,7 @@ module Junction
               end
             end
 
-            tabs.content(value: "systems", class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
+            tabs.content(value: "systems") do
               turbo_frame_tag "domain_systems", src: systems_domain_path(@domain), loading: :lazy do
                 div(class: "p-4") { Skeleton(class: "h-20") }
               end

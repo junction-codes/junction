@@ -90,7 +90,7 @@ module Junction
               render_plugin_tab_triggers(@group, list)
             end
 
-            tabs.content(value: "members", class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
+            tabs.content(value: "members") do
               turbo_frame_tag "group_members", src: members_group_path(@group), loading: :lazy do
                 div(class: "p-4") { Skeleton(class: "h-20") }
               end

@@ -93,19 +93,19 @@ module Junction
                 list.trigger(value: "resources") { "Resources" }
               end
 
-              tabs.content(value: "apis", class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
+              tabs.content(value: "apis") do
                 turbo_frame_tag "system_apis", src: apis_system_path(@system), loading: :lazy do
                   div(class: "p-4") { Skeleton(class: "h-20") }
                 end
               end
 
-              tabs.content(value: "components", class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
+              tabs.content(value: "components") do
                 turbo_frame_tag "system_components", src: components_system_path(@system), loading: :lazy do
                   div(class: "p-4") { Skeleton(class: "h-20") }
                 end
               end
 
-              tabs.content(value: "resources", class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
+              tabs.content(value: "resources") do
                 turbo_frame_tag "system_resources", src: resources_system_path(@system), loading: :lazy do
                   div(class: "p-4") { Skeleton(class: "h-20") }
                 end

@@ -30,7 +30,14 @@ module Junction
     # GET /groups/:id/members
     def members
       authorize! @entity, to: :show?
-      render Views::Groups::Members.new(members: @entity.members.order(:name))
+      @pagy, members = paginate(@entity.members.order(:name))
+
+      render Views::Groups::Members.new(
+        members:,
+        pagy: @pagy,
+        page_url: ->(page) { members_group_path(@entity, page:, per_page: @pagy.options[:limit]) },
+        per_page_url: ->(per_page) { members_group_path(@entity, per_page:) }
+      )
     end
 
     # GET /groups/:id

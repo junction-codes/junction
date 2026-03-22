@@ -123,26 +123,26 @@ module Junction
         def dependencies_section
           div do
             h3(class: "text-xl font-semibold text-gray-800 dark:text-white mb-4") { "Dependencies" }
-              Tabs(default_value: "dependencies") do
-                TabsList do
-                  TabsTrigger(value: "dependencies") { "Dependencies" }
-                  TabsTrigger(value: "dependents") { "Dependents" }
-                  TabsTrigger(value: "graph") { "Graph" }
+              Tabs(default_value: "dependencies") do |tabs|
+                tabs.list do |list|
+                  list.trigger(value: "dependencies") { "Dependencies" }
+                  list.trigger(value: "dependents") { "Dependents" }
+                  list.trigger(value: "graph") { "Graph" }
                 end
 
-                TabsContent(value: "dependencies", class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
+                tabs.content(value: "dependencies") do
                   turbo_frame_tag "dependencies", src: dependencies_api_path(@api), loading: :lazy do
-                    div(class: "p-4") { render Junction::Components::Skeleton(class: "h-20") }
+                    div(class: "p-4") { Skeleton(class: "h-20") }
                   end
                 end
 
-                TabsContent(value: "dependents", class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
+                tabs.content(value: "dependents") do
                   turbo_frame_tag "dependents", src: dependents_api_path(@api), loading: :lazy do
-                    div(class: "p-4") { render Junction::Components::Skeleton(class: "h-20") }
+                    div(class: "p-4") { Skeleton(class: "h-20") }
                   end
                 end
 
-                TabsContent(value: "graph", class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
+                tabs.content(value: "graph") do
                   dependency_graph
                 end
               end

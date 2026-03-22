@@ -99,7 +99,7 @@ module Junction
         end
 
         def component_tabs
-          render Tabs.new do |tabs|
+          Tabs do |tabs|
             tabs.list do |list|
               list.trigger(value: "dependencies") do
                 icon("blocks", class: "pe-2")
@@ -127,19 +127,19 @@ module Junction
                 list.trigger(value: "graph") { "Graph" }
               end
 
-              tabs.content(value: "dependencies", class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
+              tabs.content(value: "dependencies") do
                 turbo_frame_tag "dependencies", src: dependencies_component_path(@component), loading: :lazy do
                   div(class: "p-4") { Skeleton(class: "h-20") }
                 end
               end
 
-              tabs.content(value: "dependents", class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
+              tabs.content(value: "dependents") do
                 turbo_frame_tag "dependents", src: dependents_component_path(@component), loading: :lazy do
                   div(class: "p-4") { Skeleton(class: "h-20") }
                 end
               end
 
-              tabs.content(value: "graph", class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
+              tabs.content(value: "graph") do
                 dependency_graph
               end
             end

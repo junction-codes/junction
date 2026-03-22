@@ -16,7 +16,9 @@ module Junction
 
     # Paginate a collection using Pagy.
     #
-    # @param collection [ActiveRecord::Relation] The unpaginated collection.
+    # @param collection [ActiveRecord::Relation, Array] The unpaginated
+    #   collection. AR relations use offset/limit queries; Arrays are sliced
+    #   directly.
     # @return [Array(Pagy, ActiveRecord::Relation)] Pagy metadata and the
     #   paginated result.
     def paginate(collection)

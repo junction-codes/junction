@@ -32,7 +32,14 @@ module Junction
     # GET /domains/:id/systems
     def systems
       authorize! @entity, to: :show?
-      render Views::Domains::Systems.new(systems: @entity.systems.order(:name))
+      @pagy, systems = paginate(@entity.systems.order(:name))
+
+      render Views::Domains::Systems.new(
+        systems:,
+        pagy: @pagy,
+        page_url: ->(page) { systems_domain_path(@entity, page:, per_page: @pagy.options[:limit]) },
+        per_page_url: ->(per_page) { systems_domain_path(@entity, per_page:) }
+      )
     end
 
     # GET /domains/:id

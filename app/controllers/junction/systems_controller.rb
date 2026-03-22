@@ -102,32 +102,40 @@ module Junction
     # GET /systems/:id/apis
     def apis
       authorize! @entity, to: :show?
-      render Views::Systems::Apis.new(apis: @entity.apis.order(:name))
+      @pagy, apis = paginate(@entity.apis.order(:name))
+
+      render Views::Systems::Apis.new(
+        apis:,
+        pagy: @pagy,
+        page_url: ->(page) { apis_system_path(@entity, page:, per_page: @pagy.options[:limit]) },
+        per_page_url: ->(per_page) { apis_system_path(@entity, per_page:) }
+      )
     end
 
     # GET /systems/:id/components
     def components
       authorize! @entity, to: :show?
+      @pagy, components = paginate(@entity.components.order(:name))
+
       render Views::Systems::Components.new(
-        components: @entity.components.order(:name)
+        components:,
+        pagy: @pagy,
+        page_url: ->(page) { components_system_path(@entity, page:, per_page: @pagy.options[:limit]) },
+        per_page_url: ->(per_page) { components_system_path(@entity, per_page:) }
       )
     end
 
     # GET /systems/:id/resources
     def resources
       authorize! @entity, to: :show?
-      render Views::Systems::Resources.new(
-        resources: @entity.resources.order(:name)
-      )
-    end
+      @pagy, resources = paginate(@entity.resources.order(:name))
 
-    # GET /systems/:id/dependency_graph
-    #
-    # @todo Break this up into smaller methods for better readability.
-    def dependency_graph
-      authorize! @entity
-      graph_data = DependencyGraphService.new(model: @entity).build
-      render json: graph_data
+      render Views::Systems::Resources.new(
+        resources:,
+        pagy: @pagy,
+        page_url: ->(page) { resources_system_path(@entity, page:, per_page: @pagy.options[:limit]) },
+        per_page_url: ->(per_page) { resources_system_path(@entity, per_page:) }
+      )
     end
 
     private

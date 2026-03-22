@@ -7,7 +7,14 @@ module Junction
     # GET /:resource/:id/dependents
     def dependents
       authorize! @entity, to: :show?
-      render Views::Shared::Dependents.new(dependents: dependent_list)
+      @pagy, entities = paginate(dependent_list)
+
+      render Views::Shared::Dependents.new(
+        dependents: entities,
+        pagy: @pagy,
+        page_url: ->(page) { url_for(page:, per_page: @pagy.options[:limit]) },
+        per_page_url: ->(per_page) { url_for(per_page:) }
+      )
     end
 
     private

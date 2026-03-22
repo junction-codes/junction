@@ -11,15 +11,20 @@ module Junction
       # @param current [Integer] The current per-page setting.
       # @param options [Array<Integer>] Available per-page options.
       # @param total [Integer] The total number of results.
+      # @param turbo_action [String] Turbo action to use for pagination links.
+      # @param turbo_frame [String] Turbo frame targets for pagination links.
       # @param user_attrs [Hash] Additional HTML attributes for the component.
       def initialize(per_page_url:,
                      current: Junction::Paginatable::DEFAULT_PER_PAGE,
                      options: Junction::Paginatable::ALLOWED_PER_PAGE,
-                     total: 0, **user_attrs)
+                     total: 0, turbo_action: "advance", turbo_frame: nil,
+                     **user_attrs)
         @per_page_url = per_page_url
         @current = current
         @options = options
         @total = total
+        @turbo_action = turbo_action
+        @turbo_frame = turbo_frame
 
         super(**user_attrs)
       end
@@ -37,7 +42,7 @@ module Junction
                   href: @per_page_url.call(option),
                   variant: :ghost,
                   class: "px-2 py-1 rounded hover:bg-accent hover:text-accent-foreground",
-                  data: { turbo_action: "advance" }
+                  data: { turbo: { action: @turbo_action, frame: @turbo_frame }.compact }
                 ) { option.to_s }
               end
             end
