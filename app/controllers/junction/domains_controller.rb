@@ -4,7 +4,7 @@ module Junction
   # Controller for managing Domain catalog entities.
   class DomainsController < Junction::ApplicationController
     # Make sure the entity is set before any other helper methods are called.
-    before_action :set_entity, only: %i[show edit update destroy]
+    before_action :set_entity, only: %i[show edit update destroy systems]
 
     include Breadcrumbs
     include HasOwner
@@ -27,6 +27,12 @@ module Junction
         available_owners:,
         available_statuses:
       )
+    end
+
+    # GET /domains/:id/systems
+    def systems
+      authorize! @entity, to: :show?
+      render Views::Domains::Systems.new(systems: @entity.systems.order(:name))
     end
 
     # GET /domains/:id

@@ -124,6 +124,10 @@ en:
       dependents:
         name: "Name"
         type: "Type"
+    domains:
+      systems:
+        name: "Name"
+        status: "Status"
     groups:
       members:
         email: "Email"

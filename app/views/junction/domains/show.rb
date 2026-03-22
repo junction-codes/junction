@@ -18,7 +18,7 @@ module Junction
             div(class: "px-6 py-3 space-y-8") do
               domain_header
               domain_stats
-              systems_table
+              domain_tabs
             end
           end
         end
@@ -73,28 +73,18 @@ module Junction
           end
         end
 
-        def systems_table
-          div do
-            h3(class: "text-xl font-semibold text-gray-800 dark:text-white mb-4") { "Systems" }
-            div(class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
-              table(class: "min-w-full divide-y divide-gray-200 dark:divide-gray-700") do
-                thead(class: "bg-gray-50 dark:bg-gray-700") do
-                  tr do
-                    th(scope: "col", class: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider") { "System Name" }
-                    th(scope: "col", class: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider") { "Status" }
-                  end
-                end
+        def domain_tabs
+          Tabs do |tabs|
+            tabs.list do |list|
+              list.trigger(value: "systems") do
+                icon("network", class: "pe-2")
+                plain "Systems"
+              end
+            end
 
-                tbody(class: "bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700") do
-                  @domain.systems.each do |system|
-                    tr(class: "hover:bg-gray-50 dark:hover:bg-gray-700/50") do
-                      td(class: "px-6 py-4 whitespace-nowrap") { render_view_link(system, class: "ps-0") }
-                      td(class: "px-6 py-4 whitespace-nowrap") do
-                        Badge(variant: system.status.to_sym) { system.status.titleize }
-                      end
-                    end
-                  end
-                end
+            tabs.content(value: "systems", class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
+              turbo_frame_tag "domain_systems", src: systems_domain_path(@domain), loading: :lazy do
+                div(class: "p-4") { Skeleton(class: "h-20") }
               end
             end
           end
