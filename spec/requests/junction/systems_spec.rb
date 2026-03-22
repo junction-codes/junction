@@ -79,6 +79,54 @@ RSpec.describe "/systems", type: :request do
       end
     end
 
+    describe "GET /apis" do
+      it_behaves_like "an action that requires permission",
+        :get, -> { apis_system_path(system) }, %w[junction.codes/systems.all.read]
+
+      it_behaves_like "a paginated index",
+        -> { apis_system_path(system) },
+        -> { system.apis.count },
+        :api,
+        -> { { system: } }
+
+      it "renders a successful response" do
+        get apis_system_url(system)
+        expect(response).to be_successful
+      end
+    end
+
+    describe "GET /components" do
+      it_behaves_like "an action that requires permission",
+        :get, -> { components_system_path(system) }, %w[junction.codes/systems.all.read]
+
+      it_behaves_like "a paginated index",
+        -> { components_system_path(system) },
+        -> { system.components.count },
+        :component,
+        -> { { system: } }
+
+      it "renders a successful response" do
+        get components_system_url(system)
+        expect(response).to be_successful
+      end
+    end
+
+    describe "GET /resources" do
+      it_behaves_like "an action that requires permission",
+        :get, -> { resources_system_path(system) }, %w[junction.codes/systems.all.read]
+
+      it_behaves_like "a paginated index",
+        -> { resources_system_path(system) },
+        -> { system.resources.count },
+        :resource,
+        -> { { system: } }
+
+      it "renders a successful response" do
+        get resources_system_url(system)
+        expect(response).to be_successful
+      end
+    end
+
     describe "GET /new" do
       it_behaves_like "an action that requires permission",
         :get, -> { new_system_path }, %w[junction.codes/systems.all.write]

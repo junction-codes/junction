@@ -78,6 +78,38 @@ RSpec.describe "/resources", type: :request do
       end
     end
 
+    describe "GET /resources/:id/dependencies" do
+      it_behaves_like "an action that requires permission",
+        :get, -> { dependencies_resource_path(resource) }, %w[junction.codes/resources.all.read]
+
+      it_behaves_like "a paginated index",
+        -> { dependencies_resource_path(resource) },
+        -> { resource.dependent_apis.count },
+        :dependency,
+        -> { { source: resource } }
+
+      it "renders a successful response" do
+        get dependencies_resource_url(resource)
+        expect(response).to be_successful
+      end
+    end
+
+    describe "GET /resources/:id/dependents" do
+      it_behaves_like "an action that requires permission",
+        :get, -> { dependents_resource_path(resource) }, %w[junction.codes/resources.all.read]
+
+      it_behaves_like "a paginated index",
+        -> { dependents_resource_path(resource) },
+        -> { resource.component_dependents.count },
+        :dependency,
+        -> { { target: resource } }
+
+      it "renders a successful response" do
+        get dependents_resource_url(resource)
+        expect(response).to be_successful
+      end
+    end
+
     describe "GET /resources/new" do
       it_behaves_like "an action that requires permission",
         :get, -> { new_resource_path }, %w[junction.codes/resources.all.write]

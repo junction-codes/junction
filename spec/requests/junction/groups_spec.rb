@@ -74,6 +74,22 @@ RSpec.describe "/groups", type: :request do
       end
     end
 
+    describe "GET /members" do
+      it_behaves_like "an action that requires permission",
+        :get, -> { members_group_path(group) }, %w[junction.codes/groups.all.read]
+
+      it_behaves_like "a paginated index",
+        -> { members_group_path(group) },
+        -> { group.members.count },
+        :group_membership,
+        -> { { group: } }
+
+      it "renders a successful response" do
+        get members_group_url(group)
+        expect(response).to be_successful
+      end
+    end
+
     describe "GET /new" do
       it_behaves_like "an action that requires permission",
         :get, -> { new_group_path }, %w[junction.codes/groups.all.write]

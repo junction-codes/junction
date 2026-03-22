@@ -81,6 +81,38 @@ RSpec.describe "/components", type: :request do
       end
     end
 
+    describe "GET /components/:id/dependencies" do
+      it_behaves_like "an action that requires permission",
+        :get, -> { dependencies_component_path(component) }, %w[junction.codes/components.all.read]
+
+      it_behaves_like "a paginated index",
+        -> { dependencies_component_path(component) },
+        -> { component.dependent_apis.count },
+        :dependency,
+        -> { { source: component } }
+
+      it "renders a successful response" do
+        get dependencies_component_url(component)
+        expect(response).to be_successful
+      end
+    end
+
+    describe "GET /components/:id/dependents" do
+      it_behaves_like "an action that requires permission",
+        :get, -> { dependents_component_path(component) }, %w[junction.codes/components.all.read]
+
+      it_behaves_like "a paginated index",
+        -> { dependents_component_path(component) },
+        -> { component.component_dependents.count },
+        :dependency,
+        -> { { target: component } }
+
+      it "renders a successful response" do
+        get dependents_component_url(component)
+        expect(response).to be_successful
+      end
+    end
+
     describe "GET /components/new" do
       it_behaves_like "an action that requires permission",
         :get, -> { new_component_path }, %w[junction.codes/components.all.write]
