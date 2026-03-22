@@ -4,7 +4,7 @@ module Junction
   # Controller for managing Groups.
   class GroupsController < ApplicationController
     # Make sure the entity is set before any other helper methods are called.
-    before_action :set_entity, only: %i[ show edit update destroy ]
+    before_action :set_entity, only: %i[ show edit update destroy members ]
 
     include Breadcrumbs
     include Paginatable
@@ -25,6 +25,12 @@ module Junction
         can_create: allowed_to?(:create?, Group),
         available_types:,
       )
+    end
+
+    # GET /groups/:id/members
+    def members
+      authorize! @entity, to: :show?
+      render Views::Groups::Members.new(members: @entity.members.order(:name))
     end
 
     # GET /groups/:id

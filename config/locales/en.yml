@@ -124,6 +124,10 @@ en:
       dependents:
         name: "Name"
         type: "Type"
+    groups:
+      members:
+        email: "Email"
+        name: "Name"
     systems:
       entities:
         lifecycle: "Lifecycle"

@@ -6,7 +6,6 @@ Junction::Engine.routes.draw do
   resources :passwords, param: :token, controller: "passwords"
   resources :domains, controller: "domains"
   resources :resources, controller: "resources"
-  resources :groups, controller: "groups"
   resources :roles, controller: "roles"
   resources :users, controller: "users"
 
@@ -20,6 +19,10 @@ Junction::Engine.routes.draw do
     get :dependency_graph, on: :member
     get :dependencies, on: :member
     get :dependents, on: :member
+  end
+
+  resources :groups, controller: "groups" do
+    get :members, on: :member
   end
 
   resources :resources, controller: "resources" do
