@@ -5,22 +5,29 @@ module Junction
     module Groups
       # Lazy-loaded turbo frame content for a group's members table.
       class Members < Views::Base
-        attr_reader :page_url, :per_page_url, :pagy
+        attr_reader :page_url, :pagy, :per_page_url, :query, :sort_url
 
         # Initializes the view.
         #
         # @param members [Array<Junction::User>] The members to display in the
         #   table.
         # @param pagy [Pagy] Pagy pagination metadata.
+        # @param query [Ransack::Search] Ransack query for sorting and
+        #   filtering.
         # @param page_url [#call] Callable that accepts a page number and
         #   returns a URL string preserving current filters, sort, and per_page.
         # @param per_page_url [#call] Callable that accepts a per_page
         #   integer and returns a URL string.
-        def initialize(members:, pagy:, page_url:, per_page_url:)
+        # @param sort_url [#call] Callable that accepts a field and direction
+        #   and returns a URL string.
+        def initialize(members:, pagy:, query:, page_url:, per_page_url:,
+                       sort_url:)
           @members = members
           @pagy = pagy
+          @query = query
           @page_url = page_url
           @per_page_url = per_page_url
+          @sort_url = sort_url
         end
 
         def view_template
@@ -28,8 +35,8 @@ module Junction
             Table(class: "rounded-lg shadow overflow-hidden") do |table|
               table.header do |header|
                 header.row do |row|
-                  row.head { t("views.groups.members.name") }
-                  row.head { t("views.groups.members.email") }
+                  row.sortable_head(query:, field: "name", sort_url:) { t("views.groups.members.name") }
+                  row.sortable_head(query:, field: "email_address", sort_url:) { t("views.groups.members.email") }
                 end
               end
 
@@ -45,8 +52,7 @@ module Junction
               end
             end
 
-            PaginationNav(pagy:, page_url:, per_page_url:, turbo_action: nil,
-                          turbo_frame: "group_members")
+            PaginationNav(pagy:, page_url:, per_page_url:, turbo_action: nil)
           end
         end
       end

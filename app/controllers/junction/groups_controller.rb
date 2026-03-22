@@ -30,13 +30,32 @@ module Junction
     # GET /groups/:id/members
     def members
       authorize! @entity, to: :show?
-      @pagy, members = paginate(@entity.members.order(:name))
+      @q = @entity.members.ransack(params[:q])
+      @q.sorts = "name asc" if @q.sorts.empty?
+      @pagy, members = paginate(@q.result)
 
       render Views::Groups::Members.new(
         members:,
         pagy: @pagy,
-        page_url: ->(page) { members_group_path(@entity, page:, per_page: @pagy.options[:limit]) },
-        per_page_url: ->(per_page) { members_group_path(@entity, per_page:) }
+        query: @q,
+        page_url: ->(page) {
+          members_group_path(
+            @entity,
+            page:,
+            per_page: @pagy.options[:limit],
+            q: params[:q]&.to_unsafe_h
+          )
+        },
+        per_page_url: ->(per_page) {
+          members_group_path(@entity, per_page:, q: params[:q]&.to_unsafe_h)
+        },
+        sort_url: ->(field, direction) {
+          members_group_path(
+            @entity,
+            q: (params[:q]&.to_unsafe_h || {}).merge("s" => "#{field} #{direction}"),
+            per_page: @pagy.options[:limit]
+          )
+        }
       )
     end
 

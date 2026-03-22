@@ -102,39 +102,96 @@ module Junction
     # GET /systems/:id/apis
     def apis
       authorize! @entity, to: :show?
-      @pagy, apis = paginate(@entity.apis.order(:name))
+      @q = @entity.apis.ransack(params[:q])
+      @q.sorts = "name asc" if @q.sorts.empty?
+      @pagy, apis = paginate(@q.result)
 
       render Views::Systems::Apis.new(
         apis:,
         pagy: @pagy,
-        page_url: ->(page) { apis_system_path(@entity, page:, per_page: @pagy.options[:limit]) },
-        per_page_url: ->(per_page) { apis_system_path(@entity, per_page:) }
+        query: @q,
+        page_url: ->(page) {
+          apis_system_path(
+            @entity,
+            page:,
+            per_page: @pagy.options[:limit],
+            q: params[:q]&.to_unsafe_h
+          )
+        },
+        per_page_url: ->(per_page) {
+          apis_system_path(@entity, per_page:, q: params[:q]&.to_unsafe_h)
+        },
+        sort_url: ->(field, direction) {
+          apis_system_path(
+            @entity,
+            q: (params[:q]&.to_unsafe_h || {}).merge("s" => "#{field} #{direction}"),
+            per_page: @pagy.options[:limit]
+          )
+        }
       )
     end
 
     # GET /systems/:id/components
     def components
       authorize! @entity, to: :show?
-      @pagy, components = paginate(@entity.components.order(:name))
+      @q = @entity.components.ransack(params[:q])
+      @q.sorts = "name asc" if @q.sorts.empty?
+      @pagy, components = paginate(@q.result)
 
       render Views::Systems::Components.new(
         components:,
         pagy: @pagy,
-        page_url: ->(page) { components_system_path(@entity, page:, per_page: @pagy.options[:limit]) },
-        per_page_url: ->(per_page) { components_system_path(@entity, per_page:) }
+        query: @q,
+        page_url: ->(page) {
+          components_system_path(
+            @entity,
+            page:,
+            per_page: @pagy.options[:limit],
+            q: params[:q]&.to_unsafe_h
+          )
+        },
+        per_page_url: ->(per_page) {
+          components_system_path(@entity, per_page:, q: params[:q]&.to_unsafe_h)
+        },
+        sort_url: ->(field, direction) {
+          components_system_path(
+            @entity,
+            q: (params[:q]&.to_unsafe_h || {}).merge("s" => "#{field} #{direction}"),
+            per_page: @pagy.options[:limit]
+          )
+        }
       )
     end
 
     # GET /systems/:id/resources
     def resources
       authorize! @entity, to: :show?
-      @pagy, resources = paginate(@entity.resources.order(:name))
+      @q = @entity.resources.ransack(params[:q])
+      @q.sorts = "name asc" if @q.sorts.empty?
+      @pagy, resources = paginate(@q.result)
 
       render Views::Systems::Resources.new(
         resources:,
         pagy: @pagy,
-        page_url: ->(page) { resources_system_path(@entity, page:, per_page: @pagy.options[:limit]) },
-        per_page_url: ->(per_page) { resources_system_path(@entity, per_page:) }
+        query: @q,
+        page_url: ->(page) {
+          resources_system_path(
+            @entity,
+            page:,
+            per_page: @pagy.options[:limit],
+            q: params[:q]&.to_unsafe_h
+          )
+        },
+        per_page_url: ->(per_page) {
+          resources_system_path(@entity, per_page:, q: params[:q]&.to_unsafe_h)
+        },
+        sort_url: ->(field, direction) {
+          resources_system_path(
+            @entity,
+            q: (params[:q]&.to_unsafe_h || {}).merge("s" => "#{field} #{direction}"),
+            per_page: @pagy.options[:limit]
+          )
+        }
       )
     end
 

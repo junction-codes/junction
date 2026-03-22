@@ -32,13 +32,31 @@ module Junction
     # GET /domains/:id/systems
     def systems
       authorize! @entity, to: :show?
-      @pagy, systems = paginate(@entity.systems.order(:name))
+      @q = @entity.systems.ransack(params[:q])
+      @q.sorts = "name asc" if @q.sorts.empty?
+      @pagy, systems = paginate(@q.result)
 
       render Views::Domains::Systems.new(
         systems:,
         pagy: @pagy,
-        page_url: ->(page) { systems_domain_path(@entity, page:, per_page: @pagy.options[:limit]) },
-        per_page_url: ->(per_page) { systems_domain_path(@entity, per_page:) }
+        query: @q,
+        page_url: ->(page) {
+          systems_domain_path(
+            @entity,
+            page:,
+            per_page: @pagy.options[:limit], q: params[:q]&.to_unsafe_h
+          )
+        },
+        per_page_url: ->(per_page) {
+          systems_domain_path(@entity, per_page:, q: params[:q]&.to_unsafe_h)
+        },
+        sort_url: ->(field, direction) {
+          systems_domain_path(
+            @entity,
+            q: (params[:q]&.to_unsafe_h || {}).merge("s" => "#{field} #{direction}"),
+            per_page: @pagy.options[:limit]
+          )
+        }
       )
     end
 
