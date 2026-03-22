@@ -124,6 +124,11 @@ en:
       dependents:
         name: "Name"
         type: "Type"
+    systems:
+      entities:
+        lifecycle: "Lifecycle"
+        name: "Name"
+        type: "Type"
     roles:
       index:
         description: "Description"

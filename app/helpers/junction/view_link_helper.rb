@@ -16,7 +16,12 @@ module Junction
       return if entity.blank?
 
       if allowed_to?(:show?, entity)
-        Components::Link(href: url_for(entity), variant: :link, **user_attrs) { entity.name }
+        Components::Link(
+          href: url_for(entity),
+          variant: :link,
+          data: { turbo_frame: "_top" },
+          **user_attrs
+        ) { entity.name }
       else
         Components::Link(
           href: nil,

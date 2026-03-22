@@ -15,7 +15,7 @@ module Junction
 
         def view_template
           turbo_frame_tag "dependents" do
-            render Table.new do |table|
+            Table do |table|
               table.header do |header|
                 header.row do |row|
                   row.head { t("views.shared.dependents.name") }

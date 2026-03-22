@@ -4,7 +4,8 @@ module Junction
   # Controller for managing System catalog entities.
   class SystemsController < ApplicationController
     # Make sure the entity is set before any other helper methods are called.
-    before_action :set_entity, only: %i[ show edit update destroy dependency_graph ]
+    before_action :set_entity, only: %i[ show edit update destroy apis
+                                         components resources ]
 
     include Breadcrumbs
     include HasOwner
@@ -96,6 +97,28 @@ module Junction
       @entity.destroy!
 
       redirect_to systems_path, status: :see_other, success: "System was successfully destroyed."
+    end
+
+    # GET /systems/:id/apis
+    def apis
+      authorize! @entity, to: :show?
+      render Views::Systems::Apis.new(apis: @entity.apis.order(:name))
+    end
+
+    # GET /systems/:id/components
+    def components
+      authorize! @entity, to: :show?
+      render Views::Systems::Components.new(
+        components: @entity.components.order(:name)
+      )
+    end
+
+    # GET /systems/:id/resources
+    def resources
+      authorize! @entity, to: :show?
+      render Views::Systems::Resources.new(
+        resources: @entity.resources.order(:name)
+      )
     end
 
     # GET /systems/:id/dependency_graph
