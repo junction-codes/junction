@@ -19,22 +19,12 @@ module Junction
             div(class: "px-6 py-3 space-y-8") do
               system_header
               system_stats
-              dependencies_section
+              entities_section
             end
           end
         end
 
         private
-
-        def dependency_graph
-          div do
-            div(class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden p-5") do
-              div(data_controller: "graph", data_graph_url_value: dependency_graph_system_path(@system)) do
-                div(data_graph_target: "container", class: "w-full h-60")
-              end
-            end
-          end
-        end
 
         def system_header
           div(class: "flex justify-between items-start") do
@@ -88,47 +78,36 @@ module Junction
 
         def system_stats
           div(class: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6") do
-            render StatCard.new(title: "Total Components", value: @system.components.count, icon: "server")
-            render StatCard.new(title: "Active Incidents", value: "1", icon: "siren", status: :warning)
+            StatCard(title: "Total Components", value: @system.components.count, icon: "server")
+            StatCard(title: "Active Incidents", value: "1", icon: "siren", status: :warning)
           end
         end
 
-        def dependencies_section
+        def entities_section
           div do
-            h3(class: "text-xl font-semibold text-gray-800 dark:text-white mb-4") { "Dependencies" }
-            Tabs(default_value: "account") do
-              TabsList do
-                TabsTrigger(value: "components") { "Components" }
-                TabsTrigger(value: "graph") { "Graph" }
+            h3(class: "text-xl font-semibold text-gray-800 dark:text-white mb-4") { "Entities" }
+            Tabs(default: "apis") do |tabs|
+              tabs.list do |list|
+                list.trigger(value: "apis") { "APIs" }
+                list.trigger(value: "components") { "Components" }
+                list.trigger(value: "resources") { "Resources" }
               end
 
-              TabsContent(value: "components", class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
-                components_table
+              tabs.content(value: "apis") do
+                turbo_frame_tag "system_apis", src: apis_system_path(@system), loading: :lazy do
+                  div(class: "p-4") { Skeleton(class: "h-20") }
+                end
               end
 
-              TabsContent(value: "graph", class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
-                dependency_graph
+              tabs.content(value: "components") do
+                turbo_frame_tag "system_components", src: components_system_path(@system), loading: :lazy do
+                  div(class: "p-4") { Skeleton(class: "h-20") }
+                end
               end
-            end
-          end
-        end
 
-        def components_table
-          table(class: "min-w-full divide-y divide-gray-200 dark:divide-gray-700") do
-            thead(class: "bg-gray-50 dark:bg-gray-700") do
-              tr do
-                th(scope: "col", class: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider") { "Component Name" }
-                th(scope: "col", class: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider") { "Lifecycle" }
-              end
-            end
-
-            tbody(class: "bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700") do
-              @system.components.each do |component|
-                tr(class: "hover:bg-gray-50 dark:hover:bg-gray-700/50") do
-                  td(class: "px-6 py-4 whitespace-nowrap") { render_view_link(component, class: "ps-0") }
-                  td(class: "px-6 py-4 whitespace-nowrap") do
-                    Badge(variant: component.lifecycle&.to_sym) { component.lifecycle&.titleize }
-                  end
+              tabs.content(value: "resources") do
+                turbo_frame_tag "system_resources", src: resources_system_path(@system), loading: :lazy do
+                  div(class: "p-4") { Skeleton(class: "h-20") }
                 end
               end
             end

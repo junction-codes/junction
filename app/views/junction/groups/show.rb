@@ -91,68 +91,12 @@ module Junction
             end
 
             tabs.content(value: "members") do
-              members_table
+              turbo_frame_tag "group_members", src: members_group_path(@group), loading: :lazy do
+                div(class: "p-4") { Skeleton(class: "h-20") }
+              end
             end
 
             render_plugin_tab_content(@group, tabs)
-          end
-        end
-
-        def components_table
-          div do
-            h3(class: "text-xl font-semibold text-gray-800 dark:text-white mb-4") { "Components" }
-            div(class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
-              table(class: "min-w-full divide-y divide-gray-200 dark:divide-gray-700") do
-                thead(class: "bg-gray-50 dark:bg-gray-700") do
-                  tr do
-                    th(scope: "col", class: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider") { "Component Name" }
-                    th(scope: "col", class: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider") { "Lifecycle" }
-                    th(scope: "col", class: "relative px-6 py-3") { span(class: "sr-only") { "View" } }
-                  end
-                end
-
-                tbody(class: "bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700") do
-                  @group.components.each do |component|
-                    tr(class: "hover:bg-gray-50 dark:hover:bg-gray-700/50") do
-                      td(class: "px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white") { component.name }
-                      td(class: "px-6 py-4 whitespace-nowrap") do
-                        render Badge.new(variant: component.lifecycle&.to_sym) { component.lifecycle&.capitalize }
-                      end
-                      td(class: "px-6 py-4 whitespace-nowrap text-right text-sm font-medium") do
-                        a(href: "#{component_path(component)}", class: "text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300") { "View" }
-                      end
-                    end
-                  end
-                end
-              end
-            end
-          end
-        end
-
-        def members_table
-          div do
-            h3(class: "text-xl font-semibold text-gray-800 dark:text-white mb-4") { "Members" }
-            div(class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
-              table(class: "min-w-full divide-y divide-gray-200 dark:divide-gray-700") do
-                thead(class: "bg-gray-50 dark:bg-gray-700") do
-                  tr do
-                    th(scope: "col", class: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider") { "Name" }
-                    th(scope: "col", class: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider") { "Email" }
-                  end
-                end
-
-                tbody(class: "bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700") do
-                  @group.members.each do |user|
-                    tr(class: "hover:bg-gray-50 dark:hover:bg-gray-700/50") do
-                      td(class: "px-6 py-4 whitespace-nowrap") { render_view_link(user, class: "ps-0") }
-                      td(class: "px-6 py-4 whitespace-nowrap") do
-                        Link(href: "mailto:#{user.email_address}") { user.email_address }
-                      end
-                    end
-                  end
-                end
-              end
-            end
           end
         end
       end

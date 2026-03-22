@@ -12,6 +12,7 @@ module Junction
     validates :status, presence: true, inclusion: { in: %w[active closed] }
 
     belongs_to :domain, class_name: "Junction::Domain"
+    has_many :apis, class_name: "Junction::Api"
     has_many :components, class_name: "Junction::Component"
     has_many :resources, class_name: "Junction::Resource"
 

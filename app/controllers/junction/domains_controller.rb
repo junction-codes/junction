@@ -4,7 +4,7 @@ module Junction
   # Controller for managing Domain catalog entities.
   class DomainsController < Junction::ApplicationController
     # Make sure the entity is set before any other helper methods are called.
-    before_action :set_entity, only: %i[show edit update destroy]
+    before_action :set_entity, only: %i[show edit update destroy systems]
 
     include Breadcrumbs
     include HasOwner
@@ -26,6 +26,37 @@ module Junction
         can_create: allowed_to?(:create?, Domain),
         available_owners:,
         available_statuses:
+      )
+    end
+
+    # GET /domains/:id/systems
+    def systems
+      authorize! @entity, to: :show?
+      @q = @entity.systems.ransack(params[:q])
+      @q.sorts = "name asc" if @q.sorts.empty?
+      @pagy, systems = paginate(@q.result)
+
+      render Views::Domains::Systems.new(
+        systems:,
+        pagy: @pagy,
+        query: @q,
+        page_url: ->(page) {
+          systems_domain_path(
+            @entity,
+            page:,
+            per_page: @pagy.options[:limit], q: params[:q]&.to_unsafe_h
+          )
+        },
+        per_page_url: ->(per_page) {
+          systems_domain_path(@entity, per_page:, q: params[:q]&.to_unsafe_h)
+        },
+        sort_url: ->(field, direction) {
+          systems_domain_path(
+            @entity,
+            q: (params[:q]&.to_unsafe_h || {}).merge("s" => "#{field} #{direction}"),
+            per_page: @pagy.options[:limit]
+          )
+        }
       )
     end
 

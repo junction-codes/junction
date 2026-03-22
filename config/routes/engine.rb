@@ -4,26 +4,40 @@ Junction::Engine.routes.draw do
   resource :session, controller: "sessions"
   resource :dashboard, only: :show, controller: "dashboards"
   resources :passwords, param: :token, controller: "passwords"
-  resources :domains, controller: "domains"
   resources :resources, controller: "resources"
-  resources :groups, controller: "groups"
   resources :roles, controller: "roles"
   resources :users, controller: "users"
 
   resources :apis, controller: "apis" do
     get :dependency_graph, on: :member
+    get :dependencies, on: :member
+    get :dependents, on: :member
   end
 
   resources :components, controller: "components" do
     get :dependency_graph, on: :member
+    get :dependencies, on: :member
+    get :dependents, on: :member
+  end
+
+  resources :domains, controller: "domains" do
+    get :systems, on: :member
+  end
+
+  resources :groups, controller: "groups" do
+    get :members, on: :member
   end
 
   resources :resources, controller: "resources" do
     get :dependency_graph, on: :member
+    get :dependencies, on: :member
+    get :dependents, on: :member
   end
 
   resources :systems, controller: "systems" do
-    get :dependency_graph, on: :member
+    get :apis, on: :member
+    get :components, on: :member
+    get :resources, on: :member
   end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

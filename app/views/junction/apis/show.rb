@@ -9,11 +9,8 @@ module Junction
 
         attr_reader :breadcrumbs
 
-        def initialize(api:, dependencies:, dependents:, can_edit:,
-                       can_destroy:, breadcrumbs: [])
+        def initialize(api:, can_edit:, can_destroy:, breadcrumbs: [])
           @api = api
-          @dependencies = dependencies
-          @dependents = dependents
           @can_edit = can_edit
           @can_destroy = can_destroy
           @breadcrumbs = breadcrumbs
@@ -126,65 +123,29 @@ module Junction
         def dependencies_section
           div do
             h3(class: "text-xl font-semibold text-gray-800 dark:text-white mb-4") { "Dependencies" }
-              Tabs(default_value: "dependencies") do
-                TabsList do
-                  TabsTrigger(value: "dependencies") { "Dependencies" }
-                  TabsTrigger(value: "dependents") { "Dependents" }
-                  TabsTrigger(value: "graph") { "Graph" }
+              Tabs(default: "dependencies") do |tabs|
+                tabs.list do |list|
+                  list.trigger(value: "dependencies") { "Dependencies" }
+                  list.trigger(value: "dependents") { "Dependents" }
+                  list.trigger(value: "graph") { "Graph" }
                 end
 
-                TabsContent(value: "dependencies", class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
-                  dependencies_table
+                tabs.content(value: "dependencies") do
+                  turbo_frame_tag "dependencies", src: dependencies_api_path(@api), loading: :lazy do
+                    div(class: "p-4") { Skeleton(class: "h-20") }
+                  end
                 end
 
-                TabsContent(value: "dependents", class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
-                  dependents_table
+                tabs.content(value: "dependents") do
+                  turbo_frame_tag "dependents", src: dependents_api_path(@api), loading: :lazy do
+                    div(class: "p-4") { Skeleton(class: "h-20") }
+                  end
                 end
 
-                TabsContent(value: "graph", class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
+                tabs.content(value: "graph") do
                   dependency_graph
                 end
               end
-          end
-        end
-
-        def dependencies_table
-          table(class: "min-w-full divide-y divide-gray-200 dark:divide-gray-700") do
-            thead(class: "bg-gray-50 dark:bg-gray-700") do
-              tr do
-                th(scope: "col", class: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider") { "Name" }
-                th(scope: "col", class: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider") { "Type" }
-              end
-            end
-
-            tbody(class: "bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700") do
-              @dependencies.each do |dependency|
-                tr(class: "hover:bg-gray-50 dark:hover:bg-gray-700/50") do
-                  td(class: "px-6 py-4 whitespace-nowrap") { render_view_link(dependency) }
-                  td(class: "px-6 py-4 whitespace-nowrap") { dependency.type }
-                end
-              end
-            end
-          end
-        end
-
-        def dependents_table
-          table(class: "min-w-full divide-y divide-gray-200 dark:divide-gray-700") do
-            thead(class: "bg-gray-50 dark:bg-gray-700") do
-              tr do
-                th(scope: "col", class: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider") { "Name" }
-                th(scope: "col", class: "px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider") { "Type" }
-              end
-            end
-
-            tbody(class: "bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700") do
-              @dependents.each do |dependent|
-                tr(class: "hover:bg-gray-50 dark:hover:bg-gray-700/50") do
-                  td(class: "px-6 py-4 whitespace-nowrap") { render_view_link(dependent) }
-                  td(class: "px-6 py-4 whitespace-nowrap") { dependent.type }
-                end
-              end
-            end
           end
         end
 

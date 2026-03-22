@@ -76,6 +76,22 @@ RSpec.describe "/domains", type: :request do
       end
     end
 
+    describe "GET /systems" do
+      it_behaves_like "an action that requires permission",
+        :get, -> { systems_domain_path(domain) }, %w[junction.codes/domains.all.read]
+
+      it_behaves_like "a paginated index",
+        -> { systems_domain_path(domain) },
+        -> { domain.systems.count },
+        :system,
+        -> { { domain: } }
+
+      it "renders a successful response" do
+        get systems_domain_url(domain)
+        expect(response).to be_successful
+      end
+    end
+
     describe "GET /new" do
       it_behaves_like "an action that requires permission",
         :get, -> { new_domain_path }, %w[junction.codes/domains.all.write]

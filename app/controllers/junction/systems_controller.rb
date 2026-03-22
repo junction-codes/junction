@@ -4,7 +4,8 @@ module Junction
   # Controller for managing System catalog entities.
   class SystemsController < ApplicationController
     # Make sure the entity is set before any other helper methods are called.
-    before_action :set_entity, only: %i[ show edit update destroy dependency_graph ]
+    before_action :set_entity, only: %i[ show edit update destroy apis
+                                         components resources ]
 
     include Breadcrumbs
     include HasOwner
@@ -98,13 +99,100 @@ module Junction
       redirect_to systems_path, status: :see_other, success: "System was successfully destroyed."
     end
 
-    # GET /systems/:id/dependency_graph
-    #
-    # @todo Break this up into smaller methods for better readability.
-    def dependency_graph
-      authorize! @entity
-      graph_data = DependencyGraphService.new(model: @entity).build
-      render json: graph_data
+    # GET /systems/:id/apis
+    def apis
+      authorize! @entity, to: :show?
+      @q = @entity.apis.ransack(params[:q])
+      @q.sorts = "name asc" if @q.sorts.empty?
+      @pagy, apis = paginate(@q.result)
+
+      render Views::Systems::Apis.new(
+        apis:,
+        pagy: @pagy,
+        query: @q,
+        page_url: ->(page) {
+          apis_system_path(
+            @entity,
+            page:,
+            per_page: @pagy.options[:limit],
+            q: params[:q]&.to_unsafe_h
+          )
+        },
+        per_page_url: ->(per_page) {
+          apis_system_path(@entity, per_page:, q: params[:q]&.to_unsafe_h)
+        },
+        sort_url: ->(field, direction) {
+          apis_system_path(
+            @entity,
+            q: (params[:q]&.to_unsafe_h || {}).merge("s" => "#{field} #{direction}"),
+            per_page: @pagy.options[:limit]
+          )
+        }
+      )
+    end
+
+    # GET /systems/:id/components
+    def components
+      authorize! @entity, to: :show?
+      @q = @entity.components.ransack(params[:q])
+      @q.sorts = "name asc" if @q.sorts.empty?
+      @pagy, components = paginate(@q.result)
+
+      render Views::Systems::Components.new(
+        components:,
+        pagy: @pagy,
+        query: @q,
+        page_url: ->(page) {
+          components_system_path(
+            @entity,
+            page:,
+            per_page: @pagy.options[:limit],
+            q: params[:q]&.to_unsafe_h
+          )
+        },
+        per_page_url: ->(per_page) {
+          components_system_path(@entity, per_page:, q: params[:q]&.to_unsafe_h)
+        },
+        sort_url: ->(field, direction) {
+          components_system_path(
+            @entity,
+            q: (params[:q]&.to_unsafe_h || {}).merge("s" => "#{field} #{direction}"),
+            per_page: @pagy.options[:limit]
+          )
+        }
+      )
+    end
+
+    # GET /systems/:id/resources
+    def resources
+      authorize! @entity, to: :show?
+      @q = @entity.resources.ransack(params[:q])
+      @q.sorts = "name asc" if @q.sorts.empty?
+      @pagy, resources = paginate(@q.result)
+
+      render Views::Systems::Resources.new(
+        resources:,
+        pagy: @pagy,
+        query: @q,
+        page_url: ->(page) {
+          resources_system_path(
+            @entity,
+            page:,
+            per_page: @pagy.options[:limit],
+            q: params[:q]&.to_unsafe_h
+          )
+        },
+        per_page_url: ->(per_page) {
+          resources_system_path(@entity, per_page:, q: params[:q]&.to_unsafe_h)
+        },
+        sort_url: ->(field, direction) {
+          resources_system_path(
+            @entity,
+            q: (params[:q]&.to_unsafe_h || {}).merge("s" => "#{field} #{direction}"),
+            per_page: @pagy.options[:limit]
+          )
+        }
+      )
     end
 
     private

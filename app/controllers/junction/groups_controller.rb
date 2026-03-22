@@ -4,7 +4,7 @@ module Junction
   # Controller for managing Groups.
   class GroupsController < ApplicationController
     # Make sure the entity is set before any other helper methods are called.
-    before_action :set_entity, only: %i[ show edit update destroy ]
+    before_action :set_entity, only: %i[ show edit update destroy members ]
 
     include Breadcrumbs
     include Paginatable
@@ -24,6 +24,38 @@ module Junction
         breadcrumbs:,
         can_create: allowed_to?(:create?, Group),
         available_types:,
+      )
+    end
+
+    # GET /groups/:id/members
+    def members
+      authorize! @entity, to: :show?
+      @q = @entity.members.ransack(params[:q])
+      @q.sorts = "name asc" if @q.sorts.empty?
+      @pagy, members = paginate(@q.result)
+
+      render Views::Groups::Members.new(
+        members:,
+        pagy: @pagy,
+        query: @q,
+        page_url: ->(page) {
+          members_group_path(
+            @entity,
+            page:,
+            per_page: @pagy.options[:limit],
+            q: params[:q]&.to_unsafe_h
+          )
+        },
+        per_page_url: ->(per_page) {
+          members_group_path(@entity, per_page:, q: params[:q]&.to_unsafe_h)
+        },
+        sort_url: ->(field, direction) {
+          members_group_path(
+            @entity,
+            q: (params[:q]&.to_unsafe_h || {}).merge("s" => "#{field} #{direction}"),
+            per_page: @pagy.options[:limit]
+          )
+        }
       )
     end
 

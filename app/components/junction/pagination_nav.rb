@@ -36,11 +36,16 @@ module Junction
       # @param per_page_url [#call, nil] Callable that accepts a per_page
       #   integer and returns a URL string. When provided, renders the per-page
       #   selector.
-      def initialize(pagy:, page_url:, per_page_url: nil, **attrs)
-        @pagy         = pagy
-        @page_url     = page_url
+      # @param turbo_action [String] Turbo action to use for pagination links.
+      # @param user_attrs [Hash] Additional HTML attributes for the component.
+      def initialize(pagy:, page_url:, per_page_url: nil,
+                     turbo_action: "advance", **user_attrs)
+        @pagy = pagy
+        @page_url = page_url
         @per_page_url = per_page_url
-        super(**attrs)
+        @turbo_action = turbo_action
+
+        super(**user_attrs)
       end
 
       def view_template
@@ -50,7 +55,8 @@ module Junction
           PerPageSelector(
             per_page_url: @per_page_url,
             current: @pagy.options[:limit],
-            total: @pagy.count
+            total: @pagy.count,
+            turbo_action:,
           ) if @per_page_url
 
           render_page_controls if @pagy.pages > 1
@@ -59,17 +65,19 @@ module Junction
 
       private
 
+      attr_reader :turbo_action
+
       # Renders the pagination controls.
       def render_page_controls
         Pagination do |nav|
           nav.content do |c|
-            c.first(href: @page_url.call(1), active: @pagy.page == 1)
-            c.previous(href: @page_url.call(@pagy.previous), active: !@pagy.previous)
+            c.first(href: @page_url.call(1), active: @pagy.page == 1, turbo_action:)
+            c.previous(href: @page_url.call(@pagy.previous), active: !@pagy.previous, turbo_action:)
 
             render_page_links(c)
 
-            c.next(href: @page_url.call(@pagy.next), active: !@pagy.next)
-            c.last(href: @page_url.call(@pagy.pages), active: @pagy.page == @pagy.pages)
+            c.next(href: @page_url.call(@pagy.next), active: !@pagy.next, turbo_action:)
+            c.last(href: @page_url.call(@pagy.pages), active: @pagy.page == @pagy.pages, turbo_action:)
           end
         end
       end
@@ -86,7 +94,7 @@ module Junction
             content.item(
               href: @page_url.call(entry),
               active: entry == @pagy.page,
-              data: { turbo_action: "advance" }
+              turbo_action:
             ) { entry.to_s }
           end
         end

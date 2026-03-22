@@ -4,8 +4,9 @@ module Junction
   # Controller for managing API catalog entities.
   class ApisController < ApplicationController
     # Make sure the entity is set before any other helper methods are called.
-    before_action :set_entity, only: %i[ edit update destroy ]
-    before_action :eager_load_dependencies, only: %i[ show dependency_graph ]
+    before_action :set_entity, only: %i[ show edit update destroy dependencies
+                                         dependents ]
+    before_action :eager_load_dependencies, only: %i[ dependency_graph ]
 
     include Breadcrumbs
     include HasDependencies
@@ -42,9 +43,7 @@ module Junction
         api: @entity,
         breadcrumbs:,
         can_edit: allowed_to?(:update?, @entity),
-        can_destroy: allowed_to?(:destroy?, @entity),
-        dependencies:,
-        dependents:
+        can_destroy: allowed_to?(:destroy?, @entity)
       )
     end
 
