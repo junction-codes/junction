@@ -12,14 +12,20 @@ Junction::Engine.routes.draw do
 
   resources :apis, controller: "apis" do
     get :dependency_graph, on: :member
+    get :dependencies, on: :member
+    get :dependents, on: :member
   end
 
   resources :components, controller: "components" do
     get :dependency_graph, on: :member
+    get :dependencies, on: :member
+    get :dependents, on: :member
   end
 
   resources :resources, controller: "resources" do
     get :dependency_graph, on: :member
+    get :dependencies, on: :member
+    get :dependents, on: :member
   end
 
   resources :systems, controller: "systems" do

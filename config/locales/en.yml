@@ -117,6 +117,13 @@ en:
       empty: "No catalog updates yet."
       title: "Recent catalog updates"
   views:
+    shared:
+      dependencies:
+        name: "Name"
+        type: "Type"
+      dependents:
+        name: "Name"
+        type: "Type"
     roles:
       index:
         description: "Description"

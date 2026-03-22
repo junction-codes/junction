@@ -4,9 +4,15 @@ module Junction
   module HasDependencies
     extend ActiveSupport::Concern
 
+    # GET /:resource/:id/dependencies
+    def dependencies
+      authorize! @entity, to: :show?
+      render Views::Shared::Dependencies.new(dependencies: dependency_list)
+    end
+
     private
 
-    def dependencies
+    def dependency_list
       (
         @entity.dependent_apis +
         @entity.dependent_components +
