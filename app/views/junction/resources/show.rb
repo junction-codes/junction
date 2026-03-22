@@ -111,7 +111,7 @@ module Junction
         def dependencies_section
           div do
             h3(class: "text-xl font-semibold text-gray-800 dark:text-white mb-4") { "Dependencies" }
-            Tabs(default_value: "dependencies") do |tabs|
+            Tabs(default: "dependencies") do |tabs|
               tabs.list do |list|
                 list.trigger(value: "dependencies") { "Dependencies" }
                 list.trigger(value: "dependents") { "Dependents" }

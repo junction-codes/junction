@@ -68,7 +68,7 @@ module Junction
       sort = sort_query.sorts.first
       entities = queries.map(&:result).flatten
       sorted = entities.sort_by do |entity|
-        [ entity.send(sort.name).to_s.downcase, entity.name.to_s.downcase ]
+        [ entity.public_send(sort.name).to_s.downcase, entity.name.to_s.downcase ]
       end
 
       sort.dir == "desc" ? sorted.reverse : sorted

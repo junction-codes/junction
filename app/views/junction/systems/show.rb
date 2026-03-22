@@ -86,7 +86,7 @@ module Junction
         def entities_section
           div do
             h3(class: "text-xl font-semibold text-gray-800 dark:text-white mb-4") { "Entities" }
-            Tabs(default_value: "apis") do |tabs|
+            Tabs(default: "apis") do |tabs|
               tabs.list do |list|
                 list.trigger(value: "apis") { "APIs" }
                 list.trigger(value: "components") { "Components" }
