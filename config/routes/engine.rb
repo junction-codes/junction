@@ -10,28 +10,30 @@ Junction::Engine.routes.draw do
 
   resources :apis, controller: "apis" do
     get :dependency_graph, on: :member
-    get :dependencies, on: :member
-    get :dependents, on: :member
+    resources :dependencies, only: :index, controller: "dependencies"
+    resources :dependents, only: :index, controller: "dependents"
   end
 
   resources :components, controller: "components" do
     get :dependency_graph, on: :member
-    get :dependencies, on: :member
-    get :dependents, on: :member
+    resources :dependencies, only: :index, controller: "dependencies"
+    resources :dependents, only: :index, controller: "dependents"
   end
 
   resources :domains, controller: "domains" do
     get :systems, on: :member
   end
 
+  resources :dependencies, only: :destroy
+
   resources :groups, controller: "groups" do
-    get :members, on: :member
+    resources :members, only: %i[index destroy], controller: "group_members"
   end
 
   resources :resources, controller: "resources" do
     get :dependency_graph, on: :member
-    get :dependencies, on: :member
-    get :dependents, on: :member
+    resources :dependencies, only: :index, controller: "dependencies"
+    resources :dependents, only: :index, controller: "dependents"
   end
 
   resources :systems, controller: "systems" do

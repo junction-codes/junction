@@ -4,14 +4,11 @@ module Junction
   # Controller for managing Component catalog entities.
   class ComponentsController < ApplicationController
     # Make sure the entity is set before any other helper methods are called.
-    before_action :set_entity, only: %i[ show edit update destroy dependencies
-                                         dependents ]
+    before_action :set_entity, only: %i[ show edit update destroy ]
     before_action :eager_load_dependencies, only: %i[ dependency_graph ]
 
     include Breadcrumbs
-    include HasDependencies
     include HasDependencyGraph
-    include HasDependents
     include HasOwner
     include Paginatable
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe "/apis", type: :request do
@@ -77,37 +79,7 @@ RSpec.describe "/apis", type: :request do
       end
     end
 
-    describe "GET /apis/:id/dependencies" do
-      it_behaves_like "an action that requires permission",
-        :get, -> { dependencies_api_path(api) }, %w[junction.codes/apis.all.read]
 
-      it_behaves_like "a paginated index",
-        -> { dependencies_api_path(api) },
-        -> { api.dependent_apis.count },
-        :dependency,
-        -> { { source: api } }
-
-      it "renders a successful response" do
-        get dependencies_api_url(api)
-        expect(response).to be_successful
-      end
-    end
-
-    describe "GET /apis/:id/dependents" do
-      it_behaves_like "an action that requires permission",
-        :get, -> { dependents_api_path(api) }, %w[junction.codes/apis.all.read]
-
-      it_behaves_like "a paginated index",
-        -> { dependents_api_path(api) },
-        -> { api.component_dependents.count },
-        :dependency,
-        -> { { target: api } }
-
-      it "renders a successful response" do
-        get dependents_api_url(api)
-        expect(response).to be_successful
-      end
-    end
 
     describe "GET /apis/new" do
       it_behaves_like "an action that requires permission",

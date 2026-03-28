@@ -2,14 +2,14 @@
 
 module Junction
   module Views
-    module Shared
-      # Lazy-loaded turbo frame content for a dependency table.
-      class Dependencies < Views::Base
+    module Dependents
+      # Lazy-loaded turbo frame content for a dependents table.
+      class Index < Views::Base
         attr_reader :page_url, :pagy, :per_page_url, :query, :sort_url
 
         # Initializes the view.
         #
-        # @param dependencies [Array<Junction::Dependency>] The dependencies to
+        # @param dependents [Array<Junction::Dependency>] The dependents to
         #   display in the table.
         # @param pagy [Pagy] Pagy pagination metadata.
         # @param query [Ransack::Search] Ransack query for sorting and
@@ -20,9 +20,9 @@ module Junction
         #   integer and returns a URL string.
         # @param sort_url [#call] Callable that accepts a field and direction
         #   and returns a URL string.
-        def initialize(dependencies:, pagy:, query:, page_url:, per_page_url:,
+        def initialize(dependents:, pagy:, query:, page_url:, per_page_url:,
                        sort_url:)
-          @dependencies = dependencies
+          @dependents = dependents
           @pagy = pagy
           @query = query
           @page_url = page_url
@@ -31,20 +31,20 @@ module Junction
         end
 
         def view_template
-          turbo_frame_tag "dependencies" do
+          turbo_frame_tag "dependents" do
             Table(class: "rounded-lg shadow overflow-hidden") do |table|
               table.header do |header|
                 header.row do |row|
-                  row.sortable_head(query:, field: "name", sort_url:) { t("views.shared.dependencies.name") }
-                  row.sortable_head(query:, field: "type", sort_url:) { t("views.shared.dependencies.type") }
+                  row.sortable_head(query:, field: "name", sort_url:) { t(".name") }
+                  row.sortable_head(query:, field: "type", sort_url:) { t(".type") }
                 end
               end
 
               table.body do |body|
-                @dependencies.each do |dependency|
+                @dependents.each do |dependent|
                   body.row do |row|
-                    row.cell { render_view_link(dependency) }
-                    row.cell { dependency.type }
+                    row.cell { render_view_link(dependent) }
+                    row.cell { dependent.type }
                   end
                 end
               end
