@@ -55,7 +55,7 @@ en:
           name: "Name"
           type: "Type"
 
-  # Review everything below for proper namespacing.
+  # TODO: Review everything below for proper namespacing.
   activerecord:
     models:
       api:

@@ -63,6 +63,7 @@ module Junction
                             tooltip.trigger do
                               Button(variant: :ghost, size: :sm) do
                                 icon("trash", class: "w-4 h-4 text-destructive-foreground")
+                                span(class: "sr-only") { t(".remove", name: dependency.name) }
                               end
                             end
 

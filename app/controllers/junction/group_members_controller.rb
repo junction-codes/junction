@@ -43,7 +43,7 @@ module Junction
       )
     end
 
-    # DELETE /groups/:group_id/members/:user_id
+    # DELETE /groups/:group_id/members/:id
     def destroy
       authorize! @entity, to: :update?
       @entity.group_memberships.find_by!(user_id: params.expect(:id)).destroy!

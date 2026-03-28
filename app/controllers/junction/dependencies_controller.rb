@@ -54,12 +54,18 @@ module Junction
 
     # Detects the source entity from nested route params.
     def set_source
-      @source = if (id = params[:api_id])
-        Api.find(id)
-      elsif (id = params[:component_id])
-        Component.find(id)
-      elsif (id = params[:resource_id])
-        Resource.find(id)
+      id_key = %i[api_id component_id resource_id].find { |key| params[key].present? }
+
+      @source = case id_key
+      when :api_id
+        Api.find(params.expect(id_key))
+      when :component_id
+        Component.find(params.expect(id_key))
+      when :resource_id
+        Resource.find(params.expect(id_key))
+      else
+        raise ActiveRecord::RecordNotFound,
+          "Couldn't find source for dependencies."
       end
     end
 
