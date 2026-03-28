@@ -91,7 +91,7 @@ module Junction
             end
 
             tabs.content(value: "members") do
-              turbo_frame_tag "group_members", src: members_group_path(@group), loading: :lazy do
+              turbo_frame_tag "group_members", src: group_members_path(@group), loading: :lazy do
                 div(class: "p-4") { Skeleton(class: "h-20") }
               end
             end

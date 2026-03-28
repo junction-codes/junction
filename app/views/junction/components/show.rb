@@ -128,13 +128,13 @@ module Junction
               end
 
               tabs.content(value: "dependencies") do
-                turbo_frame_tag "dependencies", src: dependencies_component_path(@component), loading: :lazy do
+                turbo_frame_tag "dependencies", src: component_dependencies_path(@component), loading: :lazy do
                   div(class: "p-4") { Skeleton(class: "h-20") }
                 end
               end
 
               tabs.content(value: "dependents") do
-                turbo_frame_tag "dependents", src: dependents_component_path(@component), loading: :lazy do
+                turbo_frame_tag "dependents", src: component_dependents_path(@component), loading: :lazy do
                   div(class: "p-4") { Skeleton(class: "h-20") }
                 end
               end

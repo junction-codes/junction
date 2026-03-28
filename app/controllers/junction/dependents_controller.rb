@@ -1,20 +1,19 @@
 # frozen_string_literal: true
 
 module Junction
-  # Concern for handling dependents for a resource.
-  #
-  # @todo Explore using a view model to merge the dependents for easier
-  #   querying.
-  module HasDependents
-    extend ActiveSupport::Concern
+  # Controller for listing dependent entities.
+  class DependentsController < ApplicationController
+    before_action :set_entity
 
-    # GET /:resource/:id/dependents
-    def dependents
+    include Paginatable
+
+    # GET /[apis|components|resources]/:id/dependents
+    def index
       authorize! @entity, to: :show?
 
       entities, sort_query = dependents_query
 
-      render Views::Shared::Dependents.new(
+      render Views::Dependents::Index.new(
         dependents: entities,
         pagy: @pagy,
         query: sort_query,
@@ -39,12 +38,23 @@ module Junction
 
     private
 
+    # Detects the source entity from nested route params.
+    def set_entity
+      @entity = if (id = params[:api_id])
+        Api.find(id)
+      elsif (id = params[:component_id])
+        Component.find(id)
+      elsif (id = params[:resource_id])
+        Resource.find(id)
+      end
+    end
+
     # Builds and executes a paginated query for dependents.
     #
     # The API query is used for Ransack sorting and filters.
     #
-    # @return [Array(Array<Junction::Dependency>, Ransack::Search)] Entity list
-    #   and query to use for sorting.
+    # @return [Array(Array<Object>, Ransack::Search)] Entity list and query to
+    #   use for sorting.
     def dependents_query
       api_query = @entity.api_dependents.ransack(params[:q])
       component_query = @entity.component_dependents.ransack(params[:q])
@@ -61,9 +71,9 @@ module Junction
 
     # Merges results of the different dependent types and sorts them.
     #
-    # @param sort_query [Ransack::Search] Query to used to determine sorting.
+    # @param sort_query [Ransack::Search] Query used to determine sorting.
     # @param queries [Array<Ransack::Search>] Queries to merge.
-    # @return [Array<Junction::Dependency>] Merged and sorted entity list.
+    # @return [Array<Object>] Merged and sorted entity list.
     def merged_dependent_list(sort_query, queries)
       sort = sort_query.sorts.first
       entities = queries.map(&:result).flatten

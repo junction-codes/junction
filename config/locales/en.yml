@@ -28,6 +28,34 @@
 #       enabled: "ON"
 
 en:
+  junction:
+    views:
+      groups:
+        members:
+          email: "Email"
+          name: "Name"
+          actions: "Actions"
+          cancel: "Cancel"
+          confirm_title: "Remove %{name}?"
+          confirm_body: "This will remove %{name} from the group. The user account will not be deleted."
+          confirm_remove: "Remove Member"
+          remove: "Remove %{name} as a member"
+      dependencies:
+        index:
+          name: "Name"
+          type: "Type"
+          actions: "Actions"
+          cancel: "Cancel"
+          confirm_title: "Remove %{name}?"
+          confirm_body: "This will remove %{name} as a dependency. The entity itself will not be deleted."
+          confirm_delete: "Remove Dependency"
+          remove: "Remove %{name} as a dependency"
+      dependents:
+        index:
+          name: "Name"
+          type: "Type"
+
+  # TODO: Review everything below for proper namespacing.
   activerecord:
     models:
       api:
@@ -117,21 +145,10 @@ en:
       empty: "No catalog updates yet."
       title: "Recent catalog updates"
   views:
-    shared:
-      dependencies:
-        name: "Name"
-        type: "Type"
-      dependents:
-        name: "Name"
-        type: "Type"
     domains:
       systems:
         name: "Name"
         status: "Status"
-    groups:
-      members:
-        email: "Email"
-        name: "Name"
     systems:
       entities:
         lifecycle: "Lifecycle"
