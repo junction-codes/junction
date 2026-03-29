@@ -34,7 +34,8 @@ module Junction
         group: @entity,
         breadcrumbs:,
         can_edit: allowed_to?(:update?, @entity),
-        can_destroy: allowed_to?(:destroy?, @entity)
+        can_destroy: allowed_to?(:destroy?, @entity),
+        can_view_members: allowed_to?(:index_all?, User)
       )
     end
 
