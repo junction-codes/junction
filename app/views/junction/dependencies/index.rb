@@ -93,8 +93,8 @@ module Junction
                           end
 
                           content.footer do
-                            Link(
-                              href: nil,
+                            Button(
+                              variant: :link,
                               data: { action: "click->ruby-ui--dialog#dismiss" }
                             ) { t(".cancel") }
                             Link(
@@ -149,8 +149,8 @@ module Junction
                   )
 
                   div(class: "flex justify-end gap-x-2 mt-4") do
-                    Link(
-                      href: nil,
+                    Button(
+                      variant: :link,
                       data: { action: "click->ruby-ui--dialog#dismiss" }
                     ) { t(".cancel") }
                     Button(
