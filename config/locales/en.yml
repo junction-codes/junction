@@ -40,6 +40,12 @@ en:
           confirm_body: "This will remove %{name} from the group. The user account will not be deleted."
           confirm_remove: "Remove Member"
           remove: "Remove %{name} as a member"
+          add_member: "Add Member"
+          add_member_title: "Add a Member"
+          search_label: "Search users"
+          search_placeholder: "Type to search by name or email..."
+        user_search:
+          no_results: "No matching users found."
       dependencies:
         index:
           name: "Name"
@@ -50,6 +56,12 @@ en:
           confirm_body: "This will remove %{name} as a dependency. The entity itself will not be deleted."
           confirm_delete: "Remove Dependency"
           remove: "Remove %{name} as a dependency"
+          add_dependency: "Add Dependency"
+          add_dependency_title: "Add a Dependency"
+          search_label: "Search"
+          search_placeholder: "Type to search APIs, Components, Resources..."
+        search:
+          no_results: "No matching entities found."
       dependents:
         index:
           name: "Name"
