@@ -5,22 +5,25 @@ module Junction
   class DependenciesController < ApplicationController
     include Paginatable
 
-    before_action :set_source, only: :index
+    before_action :set_source, only: %i[index create search]
     before_action :set_dependency, only: :destroy
 
     # GET /[apis|components|resources]/:id/dependencies
     def index
       authorize! @source, to: :show?
 
-      can_destroy = allowed_to?(:update?, @source)
+      can_edit = allowed_to?(:update?, @source)
       entities, sort_query = dependencies_query
 
       render Views::Dependencies::Index.new(
         dependencies: entities,
         pagy: @pagy,
         query: sort_query,
-        can_destroy:,
-        dependency_map: can_destroy ? dependency_map(entities) : {},
+        can_destroy: can_edit,
+        dependency_map: can_edit ? dependency_map(entities) : {},
+        can_create: can_edit,
+        create_url: can_edit ? url_for(action: :create) : nil,
+        search_url: can_edit ? url_for(action: :search) : nil,
         page_url: ->(page) {
           url_for(
             page:,
@@ -40,6 +43,50 @@ module Junction
       )
     end
 
+    # POST /[apis|components|resources]/:id/dependencies
+    def create
+      authorize! @source, to: :update?
+
+      target_type, target_id = decode_entity(dependency_params[:target])
+      @dependency = @source.dependencies.build(target_type:, target_id:)
+
+      if @dependency.save
+        redirect_back fallback_location: url_for(@source),
+                      status: :see_other,
+                      success: "Dependency was successfully added."
+      else
+        redirect_back fallback_location: url_for(@source),
+                      status: :see_other,
+                      alert: @dependency.errors.full_messages.to_sentence
+      end
+    end
+
+    # GET /[apis|components|resources]/:id/dependencies/search
+    def search
+      authorize! @source, to: :show?
+
+      q = params[:q].to_s.strip
+
+      dependency_pairs = @source.dependencies.pluck(:target_type, :target_id)
+        .group_by(&:first).transform_values { |pairs| pairs.map(&:last) }
+      dependent_pairs = @source.dependents.pluck(:source_type, :source_id)
+        .group_by(&:first).transform_values { |pairs| pairs.map(&:last) }
+
+      results = [ Api, Component, Resource ].flat_map do |klass|
+        excluded = (dependency_pairs[klass.name] || []) +
+                   (dependent_pairs[klass.name] || []) +
+                   (@source.is_a?(klass) ? [ @source.id ] : [])
+
+        viewable_scope(klass)
+          .where("name ILIKE ?", "%#{q}%")
+          .where.not(id: excluded)
+          .order(:name)
+          .limit(10)
+      end.sort_by(&:name)
+
+      render Views::Dependencies::Search.new(results:)
+    end
+
     # DELETE /dependencies/:id
     def destroy
       authorize! @dependency.source, to: :update?
@@ -51,6 +98,39 @@ module Junction
     end
 
     private
+
+    # Builds a scope for the given entity class based on the current user's
+    # permissions.
+    #
+    # @param klass [Class] Entity class.
+    # @return [ActiveRecord::Relation] Scope restricted to entities the user is
+    #   permitted to view.
+    def viewable_scope(klass)
+      return klass.all if allowed_to?(:index_all?, klass)
+      return klass.where(owner_id: current_user.deep_group_ids) if allowed_to?(:index_owned?, klass)
+
+      klass.none
+    end
+
+    # Expected parameters for a dependency.
+    #
+    # @return [Hash] The expected parameters.
+    def dependency_params
+      params.expect(dependency: [ :target ])
+    end
+
+    # Extracts the entity type and id from a string representation.
+    #
+    # @param value [String] The string representation of the entity.
+    # @return [Array<String, Integer>] The entity type and id.
+    def decode_entity(value)
+      return [ nil, nil ] if value.blank?
+
+      i = value.rindex(":")
+      return [ nil, nil ] unless i
+
+      [ value[0, i], value[i + 1..].to_i ]
+    end
 
     # Detects the source entity from nested route params.
     def set_source
