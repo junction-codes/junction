@@ -136,57 +136,16 @@ module Junction
                   url: @create_url,
                   method: :post,
                   data: {
-                    controller: "dependency-search",
-                    dependency_search_search_url_value: @search_url
+                    controller: "autocomplete",
+                    autocomplete_search_url_value: @search_url
                   }
                 ) do |f|
-                  div(class: "space-y-1") do
-                    label(
-                      for: "member-search-input",
-                      class: "block text-sm font-medium leading-6 text-gray-900 dark:text-white mb-1"
-                    ) { t(".search_label") }
-
-                    div(class: "relative") do
-                      input(
-                        id: "member-search-input",
-                        type: "text",
-                        autocomplete: "off",
-                        placeholder: t(".search_placeholder"),
-                        data: {
-                          dependency_search_target: "input",
-                          action: "input->dependency-search#search " \
-                                  "keydown.down->dependency-search#navigate " \
-                                  "keydown.escape->dependency-search#clearResults"
-                        },
-                        class: "block w-full rounded-md border-0 px-3 py-1.5 pr-8 text-gray-900 " \
-                               "shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 " \
-                               "focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 " \
-                               "dark:bg-gray-700 dark:text-white dark:ring-gray-600 dark:focus:ring-blue-500"
-                      )
-
-                      button(
-                        type: "button",
-                        class: "absolute inset-y-0 right-0 hidden items-center pr-2 " \
-                               "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300",
-                        data: {
-                          dependency_search_target: "clearButton",
-                          action: "click->dependency-search#clear"
-                        }
-                      ) do
-                        icon("x", class: "w-4 h-4")
-                      end
-                    end
-
-                    input(
-                      type: "hidden",
-                      name: "member[user_id]",
-                      data: { dependency_search_target: "targetValue" }
-                    )
-
-                    turbo_frame_tag "member-search-results",
-                      class: "block mt-1",
-                      data: { dependency_search_target: "results" }
-                  end
+                  AutocompleteField(
+                    label: t(".search_label"),
+                    placeholder: t(".search_placeholder"),
+                    hidden_field_name: "member[user_id]",
+                    frame_id: "member-search-results"
+                  )
 
                   div(class: "flex justify-end gap-x-2 mt-4") do
                     Link(
@@ -196,7 +155,7 @@ module Junction
                     Button(
                       type: "submit",
                       variant: :primary,
-                      data: { dependency_search_target: "submit" },
+                      data: { autocomplete_target: "submit" },
                       disabled: true
                     ) { t(".add_member") }
                   end
