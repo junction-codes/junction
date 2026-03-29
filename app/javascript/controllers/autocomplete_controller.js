@@ -14,6 +14,7 @@ export default class extends Controller {
   }
 
   disconnect() {
+    clearTimeout(this.#timer)
     this.#removeKeydownListener()
   }
 

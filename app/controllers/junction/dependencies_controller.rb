@@ -22,8 +22,8 @@ module Junction
         can_destroy: can_edit,
         dependency_map: can_edit ? dependency_map(entities) : {},
         can_create: can_edit,
-        create_url: can_edit ? url_for(action: :create) : nil,
-        search_url: can_edit ? url_for(action: :search) : nil,
+        create_url: can_edit ? url_for(source_route_params.merge(action: :create)) : nil,
+        search_url: can_edit ? url_for(source_route_params.merge(action: :search)) : nil,
         page_url: ->(page) {
           url_for(
             page:,
@@ -151,6 +151,13 @@ module Junction
 
     def set_dependency
       @dependency = Dependency.find(params.expect(:id))
+    end
+
+    # Returns only the path segment parameters.
+    #
+    # @return [Hash] The path segment parameters.
+    def source_route_params
+      request.path_parameters.except(:action, :controller)
     end
 
     # Builds and executes a paginated query for dependencies.
