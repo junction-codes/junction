@@ -10,13 +10,19 @@ Junction::Engine.routes.draw do
 
   resources :apis, controller: "apis" do
     get :dependency_graph, on: :member
-    resources :dependencies, only: :index, controller: "dependencies"
+    resources :dependencies, only: %i[index create], controller: "dependencies" do
+      collection { get :search }
+    end
+
     resources :dependents, only: :index, controller: "dependents"
   end
 
   resources :components, controller: "components" do
     get :dependency_graph, on: :member
-    resources :dependencies, only: :index, controller: "dependencies"
+    resources :dependencies, only: %i[index create], controller: "dependencies" do
+      collection { get :search }
+    end
+
     resources :dependents, only: :index, controller: "dependents"
   end
 
@@ -27,12 +33,17 @@ Junction::Engine.routes.draw do
   resources :dependencies, only: :destroy
 
   resources :groups, controller: "groups" do
-    resources :members, only: %i[index destroy], controller: "group_members"
+    resources :members, only: %i[index create destroy], controller: "group_members" do
+      collection { get :search }
+    end
   end
 
   resources :resources, controller: "resources" do
     get :dependency_graph, on: :member
-    resources :dependencies, only: :index, controller: "dependencies"
+    resources :dependencies, only: %i[index create], controller: "dependencies" do
+      collection { get :search }
+    end
+
     resources :dependents, only: :index, controller: "dependents"
   end
 

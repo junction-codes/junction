@@ -7,10 +7,20 @@ module Junction
       class Show < Views::Base
         attr_reader :breadcrumbs
 
-        def initialize(group:, can_edit:, can_destroy:, breadcrumbs: [])
+        # Initialize the view.
+        #
+        # @param group [Junction::Group] Group to display.
+        # @param can_edit [Boolean] Whether the user can edit the group.
+        # @param can_destroy [Boolean] Whether the user can destroy the group.
+        # @param can_view_members [Boolean] Whether the user can view the
+        #   group's members.
+        # @param breadcrumbs [Array<Hash>] Breadcrumb items from the controller.
+        def initialize(group:, can_edit:, can_destroy:, can_view_members: false,
+                       breadcrumbs: [])
           @group = group
           @can_edit = can_edit
           @can_destroy = can_destroy
+          @can_view_members = can_view_members
           @breadcrumbs = breadcrumbs
         end
 
@@ -82,17 +92,21 @@ module Junction
         def group_tabs
           render Tabs.new do |tabs|
             tabs.list do |list|
-              list.trigger(value: "members") do
-                icon("blocks", class: "pe-2")
-                plain "Members"
+              if @can_view_members
+                list.trigger(value: "members") do
+                  icon("blocks", class: "pe-2")
+                  plain "Members"
+                end
               end
 
               render_plugin_tab_triggers(@group, list)
             end
 
-            tabs.content(value: "members") do
-              turbo_frame_tag "group_members", src: group_members_path(@group), loading: :lazy do
-                div(class: "p-4") { Skeleton(class: "h-20") }
+            if @can_view_members
+              tabs.content(value: "members") do
+                turbo_frame_tag "group_members", src: group_members_path(@group), loading: :lazy do
+                  div(class: "p-4") { Skeleton(class: "h-20") }
+                end
               end
             end
 

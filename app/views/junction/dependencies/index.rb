@@ -19,12 +19,17 @@ module Junction
         #   integer and returns a URL string.
         # @param sort_url [#call] Callable that accepts a field and direction
         #   and returns a URL string.
-        # @param can_destroy [Boolean] Whether the current user may remove
-        #   dependencies. When true, a delete button is shown per row.
+        # @param can_destroy [Boolean] Whether the current user is authorized to
+        #   remove dependencies.
         # @param dependency_map [Hash] Map of [target_type, target_id] to
-        #   Dependency record ID, used to build delete routes.
+        #   dependency record ID, used to build delete routes.
+        # @param can_create [Boolean] Whether the current user is authorized to
+        #   create dependencies.
+        # @param create_url [String] URL for creating new dependencies.
+        # @param search_url [String] URL for the autocomplete search endpoint.
         def initialize(dependencies:, pagy:, query:, page_url:, per_page_url:,
-                       sort_url:, can_destroy: false, dependency_map: {})
+                       sort_url:, can_destroy: false, dependency_map: {},
+                       can_create: false, create_url: nil, search_url: nil)
           @dependencies = dependencies
           @pagy = pagy
           @query = query
@@ -33,10 +38,15 @@ module Junction
           @sort_url = sort_url
           @can_destroy = can_destroy
           @dependency_map = dependency_map
+          @can_create = can_create
+          @create_url = create_url
+          @search_url = search_url
         end
 
         def view_template
           turbo_frame_tag "dependencies" do
+            div(class: "flex justify-end mb-4") { add_dependency_dialog } if @can_create
+
             Table(class: "rounded-lg shadow overflow-hidden") do |table|
               table.header do |header|
                 header.row do |row|
@@ -83,8 +93,8 @@ module Junction
                           end
 
                           content.footer do
-                            Link(
-                              href: nil,
+                            Button(
+                              variant: :link,
                               data: { action: "click->ruby-ui--dialog#dismiss" }
                             ) { t(".cancel") }
                             Link(
@@ -102,6 +112,57 @@ module Junction
             end
 
             PaginationNav(pagy:, page_url:, per_page_url:, turbo_action: nil)
+          end
+        end
+
+        private
+
+        # Renders the add dependency dialog.
+        def add_dependency_dialog
+          Dialog do |dialog|
+            dialog.trigger do
+              Button(variant: :primary, size: :sm) do
+                icon("plus", class: "w-4 h-4 mr-2")
+                plain t(".add_dependency")
+              end
+            end
+
+            dialog.content do |content|
+              content.header do |header|
+                header.title { t(".add_dependency_title") }
+              end
+
+              content.body do
+                form_with(
+                  url: @create_url,
+                  method: :post,
+                  data: {
+                    controller: "autocomplete",
+                    autocomplete_search_url_value: @search_url
+                  }
+                ) do |f|
+                  AutocompleteField(
+                    label: t(".search_label"),
+                    placeholder: t(".search_placeholder"),
+                    hidden_field_name: "dependency[target]",
+                    frame_id: "dependency-search-results"
+                  )
+
+                  div(class: "flex justify-end gap-x-2 mt-4") do
+                    Button(
+                      variant: :link,
+                      data: { action: "click->ruby-ui--dialog#dismiss" }
+                    ) { t(".cancel") }
+                    Button(
+                      type: "submit",
+                      variant: :primary,
+                      data: { autocomplete_target: "submit" },
+                      disabled: true
+                    ) { t(".add_dependency") }
+                  end
+                end
+              end
+            end
           end
         end
       end

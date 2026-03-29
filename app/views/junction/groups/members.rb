@@ -23,8 +23,12 @@ module Junction
         #   and returns a URL string.
         # @param can_destroy [Boolean] Whether the current user may remove
         #   members. When true, a delete button is shown per row.
+        # @param can_create [Boolean] Whether the current user may add members.
+        # @param create_url [String] URL to POST new members to.
+        # @param search_url [String] URL for the autocomplete search endpoint.
         def initialize(group:, members:, pagy:, query:, page_url:, per_page_url:,
-                       sort_url:, can_destroy: false)
+                       sort_url:, can_destroy: false, can_create: false,
+                       create_url: nil, search_url: nil)
           @group = group
           @members = members
           @pagy = pagy
@@ -33,10 +37,15 @@ module Junction
           @per_page_url = per_page_url
           @sort_url = sort_url
           @can_destroy = can_destroy
+          @can_create = can_create
+          @create_url = create_url
+          @search_url = search_url
         end
 
         def view_template
           turbo_frame_tag "group_members" do
+            div(class: "flex justify-end mb-4") { add_member_dialog } if @can_create
+
             Table(class: "rounded-lg shadow overflow-hidden") do |table|
               table.header do |header|
                 header.row do |row|
@@ -83,8 +92,8 @@ module Junction
                           end
 
                           content.footer do
-                            Link(
-                              href: nil,
+                            Button(
+                              variant: :link,
                               data: { action: "click->ruby-ui--dialog#dismiss" }
                             ) { t(".cancel") }
                             Link(
@@ -102,6 +111,57 @@ module Junction
             end
 
             PaginationNav(pagy:, page_url:, per_page_url:, turbo_action: nil)
+          end
+        end
+
+        private
+
+        # Renders the add member dialog.
+        def add_member_dialog
+          Dialog do |dialog|
+            dialog.trigger do
+              Button(variant: :primary, size: :sm) do
+                icon("plus", class: "w-4 h-4 mr-2")
+                plain t(".add_member")
+              end
+            end
+
+            dialog.content do |content|
+              content.header do |header|
+                header.title { t(".add_member_title") }
+              end
+
+              content.body do
+                form_with(
+                  url: @create_url,
+                  method: :post,
+                  data: {
+                    controller: "autocomplete",
+                    autocomplete_search_url_value: @search_url
+                  }
+                ) do |f|
+                  AutocompleteField(
+                    label: t(".search_label"),
+                    placeholder: t(".search_placeholder"),
+                    hidden_field_name: "member[user_id]",
+                    frame_id: "member-search-results"
+                  )
+
+                  div(class: "flex justify-end gap-x-2 mt-4") do
+                    Button(
+                      variant: :link,
+                      data: { action: "click->ruby-ui--dialog#dismiss" }
+                    ) { t(".cancel") }
+                    Button(
+                      type: "submit",
+                      variant: :primary,
+                      data: { autocomplete_target: "submit" },
+                      disabled: true
+                    ) { t(".add_member") }
+                  end
+                end
+              end
+            end
           end
         end
       end
