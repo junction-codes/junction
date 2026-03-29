@@ -17,7 +17,5 @@
 
 /app/assets/svg/icons/**/*.svg
 
-/db/schema.rb
-
 /public/assets/
 !/public/assets/.keep
