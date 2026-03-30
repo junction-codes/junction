@@ -15,6 +15,8 @@ module Junction
     include PluginDispatchHelper
     include Engine.routes.url_helpers
 
+    protect_from_forgery with: :exception
+
     authorize :user, through: :current_user
     verify_authorized
 
