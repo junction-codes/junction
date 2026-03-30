@@ -9,6 +9,8 @@ plugins:
 
 AllCops:
   NewCops: enable
+  Exclude:
+    - rails_app/db/schema.rb
 
 RSpec/ExampleLength:
   CountAsOne:

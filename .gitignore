@@ -36,6 +36,9 @@
 !/vendor/javascript
 
 
+# Optional per-developer dev container extensions (see .devcontainer/extensions.local.example).
+/.devcontainer/extensions.local
+
 # Ignore IDEA project files.
 .idea
 *.iml
@@ -47,3 +50,8 @@
 !/app/assets/builds/.keep
 
 /app/assets/svg/icons/**/*.svg
+
+.vscode
+.claude
+.idea
+.cursor

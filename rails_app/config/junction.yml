@@ -1,0 +1,15 @@
+# Junction Configuration
+#
+# This file customizes Junction's behavior for this development/test application.
+# See config/junction.yml.example in the engine root for all available options.
+
+default: &default
+  icon: train-track
+  title: Junction
+  allow_demo_mode: false
+
+development:
+  <<: *default
+
+test:
+  <<: *default

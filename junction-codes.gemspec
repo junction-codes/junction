@@ -29,7 +29,6 @@ Gem::Specification.new do |s|
   s.add_dependency "chartkick", "~> 5.2"
   s.add_dependency "importmap-rails", "~> 2.2"
   s.add_dependency "jbuilder", "~> 2.14"
-  s.add_dependency "kamal", "~> 2.10"
   s.add_dependency "omniauth", "~> 2.1"
   s.add_dependency "opentelemetry-api", "~> 1.4"
   s.add_dependency "omniauth-rails_csrf_protection", "~> 2.0"
@@ -37,7 +36,6 @@ Gem::Specification.new do |s|
   s.add_dependency "pg", "~> 1.6"
   s.add_dependency "phlex-rails", "~> 2.3"
   s.add_dependency "propshaft"
-  s.add_dependency "puma", "~> 7.1"
   s.add_dependency "rails", "~> 8.1"
   s.add_dependency "rails_icons", "~> 1.5"
   s.add_dependency "ransack", "~> 4.4"
@@ -47,7 +45,6 @@ Gem::Specification.new do |s|
   s.add_dependency "stimulus-rails", "~> 1.3"
   s.add_dependency "tailwind_merge", "~> 1.3"
   s.add_dependency "tailwindcss-rails", "~> 4.4"
-  s.add_dependency "thruster", "~> 0.1"
   s.add_dependency "turbo-rails", "~> 2.0"
   s.add_dependency "tzinfo-data", ">= 1.2025"
 end
