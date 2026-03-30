@@ -3,28 +3,11 @@
 require "rails_icons"
 
 RailsIcons.configure do |config|
+  config.icons_path = Rails.root.join("app/assets/svg/icons")
+
   config.default_library = "lucide"
   config.default_variant = "outline"
 
-  # Override Lucide defaults
-  # config.libraries.lucide.default_variant = "" # Set a default variant for Lucide
-  # config.libraries.lucide.exclude_variants = [] # Exclude specific variants
-
-  # config.libraries.lucide.outline.default.css = "size-6"
-  # config.libraries.lucide.outline.default.stroke_width = "1.5"
-  # config.libraries.lucide.outline.default.data = {}
-
-  # Override Boxicons defaults
-  # We primarily use Boxicons for logos.
   config.libraries.boxicons.default_variant = "logos"
-  # config.libraries.boxicons.exclude_variants = [] # Exclude specific variants
-
-  # config.libraries.boxicons.solid.css = "size-6"
-  # config.libraries.boxicons.solid.data = {}
-
-  # config.libraries.boxicons.regular.css = "size-6"
-  # config.libraries.boxicons.regular.data = {}
-
-  # config.libraries.boxicons.logos.css = "size-6"
-  # config.libraries.boxicons.logos.data = {}
+  config.libraries.lucide.default_variant = "outline"
 end
