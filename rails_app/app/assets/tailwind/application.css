@@ -1,1 +1,2 @@
-@import "../../../../app/assets/tailwind/application.css";
+@import "tailwindcss";
+@import "../builds/tailwind/junction";
