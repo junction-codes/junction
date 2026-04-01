@@ -97,34 +97,9 @@ module Junction
           table.body do |body|
             @components.each do |component|
               body.row do |row|
-                row.cell do
-                  div(class: "flex items-center space-x-4") do
-                    # Logo or placeholder image.
-                    if component.image_url.present?
-                      img(src: component.image_url, alt: "#{component.name} logo", class: "h-12 w-12 rounded-md object-cover flex-shrink-0")
-                    else
-                      div(class: "h-12 w-12 rounded-md bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0") do
-                        icon(component.icon, class: "h-6 w-6 text-gray-500")
-                      end
-                    end
-
-                    div do
-                      div(class: "text-sm font-medium text-gray-900 dark:text-white") do
-                        render_view_link(component, class: "ps-0")
-                      end
-
-                      div(class: "text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs") { component.description }
-                    end
-                  end
-                end
-
-                row.cell do
-                  render_view_link(component.system, class: "ps-0")
-                end
-
-                row.cell do
-                  render_view_link(component.owner, class: "ps-0")
-                end
+                row.cell { EntityPreview(entity: component) }
+                row.cell { render_view_link(component.system, class: "ps-0") }
+                row.cell { render_view_link(component.owner, class: "ps-0") }
 
                 row.cell do
                   break unless component.type.present?
@@ -137,7 +112,7 @@ module Junction
                 end
 
                 row.cell do
-                  render Badge.new(variant: component.lifecycle&.to_sym) { component.lifecycle&.capitalize }
+                  Badge(variant: component.lifecycle&.to_sym) { component.lifecycle&.capitalize }
                 end
               end
             end
