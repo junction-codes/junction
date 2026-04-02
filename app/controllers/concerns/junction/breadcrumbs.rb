@@ -50,7 +50,7 @@ module Junction
     # @param key [String] The translation key to use for the model name.
     # @return [String] The model name.
     def model_name(key = "other")
-      t("activerecord.models.#{controller_name.singularize.to_sym}.#{key}")
+      t("activerecord.models.junction/#{controller_name.singularize.to_sym}.#{key}")
     end
 
     # Build the breadcrumb item for the home page.

@@ -36,6 +36,7 @@ en:
     domain_id: "Domain"
     email: "Email Address"
     image_url: "Image URL"
+    kind: "Kind"
     name: "Name"
     owner: "Owner"
     owner_id: "Owner"
@@ -94,7 +95,20 @@ en:
         other: Users
 
   junction:
+    components:
+      search_bar:
+        placeholder: "Search components, docs, etc."
     views:
+      search:
+        autocomplete:
+          see_all: "See all results for \"%{query}\""
+        index:
+          title: "Search Results"
+          result_count:
+            one: "1 result for \"%{query}\""
+            other: "%{count} results for \"%{query}\""
+          empty_query: "Enter a search term to find records across all entity types."
+          no_results: "No results found for \"%{query}\"."
       groups:
         members:
           email: "Email"
