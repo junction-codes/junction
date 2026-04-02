@@ -71,10 +71,11 @@ module Junction
                 )
               }
 
-              row.sortable_head(query:, field: "name", sort_url:) { "Group" }
-              row.sortable_head(query:, field: "type", sort_url:) { "Type" }
-              row.sortable_head(query:, field: "email", sort_url:) { "Email" }
-              row.sortable_head(query:, field: "parent_id", sort_url:) { "Parent" }
+              %w[name type email parent_id].each do |field|
+                row.sortable_head(field:, sort_url:, **sort_attrs(query, field)) do
+                  Group.human_attribute_name(field)
+                end
+              end
             end
           end
         end

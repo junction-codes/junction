@@ -80,10 +80,11 @@ module Junction
                 )
               }
 
-              row.sortable_head(query:, field: "name", sort_url:) { "System" }
-              row.sortable_head(query:, field: "owner_id", sort_url:) { "Owner" }
-              row.sortable_head(query:, field: "domain_id", sort_url:) { "Domain" }
-              row.sortable_head(query:, field: "status", sort_url:) { "Status" }
+              %w[name owner_id domain_id status].each do |field|
+                row.sortable_head(field:, sort_url:, **sort_attrs(query, field)) do
+                  System.human_attribute_name(field)
+                end
+              end
             end
           end
         end

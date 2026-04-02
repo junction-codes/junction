@@ -77,9 +77,11 @@ module Junction
                 )
               }
 
-              row.sortable_head(query:, field: "name", sort_url:) { "Domain" }
-              row.sortable_head(query:, field: "status", sort_url:) { "Status" }
-              row.sortable_head(query:, field: "owner_id", sort_url:) { "Owner" }
+              %w[name status owner_id].each do |field|
+                row.sortable_head(field:, sort_url:, **sort_attrs(query, field)) do
+                  t(".#{field}")
+                end
+              end
             end
           end
         end

@@ -67,8 +67,11 @@ module Junction
                 )
               }
 
-              row.sortable_head(query:, field: "display_name", sort_url:) { "User" }
-              row.sortable_head(query:, field: "email_address", sort_url:) { "Email" }
+              %w[display_name email_address].each do |field|
+                row.sortable_head(field:, sort_url:, **sort_attrs(query, field)) do
+                  User.human_attribute_name(field)
+                end
+              end
             end
           end
         end

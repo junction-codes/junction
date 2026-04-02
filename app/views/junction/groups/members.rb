@@ -49,8 +49,12 @@ module Junction
             Table(class: "rounded-lg shadow overflow-hidden") do |table|
               table.header do |header|
                 header.row do |row|
-                  row.sortable_head(query:, field: "name", sort_url:) { t(".name") }
-                  row.sortable_head(query:, field: "email_address", sort_url:) { t(".email") }
+                  %w[name email_address].each do |field|
+                    row.sortable_head(field:, sort_url:, **sort_attrs(query, field)) do
+                      User.human_attribute_name(field)
+                    end
+                  end
+
                   row.head { span(class: "sr-only") { t(".actions") } }
                 end
               end

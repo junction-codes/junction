@@ -4,17 +4,20 @@ module Junction
   module Components
     # Sortable table head component.
     class TableSortableHead < Base
-      # Initializes the components.
+      # Initializes the component.
       #
-      # @param query [Ransack::Search] Ransack query object for sorting.
       # @param field [String] The field name to sort by.
-      # @param sort_url [Proc] A proc that generates the sort URL given field and
-      #   direction.
+      # @param sort_url [Proc] A proc that generates the sort URL given field
+      #   and direction.
+      # @param sorted [Boolean] Whether this column is currently sorted.
+      # @param direction [String] Current direction when sorted.
       # @param user_attrs [Hash] Additional HTML attributes for the component.
-      def initialize(query:, field:, sort_url:, **user_attrs)
-        @query = query
+      def initialize(field:, sort_url:, sorted: false, direction: "asc",
+                     **user_attrs)
         @field = field
         @sort_url = sort_url
+        @sorted = sorted
+        @direction = direction
 
         super(**user_attrs)
       end
@@ -22,39 +25,24 @@ module Junction
       def view_template(&block)
         TableHead(**attrs) do
           a(
-            href: @sort_url.call(@field, direction_next),
+            href: @sort_url.call(@field, next_direction),
             class: "inline-flex items-center gap-2 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer"
           ) do
             span(&block)
+            next unless @sorted
 
-            if sorted?
-              span(class: "text-sm") { direction_current == "asc" ? "↑" : "↓" }
-            end
+            span(class: "text-sm") { @direction == "asc" ? "↑" : "↓" }
           end
         end
       end
 
       private
 
-      # Determines the current sort direction.
-      #
-      # @return [String] Current sort direction.
-      def direction_current
-        @query.sorts.first&.dir == "asc" ? "asc" : "desc"
-      end
-
       # Determines the next sort direction.
       #
       # @return [String] Next sort direction.
-      def direction_next
-        sorted? && direction_current == "asc" ? "desc" : "asc"
-      end
-
-      # Whether the column is currently sorted.
-      #
-      # @return [Boolean] True if the column is currently sorted.
-      def sorted?
-        @query.sorts.first&.name == @field
+      def next_direction
+        @sorted && @direction == "asc" ? "desc" : "asc"
       end
     end
   end
