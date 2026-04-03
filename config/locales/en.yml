@@ -96,8 +96,11 @@ en:
 
   junction:
     components:
+      entity_preview:
+        logo_alt: "Logo for %{name}"
       search_bar:
         placeholder: "Search components, docs, etc."
+
     views:
       search:
         autocomplete:

@@ -46,7 +46,7 @@ module Junction
     # Fetches matching records across all searchable models.
     #
     # @param query [String] The search query.
-    # @param limit [Integer, nil] Per-model result cap (nil = 100).
+    # @param limit [Integer] Per-model result cap.
     # @return [Array<ApplicationRecord>] Flat array of matching records.
     def fetch_models(query, limit: 100)
       pattern = "%#{query}%"
@@ -55,7 +55,7 @@ module Junction
         scope = index_scope_for(model)
         next [] if scope.nil?
 
-        scope .where("name ILIKE :p OR description ILIKE :p", p: pattern)
+        scope.where("name ILIKE :p OR description ILIKE :p", p: pattern)
           .order(:name)
           .limit(limit)
           .to_a
