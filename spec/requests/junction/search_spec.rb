@@ -55,6 +55,45 @@ RSpec.describe "/search", type: :request do
         end
       end
 
+      context "when sorting by kind" do
+        let!(:api) { create(:api, name: "Sort Test API") }
+        let!(:component) { create(:component, name: "Sort Test Component") }
+
+        before do
+          sign_in_user_with_permissions([
+            "junction.codes/apis.all.read",
+            "junction.codes/components.all.read"
+          ])
+        end
+
+        it "returns results sorted by kind ascending" do
+          get search_path, params: { q: "Sort Test", s: "kind asc" }
+
+          expect(response.body.index(api_path(api))).to \
+            be < response.body.index(component_path(component))
+        end
+
+        it "returns results sorted by kind descending" do
+          get search_path, params: { q: "Sort Test", s: "kind desc" }
+
+          expect(response.body.index(component_path(component))).to \
+            be < response.body.index(api_path(api))
+        end
+      end
+
+      context "when paginating results" do
+        before do
+          create_list(:api, 30)
+          sign_in_user_with_permissions([ "junction.codes/apis.all.read" ])
+        end
+
+        it "respects the per_page parameter" do
+          get search_path, params: { q: "API Name", per_page: 10 }
+
+          expect(response.body.scan(/<tr/).count).to eq(11)
+        end
+      end
+
       context "when the user has no read permission for an entity" do
         let!(:component) { create(:component) }
 
@@ -84,12 +123,24 @@ RSpec.describe "/search", type: :request do
         end
       end
 
-      context "when more than 5 entities match" do
-        before { create_list(:api, 6) }
+      context "when more than 5 entities match across multiple models" do
+        before do
+          sign_in_user_with_permissions(%w[
+            junction.codes/apis.all.read
+            junction.codes/components.all.read
+            junction.codes/domains.all.read
+          ])
 
-        it "returns no more than 5 result links" do
-          get search_autocomplete_path, params: { q: "" }
-          expect(response.body.scan(/<a /).count).to be <= 6
+          2.times { |i| create(:api, name: "GlobalSearch API #{i}") }
+          2.times { |i| create(:component, name: "GlobalSearch Component #{i}") }
+          2.times { |i| create(:domain, name: "GlobalSearch Domain #{i}") }
+        end
+
+        it "returns no more than 5 result links plus the see-all link" do
+          get search_autocomplete_path, params: { q: "GlobalSearch" }
+
+          # 5 entities + 1 "see all" link
+          expect(response.body.scan(/<a /).count).to eq(6)
         end
       end
 
