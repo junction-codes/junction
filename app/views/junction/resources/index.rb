@@ -80,10 +80,11 @@ module Junction
                 )
               }
 
-              row.sortable_head(query:, field: "name", sort_url:) { "Resource" }
-              row.sortable_head(query:, field: "system_id", sort_url:) { "System" }
-              row.sortable_head(query:, field: "owner_id", sort_url:) { "Owner" }
-              row.sortable_head(query:, field: "type", sort_url:) { "Type" }
+              %w[name system_id owner_id type].each do |field|
+                row.sortable_head(field:, sort_url:, **sort_attrs(query, field)) do
+                  Resource.human_attribute_name(field)
+                end
+              end
             end
           end
         end
@@ -92,34 +93,9 @@ module Junction
           table.body do |body|
             @resources.each do |resource|
               body.row do |row|
-                row.cell do
-                  div(class: "flex items-center space-x-4") do
-                    # Logo or placeholder image.
-                    if resource.image_url.present?
-                      img(src: resource.image_url, alt: "#{resource.name} logo", class: "h-12 w-12 rounded-md object-cover flex-shrink-0")
-                    else
-                      div(class: "h-12 w-12 rounded-md bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0") do
-                        icon(resource.icon, class: "h-6 w-6 text-gray-500")
-                      end
-                    end
-
-                    div do
-                      div(class: "text-sm font-medium text-gray-900 dark:text-white") do
-                        render_view_link(resource, class: "ps-0")
-                      end
-
-                      div(class: "text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs") { resource.description }
-                    end
-                  end
-                end
-
-                row.cell do
-                  render_view_link(resource.system, class: "ps-0")
-                end
-
-                row.cell do
-                  render_view_link(resource.owner, class: "ps-0")
-                end
+                row.cell { EntityPreview(entity: resource) }
+                row.cell { render_view_link(resource.system, class: "ps-0") }
+                row.cell { render_view_link(resource.owner, class: "ps-0") }
 
                 row.cell do
                   break unless resource.type.present?

@@ -65,6 +65,9 @@ Junction::Engine.routes.draw do
   get "/auth/:provider/callback", to: "sessions/omniauth#callback"
   get "/auth/failure", to: "sessions/omniauth#failure"
 
+  get :search, to: "search#index"
+  get "search/autocomplete", to: "search#autocomplete", as: :search_autocomplete
+
   # Add plugin routes.
   Junction::PluginRouteBuilder.draw(self)
 

@@ -43,9 +43,19 @@ module Junction
                 render Table do |table|
                   table.header do |header|
                     header.row do |row|
-                      row.cell(class: "font-medium") { t("views.roles.index.name") }
-                      row.cell(class: "font-medium") { t("views.roles.index.description") }
-                      row.cell(class: "font-medium") { t("views.roles.index.permissions") }
+                      sort_url = ->(field, direction) {
+                        roles_path(
+                          q: @query_params.merge(s: "#{field} #{direction}"),
+                          per_page: @pagy.options[:limit]
+                        )
+                      }
+
+                      row.sortable_head(field: "name", sort_url:, **sort_attrs(query, "name")) do
+                        Role.human_attribute_name("name")
+                      end
+
+                      row.cell { Role.human_attribute_name("description") }
+                      row.cell { Role.human_attribute_name("permissions") }
                     end
                   end
 

@@ -77,9 +77,11 @@ module Junction
                 )
               }
 
-              row.sortable_head(query:, field: "name", sort_url:) { "Domain" }
-              row.sortable_head(query:, field: "status", sort_url:) { "Status" }
-              row.sortable_head(query:, field: "owner_id", sort_url:) { "Owner" }
+              %w[name status owner_id].each do |field|
+                row.sortable_head(field:, sort_url:, **sort_attrs(query, field)) do
+                  t(".#{field}")
+                end
+              end
             end
           end
         end
@@ -88,35 +90,13 @@ module Junction
           table.body do |body|
             @domains.each do |domain|
               body.row do |row|
-                row.cell do
-                  div(class: "flex items-center space-x-4") do
-                    # Logo or placeholder image.
-                    if domain.image_url.present?
-                      img(src: domain.image_url, alt: "#{domain.name} logo", class: "h-12 w-12 rounded-md object-cover flex-shrink-0")
-                    else
-                      div(class: "h-12 w-12 rounded-md bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0") do
-                        icon("briefcase", class: "h-6 w-6 text-gray-500")
-                      end
-                    end
-
-                    # Domain details.
-                    div do
-                      div(class: "text-sm font-medium text-gray-900 dark:text-white") do
-                        render_view_link(domain, class: "ps-0")
-                      end
-
-                      div(class: "text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs") { domain.description }
-                    end
-                  end
-                end
+                row.cell { EntityPreview(entity: domain) }
 
                 row.cell do
                   Badge(variant: domain.status&.to_sym) { domain.status&.titleize }
                 end
 
-                row.cell do
-                  render_view_link(domain.owner, class: "ps-0")
-                end
+                row.cell { render_view_link(domain.owner, class: "ps-0") }
               end
             end
           end

@@ -71,10 +71,11 @@ module Junction
                 )
               }
 
-              row.sortable_head(query:, field: "name", sort_url:) { "Group" }
-              row.sortable_head(query:, field: "type", sort_url:) { "Type" }
-              row.sortable_head(query:, field: "email", sort_url:) { "Email" }
-              row.sortable_head(query:, field: "parent_id", sort_url:) { "Parent" }
+              %w[name type email parent_id].each do |field|
+                row.sortable_head(field:, sort_url:, **sort_attrs(query, field)) do
+                  Group.human_attribute_name(field)
+                end
+              end
             end
           end
         end
@@ -83,26 +84,7 @@ module Junction
           table.body do |body|
             @groups.each do |group|
               body.row do |row|
-                row.cell do
-                  div(class: "flex items-center space-x-4") do
-                    # Logo or placeholder image.
-                    if group.image_url.present?
-                      img(src: group.image_url, alt: "#{group.name} logo", class: "h-12 w-12 rounded-md object-cover flex-shrink-0")
-                    else
-                      div(class: "h-12 w-12 rounded-md bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0") do
-                        icon(group.icon, class: "h-6 w-6 text-gray-500")
-                      end
-                    end
-
-                    div do
-                      div(class: "text-sm font-medium text-gray-900 dark:text-white") do
-                        render_view_link(group, class: "ps-0")
-                      end
-
-                      div(class: "text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs") { group.description }
-                    end
-                  end
-                end
+                row.cell { EntityPreview(entity: group) }
 
                 row.cell do
                   break unless group.type.present?
@@ -119,9 +101,7 @@ module Junction
                 end
 
                 row.cell do
-                  if group.parent
-                    render_view_link(group.parent, class: "ps-0")
-                  end
+                  render_view_link(group.parent, class: "ps-0") if group.parent.present?
                 end
               end
             end
