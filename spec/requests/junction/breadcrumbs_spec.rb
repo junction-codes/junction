@@ -57,7 +57,9 @@ RSpec.describe "Junction::Breadcrumbs concern", type: :request do
     end
 
     it "includes breadcrumb for the index page" do
-      expect_breadcrumb_to_include(I18n.t("activerecord.models.component.other"))
+      expect_breadcrumb_to_include(I18n.t(
+        "activerecord.models.junction/component.other"
+      ))
     end
 
     it "includes a link to the root path in the breadcrumb" do
@@ -78,7 +80,9 @@ RSpec.describe "Junction::Breadcrumbs concern", type: :request do
     end
 
     it "includes breadcrumb for the index page" do
-      expect_breadcrumb_to_include(I18n.t("activerecord.models.component.other"))
+      expect_breadcrumb_to_include(I18n.t(
+        "activerecord.models.junction/component.other"
+      ))
     end
 
     it "includes the component name in the breadcrumb" do
@@ -117,9 +121,9 @@ RSpec.describe "Junction::Breadcrumbs concern", type: :request do
     end
 
     it "includes breadcrumb for the new page" do
-      expect_breadcrumb_to_include(
-        I18n.t("breadcrumbs.new", model: I18n.t("activerecord.models.component.one"))
-      )
+      expect_breadcrumb_to_include(I18n.t(
+        "breadcrumbs.new", model: I18n.t("activerecord.models.junction/component.one")
+      ))
     end
 
     it "includes a link to the components index in the breadcrumb" do
@@ -158,9 +162,10 @@ RSpec.describe "Junction::Breadcrumbs concern", type: :request do
       before { post components_path, params: { component: { name: "" } } }
 
       it "includes breadcrumb for the new page" do
-        expect_breadcrumb_to_include(
-          I18n.t("breadcrumbs.new", model: I18n.t("activerecord.models.component.one"))
-        )
+        expect_breadcrumb_to_include(I18n.t(
+          "breadcrumbs.new",
+          model: I18n.t("activerecord.models.junction/component.one")
+        ))
       end
     end
   end
