@@ -169,12 +169,12 @@ def import_users(path)
   YAML.load_file(Rails.root.join(path, 'users.yaml'), symbolize_names: true).each do |user|
     next if Junction::User.find_by(email_address: user[:email_address])
 
-    Rails.logger.info "Creating user #{user[:display_name]}"
+    Rails.logger.info "Creating user #{user[:title]}"
     user[:password] = random_password
     entity = Junction::User.create(user)
 
     unless entity.persisted?
-      puts "Failed to create user #{user[:display_name]}"
+      puts "Failed to create user #{user[:title]}"
     end
   end
 end

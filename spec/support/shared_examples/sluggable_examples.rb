@@ -79,7 +79,7 @@ RSpec.shared_examples "a sluggable entity" do
 
       it "includes an immutability error on name" do
         subject.valid?
-        expect(subject.errors[:name]).to include("cannot be changed after creation")
+        expect(subject.errors[:name]).to include("cannot be changed after creation.")
       end
     end
 
@@ -92,7 +92,7 @@ RSpec.shared_examples "a sluggable entity" do
 
       it "includes an immutability error on namespace" do
         subject.valid?
-        expect(subject.errors[:namespace]).to include("cannot be changed after creation")
+        expect(subject.errors[:namespace]).to include("cannot be changed after creation.")
       end
     end
 

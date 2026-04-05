@@ -10,7 +10,7 @@ RSpec.describe Junction::User, type: :model do
       expect(user).to be_valid
     end
 
-    it_behaves_like "validates presence of", :display_name
+    it_behaves_like "validates presence of", :title
     it_behaves_like "validates email format of", :email_address, required: true
     it_behaves_like "validates presence of", :email_address
     it_behaves_like "validates uniqueness of", :email_address, "duplicate@example.com"
@@ -46,7 +46,7 @@ RSpec.describe Junction::User, type: :model do
 
     it "is valid when updating attributes without changing the password" do
       user.save!
-      user.display_name = "New Name"
+      user.title = "New Name"
       expect(user).to be_valid
     end
   end

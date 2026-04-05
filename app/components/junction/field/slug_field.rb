@@ -40,7 +40,8 @@ module Junction
       # @param help_text [String] Optional help text shown below the field.
       # @param required [Boolean] Whether the field is required.
       # @param user_attrs [Hash] Additional HTML attributes for the component.
-      def initialize(form, method, label, source: :title, help_text: nil, required: false, **user_attrs)
+      def initialize(form, method, label, source: :title, help_text: nil,
+                     required: false, **user_attrs)
         @form = form
         @method = method
         @label = label
@@ -55,7 +56,7 @@ module Junction
         div(data: {
             controller: "slug-field",
             slug_field_persisted_value: persisted?.to_s,
-            slug_field_title_selector_value: "input[name$='[#{@source}]']"
+            slug_field_source_selector_value: "input[name$='[#{@source}]']"
           }, **attrs) do
           div do
             div(class: "flex items-center justify-between") do

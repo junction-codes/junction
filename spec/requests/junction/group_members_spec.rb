@@ -116,15 +116,15 @@ RSpec.describe "/groups/:group_id/members", type: :request do
 
       context "when searching by name" do
         it "includes users matching the query" do
-          get search_group_members_path(group), params: { q: user.display_name }
+          get search_group_members_path(group), params: { q: user.title }
 
-          expect(response.body).to include(user.display_name)
+          expect(response.body).to include(user.title)
         end
 
         it "excludes users that do not match the query" do
           get search_group_members_path(group), params: { q: "zzznomatch_#{SecureRandom.hex}" }
 
-          expect(response.body).not_to include(user.display_name)
+          expect(response.body).not_to include(user.title)
         end
       end
 
@@ -132,8 +132,8 @@ RSpec.describe "/groups/:group_id/members", type: :request do
         before { group.members << user }
 
         it "excludes existing members from the results" do
-          get search_group_members_path(group), params: { q: user.display_name }
-          expect(response.body).not_to include(user.display_name)
+          get search_group_members_path(group), params: { q: user.title }
+          expect(response.body).not_to include(user.title)
         end
       end
     end

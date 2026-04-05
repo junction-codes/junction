@@ -98,8 +98,8 @@ RSpec.describe "Junction::Breadcrumbs concern", type: :request do
         eq([ root_path, components_path ])
     end
 
-    context "when the entity has a display name" do
-      subject(:user) { create(:user, display_name: "John Doe") }
+    context "when the entity has a title" do
+      subject(:user) { create(:user, title: "John Doe") }
 
       let(:permissions) do
         %w[junction.codes/users.all.read]
@@ -107,8 +107,8 @@ RSpec.describe "Junction::Breadcrumbs concern", type: :request do
 
       before { get user_path(user) }
 
-      it "includes the display name in the breadcrumb" do
-        expect_breadcrumb_to_include(user.display_name)
+      it "includes the title in the breadcrumb" do
+        expect_breadcrumb_to_include(user.title)
       end
     end
   end
