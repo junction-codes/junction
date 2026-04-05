@@ -20,7 +20,7 @@ module Junction
           if errors.any?
             div(class: "mt-2 text-sm text-red-600 dark:text-red-400", id: "#{@method}_errors") do
               errors.each do |error|
-                p { "#{label} #{error}" }
+                p { "#{label_text} #{error}" }
               end
             end
           end

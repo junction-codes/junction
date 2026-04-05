@@ -27,9 +27,9 @@ module Junction
 
       def view_template
         div(**attrs) do
-          if label.present?
+          if label_text.present?
             div(class: "block text-sm font-medium leading-6 text-gray-900 dark:text-white mb-2") do
-              plain label
+              plain label_text
             end
           end
 

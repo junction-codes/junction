@@ -72,7 +72,7 @@ module Junction
 
             if errors.any?
               div(class: "mt-2 text-sm text-red-600 dark:text-red-400", id: "#{@method}_errors") do
-                errors.each { |e| p { "#{label} #{e}" } }
+                errors.each { |e| p { "#{label_text} #{e}" } }
               end
             end
           end
@@ -87,11 +87,11 @@ module Junction
           tooltip.trigger do
             code(class: CODE_CLASS) do
               plain @form.object.public_send(@method)
-              span(class: "sr-only") { t(".immutable", label: label) }
+              span(class: "sr-only") { t(".immutable", label: label_text) }
             end
           end
 
-          tooltip.content { t(".immutable", label: label) }
+          tooltip.content { t(".immutable", label: label_text) }
         end
 
         @form.hidden_field @method

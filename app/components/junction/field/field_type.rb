@@ -30,7 +30,7 @@ module Junction
       # Returns the label for the field.
       #
       # @return [String] The label for the field.
-      def label
+      def label_text
         @label ||= @form.object&.class&.human_attribute_name(@method) || @method.to_s.humanize
       end
 

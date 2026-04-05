@@ -25,7 +25,7 @@ module Junction
       def view_template
         div do
           @form.label @method, class: "block text-sm font-medium leading-6 text-gray-900 dark:text-white" do
-            plain label
+            plain label_text
             span(class: "text-red-500 ml-1") { " *" } if @required
           end
 
@@ -55,7 +55,7 @@ module Junction
           if errors.any?
             div(class: "mt-2 text-sm text-red-600 dark:text-red-400", id: "#{@method}_errors") do
               errors.each do |error|
-                p { "#{label} #{error}" }
+                p { "#{label_text} #{error}" }
               end
             end
           end

@@ -40,7 +40,7 @@ RSpec.describe Junction::User, type: :model do
 
       it "includes confirmation error for password_confirmation" do
         user.valid?
-        expect(user.errors[:password_confirmation]).to include("doesn't match Password")
+        expect(user.errors[:password_confirmation]).to include("doesn't match New Password")
       end
     end
 
