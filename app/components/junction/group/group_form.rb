@@ -19,21 +19,21 @@ module Junction
             end
 
             card.content(class: "space-y-4") do
-              TextField(f, :title, "Group Name", required: true)
-              SlugField(f, :name, "Identifier")
-              ImmutableField(f, :namespace, "Namespace", placeholder: "default",
+              TextField(f, :title, required: true)
+              SlugField(f, :name)
+              ImmutableField(f, :namespace, placeholder: "default",
                              required: true,
                              help_text: "Namespaces allow the same identifier to exist in different contexts.")
-              RichSelectField(f, :type, "Type", required: true,
+              RichSelectField(f, :type, required: true,
                               options: Junction::CatalogOptions.group_types)
 
-              ReferenceField(f, :parent_id, "Parent", required: false, icon: "users-round",
+              ReferenceField(f, :parent_id, required: false, icon: "users-round",
                              options: @available_parents, value: @group.parent,
                              help_text: "Select a parent for this group.")
 
-              TextField(f, :email, "Email", placeholder: "example@example.com")
-              TextField(f, :image_url, "Image URL", placeholder: "https://example.com/logo.png")
-              TextAreaField(f, :description, "Description", required: true,
+              TextField(f, :email, placeholder: "example@example.com")
+              TextField(f, :image_url, placeholder: "https://example.com/logo.png")
+              TextAreaField(f, :description, required: true,
                             help_text: "A brief, high-level summary of the group's mission.")
             end
           end

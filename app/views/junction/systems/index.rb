@@ -80,7 +80,7 @@ module Junction
                 )
               }
 
-              %w[name owner_id domain_id status].each do |field|
+              %w[title owner_id domain_id status].each do |field|
                 row.sortable_head(field:, sort_url:, **sort_attrs(query, field)) do
                   System.human_attribute_name(field)
                 end

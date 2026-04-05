@@ -14,7 +14,7 @@ module Junction
     #
     # On a persisted record the identifier is shown read-only with a tooltip,
     # and a hidden input preserves the value for form submission.
-    class SlugField < Base
+    class SlugField < FieldType
       CODE_CLASS = "font-mono text-sm text-gray-700 dark:text-gray-300 " \
                    "bg-gray-100 dark:bg-gray-700 rounded px-2 py-1 " \
                    "cursor-default"
@@ -30,26 +30,22 @@ module Junction
                     "dark:text-white"
 
 
-      # Initializes a new component.
+      # Initializes a new field component.
       #
       # @param form [ActionView::Helpers::FormBuilder] The form builder.
       # @param method [Symbol] Method name for the field.
-      # @param label [String] Human-readable label for the field.
+      # @param label [String] Optional, human-readable label for the field.
+      # @param help_text [String] Optional help text for the field.
+      # @param placeholder [String] Optional placeholder text for the field.
+      # @param required [Boolean] Whether the field is required.
       # @param source [Symbol] Method name for the field whose input drives
       #   auto-generation.
-      # @param help_text [String] Optional help text shown below the field.
-      # @param required [Boolean] Whether the field is required.
       # @param user_attrs [Hash] Additional HTML attributes for the component.
-      def initialize(form, method, label, source: :title, help_text: nil,
-                     required: false, **user_attrs)
-        @form = form
-        @method = method
-        @label = label
+      def initialize(form, method, label: nil, help_text: nil, required: false,
+                     source: :title, **user_attrs)
         @source = source
-        @help_text = help_text
-        @required = required
 
-        super(**user_attrs)
+        super(form, method, label:, help_text:, required:, **user_attrs)
       end
 
       def view_template
@@ -61,7 +57,7 @@ module Junction
           div do
             div(class: "flex items-center justify-between") do
               span(class: LABEL_CLASS) do
-                plain @label
+                plain label
                 span(class: "text-red-500 ml-1") { " *" } if @required && !persisted?
               end
 
@@ -74,9 +70,9 @@ module Junction
 
             p(class: "mt-2 text-sm text-gray-500") { @help_text } if @help_text
 
-            if @form.object.errors[@method].any?
+            if errors.any?
               div(class: "mt-2 text-sm text-red-600 dark:text-red-400", id: "#{@method}_errors") do
-                @form.object.errors[@method].each { |e| p { "#{@label} #{e}" } }
+                errors.each { |e| p { "#{label} #{e}" } }
               end
             end
           end
@@ -85,24 +81,17 @@ module Junction
 
       private
 
-      # Determines if the form object has been persisted.
-      #
-      # @return [Boolean] Whether or not the form object has been persisted.
-      def persisted?
-        @persisted ||= @form.object.persisted?
-      end
-
       # Render the field in read-only mode.
       def render_read_only
         Tooltip do |tooltip|
           tooltip.trigger do
             code(class: CODE_CLASS) do
               plain @form.object.public_send(@method)
-              span(class: "sr-only") { t(".immutable", label: @label) }
+              span(class: "sr-only") { t(".immutable", label: label) }
             end
           end
 
-          tooltip.content { t(".immutable", label: @label) }
+          tooltip.content { t(".immutable", label: label) }
         end
 
         @form.hidden_field @method

@@ -71,7 +71,7 @@ module Junction
                 )
               }
 
-              %w[name type email parent_id].each do |field|
+              %w[title type email parent_id].each do |field|
                 row.sortable_head(field:, sort_url:, **sort_attrs(query, field)) do
                   Group.human_attribute_name(field)
                 end

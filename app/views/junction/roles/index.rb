@@ -50,8 +50,8 @@ module Junction
                         )
                       }
 
-                      row.sortable_head(field: "name", sort_url:, **sort_attrs(query, "name")) do
-                        Role.human_attribute_name("name")
+                      row.sortable_head(field: "title", sort_url:, **sort_attrs(query, "title")) do
+                        Role.human_attribute_name("title")
                       end
 
                       row.cell { Role.human_attribute_name("description") }

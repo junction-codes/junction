@@ -24,23 +24,23 @@ module Junction
             end
 
             card.content(class: "space-y-4") do
-              TextField(f, :title, "Resource Name", required: true)
-              SlugField(f, :name, "Identifier")
-              ImmutableField(f, :namespace, "Namespace", placeholder: "default",
+              TextField(f, :title, required: true)
+              SlugField(f, :name)
+              ImmutableField(f, :namespace, placeholder: "default",
                              required: true,
                              help_text: "Namespaces allow the same identifier to exist in different contexts.")
-              RichSelectField(f, :type, "Type", required: true, options: Junction::CatalogOptions.resources)
+              RichSelectField(f, :type, required: true, options: Junction::CatalogOptions.resources)
 
-              ReferenceField(f, :owner_id, "Owner", required: true,
+              ReferenceField(f, :owner_id, required: true,
                              icon: "users-round", options: @available_owners,
                              value: @resource.owner,
                              help_text: "Assign an owner for this resource.")
-              ReferenceField(f, :system_id, "System", icon: "users-round",
+              ReferenceField(f, :system_id, icon: "users-round",
                              options: @available_systems, value: @resource.system,
                              help_text: "System this resource belongs to.")
 
-              TextAreaField(f, :description, "Description", required: true, help_text: "A brief summary of the resource's goals.")
-              TextField(f, :image_url, "Image URL", help_text: "Optional URL for an image representing this resource.")
+              TextAreaField(f, :description, required: true, help_text: "A brief summary of the resource's goals.")
+              TextField(f, :image_url, help_text: "Optional URL for an image representing this resource.")
             end
           end
 

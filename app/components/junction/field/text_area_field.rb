@@ -2,22 +2,12 @@
 
 module Junction
   module Components
-    class TextAreaField < Base
-      def initialize(form, method, label, help_text: nil, required: false, **user_attrs)
-        @form = form
-        @method = method
-        @label = label
-        @help_text = help_text
-        @required = required
-        @errors = @form.object.errors[@method]
-
-        super(**user_attrs)
-      end
-
+    # Form field for a multi-line text input.
+    class TextAreaField < FieldType
       def view_template
         div do
           @form.label @method, class: "block text-sm font-medium leading-6 text-gray-900 dark:text-white" do
-            plain @label
+            plain label
             span(class: "text-red-500 ml-1") { " *" } if @required
           end
 
@@ -27,10 +17,10 @@ module Junction
 
           p(class: "mt-2 text-sm text-gray-500") { @help_text } if @help_text
 
-          if @errors.any?
+          if errors.any?
             div(class: "mt-2 text-sm text-red-600 dark:text-red-400", id: "#{@method}_errors") do
-              @errors.each do |error|
-                p { "#{@label} #{error}" }
+              errors.each do |error|
+                p { "#{label} #{error}" }
               end
             end
           end

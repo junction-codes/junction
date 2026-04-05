@@ -84,7 +84,7 @@ module Junction
                 )
               }
 
-              %w[name system_id owner_id type lifecycle].each do |field|
+              %w[title system_id owner_id type lifecycle].each do |field|
                 row.sortable_head(field:, sort_url:, **sort_attrs(query, field)) do
                   Component.human_attribute_name(field)
                 end

@@ -28,10 +28,9 @@ module Junction
             end
 
             card.content(class: "space-y-4") do
-              TextField(f, :title, t("components.role_form.role_name_label"), required: true)
-              SlugField(f, :name, "Identifier")
-              TextAreaField(f, :description, t("components.role_form.description_label"),
-                            required: true)
+              TextField(f, :title, required: true)
+              SlugField(f, :name)
+              TextAreaField(f, :description, required: true)
             end
           end
 
@@ -43,7 +42,7 @@ module Junction
               end
 
               card.content do
-                PermissionsField(f, :permission_ids, nil, available_permissions:)
+                PermissionsField(f, :permission_ids, available_permissions:)
               end
             end
           end

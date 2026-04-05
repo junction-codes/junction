@@ -24,25 +24,24 @@ module Junction
             end
 
             card.content(class: "space-y-4") do
-              TextField(f, :title, "Component Name", required: true)
-              SlugField(f, :name, "Identifier")
-              ImmutableField(f, :namespace, "Namespace", placeholder: "default",
+              TextField(f, :title, required: true)
+              SlugField(f, :name)
+              ImmutableField(f, :namespace, placeholder: "default",
                              required: true,
                              help_text: "Namespaces allow the same identifier to exist in different contexts.")
-              RichSelectField(f, :type, "Type", required: true,
-                              options: Junction::CatalogOptions.kinds)
-              RichSelectField(f, :lifecycle, "Lifecycle", required: true,
+              RichSelectField(f, :type, required: true, options: Junction::CatalogOptions.kinds)
+              RichSelectField(f, :lifecycle, required: true,
                               options: Junction::CatalogOptions.lifecycles)
 
-              ReferenceField(f, :owner_id, "Owner", icon: "users-round",
+              ReferenceField(f, :owner_id, icon: "users-round",
                              options: @available_owners, value: @component.owner,
                              help_text: "Assign an owner for this component.")
-              ReferenceField(f, :system_id, "System", icon: "users-round",
+              ReferenceField(f, :system_id, icon: "users-round",
                              options: @available_systems, value: @component.system,
                              help_text: "System this resource belongs to.")
 
-              TextField(f, :repository_url, "Repository URL")
-              TextAreaField(f, :description, "Description", required: true,
+              TextField(f, :repository_url)
+              TextAreaField(f, :description, required: true,
                             help_text: "A brief summary of the component's goals.")
             end
           end

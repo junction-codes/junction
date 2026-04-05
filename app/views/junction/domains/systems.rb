@@ -35,7 +35,7 @@ module Junction
             Table(class: "rounded-lg shadow overflow-hidden") do |table|
               table.header do |header|
                 header.row do |row|
-                  %w[name status].each do |field|
+                  %w[title status].each do |field|
                     row.sortable_head(field:, sort_url:, **sort_attrs(query, field)) do
                       System.human_attribute_name(field)
                     end

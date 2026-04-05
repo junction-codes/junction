@@ -20,19 +20,18 @@ module Junction
             end
 
             card.content(class: "space-y-4") do
-              TextField(f, :title, "Domain Name", required: true)
-              SlugField(f, :name, "Identifier")
-              ImmutableField(f, :namespace, "Namespace",
-                             placeholder: "default", required: true,
+              TextField(f, :title, required: true)
+              SlugField(f, :name)
+              ImmutableField(f, :namespace, placeholder: "default", required: true,
                              help_text: "Namespaces allow the same identifier to exist in different contexts.")
-              TextField(f, :status, "Domain Status", required: true)
-              TextField(f, :image_url, "Logo URL", placeholder: "https://example.com/logo.png")
+              TextField(f, :status, required: true)
+              TextField(f, :image_url, placeholder: "https://example.com/logo.png")
 
-              ReferenceField(f, :owner_id, "Owner", icon: "users-round",
+              ReferenceField(f, :owner_id, icon: "users-round",
                              options: @available_owners, value: @domain.owner,
                              help_text: "Assign an owner for this domain.")
 
-              TextAreaField(f, :description, "Description", required: true,
+              TextAreaField(f, :description, required: true,
                             help_text: "A brief, high-level summary of the domain's mission.")
             end
           end

@@ -22,22 +22,22 @@ module Junction
             end
 
             card.content(class: "space-y-4") do
-              TextField(f, :title, "System Name", required: true)
-              SlugField(f, :name, "Identifier")
-              ImmutableField(f, :namespace, "Namespace", placeholder: "default",
+              TextField(f, :title, required: true)
+              SlugField(f, :name)
+              ImmutableField(f, :namespace, placeholder: "default",
                              required: true,
                              help_text: "Namespaces allow the same identifier to exist in different contexts.")
-              TextField(f, :status, "System Status", required: true)
+              TextField(f, :status, required: true)
 
-              ReferenceField(f, :domain_id, "Domain", required: true,
+              ReferenceField(f, :domain_id, required: true,
                              options: @available_domains, value: @system.domain, icon: "briefcase",
                              help_text: "Assign this system to an existing domain.")
 
-              ReferenceField(f, :owner_id, "Owner", icon: "users-round",
+              ReferenceField(f, :owner_id, icon: "users-round",
                              options: @available_owners, value: @system.owner,
                              help_text: "Assign an owner for this system.")
 
-              TextAreaField(f, :description, "Description", required: true, help_text: "A brief summary of the system's goals.")
+              TextAreaField(f, :description, required: true, help_text: "A brief summary of the system's goals.")
             end
           end
 

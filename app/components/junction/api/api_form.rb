@@ -24,28 +24,27 @@ module Junction
             end
 
             card.content(class: "space-y-4") do
-              TextField(f, :title, "API Name", required: true)
-              SlugField(f, :name, "Identifier")
-              ImmutableField(f, :namespace, "Namespace", placeholder: "default",
+              TextField(f, :title, required: true)
+              SlugField(f, :name)
+              ImmutableField(f, :namespace, placeholder: "default",
                              required: true,
                              help_text: "Namespaces allow the same identifier to exist in different contexts.")
-              RichSelectField(f, :type, "Type", required: true,
-                              options: Junction::CatalogOptions.apis)
-              RichSelectField(f, :lifecycle, "Lifecycle", required: true,
+              RichSelectField(f, :type, required: true, options: Junction::CatalogOptions.apis)
+              RichSelectField(f, :lifecycle, required: true,
                               options: Junction::CatalogOptions.lifecycles)
 
-              ReferenceField(f, :owner_id, "Owner", icon: "users-round",
+              ReferenceField(f, :owner_id, icon: "users-round",
                              options: @available_owners, value: @api.owner,
                              required: true,
                              help_text: "Assign an owner for this API.")
-              ReferenceField(f, :system_id, "System", icon: "users-round",
+              ReferenceField(f, :system_id, icon: "users-round",
                              options: @available_systems, value: @api.system,
                              required: true,
                              help_text: "System this API belongs to.")
 
-              TextAreaField(f, :description, "Description", required: true,
+              TextAreaField(f, :description, required: true,
                             help_text: "A brief summary of the component's goals.")
-              TextAreaField(f, :definition, "Definition", required: true,
+              TextAreaField(f, :definition, required: true,
                             help_text: "API spec definition.", rows: 10)
             end
           end

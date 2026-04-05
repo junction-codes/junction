@@ -58,10 +58,10 @@ module Junction
           end
 
           card.content(class: "space-y-4") do
-            TextField(form, :title, "Display Name", required: true)
-            SlugField(form, :name, "Identifier")
-            TextField(form, :pronouns, "Pronouns", placeholder: "e.g., they/them, he/him, she/her")
-            TextField(form, :image_url, "Image URL", placeholder: "https://example.com/logo.png")
+            TextField(form, :title, required: true)
+            SlugField(form, :name)
+            TextField(form, :pronouns, placeholder: "e.g., they/them, he/him, she/her")
+            TextField(form, :image_url, placeholder: "https://example.com/logo.png")
           end
         end
       end
@@ -84,8 +84,8 @@ module Junction
           end
 
           card.content(class: "space-y-4") do
-            TextField(form, :email_address, "Email", required: new?)
-            TextField(form, :email_address_confirmation, "Confirm Email", required: new?)
+            TextField(form, :email_address, required: new?)
+            TextField(form, :email_address_confirmation, required: new?)
           end
         end
       end
@@ -111,14 +111,13 @@ module Junction
 
           card.content(class: "space-y-4") do
             if existing?
-              PasswordField(form, :password_challenge, "Current Password",
-                            required: new?, autocomplete: "current-password")
+              PasswordField(form, :password_challenge, required: new?,
+                            autocomplete: "current-password")
             end
 
-            PasswordField(form, :password, "New Password", required: new?,
+            PasswordField(form, :password, required: new?, autocomplete: "new-password")
+            PasswordField(form, :password_confirmation, required: new?,
                           autocomplete: "new-password")
-            PasswordField(form, :password_confirmation, "Confirm Password",
-                          required: new?, autocomplete: "new-password")
           end
         end
       end
