@@ -17,7 +17,7 @@ module Junction
       def view_template
         div(**attrs) do
           @form.label @method, class: LABEL_CLASS do
-            plain label
+            plain label_text
             span(class: "text-red-500 ml-1") { " *" } if @required && !persisted?
           end
 
