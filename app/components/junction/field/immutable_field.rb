@@ -23,18 +23,15 @@ module Junction
       # @param help_text [String] Optional help text shown below the field when
       #   editable.
       # @param required [Boolean] Whether the field is required.
-      # @param tooltip_text [String] Tooltip shown on the read-only value when
-      #   persisted.
       # @param user_attrs [Hash] Additional HTML attributes for the component.
       def initialize(form, method, label, placeholder: nil, help_text: nil,
-                     required: false, tooltip_text: "", **user_attrs)
+                     required: false, **user_attrs)
         @form = form
         @method = method
         @label = label
         @placeholder = placeholder
         @help_text = help_text
         @required = required
-        @tooltip_text = tooltip_text
 
         super(**user_attrs)
       end
@@ -52,11 +49,11 @@ module Junction
                 tooltip.trigger do
                   code(class: CODE_CLASS) do
                     plain @form.object.public_send(@method)
-                    span(class: "sr-only") { " (cannot be changed after creation)" }
+                    span(class: "sr-only") { t(".immutable", label: @label) }
                   end
                 end
 
-                tooltip.content { @tooltip_text }
+                tooltip.content { t(".immutable", label: @label) }
               end
 
               @form.hidden_field @method

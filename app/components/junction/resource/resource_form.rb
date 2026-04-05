@@ -24,10 +24,10 @@ module Junction
             end
 
             card.content(class: "space-y-4") do
-              SlugField(f, title_label: "Resource Name", required: true)
+              TextField(f, :title, "Resource Name", required: true)
+              SlugField(f, :name, "Identifier")
               ImmutableField(f, :namespace, "Namespace", placeholder: "default",
                              required: true,
-                             tooltip_text: "The namespace cannot be changed after creation.",
                              help_text: "Namespaces allow the same identifier to exist in different contexts.")
               RichSelectField(f, :type, "Type", required: true, options: Junction::CatalogOptions.resources)
 

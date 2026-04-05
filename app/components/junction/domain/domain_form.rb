@@ -20,10 +20,10 @@ module Junction
             end
 
             card.content(class: "space-y-4") do
-              SlugField(f, title_label: "Domain Name", required: true)
+              TextField(f, :title, "Domain Name", required: true)
+              SlugField(f, :name, "Identifier")
               ImmutableField(f, :namespace, "Namespace",
                              placeholder: "default", required: true,
-                             tooltip_text: "The namespace cannot be changed after creation.",
                              help_text: "Namespaces allow the same identifier to exist in different contexts.")
               TextField(f, :status, "Domain Status", required: true)
               TextField(f, :image_url, "Logo URL", placeholder: "https://example.com/logo.png")

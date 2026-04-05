@@ -104,8 +104,14 @@ en:
     components:
       entity_preview:
         logo_alt: "Logo for %{name}"
+      immutable_field:
+        immutable: "%{label} cannot be changed after creation."
       search_bar:
         placeholder: "Search components, docs, etc."
+      slug_field:
+        auto: "Auto"
+        edit: "Edit"
+        immutable: "%{label} cannot be changed after creation."
 
     views:
       search:

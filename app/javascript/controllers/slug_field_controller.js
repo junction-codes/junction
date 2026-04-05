@@ -1,9 +1,8 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Manages the interactive slug/title pair on entity create forms.
+// Manages the interactive slug/source pair on entity create forms.
 export default class extends Controller {
   static targets = [
-    "titleInput",
     "slugDisplay",
     "slugInput",
     "slugDisplayWrapper",
@@ -12,27 +11,42 @@ export default class extends Controller {
     "editLink",
     "autoLink"
   ]
-  static values = { persisted: Boolean }
+  static values = { persisted: Boolean, sourceSelector: String }
 
   #autoMode = true
+  #onSourceInputBound = null
 
   connect() {
     if (this.persistedValue) return
 
+    // Listen for input on the source field, which lives outside this element.
+    const sourceInput = this.#sourceInput
+    if (sourceInput) {
+      this.#onSourceInputBound = this.onSourceInput.bind(this)
+      sourceInput.addEventListener("input", this.#onSourceInputBound)
+    }
+
     // Restore manual mode after a validation-error re-render: if the submitted
     // slug differs from what auto-mode would produce, the user had edited it.
-    if (this.hasSlugInputTarget && this.hasTitleInputTarget) {
+    if (this.hasSlugInputTarget && sourceInput) {
       const submitted = this.slugInputTarget.value
-      if (submitted && submitted !== this.#slugify(this.titleInputTarget.value)) {
+      if (submitted && submitted !== this.#slugify(sourceInput.value)) {
         this.#switchToManualMode(submitted)
       }
     }
   }
 
-  // Called on every keystroke in the title input.
-  onTitleInput() {
+  disconnect() {
+    const sourceInput = this.#sourceInput
+    if (sourceInput && this.#onSourceInputBound) {
+      sourceInput.removeEventListener("input", this.#onSourceInputBound)
+    }
+  }
+
+  // Called on every keystroke in the source input.
+  onSourceInput() {
     if (!this.#autoMode) return
-    const slug = this.#slugify(this.titleInputTarget.value)
+    const slug = this.#slugify(this.#sourceInput?.value ?? "")
     this.slugDisplayTarget.textContent = slug || "auto-generated"
     this.slugInputTarget.value = slug
   }
@@ -47,10 +61,17 @@ export default class extends Controller {
   enableAutoMode(event) {
     event.preventDefault()
     this.#autoMode = true
-    const slug = this.#slugify(this.titleInputTarget.value)
+    const slug = this.#slugify(this.#sourceInput?.value ?? "")
     this.slugInputTarget.value = slug
     this.slugDisplayTarget.textContent = slug || "auto-generated"
     this.#showAutoModeUI()
+  }
+
+  // Returns the source input element located within the enclosing form using
+  // the CSS selector stored in the sourceSelector value.
+  get #sourceInput() {
+    if (!this.hasSourceSelectorValue) return null
+    return this.element.closest("form")?.querySelector(this.sourceSelectorValue) ?? null
   }
 
   // Called on keystroke in manual slug input.

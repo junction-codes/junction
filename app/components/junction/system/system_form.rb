@@ -22,10 +22,10 @@ module Junction
             end
 
             card.content(class: "space-y-4") do
-              SlugField(f, label: "System Name", required: true)
+              TextField(f, :title, "System Name", required: true)
+              SlugField(f, :name, "Identifier")
               ImmutableField(f, :namespace, "Namespace", placeholder: "default",
                              required: true,
-                             tooltip_text: "The namespace cannot be changed after creation.",
                              help_text: "Namespaces allow the same identifier to exist in different contexts.")
               TextField(f, :status, "System Status", required: true)
 

@@ -28,8 +28,8 @@ module Junction
             end
 
             card.content(class: "space-y-4") do
-              SlugField(f, title_label: t("components.role_form.role_name_label"),
-                        required: true)
+              TextField(f, :title, t("components.role_form.role_name_label"), required: true)
+              SlugField(f, :name, "Identifier")
               TextAreaField(f, :description, t("components.role_form.description_label"),
                             required: true)
             end

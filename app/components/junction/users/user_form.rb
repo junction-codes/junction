@@ -58,7 +58,8 @@ module Junction
           end
 
           card.content(class: "space-y-4") do
-            SlugField(form, title_label: "Display Name", required: true)
+            TextField(form, :title, "Display Name", required: true)
+            SlugField(form, :name, "Identifier")
             TextField(form, :pronouns, "Pronouns", placeholder: "e.g., they/them, he/him, she/her")
             TextField(form, :image_url, "Image URL", placeholder: "https://example.com/logo.png")
           end
