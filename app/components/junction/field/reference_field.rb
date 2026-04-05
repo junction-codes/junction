@@ -74,7 +74,7 @@ module Junction
           end
 
           div do
-            div(class: "text-sm font-medium text-gray-900 dark:text-white") { t(".blank", label:) }
+            div(class: "text-sm font-medium text-gray-900 dark:text-white") { t(".blank", label: label_text) }
             div(class: "text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs italic") { @placeholder }
           end
         end

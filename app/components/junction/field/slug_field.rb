@@ -57,7 +57,7 @@ module Junction
           div do
             div(class: "flex items-center justify-between") do
               span(class: LABEL_CLASS) do
-                plain label
+                plain label_text
                 span(class: "text-red-500 ml-1") { " *" } if @required && !persisted?
               end
 
