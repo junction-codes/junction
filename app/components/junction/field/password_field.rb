@@ -20,7 +20,7 @@ module Junction
           # If there are any validation errors, display them below the field
           if errors.any?
             div(class: "mt-2 text-sm text-red-600 dark:text-red-400", id: "#{@method}_errors") do
-              @errors.each do |error|
+              errors.each do |error|
                 p { "#{label_text} #{error}" }
               end
             end
