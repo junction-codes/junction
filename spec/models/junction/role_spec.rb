@@ -14,7 +14,8 @@ RSpec.describe Junction::Role, type: :model do
 
     it_behaves_like "validates presence of", :description
     it_behaves_like "validates presence of", :name
-    it_behaves_like "validates uniqueness of", :name, "Duplicate Role"
+    it_behaves_like "validates presence of", :title
+    it_behaves_like "validates uniqueness of", :name, "duplicate-role"
   end
 
   describe "associations" do
@@ -83,8 +84,8 @@ RSpec.describe Junction::Role, type: :model do
   end
 
   describe ".ransackable_attributes" do
-    it "returns description and name" do
-      expect(described_class.ransackable_attributes).to eq(%w[description name])
+    it "returns description, name, and title" do
+      expect(described_class.ransackable_attributes).to eq(%w[description name title])
     end
   end
 end

@@ -22,7 +22,7 @@ module Junction
           if @entity.image_url.present?
             img(
               src: @entity.image_url,
-              alt: t(".logo_alt", name: @entity.name),
+              alt: t(".logo_alt", name: @entity.title),
               class: "h-12 w-12 rounded-md object-cover flex-shrink-0"
             )
           else

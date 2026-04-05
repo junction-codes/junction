@@ -6,7 +6,7 @@ RSpec.describe "systems/index", type: :view do
   before do
     assign(:systems, [
       Junction::System.create!(
-        name: "Name",
+        title: "Name",
         description: "MyText",
         status: "active",
         image_url: "https://example.com/image.png",
@@ -14,7 +14,7 @@ RSpec.describe "systems/index", type: :view do
         owner: nil
       ),
       Junction::System.create!(
-        name: "Second Name",
+        title: "Second Name",
         description: "MyText",
         status: "closed",
         image_url: nil,

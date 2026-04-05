@@ -46,6 +46,12 @@ en:
     lifecycle: "Lifecycle"
     updated_at: "Updated"
 
+  errors:
+    messages:
+      immutable: "cannot be changed after creation."
+      namespace_format: "must start with a lowercase letter and contain only lowercase letters, numbers, or hyphens."
+      slug_format: "must start with a letter and contain only letters, numbers, hyphens, underscores, or dots."
+
   activerecord:
     attributes:
       junction/api:

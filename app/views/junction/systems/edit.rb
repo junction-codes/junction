@@ -36,7 +36,7 @@ module Junction
           div(class: "px-6 py-3 space-y-6") do
             div do
               h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { "Edit System" }
-              p(class: "mt-1 text-sm text-gray-600 dark:text-gray-400") { "Update the details for the '#{@system.name}' system." }
+              p(class: "mt-1 text-sm text-gray-600 dark:text-gray-400") { "Update the details for the '#{@system.title}' system." }
             end
 
             div(class: "grid grid-cols-1 lg:grid-cols-3 gap-8") do

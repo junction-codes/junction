@@ -6,6 +6,7 @@ module Junction
     include Dependable
     include Dependentable
     include Ownable
+    include Sluggable
 
     attribute :lifecycle, :string, default: "experimental"
     alias_attribute :type, :api_type
@@ -17,14 +18,14 @@ module Junction
     validates :description, presence: true
     validates :image_url, allow_blank: true, format: URI::DEFAULT_PARSER.make_regexp(%w[http https])
     validates :lifecycle, presence: true, inclusion: { in: Junction::CatalogOptions.lifecycles.keys }
-    validates :name, presence: true, uniqueness: true
 
     def self.ransackable_associations(auth_object = nil)
       %w[owner system]
     end
 
     def self.ransackable_attributes(auth_object = nil)
-      %w[created_at api_type description lifecycle name owner_id system_id type updated_at]
+      %w[created_at api_type description lifecycle name owner_id system_id title
+         type updated_at]
     end
 
     # Get the icon associated with the component's type.

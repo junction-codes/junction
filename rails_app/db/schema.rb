@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_01_000000) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_05_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -22,10 +22,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_01_000000) do
     t.text "description"
     t.string "image_url"
     t.string "lifecycle"
-    t.string "name"
+    t.string "name", null: false
+    t.string "namespace", default: "default", null: false
     t.bigint "owner_id", null: false
     t.bigint "system_id", null: false
+    t.string "title", null: false
     t.datetime "updated_at", null: false
+    t.index ["namespace", "name"], name: "index_junction_apis_on_namespace_and_name", unique: true
     t.index ["owner_id"], name: "index_junction_apis_on_owner_id"
     t.index ["system_id"], name: "index_junction_apis_on_system_id"
   end
@@ -37,11 +40,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_01_000000) do
     t.text "description"
     t.string "image_url"
     t.string "lifecycle"
-    t.string "name"
+    t.string "name", null: false
+    t.string "namespace", default: "default", null: false
     t.bigint "owner_id"
     t.string "repository_url"
     t.bigint "system_id"
+    t.string "title", null: false
     t.datetime "updated_at", null: false
+    t.index ["namespace", "name"], name: "index_junction_components_on_namespace_and_name", unique: true
     t.index ["owner_id"], name: "index_junction_components_on_owner_id"
     t.index ["system_id"], name: "index_junction_components_on_system_id"
   end
@@ -61,10 +67,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_01_000000) do
     t.datetime "created_at", null: false
     t.text "description"
     t.string "image_url"
-    t.string "name"
+    t.string "name", null: false
+    t.string "namespace", default: "default", null: false
     t.bigint "owner_id"
     t.string "status"
+    t.string "title", null: false
     t.datetime "updated_at", null: false
+    t.index ["namespace", "name"], name: "index_junction_domains_on_namespace_and_name", unique: true
     t.index ["owner_id"], name: "index_junction_domains_on_owner_id"
   end
 
@@ -85,9 +94,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_01_000000) do
     t.string "group_type", null: false
     t.string "image_url"
     t.string "name", null: false
+    t.string "namespace", default: "default", null: false
     t.bigint "parent_id"
     t.bigint "role_id"
+    t.string "title", null: false
     t.datetime "updated_at", null: false
+    t.index ["namespace", "name"], name: "index_junction_groups_on_namespace_and_name", unique: true
     t.index ["parent_id"], name: "index_junction_groups_on_parent_id"
     t.index ["role_id"], name: "index_junction_groups_on_role_id"
   end
@@ -106,11 +118,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_01_000000) do
     t.datetime "created_at", null: false
     t.text "description"
     t.string "image_url"
-    t.string "name"
+    t.string "name", null: false
+    t.string "namespace", default: "default", null: false
     t.bigint "owner_id", null: false
     t.string "resource_type"
     t.bigint "system_id", null: false
+    t.string "title", null: false
     t.datetime "updated_at", null: false
+    t.index ["namespace", "name"], name: "index_junction_resources_on_namespace_and_name", unique: true
     t.index ["owner_id"], name: "index_junction_resources_on_owner_id"
     t.index ["system_id"], name: "index_junction_resources_on_system_id"
   end
@@ -129,6 +144,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_01_000000) do
     t.text "description"
     t.string "name", null: false
     t.boolean "system", default: false, null: false
+    t.string "title", null: false
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_junction_roles_on_name", unique: true
   end
@@ -147,24 +163,29 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_01_000000) do
     t.text "description"
     t.bigint "domain_id", null: false
     t.string "image_url"
-    t.string "name"
+    t.string "name", null: false
+    t.string "namespace", default: "default", null: false
     t.bigint "owner_id"
     t.string "status"
+    t.string "title", null: false
     t.datetime "updated_at", null: false
     t.index ["domain_id"], name: "index_junction_systems_on_domain_id"
+    t.index ["namespace", "name"], name: "index_junction_systems_on_namespace_and_name", unique: true
     t.index ["owner_id"], name: "index_junction_systems_on_owner_id"
   end
 
   create_table "junction_users", force: :cascade do |t|
     t.jsonb "annotations"
     t.datetime "created_at", null: false
-    t.string "display_name", null: false
     t.string "email_address", null: false
     t.string "image_url"
+    t.string "name", null: false
     t.string "password_digest", null: false
     t.string "pronouns"
+    t.string "title", null: false
     t.datetime "updated_at", null: false
     t.index ["email_address"], name: "index_junction_users_on_email_address", unique: true
+    t.index ["name"], name: "index_junction_users_on_name", unique: true
   end
 
   add_foreign_key "junction_apis", "junction_groups", column: "owner_id"

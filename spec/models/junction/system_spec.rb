@@ -11,11 +11,13 @@ RSpec.describe Junction::System, type: :model do
     end
 
     it_behaves_like "validates presence of", :description
-    it_behaves_like "validates presence of", :name
-    it_behaves_like "validates uniqueness of", :name
+    it_behaves_like "validates presence of", :title
+    it_behaves_like "validates uniqueness of", :name, "duplicate-slug", scope: :namespace
     it_behaves_like "validates image_url format"
     it_behaves_like "validates status inclusion"
   end
+
+  it_behaves_like "a sluggable entity"
 
   describe "associations" do
     it_behaves_like "a model that can be owned"

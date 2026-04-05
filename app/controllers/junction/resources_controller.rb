@@ -16,7 +16,7 @@ module Junction
     def index
       authorize! Resource
       @q = index_scope_for(Resource).ransack(params[:q])
-      @q.sorts = "name asc" if @q.sorts.empty?
+      @q.sorts = "title asc" if @q.sorts.empty?
       @pagy, resources = paginate(@q.result)
 
       render Views::Resources::Index.new(
@@ -111,7 +111,7 @@ module Junction
     #
     # @return [ActiveRecord::Relation] Collection of systems.
     def available_systems
-      System.select(:description, :id, :image_url, :name).order(:name)
+      System.select(:description, :id, :image_url, :title).order(:title)
     end
 
     # Returns an array of available types for resources.
@@ -132,8 +132,8 @@ module Junction
 
     def resource_params
       sanitize_owner_id(params.expect(resource: [
-        :name, :description, :type, :image_url, :owner_id, :resource_type,
-        :system_id, annotations: {}
+        :description, :image_url, :name, :namespace, :owner_id, :resource_type,
+        :system_id, :title, :type, annotations: {}
       ]))
     end
   end

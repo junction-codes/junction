@@ -75,7 +75,7 @@ module Junction
       def item_content(record, target = "itemContent")
         div(class: "flex items-center space-x-4 text-left", data_ruby_ui__select_target: target) do
           if record.image_url.present?
-            img(src: record.image_url, alt: "#{record.name} logo", class: "h-6 w-6 rounded-md object-cover flex-shrink-0")
+            img(src: record.image_url, alt: "#{record.title} logo", class: "h-6 w-6 rounded-md object-cover flex-shrink-0")
           else
             div(class: "h-6 w-6 rounded-md bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0") do
               icon(@icon, class: "h-6 w-6 text-gray-500")
@@ -83,7 +83,7 @@ module Junction
           end
 
           div do
-            div(class: "text-sm font-medium text-gray-900 dark:text-white") { record.name }
+            div(class: "text-sm font-medium text-gray-900 dark:text-white") { record.title }
             div(class: "text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs") { record.description }
           end
         end

@@ -4,7 +4,7 @@ RSpec.describe "groups/index", type: :view do
   before do
     assign(:groups, [
       Junction::Group.create!(
-        name: "Name",
+        title: "Name",
         description: "MyText",
         group_type: "team",
         email: "team@example.com",
@@ -12,7 +12,7 @@ RSpec.describe "groups/index", type: :view do
         parent: nil
       ),
       Junction::Group.create!(
-        name: "Second Name",
+        title: "Second Name",
         description: "MyText",
         group_type: "business_unit",
         email: "bu@example.com",

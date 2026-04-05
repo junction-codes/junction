@@ -13,8 +13,8 @@ RSpec.describe Junction::Component, type: :model do
     it_behaves_like "validates presence of", :component_type
     it_behaves_like "validates presence of", :description
     it_behaves_like "validates presence of", :lifecycle
-    it_behaves_like "validates presence of", :name
-    it_behaves_like "validates uniqueness of", :name
+    it_behaves_like "validates presence of", :title
+    it_behaves_like "validates uniqueness of", :name, "duplicate-slug", scope: :namespace
     it_behaves_like "validates image_url format"
 
     it "is invalid with an unknown component_type" do
@@ -27,6 +27,8 @@ RSpec.describe Junction::Component, type: :model do
       expect(component).not_to be_valid
     end
   end
+
+  it_behaves_like "a sluggable entity"
 
   describe "associations" do
     it_behaves_like "a model that can be depended on"

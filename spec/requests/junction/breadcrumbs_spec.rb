@@ -86,7 +86,7 @@ RSpec.describe "Junction::Breadcrumbs concern", type: :request do
     end
 
     it "includes the component name in the breadcrumb" do
-      expect_breadcrumb_to_include(component.name)
+      expect_breadcrumb_to_include(component.title)
     end
 
     it "includes a link to the components index in the breadcrumb" do
@@ -144,7 +144,7 @@ RSpec.describe "Junction::Breadcrumbs concern", type: :request do
     end
 
     it "includes the component name in the breadcrumb" do
-      expect_breadcrumb_to_include(component.name)
+      expect_breadcrumb_to_include(component.title)
     end
 
     it "includes a link to the component show page in the breadcrumb" do
@@ -181,7 +181,7 @@ RSpec.describe "Junction::Breadcrumbs concern", type: :request do
       end
 
       it "includes the component name in the breadcrumb" do
-        expect_breadcrumb_to_include(component.name)
+        expect_breadcrumb_to_include(component.title)
       end
     end
   end

@@ -73,9 +73,9 @@ module Junction
       excluded_ids = @entity.members.pluck(:id)
 
       results = User
-        .where("display_name ILIKE ? OR email_address ILIKE ?", "%#{q}%", "%#{q}%")
+        .where("title ILIKE ? OR email_address ILIKE ?", "%#{q}%", "%#{q}%")
         .where.not(id: excluded_ids)
-        .order(:display_name)
+        .order(:title)
         .limit(10)
 
       render Views::Groups::UserSearch.new(results:)

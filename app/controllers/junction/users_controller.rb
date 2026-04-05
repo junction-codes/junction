@@ -99,9 +99,9 @@ module Junction
     # Only allow a list of trusted parameters through.
     def user_params
       params.expect(user: [
-        :display_name, :email_address, :email_address_confirmation, :image_url,
-        :password, :password_challenge, :password_confirmation, :pronouns,
-        :owner_id, annotations: {}
+        :email_address, :email_address_confirmation, :image_url, :name,
+        :owner_id, :password, :password_challenge, :password_confirmation,
+        :pronouns, :title, annotations: {}
       ])
     end
 

@@ -76,23 +76,23 @@ module Junction
                             tooltip.trigger do
                               Button(variant: :ghost, size: :sm) do
                                 icon("trash", class: "w-4 h-4 text-destructive-foreground")
-                                span(class: "sr-only") { t(".remove", name: user.display_name) }
+                                span(class: "sr-only") { t(".remove", name: user.title) }
                               end
                             end
 
                             tooltip.content do
-                              t(".remove", name: user.display_name)
+                              t(".remove", name: user.title)
                             end
                           end
                         end
 
                         dialog.content do |content|
                           content.header do |header|
-                            header.title { t(".confirm_title", name: user.display_name) }
+                            header.title { t(".confirm_title", name: user.title) }
                           end
 
                           content.body do
-                            t(".confirm_body", name: user.display_name)
+                            t(".confirm_body", name: user.title)
                           end
 
                           content.footer do

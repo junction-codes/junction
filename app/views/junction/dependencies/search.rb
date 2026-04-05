@@ -23,7 +23,7 @@ module Junction
               @results.each do |entity|
                 AutocompleteResultItem(
                   value: "#{entity.class.name}:#{entity.id}",
-                  name: entity.name
+                  name: entity.title
                 ) do
                   "#{entity.class.name.demodulize.downcase} · #{entity.type}"
                 end

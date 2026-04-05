@@ -33,7 +33,7 @@ module Junction
             # Left side: logo, title, and description.
             div(class: "flex items-center space-x-6") do
               if @component.image_url.present?
-                img(src: @component.image_url, alt: "#{@component.name} logo", class: "h-20 w-20 rounded-lg object-cover flex-shrink-0")
+                img(src: @component.image_url, alt: "#{@component.title} logo", class: "h-20 w-20 rounded-lg object-cover flex-shrink-0")
               else
                 div(class: "h-20 w-20 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0") do
                   icon(@component.icon, class: "h-10 w-10 text-gray-500")
@@ -41,7 +41,7 @@ module Junction
               end
 
               div do
-                h2(class: "text-3xl font-bold text-gray-900 dark:text-white") { @component.name }
+                h2(class: "text-3xl font-bold text-gray-900 dark:text-white") { @component.title }
 
                 p(class: "mt-1 text-md text-gray-600 dark:text-gray-400 max-w-2xl") { @component.description }
                 div(class: "mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400") do
@@ -71,9 +71,9 @@ module Junction
                 break unless @component.system.present?
 
                 if allowed_to?(:show?, @component.system)
-                  Link(href: system_path(@component.system)) { "Part of the '#{@component.system.name}' System" }
+                  Link(href: system_path(@component.system)) { "Part of the '#{@component.system.title}' System" }
                 else
-                  Link(variant: :disabled) { "Part of the '#{@component.system.name}' System" }
+                  Link(variant: :disabled) { "Part of the '#{@component.system.title}' System" }
                 end
               end
             end

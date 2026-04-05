@@ -3,6 +3,7 @@
 module Junction
   class Group < ApplicationRecord
     include Annotated
+    include Sluggable
 
     attribute :group_type, :string, default: "team"
     alias_attribute :type, :group_type
@@ -13,7 +14,6 @@ module Junction
     validates :email, allow_blank: true, format: URI::MailTo::EMAIL_REGEXP
     validates :group_type, presence: true
     validates :image_url, allow_blank: true, format: URI::DEFAULT_PARSER.make_regexp(%w[http https])
-    validates :name, presence: true, uniqueness: true
 
     belongs_to :parent, class_name: "Junction::Group", optional: true
     belongs_to :role, class_name: "Junction::Role", optional: true
@@ -28,7 +28,8 @@ module Junction
     end
 
     def self.ransackable_attributes(auth_object = nil)
-      %w[created_at description email group_type name parent_id type updated_at]
+      %w[created_at description email group_type name parent_id title type
+         updated_at]
     end
 
     def icon

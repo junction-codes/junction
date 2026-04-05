@@ -14,10 +14,12 @@ RSpec.describe Junction::Api, type: :model do
     it_behaves_like "validates presence of", :definition
     it_behaves_like "validates presence of", :description
     it_behaves_like "validates presence of", :lifecycle
-    it_behaves_like "validates presence of", :name
-    it_behaves_like "validates uniqueness of", :name
+    it_behaves_like "validates presence of", :title
+    it_behaves_like "validates uniqueness of", :name, "duplicate-slug", scope: :namespace
     it_behaves_like "validates image_url format"
   end
+
+  it_behaves_like "a sluggable entity"
 
   describe "associations" do
     it_behaves_like "a model with dependencies"

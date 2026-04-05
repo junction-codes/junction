@@ -14,7 +14,7 @@ module Junction
     def index
       authorize! Role
       @q = Role.ransack(params[:q])
-      @q.sorts = "name asc" if @q.sorts.empty?
+      @q.sorts = "title asc" if @q.sorts.empty?
       @pagy, roles = paginate(@q.result)
 
       render Views::Roles::Index.new(
@@ -118,7 +118,7 @@ module Junction
     end
 
     def role_params
-      params.expect(role: [ :description, :name, { permission_ids: [] } ])
+      params.expect(role: [ :description, :name, :title, { permission_ids: [] } ])
     end
 
     # Synchronize the permissions assigned to a role.

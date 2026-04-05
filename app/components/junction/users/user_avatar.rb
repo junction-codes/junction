@@ -13,7 +13,7 @@ module Junction
       def view_template
         Avatar(**attrs) do |avatar|
           if @user.image_url.present?
-            avatar.image(src: @user.image_url, alt: @user.display_name)
+            avatar.image(src: @user.image_url, alt: @user.title)
           else
             avatar.fallback { icon("circle-user-round") }
           end

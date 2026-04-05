@@ -5,7 +5,7 @@ RSpec.describe "systems/show", type: :view do
 
   before do
     assign(:system, Junction::System.create!(
-      name: "Name",
+      title: "Name",
       description: "MyText",
       status: "active",
       image_url: "https://example.com/image.png",

@@ -21,7 +21,7 @@ module Junction
 
             AutocompleteResultList do
               @results.each do |user|
-                AutocompleteResultItem(value: user.id.to_s, name: user.display_name) do
+                AutocompleteResultItem(value: user.id.to_s, name: user.title) do
                   user.email_address
                 end
               end

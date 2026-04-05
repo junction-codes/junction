@@ -32,7 +32,7 @@ module Junction
             # Page header.
             div do
               h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { "Edit Group" }
-              p(class: "mt-1 text-sm text-gray-600 dark:text-gray-400") { "Update the details for the '#{@group.name}' group." }
+              p(class: "mt-1 text-sm text-gray-600 dark:text-gray-400") { "Update the details for the '#{@group.title}' group." }
             end
 
             # Two-column layout for form and sidebar.

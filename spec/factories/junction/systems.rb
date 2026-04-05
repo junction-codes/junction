@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory "junction/system", aliases: [ :system ], class: "Junction::System" do
-    sequence(:name) { |n| "System #{n}" }
+    sequence(:title) { |n| "System #{n}" }
     description { Faker::Lorem.paragraph }
     status { %w[active closed].sample }
     image_url { Faker::Internet.url }

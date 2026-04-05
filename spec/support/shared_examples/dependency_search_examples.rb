@@ -29,19 +29,19 @@ RSpec.shared_examples "a dependency search action" do |source_factory, path_meth
         expect(response).to be_successful
       end
 
-      context "when searching by name" do
+      context "when searching by title" do
         # Use the same factory as the source so the read_permission covers
         # the target type without needing additional permissions.
         let!(:target) { create(source_factory) }
 
         it "includes entities matching the query" do
-          get path, params: { q: target.name }
-          expect(response.body).to include(target.name)
+          get path, params: { q: target.title }
+          expect(response.body).to include(target.title)
         end
 
         it "excludes entities that do not match the query" do
           get path, params: { q: "zzznomatch_#{SecureRandom.hex}" }
-          expect(response.body).not_to include(target.name)
+          expect(response.body).not_to include(target.title)
         end
       end
     end

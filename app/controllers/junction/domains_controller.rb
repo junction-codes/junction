@@ -14,7 +14,7 @@ module Junction
     def index
       authorize! Domain
       @q = index_scope_for(Domain).ransack(params[:q])
-      @q.sorts = "name asc" if @q.sorts.empty?
+      @q.sorts = "title asc" if @q.sorts.empty?
       @pagy, domains = paginate(@q.result)
 
       render Views::Domains::Index.new(
@@ -33,7 +33,7 @@ module Junction
     def systems
       authorize! @entity, to: :show?
       @q = @entity.systems.ransack(params[:q])
-      @q.sorts = "name asc" if @q.sorts.empty?
+      @q.sorts = "title asc" if @q.sorts.empty?
       @pagy, systems = paginate(@q.result)
 
       render Views::Domains::Systems.new(
@@ -145,7 +145,7 @@ module Junction
 
     def domain_params
       sanitize_owner_id(params.expect(domain: [
-        :name, :description, :image_url, :status, :owner_id
+        :description, :image_url, :name, :namespace, :owner_id, :status, :title
       ]))
     end
   end

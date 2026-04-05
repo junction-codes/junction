@@ -9,7 +9,7 @@ RSpec.describe "/systems", type: :request do
     {
       description: "A description for the test system",
       domain_id: junction_domains(:one).id,
-      name: "Test System",
+      title: "Test System",
       image_url: "https://example.com/image.png",
       status: "active"
     }

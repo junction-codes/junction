@@ -33,7 +33,7 @@ module Junction
     # @return [ActiveRecord::Relation]
     def available_owners
       ids = allowed_owner_ids
-      scope = Group.select(:description, :id, :image_url, :name).order(:name)
+      scope = Group.select(:description, :id, :image_url, :title).order(:title)
       ids.present? ? scope.where(id: ids) : scope.none
     end
 

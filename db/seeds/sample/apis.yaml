@@ -1,4 +1,5 @@
-- name: Junction API
+- title: Junction API
+  name: junction-api
   lifecycle: experimental
   type: openapi
   system: Junction Codes

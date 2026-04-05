@@ -51,12 +51,12 @@ module Junction
                         # safely render the entity's link here.
                         Link(href: url_for(entity), class: "p-0") do
                           span(class: "inline-block max-w-[10em] truncate") do
-                            entity.name
+                            entity.title
                           end
                         end
                       end
 
-                      t.content { entity.name }
+                      t.content { entity.title }
                     end
                   end
 

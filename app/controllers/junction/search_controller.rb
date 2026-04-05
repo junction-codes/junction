@@ -12,7 +12,7 @@ module Junction
     skip_verify_authorized
 
     SEARCHABLE_MODELS = [ Api, Component, Domain, Resource, System ].freeze
-    SORT_FIELDS = %w[name kind].freeze
+    SORT_FIELDS = %w[kind title].freeze
 
     # GET /search
     def index
@@ -55,8 +55,8 @@ module Junction
         scope = index_scope_for(model)
         next [] if scope.nil?
 
-        scope.where("name ILIKE :p OR description ILIKE :p", p: pattern)
-          .order(:name)
+        scope.where("title ILIKE :p OR description ILIKE :p", p: pattern)
+          .order(:title)
           .limit(limit)
           .to_a
       end
@@ -70,8 +70,8 @@ module Junction
     # @return [Array<ApplicationRecord>] Sorted results.
     def sort_results(results, field = "name", direction = "asc")
       sorted = case field
-      when "kind" then results.sort_by { |e| [ e.class.model_name.human, e.name ] }
-      else results.sort_by(&:name)
+      when "kind" then results.sort_by { |e| [ e.class.model_name.human, e.title ] }
+      else results.sort_by(&:title)
       end
 
       direction == "desc" ? sorted.reverse : sorted
@@ -82,7 +82,7 @@ module Junction
     # @return [Array(String, String)] Field and direction.
     def parse_sort
       field, dir = params[:s].to_s.split(" ", 2)
-      field = SORT_FIELDS.include?(field) ? field : "name"
+      field = SORT_FIELDS.include?(field) ? field : "title"
       dir = %w[asc desc].include?(dir) ? dir : "asc"
 
       [ field, dir ]

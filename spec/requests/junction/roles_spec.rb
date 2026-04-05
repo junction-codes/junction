@@ -8,7 +8,8 @@ RSpec.describe "Junction::RolesController", type: :request do
   let(:system) { false }
   let(:valid_attributes) do
     {
-      name: "Test Role",
+      name: "test-role",
+      title: "Test Role",
       description: "A role for testing purposes",
       permission_ids: []
     }

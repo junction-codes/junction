@@ -76,7 +76,7 @@ module Junction
     def breadcrumb_show
       {
         href: send(:"#{controller_name.singularize}_path", @entity),
-        label: @entity.respond_to?(:display_name) ? @entity.display_name : @entity.name
+        label: @entity.title
       }
     end
 

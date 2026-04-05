@@ -7,7 +7,7 @@ RSpec.describe "/resources", type: :request do
 
   let(:valid_attributes) {
     {
-      name: "Test Resource",
+      title: "Test Resource",
       description: "A resource for testing purposes",
       type: "database",
       system_id: create(:system).id,

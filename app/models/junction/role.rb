@@ -5,6 +5,7 @@ module Junction
   class Role < ApplicationRecord
     validates :description, presence: true
     validates :name, presence: true, uniqueness: true
+    validates :title, presence: true
 
     has_many :groups, class_name: "Junction::Group"
     has_many :role_permissions, dependent: :destroy, class_name: "Junction::RolePermission"
@@ -16,7 +17,7 @@ module Junction
     end
 
     def self.ransackable_attributes(auth_object = nil)
-      %w[description name]
+      %w[description name title]
     end
 
     # String representation of the permissions assigned to this role.

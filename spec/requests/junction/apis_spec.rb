@@ -7,7 +7,7 @@ RSpec.describe "/apis", type: :request do
 
   let(:valid_attributes) {
     {
-      name: "Test API",
+      title: "Test API",
       description: "An API for testing purposes",
       definition: "{}",
       lifecycle: "experimental",

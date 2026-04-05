@@ -4,7 +4,7 @@ RSpec.describe "components/index", type: :view do
   before do
     assign(:components, [
       Junction::Component.create!(
-        name: "Name",
+        title: "Name",
         description: "MyText",
         lifecycle: "production",
         component_type: "api",
@@ -12,7 +12,7 @@ RSpec.describe "components/index", type: :view do
         owner: nil
       ),
       Junction::Component.create!(
-        name: "Second Name",
+        title: "Second Name",
         description: "MyText",
         lifecycle: "experimental",
         component_type: "worker",

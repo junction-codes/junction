@@ -15,7 +15,7 @@ module Junction
     def index
       authorize! System
       @q = index_scope_for(System).ransack(params[:q])
-      @q.sorts = "name asc" if @q.sorts.empty?
+      @q.sorts = "title asc" if @q.sorts.empty?
       @pagy, systems = paginate(@q.result)
 
       render Views::Systems::Index.new(
@@ -103,7 +103,7 @@ module Junction
     def apis
       authorize! @entity, to: :show?
       @q = @entity.apis.ransack(params[:q])
-      @q.sorts = "name asc" if @q.sorts.empty?
+      @q.sorts = "title asc" if @q.sorts.empty?
       @pagy, apis = paginate(@q.result)
 
       render Views::Systems::Apis.new(
@@ -135,7 +135,7 @@ module Junction
     def components
       authorize! @entity, to: :show?
       @q = @entity.components.ransack(params[:q])
-      @q.sorts = "name asc" if @q.sorts.empty?
+      @q.sorts = "title asc" if @q.sorts.empty?
       @pagy, components = paginate(@q.result)
 
       render Views::Systems::Components.new(
@@ -167,7 +167,7 @@ module Junction
     def resources
       authorize! @entity, to: :show?
       @q = @entity.resources.ransack(params[:q])
-      @q.sorts = "name asc" if @q.sorts.empty?
+      @q.sorts = "title asc" if @q.sorts.empty?
       @pagy, resources = paginate(@q.result)
 
       render Views::Systems::Resources.new(
@@ -202,7 +202,7 @@ module Junction
     # @return [Array<Array(String, Integer)>] Array of [name, id] pairs for
     #   domains.
     def available_domains
-      Domain.select(:description, :id, :image_url, :name).order(:name)
+      Domain.select(:description, :id, :image_url, :title).order(:title)
     end
 
     # Returns an array of available statuses for systems.
@@ -221,7 +221,7 @@ module Junction
 
     def system_params
       sanitize_owner_id(params.expect(system: [
-        :name, :description, :status, :domain_id, :owner_id
+        :description, :domain_id, :name, :namespace, :owner_id, :status, :title
       ]))
     end
   end

@@ -25,10 +25,10 @@ module Junction
         ) do |bar|
           div(class: "grid grid-cols-1 md:grid-cols-4 gap-4") do
             bar.text_filter(
-              name: "q[name_or_description_cont]",
+              name: "q[title_or_description_cont]",
               label: "Search",
               placeholder: "Name or description...",
-              value: @query.name_or_description_cont
+              value: @query.title_or_description_cont
             )
 
             bar.select_filter(

@@ -6,7 +6,7 @@ RSpec.describe "/domains", type: :request do
   let(:valid_attributes) {
     {
       description: "A domain for testing purposes",
-      name: "Test Domain",
+      title: "Test Domain",
       image_url: "https://example.com/image.png",
       status: "active"
     }

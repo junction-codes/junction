@@ -1,4 +1,5 @@
-- name: Junction Components
+- title: Junction Components
+  name: junction-components
   lifecycle: experimental
   type: library
   system: Junction Codes
@@ -8,7 +9,8 @@
   description: |
     UI components for the Junction web application, including reusable elements
     and styles.
-- name: Junction
+- title: Junction
+  name: junction
   lifecycle: experimental
   type: web
   system: Junction Codes

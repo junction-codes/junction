@@ -29,7 +29,7 @@ module Junction
             div(class: "px-6 py-3 space-y-6") do
               div(class: "flex justify-between items-start") do
                 div do
-                  h2(class: "text-3xl font-bold text-gray-900 dark:text-white") { @role.name }
+                  h2(class: "text-3xl font-bold text-gray-900 dark:text-white") { @role.title }
 
                   p(class: "mt-1 text-md text-gray-600 dark:text-gray-400") { @role.description }
                 end

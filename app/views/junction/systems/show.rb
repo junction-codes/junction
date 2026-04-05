@@ -31,7 +31,7 @@ module Junction
             # Left side: logo, title, and description.
             div(class: "flex items-center space-x-6") do
               if @system.image_url.present?
-                img(src: @system.image_url, alt: "#{@system.name} logo", class: "h-20 w-20 rounded-lg object-cover flex-shrink-0")
+                img(src: @system.image_url, alt: "#{@system.title} logo", class: "h-20 w-20 rounded-lg object-cover flex-shrink-0")
               else
                 div(class: "h-20 w-20 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0") do
                   icon("network", class: "h-10 w-10 text-gray-500")
@@ -39,7 +39,7 @@ module Junction
               end
 
               div do
-                h2(class: "text-3xl font-bold text-gray-900 dark:text-white") { @system.name }
+                h2(class: "text-3xl font-bold text-gray-900 dark:text-white") { @system.title }
 
                 p(class: "mt-1 text-md text-gray-600 dark:text-gray-400 max-w-2xl") { @system.description }
                 div(class: "mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400") do
@@ -57,9 +57,9 @@ module Junction
                 break unless @system.domain.present?
 
                 if allowed_to?(:show?, @system.domain)
-                  Link(href: domain_path(@system.domain)) { "Part of the '#{@system.domain.name}' Domain" }
+                  Link(href: domain_path(@system.domain)) { "Part of the '#{@system.domain.title}' Domain" }
                 else
-                  Link(variant: :disabled) { "Part of the '#{@system.domain.name}' Domain" }
+                  Link(variant: :disabled) { "Part of the '#{@system.domain.title}' Domain" }
                 end
               end
             end

@@ -67,7 +67,7 @@ module Junction
                 )
               }
 
-              %w[display_name email_address].each do |field|
+              %w[title email_address].each do |field|
                 row.sortable_head(field:, sort_url:, **sort_attrs(query, field)) do
                   User.human_attribute_name(field)
                 end
@@ -84,7 +84,7 @@ module Junction
                   div(class: "flex items-center space-x-4") do
                     # Logo or placeholder image.
                     if user.image_url.present?
-                      img(src: user.image_url, alt: "#{user.display_name} logo", class: "h-12 w-12 rounded-md object-cover flex-shrink-0")
+                      img(src: user.image_url, alt: "#{user.title} logo", class: "h-12 w-12 rounded-md object-cover flex-shrink-0")
                     else
                       div(class: "h-12 w-12 rounded-md bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0") do
                         icon("user-round", class: "h-6 w-6 text-gray-500")
@@ -93,7 +93,7 @@ module Junction
 
                     div do
                       div(class: "text-sm font-medium text-gray-900 dark:text-white") do
-                        a(href: user_path(user)) { user.display_name }
+                        a(href: user_path(user)) { user.title }
                       end
 
                       div(class: "text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs") { user.pronouns }
