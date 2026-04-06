@@ -118,7 +118,7 @@ module Junction
     end
 
     def role_params
-      params.expect(role: [ :description, :name, :title, { permission_ids: [] } ])
+      params.expect(role: [ :description, :name, :namespace, :title, { permission_ids: [] } ])
     end
 
     # Synchronize the permissions assigned to a role.

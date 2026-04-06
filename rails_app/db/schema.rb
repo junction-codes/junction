@@ -143,10 +143,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_05_000000) do
     t.datetime "created_at", null: false
     t.text "description"
     t.string "name", null: false
+    t.string "namespace", default: "default", null: false
     t.boolean "system", default: false, null: false
     t.string "title", null: false
     t.datetime "updated_at", null: false
-    t.index ["name"], name: "index_junction_roles_on_name", unique: true
+    t.index ["namespace", "name"], name: "index_junction_roles_on_namespace_and_name", unique: true
   end
 
   create_table "junction_sessions", force: :cascade do |t|
@@ -180,12 +181,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_05_000000) do
     t.string "email_address", null: false
     t.string "image_url"
     t.string "name", null: false
+    t.string "namespace", default: "default", null: false
     t.string "password_digest", null: false
     t.string "pronouns"
     t.string "title", null: false
     t.datetime "updated_at", null: false
     t.index ["email_address"], name: "index_junction_users_on_email_address", unique: true
-    t.index ["name"], name: "index_junction_users_on_name", unique: true
+    t.index ["namespace", "name"], name: "index_junction_users_on_namespace_and_name", unique: true
   end
 
   add_foreign_key "junction_apis", "junction_groups", column: "owner_id"

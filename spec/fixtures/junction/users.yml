@@ -3,6 +3,7 @@
 one:
   title: One User
   name: one-user
+  namespace: default
   pronouns: they/them
   email_address: one@example.com
   image_url: https://example.com/avatar.png
@@ -11,6 +12,7 @@ one:
 two:
   title: Two User
   name: two-user
+  namespace: default
   pronouns: she/they
   email_address: two@example.com
   password_digest: <%= password_digest %>

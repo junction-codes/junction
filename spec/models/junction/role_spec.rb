@@ -13,9 +13,8 @@ RSpec.describe Junction::Role, type: :model do
     end
 
     it_behaves_like "validates presence of", :description
-    it_behaves_like "validates presence of", :name
     it_behaves_like "validates presence of", :title
-    it_behaves_like "validates uniqueness of", :name, "duplicate-role"
+    it_behaves_like "validates uniqueness of", :name, "duplicate-role", scope: :namespace
   end
 
   describe "associations" do

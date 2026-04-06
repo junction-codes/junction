@@ -60,6 +60,8 @@ module Junction
           card.content(class: "space-y-4") do
             TextField(form, :title, required: true)
             SlugField(form, :name)
+            ImmutableField(form, :namespace, required: true,
+                           help_text: "Namespaces allow the same identifier to exist in different contexts.")
             TextField(form, :pronouns, placeholder: "e.g., they/them, he/him, she/her")
             TextField(form, :image_url, placeholder: "https://example.com/logo.png")
           end

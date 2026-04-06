@@ -142,18 +142,18 @@ RSpec.describe "Junction::RolesController", type: :request do
       it_behaves_like "an action that requires permission",
         :patch, -> { role_path(role) },
         %w[junction.codes/roles.all.write junction.codes/roles.owned.write],
-        { role: { name: "Updated Role Name", description: "Updated description", permission_ids: [] } }
+        { role: { description: "Updated description", permission_ids: [] } }
 
       context "with valid parameters" do
         let(:new_attributes) do
-          { name: "Updated Role Name", description: "Updated description", permission_ids: [] }
+          { description: "Updated description", permission_ids: [] }
         end
 
         it "updates the requested role" do
           patch role_url(role), params: { role: new_attributes }
           role.reload
 
-          expect(role.name).to eq("Updated Role Name")
+          expect(role.description).to eq("Updated description")
         end
 
         it "redirects to the role" do

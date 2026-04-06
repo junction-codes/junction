@@ -30,6 +30,8 @@ module Junction
             card.content(class: "space-y-4") do
               TextField(f, :title, required: true)
               SlugField(f, :name)
+              ImmutableField(f, :namespace, required: true,
+                             help_text: "Namespaces allow the same identifier to exist in different contexts.")
               TextAreaField(f, :description, required: true)
             end
           end

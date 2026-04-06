@@ -100,8 +100,8 @@ module Junction
     def user_params
       params.expect(user: [
         :email_address, :email_address_confirmation, :image_url, :name,
-        :owner_id, :password, :password_challenge, :password_confirmation,
-        :pronouns, :title, annotations: {}
+        :namespace, :owner_id, :password, :password_challenge,
+        :password_confirmation, :pronouns, :title, annotations: {}
       ])
     end
 

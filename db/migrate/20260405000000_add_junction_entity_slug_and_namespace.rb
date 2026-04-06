@@ -30,19 +30,28 @@ class AddJunctionEntitySlugAndNamespace < ActiveRecord::Migration[8.1]
     add_column :junction_roles, :title, :string
     execute "UPDATE junction_roles SET title = name"
     change_column_null :junction_roles, :title, false
+    remove_index :junction_roles, :name
+    add_column :junction_roles, :namespace, :string, null: false, default: "default"
+    add_index :junction_roles, [ :namespace, :name ], unique: true
 
     rename_column :junction_users, :display_name, :title
     add_column :junction_users, :name, :string
     execute "UPDATE junction_users SET name = trim(both '-' from regexp_replace(lower(title), '[^a-z0-9]+', '-', 'g'))"
     change_column_null :junction_users, :name, false
-    add_index :junction_users, :name, unique: true
+    add_column :junction_users, :namespace, :string, null: false, default: "default"
+    add_index :junction_users, [ :namespace, :name ], unique: true
   end
 
   def down
-    remove_index :junction_users, :name
+    remove_index :junction_users, [ :namespace, :name ]
+    remove_column :junction_users, :namespace
+    add_index :junction_users, :name, unique: true
     remove_column :junction_users, :name
     rename_column :junction_users, :title, :display_name
 
+    remove_index :junction_roles, [ :namespace, :name ]
+    remove_column :junction_roles, :namespace
+    add_index :junction_roles, :name, unique: true
     remove_column :junction_roles, :title
 
     ENTITY_TABLES.each do |table|

@@ -253,6 +253,7 @@ en:
     roles:
       index:
         title: "Roles"
+        new_role: "New Role"
         permissions_all: "All"
         permissions_all_read: "All read"
       new:

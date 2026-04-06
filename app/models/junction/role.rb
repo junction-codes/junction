@@ -3,9 +3,9 @@
 module Junction
   # Represents a role used for authorization.
   class Role < ApplicationRecord
+    include Sluggable
+
     validates :description, presence: true
-    validates :name, presence: true, uniqueness: true
-    validates :title, presence: true
 
     has_many :groups, class_name: "Junction::Group"
     has_many :role_permissions, dependent: :destroy, class_name: "Junction::RolePermission"

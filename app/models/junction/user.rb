@@ -3,17 +3,11 @@
 module Junction
   class User < Junction::ApplicationRecord
     include Annotated
-
-    before_validation :generate_slug, on: :create
+    include Sluggable
 
     has_secure_password
 
-    validates :title, presence: true
-    validates :name, presence: true, uniqueness: true,
-              format: { with: Sluggable::SLUG_FORMAT,
-                        message: "must start with a letter and contain only letters, numbers, hyphens, underscores, or dots" }
     validates :email_address, presence: true, format: URI::MailTo::EMAIL_REGEXP, uniqueness: true, confirmation: { if: :will_save_change_to_email_address? }
-    validate :name_is_immutable, on: :update
     validates :image_url, allow_blank: true, format: URI::DEFAULT_PARSER.make_regexp(%w[http https])
     validates :password, presence: true, confirmation: true, length: { minimum: 8 }, password: true, if: :password_being_set?
 
@@ -30,14 +24,6 @@ module Junction
 
     def self.ransackable_attributes(auth_object = nil)
       %w[created_at email_address name title updated_at]
-    end
-
-    def generate_slug
-      self.name = title.parameterize if name.blank? && title.present?
-    end
-
-    def name_is_immutable
-      errors.add(:name, "cannot be changed after creation") if name_changed?
     end
 
     def password_being_set?
