@@ -3,8 +3,8 @@
   email: admins@example.com
   description: Portal administrators with full access to all features.
   members:
-    - admin@example.com
-    - aadmin@example.com
+    - admin
+    - aadmin
 - title: Junction Developers
   name: junction-developers
   email: developers@example.com
@@ -12,21 +12,21 @@
     Engineering team responsible for developing and maintaining the Junction
     platform.
   members:
-    - ttester@example.com
-    - aadmin@example.com
-    - ssupervisor@example.com
-    - ddeveloper@example.com
+    - ttester
+    - aadmin
+    - ssupervisor
+    - ddeveloper
 - title: Demo Developers
   name: demo-developers
   description: |
     Team responsible for building and maintaining the Junction demo application.
   members:
-    - ssupervisor@example.com
-    - ttester@example.com
+    - ssupervisor
+    - ttester
 - title: Plugin Maintainers
   name: plugin-maintainers
   description: |
     Team responsible for managing and maintaining official Junction plugins.
   members:
-    - aadmin@example.com
-    - ddeveloper@example.com
+    - aadmin
+    - ddeveloper

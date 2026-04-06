@@ -19,12 +19,15 @@ def create_system_roles
     },
     {
       name: Junction::Permissions::UserPermissions::READ_ALL_ROLE_NAME,
-      title: "Read all",
+      title: "Read All",
       description: "Global read-only role with all read permissions."
     }
   ].each do |role|
-    role[:system] = true
-    Junction::Role.find_or_initialize_by(name: role[:name]).update!(role)
+    r = Junction::Role.find_or_initialize_by(name: role[:name])
+    r.title = role[:title]
+    r.description = role[:description]
+    r.system = true
+    r.save!
   end
 end
 
@@ -34,6 +37,7 @@ def create_default_admin_user
 
   Junction::User.create!(
     title: "Administrator",
+    name: "admin",
     email_address: "admin@example.com",
     password: "passWord1!",
     password_confirmation: "passWord1!"
@@ -46,22 +50,25 @@ def create_default_role_groups
   admin_name = Junction::Permissions::UserPermissions::ADMIN_ROLE_NAME
   read_all_name = Junction::Permissions::UserPermissions::READ_ALL_ROLE_NAME
 
-  Junction::Group.find_or_create_by!(title: "Junction Admins") do |g|
-    g.name = "junction-admins"
+  Junction::Group.find_or_create_by!(name: "junction-admins", namespace: "default") do |g|
+    g.title = "Junction Admins"
     g.description = "Default group for administrators. Members receive the Admin role."
     g.annotations = { "junction.codes/role" => admin_name }
   end
 
-  Junction::Group.find_or_create_by!(title: "Junction Readers") do |g|
-    g.name = "junction-readers"
+  Junction::Group.find_or_create_by!(name: "junction-readers", namespace: "default") do |g|
+    g.title = "Junction Readers"
     g.description = "Default group for read-only access. Members receive the Read all role."
     g.annotations = { "junction.codes/role" => read_all_name }
   end
 end
 
 def add_default_admin_to_junction_admins
-  admin_user = Junction::User.find_by(email_address: "admin@example.com")
-  junction_admins = Junction::Group.find_by(title: "Junction Admins")
+  admin_user = Junction::User.find_by(
+    name: Junction::Permissions::UserPermissions::ADMIN_ROLE_NAME,
+    namespace: "default"
+  )
+  junction_admins = Junction::Group.find_by(name: "junction-admins", namespace: "default")
   return unless admin_user && junction_admins
 
   Junction::GroupMembership.find_or_create_by!(user: admin_user, group: junction_admins)
@@ -72,17 +79,17 @@ def import_apis(path)
   return unless File.exist?(Rails.root.join(path, 'apis.yaml'))
 
   YAML.load_file(Rails.root.join(path, 'apis.yaml'), symbolize_names: true).each do |api|
-    next if Junction::Api.find_by(title: api[:title])
+    next if Junction::Api.find_by(name: api[:name], namespace: api.fetch(:namespace, "default"))
 
     Rails.logger.info "Creating API #{api[:title]}"
-    api[:system] = Junction::System.find_by(title: api[:system]) if api[:system].present?
-    api[:owner] = Junction::Group.find_by(title: api[:owner]) if api[:owner].present?
+    api[:system] = Junction::System.find_by(name: api[:system]) if api[:system].present?
+    api[:owner] = Junction::Group.find_by(name: api[:owner]) if api[:owner].present?
     api[:dependent_components] = []
     api[:dependent_resources] = []
 
     (api.delete(:dependencies) || []).each do |dependency|
       type, name = dependency.split(':', 2)
-      api["dependent_#{type}s".to_sym] << Junction.const_get(type.capitalize).find_by(title: name.strip)
+      api["dependent_#{type}s".to_sym] << Junction.const_get(type.capitalize).find_by(name: name.strip)
     end
 
     Junction::Api.create(api)
@@ -93,17 +100,17 @@ def import_components(path)
   return unless File.exist?(Rails.root.join(path, 'components.yaml'))
 
   YAML.load_file(Rails.root.join(path, 'components.yaml'), symbolize_names: true).each do |component|
-    next if Junction::Component.find_by(title: component[:title])
+    next if Junction::Component.find_by(name: component[:name], namespace: component.fetch(:namespace, "default"))
 
     Rails.logger.info "Creating component #{component[:title]}"
-    component[:system] = Junction::System.find_by(title: component[:system]) if component[:system].present?
-    component[:owner] = Junction::Group.find_by(title: component[:owner]) if component[:owner].present?
+    component[:system] = Junction::System.find_by(name: component[:system]) if component[:system].present?
+    component[:owner] = Junction::Group.find_by(name: component[:owner]) if component[:owner].present?
     component[:dependent_components] = []
     component[:dependent_resources] = []
 
     (component.delete(:dependencies) || []).each do |dependency|
       type, name = dependency.split(':', 2)
-      entity = Junction.const_get(type.capitalize).find_by(title: name.strip)
+      entity = Junction.const_get(type.capitalize).find_by(name: name.strip)
       component["dependent_#{type}s".to_sym] << entity if entity
     end
 
@@ -115,7 +122,7 @@ def import_domains(path)
   return unless File.exist?(Rails.root.join(path, 'domains.yaml'))
 
   YAML.load_file(Rails.root.join(path, 'domains.yaml'), symbolize_names: true).each do |domain|
-    next if Junction::Domain.find_by(title: domain[:title])
+    next if Junction::Domain.find_by(name: domain[:name], namespace: domain.fetch(:namespace, "default"))
 
     Rails.logger.info "Creating domain #{domain[:title]}"
     Junction::Domain.create(domain)
@@ -126,11 +133,11 @@ def import_groups(path)
   return unless File.exist?(Rails.root.join(path, 'groups.yaml'))
 
   YAML.load_file(Rails.root.join(path, 'groups.yaml'), symbolize_names: true).each do |group|
-    next if Junction::Group.find_by(title: group[:title])
+    next if Junction::Group.find_by(name: group[:name], namespace: group.fetch(:namespace, "default"))
 
     Rails.logger.info "Creating group #{group[:title]}"
     group.fetch(:members, []).map! do |member|
-      Junction::User.find_by(email_address: member)
+      Junction::User.find_by(name: member)
     end
 
     Junction::Group.create(group)
@@ -141,11 +148,12 @@ def import_resources(path)
   return unless File.exist?(Rails.root.join(path, 'resources.yaml'))
 
   YAML.load_file(Rails.root.join(path, 'resources.yaml'), symbolize_names: true).each do |resource|
-    next if Junction::Resource.find_by(title: resource[:title])
+    next if Junction::Resource.find_by(name: resource[:name], namespace: resource.fetch(:namespace, "default"))
 
     Rails.logger.info "Creating resource #{resource[:title]}"
-    resource[:system] = Junction::System.find_by(title: resource[:system]) if resource[:system].present?
-    resource[:owner] = Junction::Group.find_by(title: resource[:owner]) if resource[:owner].present?
+    resource[:system] = Junction::System.find_by(name: resource[:system]) if resource[:system].present?
+    resource[:owner] = Junction::Group.find_by(name: resource[:owner]) if resource[:owner].present?
+
     Junction::Resource.create(resource)
   end
 end
@@ -154,11 +162,11 @@ def import_systems(path)
   return unless File.exist?(Rails.root.join(path, 'systems.yaml'))
 
   YAML.load_file(Rails.root.join(path, 'systems.yaml'), symbolize_names: true).each do |system|
-    next if Junction::System.find_by(title: system[:title])
+    next if Junction::System.find_by(name: system[:name], namespace: system.fetch(:namespace, "default"))
 
     Rails.logger.info "Creating system #{system[:title]}"
-    system[:domain] = Junction::Domain.find_by(title: system[:domain]) if system[:domain].present?
-    system[:owner] = Junction::Group.find_by(title: system[:owner]) if system[:owner].present?
+    system[:domain] = Junction::Domain.find_by(name: system[:domain]) if system[:domain].present?
+    system[:owner] = Junction::Group.find_by(name: system[:owner]) if system[:owner].present?
     Junction::System.create(system)
   end
 end
@@ -167,7 +175,7 @@ def import_users(path)
   return unless File.exist?(Rails.root.join(path, 'users.yaml'))
 
   YAML.load_file(Rails.root.join(path, 'users.yaml'), symbolize_names: true).each do |user|
-    next if Junction::User.find_by(email_address: user[:email_address])
+    next if Junction::User.find_by(name: user[:name], namespace: user.fetch(:namespace, "default"))
 
     Rails.logger.info "Creating user #{user[:title]}"
     user[:password] = random_password

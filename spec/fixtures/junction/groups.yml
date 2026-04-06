@@ -6,12 +6,14 @@ one:
   email: one@example.com
   image_url: https://example.com/image.png
   parent:
+  namespace: default
   annotations:
-    "junction.codes/role": "Admin"
+    "junction.codes/role": "admin"
 
 two:
   title: Group Two
   name: group-two
+  namespace: default
   description: MyText
   group_type: team
   email: two@example.com
