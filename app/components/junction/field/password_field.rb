@@ -9,7 +9,7 @@ module Junction
           render_label
 
           div(class: "mt-2") do
-            @form.password_field @method, **attrs
+            @form.password_field @method, placeholder:, **attrs
           end
 
           p(class: "mt-2 text-sm text-gray-500") { @help_text } if @help_text
