@@ -82,7 +82,6 @@ class AddJunctionEntitySlugAndNamespace < ActiveRecord::Migration[8.1]
 
   def name_column(table)
     case table
-    when "junction_roles" then :title
     when "junction_users" then :display_name
     else :name
     end
