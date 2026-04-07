@@ -6,9 +6,8 @@ RSpec.describe Junction::User, type: :model do
   describe "validations" do
     subject(:user) { build(:user) }
 
-    it "is valid with valid attributes" do
-      expect(user).to be_valid
-    end
+    it_behaves_like "a sluggable entity"
+
 
     it_behaves_like "validates presence of", :title
     it_behaves_like "validates email format of", :email_address, required: true
@@ -16,6 +15,10 @@ RSpec.describe Junction::User, type: :model do
     it_behaves_like "validates uniqueness of", :email_address, "duplicate@example.com"
     it_behaves_like "validates presence of", :password
     it_behaves_like "validates image_url format"
+
+    it "is valid with valid attributes" do
+      expect(user).to be_valid
+    end
 
     context "when the password is too short" do
       before { user.password = user.password_confirmation = "short" }

@@ -8,12 +8,12 @@ RSpec.describe Junction::RolePermission, type: :model do
 
     let(:permission) { "junction.codes/apis.all.read" }
 
+    it_behaves_like "validates presence of", :permission
+    it_behaves_like "validates uniqueness of", :permission, "junction/codes.all.read", scope: :role_id
+
     it "is valid with valid attributes" do
       expect(role_permission).to be_valid
     end
-
-    it_behaves_like "validates presence of", :permission
-    it_behaves_like "validates uniqueness of", :permission, "junction/codes.all.read", scope: :role_id
 
     context "when permission format is invalid" do
       let(:permission) { "not-valid" }

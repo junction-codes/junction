@@ -5,20 +5,20 @@ require "rails_helper"
 RSpec.describe Junction::Group, type: :model do
   subject(:group) { build(:group) }
 
-  describe "validations" do
-    it "is valid with valid attributes" do
-      expect(group).to be_valid
-    end
+  it_behaves_like "a sluggable entity"
 
+  describe "validations" do
     it_behaves_like "validates presence of", :description
     it_behaves_like "validates email format of", :email
     it_behaves_like "validates presence of", :group_type
     it_behaves_like "validates presence of", :title
     it_behaves_like "validates uniqueness of", :name, "duplicate-slug", scope: :namespace
     it_behaves_like "validates image_url format"
-  end
 
-  it_behaves_like "a sluggable entity"
+    it "is valid with valid attributes" do
+      expect(group).to be_valid
+    end
+  end
 
   describe 'associations' do
     it { is_expected.to have_many(:children).class_name('Group').with_foreign_key('parent_id').dependent(:destroy) }

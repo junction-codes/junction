@@ -5,11 +5,9 @@ require "rails_helper"
 RSpec.describe Junction::Api, type: :model do
   subject(:api) { build(:api) }
 
-  describe "validations" do
-    it "is valid with valid attributes" do
-      expect(api).to be_valid
-    end
+  it_behaves_like "a sluggable entity"
 
+  describe "validations" do
     it_behaves_like "validates presence of", :api_type
     it_behaves_like "validates presence of", :definition
     it_behaves_like "validates presence of", :description
@@ -17,9 +15,11 @@ RSpec.describe Junction::Api, type: :model do
     it_behaves_like "validates presence of", :title
     it_behaves_like "validates uniqueness of", :name, "duplicate-slug", scope: :namespace
     it_behaves_like "validates image_url format"
-  end
 
-  it_behaves_like "a sluggable entity"
+    it "is valid with valid attributes" do
+      expect(api).to be_valid
+    end
+  end
 
   describe "associations" do
     it_behaves_like "a model with dependencies"

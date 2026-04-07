@@ -97,7 +97,7 @@ RSpec.shared_examples "a sluggable entity" do
     end
 
     it "is valid when name and namespace are unchanged on update" do
-      subject.description = "Updated description"
+      subject.title += " Updated"
       expect(subject).to be_valid
     end
   end

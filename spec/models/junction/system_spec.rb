@@ -5,19 +5,19 @@ require "rails_helper"
 RSpec.describe Junction::System, type: :model do
   subject(:system) { build(:system) }
 
-  describe "validations" do
-    it "is valid with valid attributes" do
-      expect(system).to be_valid
-    end
+  it_behaves_like "a sluggable entity"
 
+  describe "validations" do
     it_behaves_like "validates presence of", :description
     it_behaves_like "validates presence of", :title
     it_behaves_like "validates uniqueness of", :name, "duplicate-slug", scope: :namespace
     it_behaves_like "validates image_url format"
     it_behaves_like "validates status inclusion"
-  end
 
-  it_behaves_like "a sluggable entity"
+    it "is valid with valid attributes" do
+      expect(system).to be_valid
+    end
+  end
 
   describe "associations" do
     it_behaves_like "a model that can be owned"
