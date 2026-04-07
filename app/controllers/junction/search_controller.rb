@@ -65,10 +65,10 @@ module Junction
     # Sorts the combined results array.
     #
     # @param results [Array<ApplicationRecord>] Flat results array.
-    # @param field [String] Sort field ("name" or "kind").
+    # @param field [String] Sort field ("title" or "kind").
     # @param direction [String] Sort direction ("asc" or "desc").
     # @return [Array<ApplicationRecord>] Sorted results.
-    def sort_results(results, field = "name", direction = "asc")
+    def sort_results(results, field = "title", direction = "asc")
       sorted = case field
       when "kind" then results.sort_by { |e| [ e.class.model_name.human, e.title ] }
       else results.sort_by(&:title)
