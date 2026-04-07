@@ -6,16 +6,19 @@ RSpec.describe Junction::User, type: :model do
   describe "validations" do
     subject(:user) { build(:user) }
 
-    it "is valid with valid attributes" do
-      expect(user).to be_valid
-    end
+    it_behaves_like "a sluggable entity"
 
-    it_behaves_like "validates presence of", :display_name
+
+    it_behaves_like "validates presence of", :title
     it_behaves_like "validates email format of", :email_address, required: true
     it_behaves_like "validates presence of", :email_address
     it_behaves_like "validates uniqueness of", :email_address, "duplicate@example.com"
     it_behaves_like "validates presence of", :password
     it_behaves_like "validates image_url format"
+
+    it "is valid with valid attributes" do
+      expect(user).to be_valid
+    end
 
     context "when the password is too short" do
       before { user.password = user.password_confirmation = "short" }
@@ -40,13 +43,13 @@ RSpec.describe Junction::User, type: :model do
 
       it "includes confirmation error for password_confirmation" do
         user.valid?
-        expect(user.errors[:password_confirmation]).to include("doesn't match Password")
+        expect(user.errors[:password_confirmation]).to include("doesn't match New Password")
       end
     end
 
     it "is valid when updating attributes without changing the password" do
       user.save!
-      user.display_name = "New Name"
+      user.title = "New Name"
       expect(user).to be_valid
     end
   end

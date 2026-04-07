@@ -5,6 +5,8 @@ module Junction
     module Groups
       # Lazy-loaded turbo frame content for a group's members table.
       class Members < Views::Base
+        include Phlex::Rails::Helpers::Translate
+
         attr_reader :page_url, :pagy, :per_page_url, :query, :sort_url
 
         # Initializes the view.
@@ -49,7 +51,7 @@ module Junction
             Table(class: "rounded-lg shadow overflow-hidden") do |table|
               table.header do |header|
                 header.row do |row|
-                  %w[name email_address].each do |field|
+                  %w[title email_address].each do |field|
                     row.sortable_head(field:, sort_url:, **sort_attrs(query, field)) do
                       User.human_attribute_name(field)
                     end
@@ -76,23 +78,23 @@ module Junction
                             tooltip.trigger do
                               Button(variant: :ghost, size: :sm) do
                                 icon("trash", class: "w-4 h-4 text-destructive-foreground")
-                                span(class: "sr-only") { t(".remove", name: user.display_name) }
+                                span(class: "sr-only") { t(".remove", name: user.title) }
                               end
                             end
 
                             tooltip.content do
-                              t(".remove", name: user.display_name)
+                              t(".remove", name: user.title)
                             end
                           end
                         end
 
                         dialog.content do |content|
                           content.header do |header|
-                            header.title { t(".confirm_title", name: user.display_name) }
+                            header.title { t(".confirm_title", name: user.title) }
                           end
 
                           content.body do
-                            t(".confirm_body", name: user.display_name)
+                            t(".confirm_body", name: user.title)
                           end
 
                           content.footer do

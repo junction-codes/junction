@@ -41,7 +41,7 @@ module Junction
         TextField(
           @form,
           annotation[:key],
-          "#{annotation[:title]} (#{annotation[:key]})",
+          label: "#{annotation[:title]} (#{annotation[:key]})",
           placeholder: annotation[:placeholder]
         )
       end

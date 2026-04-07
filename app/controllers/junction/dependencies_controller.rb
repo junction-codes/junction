@@ -78,11 +78,11 @@ module Junction
                    (@source.is_a?(klass) ? [ @source.id ] : [])
 
         viewable_scope(klass)
-          .where("name ILIKE ?", "%#{q}%")
+          .where("title ILIKE ?", "%#{q}%")
           .where.not(id: excluded)
-          .order(:name)
+          .order(:title)
           .limit(10)
-      end.sort_by(&:name)
+      end.sort_by(&:title)
 
       render Views::Dependencies::Search.new(results:)
     end
@@ -170,7 +170,7 @@ module Junction
       api_query = @source.dependent_apis.ransack(params[:q])
       component_query = @source.dependent_components.ransack(params[:q])
       resource_query  = @source.dependent_resources.ransack(params[:q])
-      api_query.sorts = "name asc" if api_query.sorts.empty?
+      api_query.sorts = "title asc" if api_query.sorts.empty?
 
       @pagy, entities = paginate(merged_dependency_list(
         api_query,
@@ -206,7 +206,7 @@ module Junction
       sort = sort_query.sorts.first
       entities = queries.map(&:result).flatten
       sorted = entities.sort_by do |entity|
-        [ entity.public_send(sort.name).to_s.downcase, entity.name.to_s.downcase ]
+        [ entity.public_send(sort.name).to_s.downcase, entity.title.to_s.downcase ]
       end
 
       sort.dir == "desc" ? sorted.reverse : sorted

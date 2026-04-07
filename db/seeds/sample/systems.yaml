@@ -1,13 +1,16 @@
-- name: Junction Codes
+- title: Junction Codes
+  name: junction-codes
   status: active
-  domain: Junction
+  domain: junction
   image_url: https://github.com/junction-codes.png
   description: The core Junction devportal framework.
-- name: Plugin Marketplace
+- title: Plugin Marketplace
+  name: plugin-marketplace
   status: active
-  domain: Plugins
+  domain: plugins
   description: Marketplace for official and community Junction plugins.
-- name: Junction Demo Application
+- title: Junction Demo Application
+  name: junction-demo-application
   status: active
-  domain: Demo
+  domain: demo
   description: A demonstration application showcasing Junction features.

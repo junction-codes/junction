@@ -32,8 +32,8 @@ RSpec.describe "/search", type: :request do
         before { sign_in_user_with_permissions(%w[junction.codes/apis.all.read]) }
 
         it "includes the matching entity" do
-          get search_path, params: { q: api.name }
-          expect(response.body).to include(api.name)
+          get search_path, params: { q: api.title }
+          expect(response.body).to include(api.title)
         end
       end
 
@@ -45,19 +45,19 @@ RSpec.describe "/search", type: :request do
         before { sign_in(user:, password: user.password) }
 
         it "includes apis owned by the user's group" do
-          get search_path, params: { q: owned_api.name }
-          expect(response.body).to include(owned_api.name)
+          get search_path, params: { q: owned_api.title }
+          expect(response.body).to include(owned_api.title)
         end
 
         it "excludes apis not owned by the user's group" do
-          get search_path, params: { q: other_api.name }
+          get search_path, params: { q: other_api.title }
           expect(response.body).not_to include(api_path(other_api))
         end
       end
 
       context "when sorting by kind" do
-        let!(:api) { create(:api, name: "Sort Test API") }
-        let!(:component) { create(:component, name: "Sort Test Component") }
+        let!(:api) { create(:api, title: "Sort Test API") }
+        let!(:component) { create(:component, title: "Sort Test Component") }
 
         before do
           sign_in_user_with_permissions([
@@ -100,7 +100,7 @@ RSpec.describe "/search", type: :request do
         before { sign_in_user_with_permissions(%w[junction.codes/apis.all.read]) }
 
         it "excludes entities of that type from results" do
-          get search_path, params: { q: component.name }
+          get search_path, params: { q: component.title }
           expect(response.body).not_to include(component_path(component))
         end
       end
@@ -118,8 +118,8 @@ RSpec.describe "/search", type: :request do
         let!(:api) { create(:api) }
 
         it "includes the matching entity name" do
-          get search_autocomplete_path, params: { q: api.name }
-          expect(response.body).to include(api.name)
+          get search_autocomplete_path, params: { q: api.title }
+          expect(response.body).to include(api.title)
         end
       end
 
@@ -131,9 +131,9 @@ RSpec.describe "/search", type: :request do
             junction.codes/domains.all.read
           ])
 
-          2.times { |i| create(:api, name: "GlobalSearch API #{i}") }
-          2.times { |i| create(:component, name: "GlobalSearch Component #{i}") }
-          2.times { |i| create(:domain, name: "GlobalSearch Domain #{i}") }
+          2.times { |i| create(:api, title: "GlobalSearch API #{i}") }
+          2.times { |i| create(:component, title: "GlobalSearch Component #{i}") }
+          2.times { |i| create(:domain, title: "GlobalSearch Domain #{i}") }
         end
 
         it "returns no more than 5 result links plus the see-all link" do

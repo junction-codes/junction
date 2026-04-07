@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory "junction/group", aliases: [ :group ], class: "Junction::Group" do
-    sequence(:name) { |n| "Group #{n}" }
+    sequence(:title) { |n| "Group #{n}" }
     description { Faker::Lorem.paragraph }
     sequence(:email) { |n| "group-#{n}@example.com" }
     group_type { Junction::CatalogOptions.group_types.keys.sample }

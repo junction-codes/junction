@@ -30,7 +30,7 @@ module Junction
               div do
                 h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { t("views.roles.edit.title") }
                 p(class: "mt-1 text-sm text-gray-600 dark:text-gray-400") do
-                  plain t("views.roles.edit.description", name: @role.name)
+                  plain t("views.roles.edit.description", name: @role.title)
                 end
               end
 

@@ -37,36 +37,61 @@ en:
     email: "Email Address"
     image_url: "Image URL"
     kind: "Kind"
-    name: "Name"
+    name: "Identifier"
+    namespace: "Namespace"
     owner: "Owner"
     owner_id: "Owner"
     system: "System"
     system_id: "System"
+    title: "Title"
     type: "Type"
     lifecycle: "Lifecycle"
     updated_at: "Updated"
+
+  errors:
+    messages:
+      immutable: "cannot be changed after creation."
+      namespace_format: "must start with a lowercase letter and contain only lowercase letters, numbers, or hyphens."
+      slug_format: "must start with a letter and contain only letters, numbers, hyphens, underscores, or dots."
 
   activerecord:
     attributes:
       junction/api:
         api_type: "Type"
         definition: "Definition"
+        title: "API Name"
       junction/component:
         component_type: "Type"
         repository_url: "Repository URL"
+        title: "Component Name"
+      junction/domain:
+        image_url: "Logo URL"
+        status: "Domain Status"
+        title: "Domain Name"
       junction/group:
         group_type: "Type"
         parent_id: "Parent"
         role_id: "Role"
+        title: "Group Name"
       junction/resource:
         resource_type: "Type"
+        title: "Resource Name"
       junction/role:
         permissions: "Permissions"
+        permission_ids: "Permissions"
         system: "System Role"
+        title: "Role name"
+      junction/system:
+        status: "System Status"
+        title: "System Name"
       junction/user:
-        display_name: "Display Name"
         email_address: "Email Address"
+        email_address_confirmation: "Confirm Email"
+        password: "New Password"
+        password_challenge: "Current Password"
+        password_confirmation: "Confirm Password"
         pronouns: "Pronouns"
+        title: "Display Name"
 
     models:
       junction/api:
@@ -98,8 +123,19 @@ en:
     components:
       entity_preview:
         logo_alt: "Logo for %{name}"
+      immutable_field:
+        immutable: "%{label} cannot be changed after creation."
+      reference_field:
+        blank: "No %{label} selected"
+        logo_alt: "Logo for %{title}"
+      rich_select_field:
+        blank: "No %{label} selected"
       search_bar:
         placeholder: "Search components, docs, etc."
+      slug_field:
+        auto: "Auto"
+        edit: "Edit"
+        immutable: "%{label} cannot be changed after creation."
 
     views:
       search:
@@ -130,7 +166,7 @@ en:
           no_results: "No matching users found."
       dependencies:
         index:
-          name: "Name"
+          title: "Dependency Name"
           type: "Type"
           actions: "Actions"
           cancel: "Cancel"
@@ -146,7 +182,7 @@ en:
           no_results: "No matching entities found."
       dependents:
         index:
-          name: "Name"
+          title: "Dependent Name"
           type: "Type"
 
   # TODO: Review everything below for proper namespacing.
@@ -217,6 +253,7 @@ en:
     roles:
       index:
         title: "Roles"
+        new_role: "New Role"
         permissions_all: "All"
         permissions_all_read: "All read"
       new:

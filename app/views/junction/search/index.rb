@@ -63,7 +63,7 @@ module Junction
                     )
                   }
 
-                  %w[name kind].each do |field|
+                  %w[title kind].each do |field|
                     row.sortable_head(field:, sort_url:, sorted: @sort_field == field, direction: @sort_dir) do
                       ApplicationRecord.human_attribute_name(field)
                     end

@@ -1,12 +1,14 @@
 one:
-  name: MyString
+  title: Domain One
+  name: domain-one
   description: MyText
   status: active
   image_url: https://example.com/image.png
   owner:
 
 two:
-  name: MyString
+  title: Domain Two
+  name: domain-two
   description: MyText
   status: closed
   image_url:

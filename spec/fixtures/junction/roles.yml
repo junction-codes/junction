@@ -1,9 +1,13 @@
 admin:
-  name: Admin
+  title: Admin
+  name: admin
+  namespace: default
   description: Super user role with all permissions.
   system: true
 
 read_all:
-  name: Read all
+  title: Read All
+  name: read-all
+  namespace: default
   description: Read-only role with all read permissions.
   system: true

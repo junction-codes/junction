@@ -41,7 +41,7 @@ module Junction
             # Left side: logo, title, and description.
             div(class: "flex items-center space-x-6") do
               if @group.image_url.present?
-                img(src: @group.image_url, alt: "#{@group.name} logo", class: "h-20 w-20 rounded-lg object-cover flex-shrink-0")
+                img(src: @group.image_url, alt: "#{@group.title} logo", class: "h-20 w-20 rounded-lg object-cover flex-shrink-0")
               else
                 div(class: "h-20 w-20 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0") do
                   icon(@group.icon, class: "h-10 w-10 text-gray-500")
@@ -49,7 +49,7 @@ module Junction
               end
 
               div do
-                h2(class: "text-3xl font-bold text-gray-900 dark:text-white") { @group.name }
+                h2(class: "text-3xl font-bold text-gray-900 dark:text-white") { @group.title }
                 p(class: "mt-1 text-md text-gray-600 dark:text-gray-400 max-w-2xl") { @group.description }
 
                 p(class: "mt-1 text-md text-gray-600 dark:text-gray-400 max-w-2xl") do
@@ -61,9 +61,9 @@ module Junction
                 break unless @group.parent.present?
 
                 if allowed_to?(:show?, @group.parent)
-                  Link(href: group_path(@group.parent)) { "Child of the '#{@group.parent.name}' Group" }
+                  Link(href: group_path(@group.parent)) { "Child of the '#{@group.parent.title}' Group" }
                 else
-                  Link(variant: :disabled) { "Child of the '#{@group.parent.name}' Group" }
+                  Link(variant: :disabled) { "Child of the '#{@group.parent.title}' Group" }
                 end
               end
             end

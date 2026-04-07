@@ -33,7 +33,7 @@ RSpec.describe Junction::Permissions::UserPermissions do
 
     context "when the user's direct group has a role with permissions" do
       let(:group) { create(:group, annotations: { Junction::CorePlugin::ANNOTATION_GROUP_ROLE => role.name }) }
-      let(:role) { create(:role, name: "Custom Role", permissions:) }
+      let(:role) { create(:role, title: "Custom Role", permissions:) }
 
       before { user.update!(groups: [ group ]) }
 
@@ -45,7 +45,7 @@ RSpec.describe Junction::Permissions::UserPermissions do
     context "when the user's ancestor group has a role with permissions" do
       let(:parent) { create(:group, annotations: { Junction::CorePlugin::ANNOTATION_GROUP_ROLE => role.name }) }
       let(:child) { create(:group, parent: parent) }
-      let(:role) { create(:role, name: "Ancestor Role", permissions: [ permissions.last ]) }
+      let(:role) { create(:role, title: "Ancestor Role", permissions: [ permissions.last ]) }
 
       before { user.update!(groups: [ child ]) }
 
@@ -95,7 +95,7 @@ RSpec.describe Junction::Permissions::UserPermissions do
     end
 
     context "when the user has the permission" do
-      let(:role) { create(:role, name: "Test Role", permissions: [ permissions.first ]) }
+      let(:role) { create(:role, title: "Test Role", permissions: [ permissions.first ]) }
       let(:group) { create(:group, annotations: { Junction::CorePlugin::ANNOTATION_GROUP_ROLE => role.name }) }
 
       before { user.update!(groups: [ group ]) }

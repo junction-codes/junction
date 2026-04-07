@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe "groups/edit", type: :view do
   let(:group) {
     Junction::Group.create!(
-      name: "MyEditString",
+      title: "MyEditString",
       description: "MyText",
       group_type: "team",
       email: "team@example.com",

@@ -30,7 +30,7 @@ module Junction
             # Left side: logo, title, and description.
             div(class: "flex items-center space-x-6") do
               if @user.image_url.present?
-                img(src: @user.image_url, alt: "#{@user.display_name} logo", class: "h-20 w-20 rounded-lg object-cover flex-shrink-0")
+                img(src: @user.image_url, alt: "#{@user.title} logo", class: "h-20 w-20 rounded-lg object-cover flex-shrink-0")
               else
                 div(class: "h-20 w-20 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0") do
                   icon("user-round", class: "h-10 w-10 text-gray-500")
@@ -38,7 +38,7 @@ module Junction
               end
 
               div do
-                h2(class: "text-3xl font-bold text-gray-900 dark:text-white") { @user.display_name }
+                h2(class: "text-3xl font-bold text-gray-900 dark:text-white") { @user.title }
                 p(class: "mt-1 text-md text-gray-600 dark:text-gray-400 max-w-2xl") { @user.pronouns }
 
                 p(class: "mt-1 text-md text-gray-600 dark:text-gray-400 max-w-2xl") do

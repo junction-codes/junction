@@ -67,7 +67,7 @@ module Junction
       # @param blank_label [String] Optional label for the blank option.
       def entity_filter(name:, label:, entities:, selected: nil,
                         include_blank: true, blank_label: nil)
-        options = entities.map { |entity| [ entity.name, entity.id ] }
+        options = entities.map { |entity| [ entity.title, entity.id ] }
         select_filter(name:, label:, options:, selected:, include_blank:, blank_label:)
       end
 

@@ -7,34 +7,29 @@ module Junction
     # Renders permissions grouped by domain/context, then by all vs owned. Each
     # checkbox is labeled by access level with a tooltip for the full
     # description.
-    class PermissionsField < Base
-      # Initialize a new component.
+    class PermissionsField < FieldType
+      # Initialize a new field component.
       #
       # @param form [ActionView::Helpers::FormBuilder] The form builder.
       # @param method [Symbol] Method name for the field.
-      # @param label [String] The label for the field.
       # @param available_permissions [Array<Junction::Permission>] Available
       #   permissions to select from.
+      # @param label [String] Optional, human-readable label for the field.
+      #   Defaults to the human-readable name of the field attribute. Set to an
+      #   empty string ("") to omit the label.
       # @param help_text [String] Optional help text for the field.
+      # @param required [Boolean] Whether the field is required.
       # @param user_attrs [Hash] Additional HTML attributes for the component.
-      def initialize(form, method, label, available_permissions:, help_text: nil, **user_attrs)
-        @form = form
-        @method = method
-        @label = label
+      def initialize(form, method, available_permissions:, label: nil,
+                     help_text: nil, required: false, **user_attrs)
         @available_permissions = available_permissions
-        @help_text = help_text
-        @role = form.object
 
-        super(**user_attrs)
+        super(form, method, label:, help_text:, required:, **user_attrs)
       end
 
       def view_template
         div(**attrs) do
-          if @label.present?
-            div(class: "block text-sm font-medium leading-6 text-gray-900 dark:text-white mb-2") do
-              plain @label
-            end
-          end
+          render_label
 
           p(class: "mb-4 text-sm text-gray-500 dark:text-gray-400") { @help_text } if @help_text
 
@@ -74,7 +69,7 @@ module Junction
       #
       # @return [Set<String>] The selected permissions.
       def selected_permissions
-        @selected_permissions ||= @role.role_permissions.pluck(:permission).to_set
+        @selected_permissions ||= entity.role_permissions.pluck(:permission).to_set
       end
 
       # Renders a block of permissions for a given group.
@@ -120,7 +115,7 @@ module Junction
         div(class: "flex min-w-0 items-center gap-2") do
           input(
             type: "checkbox",
-            name: "#{@form.object_name}[#{@method}][]",
+            name: "#{entity_type}[#{@method}][]",
             id: "role_permission_#{permission.to_s.parameterize}",
             value: permission.to_s,
             checked: selected_permissions.include?(permission.to_s),

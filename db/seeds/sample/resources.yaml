@@ -1,18 +1,21 @@
-- name: Junction Database
+- title: Junction Database
+  name: junction-database
   type: database
-  system: Junction Codes
-  owner: Junction Developers
+  system: junction-codes
+  owner: junction-developers
   description: |
     PostgreSQL database for Junction.
-- name: Junction Document Store
+- title: Junction Document Store
+  name: junction-document-store
   type: bucket
-  system: Junction Codes
-  owner: Junction Developers
+  system: junction-codes
+  owner: junction-developers
   description: |
     Document storage for Junction.
-- name: Junction Demo Database
+- title: Junction Demo Database
+  name: junction-demo-database
   type: database
-  system: Junction Demo Application
-  owner: Demo Developers
+  system: junction-demo-application
+  owner: demo-developers
   description: |
     Database for Junction Demo Application.

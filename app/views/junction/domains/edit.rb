@@ -33,7 +33,7 @@ module Junction
             # Page header.
             div do
               h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { "Edit Domain" }
-              p(class: "mt-1 text-sm text-gray-600 dark:text-gray-400") { "Update the details for the '#{@domain.name}' domain." }
+              p(class: "mt-1 text-sm text-gray-600 dark:text-gray-400") { "Update the details for the '#{@domain.title}' domain." }
             end
 
             # Two-column layout for form and sidebar.

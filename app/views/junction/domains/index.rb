@@ -77,9 +77,9 @@ module Junction
                 )
               }
 
-              %w[name status owner_id].each do |field|
+              %w[title status owner_id].each do |field|
                 row.sortable_head(field:, sort_url:, **sort_attrs(query, field)) do
-                  t(".#{field}")
+                  Domain.human_attribute_name(field)
                 end
               end
             end

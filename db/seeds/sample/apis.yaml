@@ -1,10 +1,11 @@
-- name: Junction API
+- title: Junction API
+  name: junction-api
   lifecycle: experimental
   type: openapi
-  system: Junction Codes
-  owner: Junction Developers
+  system: junction-codes
+  owner: junction-developers
   dependencies:
-    - component:Junction
+    - component:junction
   description: |
     REST API for the Junction.
   definition: |

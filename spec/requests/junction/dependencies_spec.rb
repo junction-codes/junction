@@ -87,12 +87,12 @@ RSpec.describe "/dependencies", type: :request do
 
       it "includes components owned by the user's groups" do
         get path, params: { q: "" }
-        expect(response.body).to include(owned_component.name)
+        expect(response.body).to include(owned_component.title)
       end
 
       it "excludes components not owned by the user's groups" do
         get path, params: { q: "" }
-        expect(response.body).not_to include(other_component.name)
+        expect(response.body).not_to include(other_component.title)
       end
     end
 

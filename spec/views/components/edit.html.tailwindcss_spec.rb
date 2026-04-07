@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe "components/edit", type: :view do
   let(:component) {
     Junction::Component.create!(
-      name: "MyEditString",
+      title: "MyEditString",
       description: "MyText",
       lifecycle: "production",
       component_type: "api",

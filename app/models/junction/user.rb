@@ -3,12 +3,10 @@
 module Junction
   class User < Junction::ApplicationRecord
     include Annotated
-
-    alias_attribute :name, :display_name
+    include Sluggable
 
     has_secure_password
 
-    validates :display_name, presence: true
     validates :email_address, presence: true, format: URI::MailTo::EMAIL_REGEXP, uniqueness: true, confirmation: { if: :will_save_change_to_email_address? }
     validates :image_url, allow_blank: true, format: URI::DEFAULT_PARSER.make_regexp(%w[http https])
     validates :password, presence: true, confirmation: true, length: { minimum: 8 }, password: true, if: :password_being_set?
@@ -25,7 +23,7 @@ module Junction
     end
 
     def self.ransackable_attributes(auth_object = nil)
-      %w[created_at display_name email_address updated_at]
+      %w[created_at email_address name title updated_at]
     end
 
     def password_being_set?

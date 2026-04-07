@@ -13,7 +13,7 @@ module Junction
     def index
       authorize! Group
       @q = Group.ransack(params[:q])
-      @q.sorts = "name asc" if @q.sorts.empty?
+      @q.sorts = "title asc" if @q.sorts.empty?
       @pagy, groups = paginate(@q.result)
 
       render Views::Groups::Index.new(
@@ -100,7 +100,7 @@ module Junction
     #
     # @return [ActiveRecord::Relation] Collection of parents.
     def available_parents
-      Group.select(:description, :id, :image_url, :name).order(:name)
+      Group.select(:description, :id, :image_url, :title).order(:title)
     end
 
     # Returns an array of available types for groups.
@@ -124,7 +124,8 @@ module Junction
     # that are used for access controls.
     def group_params
       params.expect(group: [
-        :description, :name, :email, :image_url, :parent_id, :type, annotations: {}
+        :description, :email, :group_type, :image_url, :name, :namespace,
+        :parent_id, :title, :type, annotations: {}
       ])
     end
   end

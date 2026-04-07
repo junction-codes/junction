@@ -21,27 +21,30 @@ module Junction
 
       def view_template
         form_with(model: @role, **attrs) do |f|
-          render Card do |card|
+          Card do |card|
             card.header do |header|
               header.title { t("components.role_form.basic_info_title") }
               header.description { t("components.role_form.basic_info_description") }
             end
 
             card.content(class: "space-y-4") do
-              TextField(f, :name, t("components.role_form.role_name_label"), required: true)
-              TextAreaField(f, :description, t("components.role_form.description_label"), required: true)
+              TextField(f, :title, required: true)
+              SlugField(f, :name)
+              ImmutableField(f, :namespace, required: true,
+                             help_text: "Namespaces allow the same identifier to exist in different contexts.")
+              TextAreaField(f, :description, required: true)
             end
           end
 
           unless @role.system?
-            render Card do |card|
+            Card do |card|
               card.header do |header|
                 header.title { t("components.role_form.permissions_title") }
                 header.description { t("components.role_form.permissions_description") }
               end
 
               card.content do
-                PermissionsField(f, :permission_ids, nil, available_permissions:)
+                PermissionsField(f, :permission_ids, available_permissions:)
               end
             end
           end

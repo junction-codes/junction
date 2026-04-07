@@ -16,7 +16,7 @@ module Junction
     def index
       authorize! Api
       @q = index_scope_for(Api).ransack(params[:q])
-      @q.sorts = "name asc" if @q.sorts.empty?
+      @q.sorts = "title asc" if @q.sorts.empty?
       @pagy, apis = paginate(@q.result)
 
       render Views::Apis::Index.new(
@@ -116,7 +116,7 @@ module Junction
     #
     # @return [ActiveRecord::Relation] Collection of systems.
     def available_systems
-      System.select(:description, :id, :image_url, :name).order(:name)
+      System.select(:description, :id, :image_url, :title).order(:title)
     end
 
     # Returns an array of available types for apis.
@@ -137,8 +137,8 @@ module Junction
 
     def api_params
       sanitize_owner_id(params.expect(api: [
-        :api_type, :name, :description, :definition, :lifecycle, :type,
-        :image_url, :owner_id, :system_id, annotations: {}
+        :api_type, :definition, :description, :image_url, :lifecycle, :name,
+        :namespace, :owner_id, :system_id, :title, :type, annotations: {}
       ]))
     end
   end

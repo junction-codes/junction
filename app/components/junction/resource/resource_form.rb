@@ -17,40 +17,44 @@ module Junction
       def view_template
         form_with(model: @resource, class: "space-y-8", data: { controller: "form", action: "submit->form#disable" }) do |f|
           # Basic information section.
-          render Components::Card.new do |card|
+          Card do |card|
             card.header do |header|
               header.title { "Resource Details" }
               header.description { "This information will be displayed on the resources's main page." }
             end
 
             card.content(class: "space-y-4") do
-              render TextField.new(f, :name, "Resource Name", required: true)
-              render RichSelectField.new(f, :type, "Type", required: true, options: Junction::CatalogOptions.resources)
+              TextField(f, :title, required: true)
+              SlugField(f, :name)
+              ImmutableField(f, :namespace, placeholder: "default",
+                             required: true,
+                             help_text: "Namespaces allow the same identifier to exist in different contexts.")
+              RichSelectField(f, :type, required: true, options: Junction::CatalogOptions.resources)
 
-              render ReferenceField.new(f, :owner_id, "Owner", required: true,
-                                        icon: "users-round", options: @available_owners,
-                                        value: @resource.owner,
-                                        help_text: "Assign an owner for this resource.")
-              render ReferenceField.new(f, :system_id, "System", icon: "users-round",
-                                        options: @available_systems, value: @resource.system,
-                                        help_text: "System this resource belongs to.")
+              ReferenceField(f, :owner_id, required: true,
+                             icon: "users-round", options: @available_owners,
+                             value: @resource.owner,
+                             help_text: "Assign an owner for this resource.")
+              ReferenceField(f, :system_id, icon: "users-round",
+                             options: @available_systems, value: @resource.system,
+                             help_text: "System this resource belongs to.")
 
-              render TextAreaField.new(f, :description, "Description", required: true, help_text: "A brief summary of the resource's goals.")
-              render TextField.new(f, :image_url, "Image URL", help_text: "Optional URL for an image representing this resource.")
+              TextAreaField(f, :description, required: true, help_text: "A brief summary of the resource's goals.")
+              TextField(f, :image_url, help_text: "Optional URL for an image representing this resource.")
             end
           end
 
           f.fields_for :annotations, @resource.annotations do |annotations_form|
-            render(AnnotationsForm.new(
+            AnnotationsForm(
               form: annotations_form,
               context: @resource
-            ))
+            )
           end
 
           # Form actions.
           div(class: "flex items-center justify-end gap-x-4 pt-4") do
-            render Link.new(href: cancel_path, class: "text-sm font-semibold leading-6") { "Cancel" }
-            render Button.new(type: "submit", variant: :primary, data: { form_target: "submit" }) do
+            Link(href: cancel_path, class: "text-sm font-semibold leading-6") { "Cancel" }
+            Button(type: "submit", variant: :primary, data: { form_target: "submit" }) do
               icon("save", class: "w-4 h-4 mr-2")
               plain "Save Changes"
             end

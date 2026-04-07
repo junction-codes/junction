@@ -17,8 +17,8 @@ module Junction
           security_settings(f)
 
           div(class: "flex items-center justify-end gap-x-4 pt-4") do
-            render Link.new(href: cancel_path, class: "text-sm font-semibold leading-6") { "Cancel" }
-            render Button.new(type: "submit", variant: :primary, data: { form_target: "submit" }) do
+            Link(href: cancel_path, class: "text-sm font-semibold leading-6") { "Cancel" }
+            Button(type: "submit", variant: :primary, data: { form_target: "submit" }) do
               icon("save", class: "w-4 h-4 mr-2")
               plain "Save Changes"
             end
@@ -46,21 +46,24 @@ module Junction
 
       def annotations(form)
         form.fields_for :annotations, @user.annotations do |annotations_form|
-          render AnnotationsForm.new(form: annotations_form, context: @user)
+          AnnotationsForm(form: annotations_form, context: @user)
         end
       end
 
       def basic_settings(form)
-        render Components::Card.new do |card|
+        Card do |card|
           card.header do |header|
             header.title { "Basic Information" }
             header.description { "This information will be displayed on the user's main page." }
           end
 
           card.content(class: "space-y-4") do
-            render TextField.new(form, :display_name, "Display Name", required: true)
-            render TextField.new(form, :pronouns, "Pronouns", placeholder: "e.g., they/them, he/him, she/her")
-            render TextField.new(form, :image_url, "Image URL", placeholder: "https://example.com/logo.png")
+            TextField(form, :title, required: true)
+            SlugField(form, :name)
+            ImmutableField(form, :namespace, required: true,
+                           help_text: "Namespaces allow the same identifier to exist in different contexts.")
+            TextField(form, :pronouns, placeholder: "e.g., they/them, he/him, she/her")
+            TextField(form, :image_url, placeholder: "https://example.com/logo.png")
           end
         end
       end
@@ -76,15 +79,15 @@ module Junction
       end
 
       def email_settings(form)
-        render Components::Card.new do |card|
+        Card do |card|
           card.header do |header|
             header.title { "Email Settings" }
             header.description { email_description }
           end
 
           card.content(class: "space-y-4") do
-            render TextField.new(form, :email_address, "Email", required: new?)
-            render TextField.new(form, :email_address_confirmation, "Confirm Email", required: new?)
+            TextField(form, :email_address, required: new?)
+            TextField(form, :email_address_confirmation, required: new?)
           end
         end
       end
@@ -102,7 +105,7 @@ module Junction
       def security_settings(form)
         return unless self? || new?
 
-        render Components::Card.new do |card|
+        Card do |card|
           card.header do |header|
             header.title { "Security Settings" }
             header.description { "Change your password." }
@@ -110,11 +113,13 @@ module Junction
 
           card.content(class: "space-y-4") do
             if existing?
-              render PasswordField.new(form, :password_challenge, "Current Password", required: new?, autocomplete: "current-password")
+              PasswordField(form, :password_challenge, required: new?,
+                            autocomplete: "current-password")
             end
 
-            render PasswordField.new(form, :password, "New Password", required: new?, autocomplete: "new-password")
-            render PasswordField.new(form, :password_confirmation, "Confirm Password", required: new?, autocomplete: "new-password")
+            PasswordField(form, :password, required: new?, autocomplete: "new-password")
+            PasswordField(form, :password_confirmation, required: new?,
+                          autocomplete: "new-password")
           end
         end
       end

@@ -16,7 +16,7 @@ module Junction
     def index
       authorize! Component
       @q = index_scope_for(Component).ransack(params[:q])
-      @q.sorts = "name asc" if @q.sorts.empty?
+      @q.sorts = "title asc" if @q.sorts.empty?
       @pagy, components = paginate(@q.result)
 
       render Views::Components::Index.new(
@@ -120,7 +120,7 @@ module Junction
     #
     # @return [ActiveRecord::Relation] Collection of systems.
     def available_systems
-      System.select(:description, :id, :image_url, :name).order(:name)
+      System.select(:description, :id, :image_url, :title).order(:title)
     end
 
     # Returns an array of available types for components.
@@ -142,8 +142,9 @@ module Junction
 
     def component_params
       sanitize_owner_id(params.expect(component: [
-        :component_type, :name, :description, :repository_url, :lifecycle,
-        :type, :image_url, :owner_id, :system_id, annotations: {}
+        :component_type, :description, :image_url, :lifecycle, :name,
+        :namespace, :owner_id, :repository_url, :system_id, :title, :type,
+        annotations: {}
       ]))
     end
   end

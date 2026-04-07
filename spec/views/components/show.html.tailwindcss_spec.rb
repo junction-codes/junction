@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe "components/show", type: :view do
   before do
     assign(:component, Junction::Component.create!(
-      name: "Name",
+      title: "Name",
       description: "MyText",
       lifecycle: "production",
       component_type: "api",

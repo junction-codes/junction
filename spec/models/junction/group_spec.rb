@@ -3,19 +3,21 @@
 require "rails_helper"
 
 RSpec.describe Junction::Group, type: :model do
+  subject(:group) { build(:group) }
+
+  it_behaves_like "a sluggable entity"
+
   describe "validations" do
-    subject(:group) { build(:group) }
+    it_behaves_like "validates presence of", :description
+    it_behaves_like "validates email format of", :email
+    it_behaves_like "validates presence of", :group_type
+    it_behaves_like "validates presence of", :title
+    it_behaves_like "validates uniqueness of", :name, "duplicate-slug", scope: :namespace
+    it_behaves_like "validates image_url format"
 
     it "is valid with valid attributes" do
       expect(group).to be_valid
     end
-
-    it_behaves_like "validates presence of", :description
-    it_behaves_like "validates email format of", :email
-    it_behaves_like "validates presence of", :group_type
-    it_behaves_like "validates presence of", :name
-    it_behaves_like "validates uniqueness of", :name
-    it_behaves_like "validates image_url format"
   end
 
   describe 'associations' do

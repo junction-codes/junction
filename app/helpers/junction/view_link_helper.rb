@@ -21,14 +21,14 @@ module Junction
           variant: :link,
           data: { turbo_frame: "_top" },
           **user_attrs
-        ) { entity.name }
+        ) { entity.title }
       else
         Components::Link(
           href: nil,
           variant: :disabled,
           title: "You do not have access to this #{entity.class.model_name.human}",
           **user_attrs
-        ) { entity.name }
+        ) { entity.title }
       end
     end
   end

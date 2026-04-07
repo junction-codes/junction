@@ -50,7 +50,7 @@ module Junction
             Table(class: "rounded-lg shadow overflow-hidden") do |table|
               table.header do |header|
                 header.row do |row|
-                  %w[name type].each do |field|
+                  %w[title type].each do |field|
                     row.sortable_head(field:, sort_url:, **sort_attrs(query, field)) do
                       t(".#{field}")
                     end
@@ -77,23 +77,23 @@ module Junction
                             tooltip.trigger do
                               Button(variant: :ghost, size: :sm) do
                                 icon("trash", class: "w-4 h-4 text-destructive-foreground")
-                                span(class: "sr-only") { t(".remove", name: dependency.name) }
+                                span(class: "sr-only") { t(".remove", name: dependency.title) }
                               end
                             end
 
                             tooltip.content do
-                              t(".remove", name: dependency.name)
+                              t(".remove", name: dependency.title)
                             end
                           end
                         end
 
                         dialog.content do |content|
                           content.header do |header|
-                            header.title { t(".confirm_title", name: dependency.name) }
+                            header.title { t(".confirm_title", name: dependency.title) }
                           end
 
                           content.body do
-                            t(".confirm_body", name: dependency.name)
+                            t(".confirm_body", name: dependency.title)
                           end
 
                           content.footer do

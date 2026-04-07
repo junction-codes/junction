@@ -17,40 +17,46 @@ module Junction
       def view_template
         form_with(model: @api, class: "space-y-8", data: { controller: "form", action: "submit->form#disable" }) do |f|
           # Basic information section.
-          render Components::Card.new do |card|
+          Card do |card|
             card.header do |header|
               header.title { "API Details" }
               header.description { "This information will be displayed on the API's main page." }
             end
 
             card.content(class: "space-y-4") do
-              render TextField.new(f, :name, "API Name", required: true)
-              render RichSelectField.new(f, :type, "Type", required: true, options: Junction::CatalogOptions.apis)
-              render RichSelectField.new(f, :lifecycle, "Lifecycle", required: true, options: Junction::CatalogOptions.lifecycles)
+              TextField(f, :title, required: true)
+              SlugField(f, :name)
+              ImmutableField(f, :namespace, placeholder: "default",
+                             required: true,
+                             help_text: "Namespaces allow the same identifier to exist in different contexts.")
+              RichSelectField(f, :type, required: true, options: Junction::CatalogOptions.apis)
+              RichSelectField(f, :lifecycle, required: true,
+                              options: Junction::CatalogOptions.lifecycles)
 
-              render ReferenceField.new(f, :owner_id, "Owner", icon: "users-round",
-                                        options: @available_owners, value: @api.owner, required: true,
-                                        help_text: "Assign an owner for this API.")
-              render ReferenceField.new(f, :system_id, "System", icon: "users-round",
-                                        options: @available_systems, value: @api.system, required: true,
-                                        help_text: "System this API belongs to.")
+              ReferenceField(f, :owner_id, icon: "users-round",
+                             options: @available_owners, value: @api.owner,
+                             required: true,
+                             help_text: "Assign an owner for this API.")
+              ReferenceField(f, :system_id, icon: "users-round",
+                             options: @available_systems, value: @api.system,
+                             required: true,
+                             help_text: "System this API belongs to.")
 
-              render TextAreaField.new(f, :description, "Description", required: true, help_text: "A brief summary of the component's goals.")
-              render TextAreaField.new(f, :definition, "Definition", required: true, help_text: "API spec definition.", rows: 10)
+              TextAreaField(f, :description, required: true,
+                            help_text: "A brief summary of the component's goals.")
+              TextAreaField(f, :definition, required: true,
+                            help_text: "API spec definition.", rows: 10)
             end
           end
 
           f.fields_for :annotations, @api.annotations do |annotations_form|
-            render(AnnotationsForm.new(
-              form: annotations_form,
-              context: @api
-            ))
+            AnnotationsForm(form: annotations_form, context: @api)
           end
 
           # Form actions.
           div(class: "flex items-center justify-end gap-x-4 pt-4") do
-            render Link.new(href: cancel_path, class: "text-sm font-semibold leading-6") { "Cancel" }
-            render Button.new(type: "submit", variant: :primary, data: { form_target: "submit" }) do
+            Link(href: cancel_path, class: "text-sm font-semibold leading-6") { "Cancel" }
+            Button(type: "submit", variant: :primary, data: { form_target: "submit" }) do
               icon("save", class: "w-4 h-4 mr-2")
               plain "Save Changes"
             end

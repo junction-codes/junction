@@ -30,7 +30,7 @@ module Junction
             # Left side: logo, title, and description.
             div(class: "flex items-center space-x-6") do
               if @domain.image_url.present?
-                img(src: @domain.image_url, alt: "#{@domain.name} logo", class: "h-20 w-20 rounded-lg object-cover flex-shrink-0")
+                img(src: @domain.image_url, alt: "#{@domain.title} logo", class: "h-20 w-20 rounded-lg object-cover flex-shrink-0")
               else
                 div(class: "h-20 w-20 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0") do
                   icon("briefcase", class: "h-10 w-10 text-gray-500")
@@ -38,7 +38,7 @@ module Junction
               end
 
               div do
-                h2(class: "text-3xl font-bold text-gray-900 dark:text-white") { @domain.name }
+                h2(class: "text-3xl font-bold text-gray-900 dark:text-white") { @domain.title }
                 p(class: "mt-1 text-md text-gray-600 dark:text-gray-400 max-w-2xl") { @domain.description }
                 div(class: "mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400") do
                   span(class: "font-semibold mr-2") { "Owner:" }

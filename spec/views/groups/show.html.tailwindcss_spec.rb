@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe "groups/show", type: :view do
   before do
     assign(:group, Junction::Group.create!(
-      name: "Name",
+      title: "Name",
       description: "MyText",
       group_type: "team",
       email: "team@example.com",

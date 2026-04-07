@@ -9,7 +9,7 @@ RSpec.describe "/components", type: :request do
 
   let(:valid_attributes) {
     {
-      name: "Test Component",
+      title: "Test Component",
       description: "A component for testing purposes",
       lifecycle: "experimental",
       type: "api",

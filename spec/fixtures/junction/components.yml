@@ -1,5 +1,6 @@
 one:
-  name: MyString
+  title: Component One
+  name: component-one
   description: MyText
   lifecycle: experimental
   component_type: api
@@ -8,7 +9,8 @@ one:
   owner:
 
 two:
-  name: MyString
+  title: Component Two
+  name: component-two
   description: MyText
   lifecycle: production
   component_type: worker

@@ -1,10 +1,13 @@
-- name: Junction
+- title: Junction
+  name: junction
   status: active
   image_url: https://github.com/junction-codes.png
   description: Core Junction application
-- name: Plugins
+- title: Plugins
+  name: plugins
   status: active
   description: Official Junction plugins
-- name: Demo
+- title: Demo
+  name: demo
   status: active
   description: Official demo of Junction

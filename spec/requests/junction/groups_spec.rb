@@ -7,7 +7,7 @@ RSpec.describe "/groups", type: :request do
 
   let(:valid_attributes) {
     {
-      name: "Test Group",
+      title: "Test Group",
       description: "A group for testing purposes",
       type: "team",
       email: "team@example.com"

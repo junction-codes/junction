@@ -5,7 +5,7 @@ RSpec.describe "systems/edit", type: :view do
 
   let(:system) {
     Junction::System.create!(
-      name: "MyEditString",
+      title: "MyEditString",
       description: "MyText",
       status: "active",
       image_url: "https://example.com/image.png",

@@ -42,7 +42,7 @@ module Junction
                    "focus:bg-gray-100 dark:focus:bg-gray-700 " \
                    "focus:outline-none"
           ) do
-            span(class: "text-sm font-medium text-gray-900 dark:text-white") { entity.name }
+            span(class: "text-sm font-medium text-gray-900 dark:text-white") { entity.title }
             span(class: "text-xs text-gray-500 dark:text-gray-400") do
               plain entity.class.model_name.human
               if entity.respond_to?(:type) && entity.type.present?

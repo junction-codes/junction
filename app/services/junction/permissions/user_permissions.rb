@@ -7,8 +7,8 @@ module Junction
     class UserPermissions
       include InstrumentationHelper
 
-      ADMIN_ROLE_NAME = "Admin"
-      READ_ALL_ROLE_NAME = "Read all"
+      ADMIN_ROLE_NAME = "admin"
+      READ_ALL_ROLE_NAME = "read-all"
 
       attr_reader :user
 
@@ -86,13 +86,12 @@ module Junction
       # @todo Make this more robust for system roles, rather than relying on
       #       hard-coded role names.
       def role_permissions(role)
+        return role.permission_strings.to_set unless role.system?
+
         case role.name
-        when ADMIN_ROLE_NAME
-          all_registry_permissions
-        when READ_ALL_ROLE_NAME
-          read_only_registry_permissions
-        else
-          role.permission_strings.to_set
+        when ADMIN_ROLE_NAME then all_registry_permissions
+        when READ_ALL_ROLE_NAME then read_only_registry_permissions
+        else role.permission_strings.to_set
         end
       end
 

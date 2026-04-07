@@ -2,7 +2,8 @@
 
 FactoryBot.define do
   factory "junction/role", aliases: [ :role ], class: "Junction::Role" do
-    sequence(:name) { |n| "Role Name #{n}" }
+    sequence(:name) { |n| "role-name-#{n}" }
+    sequence(:title) { |n| "Role Name #{n}" }
     description { Faker::Lorem.sentence }
     system { false }
 

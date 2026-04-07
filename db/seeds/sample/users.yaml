@@ -1,12 +1,16 @@
-- display_name: Timmy Tester
+- title: Timmy Tester
+  name: ttester
   email_address: ttester@example.com
   pronouns: he/him
-- display_name: Alice Admin
+- title: Alice Admin
+  name: aadmin
   email_address: aadmin@example.com
   pronouns: she/her
-- display_name: Sam Supervisor
+- title: Sam Supervisor
+  name: ssupervisor
   email_address: ssupervisor@example.com
   pronouns: they/them
-- display_name: Danni Developer
+- title: Danni Developer
+  name: ddeveloper
   email_address: ddeveloper@example.com
   pronouns: ze/hir
