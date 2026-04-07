@@ -14,8 +14,8 @@ module Junction
     extend ActiveSupport::Concern
 
     DEFAULT_NAMESPACE = "default"
-    NAMESPACE_FORMAT = /\A[a-z][a-z0-9\-]+\z/
-    SLUG_FORMAT = /\A[a-zA-Z][a-zA-Z0-9\-_.]+\z/
+    NAMESPACE_FORMAT = /\A[a-z][a-z0-9\-]*\z/
+    SLUG_FORMAT = /\A[a-zA-Z][a-zA-Z0-9\-_.]*\z/
 
     included do
       attribute :namespace, :string, default: DEFAULT_NAMESPACE
