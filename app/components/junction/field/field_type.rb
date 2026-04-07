@@ -9,6 +9,8 @@ module Junction
       LABEL_CLASS = "block text-sm font-medium leading-6 text-gray-900 " \
                     "dark:text-white"
 
+      attr_reader :help_text, :placeholder
+
       # Initializes a new field component.
       #
       # @param form [ActionView::Helpers::FormBuilder] The form builder.

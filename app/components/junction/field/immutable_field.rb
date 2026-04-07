@@ -32,9 +32,7 @@ module Junction
 
               @form.hidden_field @method
             else
-              @form.text_field @method,
-                class: INPUT_CLASS,
-                placeholder: @placeholder
+              @form.text_field @method, class: INPUT_CLASS, placeholder:
             end
           end
 

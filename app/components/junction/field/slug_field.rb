@@ -109,6 +109,7 @@ module Junction
           @form.text_field @method,
             class: INPUT_CLASS,
             name: nil,
+            placeholder:,
             data: {
               slug_field_target: "slugManualInput",
               action: "input->slug-field#onManualSlugInput"

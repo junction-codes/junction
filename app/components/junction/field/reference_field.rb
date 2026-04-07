@@ -33,7 +33,7 @@ module Junction
           render_label
 
           div(class: "mt-2") do
-            Select do
+            Select(**attrs) do
               SelectInput(value: @value&.id, id: @form.field_id(@method), name: @form.field_name(@method))
               SelectTrigger(class: "h-auto") do
                 SelectValue(id: @form.field_id(@method), class: "px-2") do
@@ -74,7 +74,7 @@ module Junction
 
           div do
             div(class: "text-sm font-medium text-gray-900 dark:text-white") { t(".blank", label: label_text) }
-            div(class: "text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs italic") { @placeholder }
+            div(class: "text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs italic") { placeholder }
           end
         end
       end
@@ -96,11 +96,8 @@ module Junction
         end
       end
 
-      def default_attrs
-        {
-          class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 dark:bg-gray-700 dark:text-white dark:ring-gray-600 dark:focus:ring-blue-500",
-          placeholder: @placeholder
-        }
+      def placeholder
+        @placeholder ||= t(".blank", label: label_text || @method.to_s.humanize)
       end
     end
   end
