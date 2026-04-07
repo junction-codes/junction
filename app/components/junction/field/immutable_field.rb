@@ -10,16 +10,12 @@ module Junction
     # behind a tooltip that explains why the field cannot be edited. A hidden
     # input preserves the value for form submission.
     class ImmutableField < FieldType
-      LABEL_CLASS = "block text-sm font-medium leading-6 text-gray-900 dark:text-white"
       INPUT_CLASS = "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 dark:bg-gray-700 dark:text-white dark:ring-gray-600 dark:focus:ring-blue-500"
       CODE_CLASS = "font-mono text-sm text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded px-2 py-1 cursor-default"
 
       def view_template
         div(**attrs) do
-          @form.label @method, class: LABEL_CLASS do
-            plain label_text
-            span(class: "text-red-500 ml-1") { " *" } if @required && !persisted?
-          end
+          render_label
 
           div(class: "mt-2") do
             if persisted?

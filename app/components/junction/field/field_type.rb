@@ -6,11 +6,16 @@ module Junction
     #
     # @abstract
     class FieldType < Base
+      LABEL_CLASS = "block text-sm font-medium leading-6 text-gray-900 " \
+                    "dark:text-white"
+
       # Initializes a new field component.
       #
       # @param form [ActionView::Helpers::FormBuilder] The form builder.
       # @param method [Symbol] Method name for the field.
       # @param label [String] Optional, human-readable label for the field.
+      #   Defaults to the human-readable name of the field attribute. Set to an
+      #   empty string ("") to omit the label.
       # @param help_text [String] Optional help text for the field.
       # @param placeholder [String] Optional placeholder text for the field.
       # @param required [Boolean] Whether the field is required.
@@ -31,7 +36,9 @@ module Junction
       #
       # @return [String] The label for the field.
       def label_text
-        @label ||= @form.object&.class&.human_attribute_name(@method) || @method.to_s.humanize
+        return @label unless @label.nil?
+
+        @label = @form.object&.class&.human_attribute_name(@method) || @method.to_s.humanize
       end
 
       private
@@ -62,6 +69,16 @@ module Junction
       # @return [Boolean] Whether the form object has been persisted.
       def persisted?
         @form.object.persisted?
+      end
+
+      # Renders the label for a field component.
+      def render_label
+        return if label_text.blank?
+
+        @form.label @method, class: LABEL_CLASS do
+          plain label_text
+          span(class: "text-red-500 ml-1") { " *" } if @required
+        end
       end
     end
   end

@@ -26,15 +26,13 @@ module Junction
                     "dark:bg-gray-700 dark:text-white dark:ring-gray-600 " \
                     "dark:focus:ring-blue-500"
 
-      LABEL_CLASS = "block text-sm font-medium leading-6 text-gray-900 " \
-                    "dark:text-white"
-
-
       # Initializes a new field component.
       #
       # @param form [ActionView::Helpers::FormBuilder] The form builder.
       # @param method [Symbol] Method name for the field.
       # @param label [String] Optional, human-readable label for the field.
+      #   Defaults to the human-readable name of the field attribute. Set to an
+      #   empty string ("") to omit the label.
       # @param help_text [String] Optional help text for the field.
       # @param placeholder [String] Optional placeholder text for the field.
       # @param required [Boolean] Whether the field is required.
@@ -56,10 +54,7 @@ module Junction
           }, **attrs) do
           div do
             div(class: "flex items-center justify-between") do
-              span(class: LABEL_CLASS) do
-                plain label_text
-                span(class: "text-red-500 ml-1") { " *" } if @required && !persisted?
-              end
+              render_label
 
               render_mode_switcher unless persisted?
             end

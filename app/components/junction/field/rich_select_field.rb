@@ -9,6 +9,8 @@ module Junction
       # @param form [ActionView::Helpers::FormBuilder] The form builder.
       # @param method [Symbol] Method name for the field.
       # @param label [String] Optional, human-readable label for the field.
+      #   Defaults to the human-readable name of the field attribute. Set to an
+      #   empty string ("") to omit the label.
       # @param help_text [String] Optional help text for the field.
       # @param required [Boolean] Whether the field is required.
       # @param options [Hash] The options for the field.
@@ -24,10 +26,7 @@ module Junction
 
       def view_template
         div do
-          @form.label @method, class: "block text-sm font-medium leading-6 text-gray-900 dark:text-white" do
-            plain label_text
-            span(class: "text-red-500 ml-1") { " *" } if @required
-          end
+          render_label
 
           div(class: "mt-2") do
             Select do

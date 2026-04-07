@@ -6,10 +6,7 @@ module Junction
     class TextField < FieldType
       def view_template
         div do
-          @form.label @method, class: "block text-sm font-medium leading-6 text-gray-900 dark:text-white" do
-            plain label_text
-            span(class: "text-red-500 ml-1") { " *" } if @required
-          end
+          render_label
 
           div(class: "mt-2") do
             @form.text_field @method, attrs

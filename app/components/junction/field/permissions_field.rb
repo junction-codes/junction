@@ -15,6 +15,8 @@ module Junction
       # @param available_permissions [Array<Junction::Permission>] Available
       #   permissions to select from.
       # @param label [String] Optional, human-readable label for the field.
+      #   Defaults to the human-readable name of the field attribute. Set to an
+      #   empty string ("") to omit the label.
       # @param help_text [String] Optional help text for the field.
       # @param required [Boolean] Whether the field is required.
       # @param user_attrs [Hash] Additional HTML attributes for the component.
@@ -27,11 +29,7 @@ module Junction
 
       def view_template
         div(**attrs) do
-          if label_text.present?
-            div(class: "block text-sm font-medium leading-6 text-gray-900 dark:text-white mb-2") do
-              plain label_text
-            end
-          end
+          render_label
 
           p(class: "mb-4 text-sm text-gray-500 dark:text-gray-400") { @help_text } if @help_text
 
