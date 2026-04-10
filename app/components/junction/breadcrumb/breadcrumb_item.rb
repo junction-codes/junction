@@ -2,18 +2,20 @@
 
 module Junction
   module Components
-    # UI component to display an item in a breadcrumb trail.
-    class BreadcrumbItem < Base
-      def view_template(&)
-        li(**attrs, &)
-      end
+    module Breadcrumb
+      # UI component to display an item in a breadcrumb trail.
+      class BreadcrumbItem < Base
+        def view_template(&)
+          li(**attrs, &)
+        end
 
-      private
+        private
 
-      def default_attrs
-        {
-          class: "inline-flex items-center gap-1.5"
-        }
+        def default_attrs
+          {
+            class: "inline-flex items-center gap-1.5"
+          }
+        end
       end
     end
   end

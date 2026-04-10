@@ -2,18 +2,20 @@
 
 module Junction
   module Components
-    # UI component to display a card title.
-    class CardTitle < Base
-      def view_template(&)
-        h3(**attrs, &)
-      end
+    module Card
+      # UI component to display a card title.
+      class CardTitle < Base
+        def view_template(&)
+          h3(**attrs, &)
+        end
 
-      private
+        private
 
-      def default_attrs
-        {
-          class: "font-semibold leading-none tracking-tight"
-        }
+        def default_attrs
+          {
+            class: "font-semibold leading-none tracking-tight"
+          }
+        end
       end
     end
   end

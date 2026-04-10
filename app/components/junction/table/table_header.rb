@@ -2,21 +2,23 @@
 
 module Junction
   module Components
-    class TableHeader < Base
-      def view_template(&)
-        thead(**attrs, &)
-      end
+    module Table
+      class TableHeader < Base
+        def view_template(&)
+          thead(**attrs, &)
+        end
 
-      def row(*, **, &)
-        render TableRow.new(*, **, &)
-      end
+        def row(...)
+          render Row.new(...)
+        end
 
-      private
+        private
 
-      def default_attrs
-        {
-          class: "bg-gray-50 dark:bg-gray-700 [&_tr]:border-b"
-        }
+        def default_attrs
+          {
+            class: "bg-gray-50 dark:bg-gray-700 [&_tr]:border-b"
+          }
+        end
       end
     end
   end

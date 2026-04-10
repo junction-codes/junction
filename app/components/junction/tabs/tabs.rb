@@ -2,33 +2,36 @@
 
 module Junction
   module Components
-    class Tabs < Base
-      def initialize(default: nil, **attrs)
-        @default = default
-        super(**attrs)
-      end
+    module Tabs
+      class Tabs < Base
+        def initialize(default: nil, **user_attrs)
+          @default = default
 
-      def view_template(&)
-        div(**attrs, &)
-      end
+          super(**user_attrs)
+        end
 
-      def content(*, **, &)
-        render TabsContent.new(*, **, &)
-      end
+        def view_template(&)
+          div(**attrs, &)
+        end
 
-      def list(*, **, &)
-        render TabsList.new(*, **, &)
-      end
+        def content(...)
+          render TabsContent.new(...)
+        end
 
-      private
+        def list(...)
+          render TabsList.new(...)
+        end
 
-      def default_attrs
-        {
-          data: {
-            controller: "ruby-ui--tabs",
-            ruby_ui__tabs_active_value: @default
+        private
+
+        def default_attrs
+          {
+            data: {
+              controller: "ruby-ui--tabs",
+              ruby_ui__tabs_active_value: @default
+            }
           }
-        }
+        end
       end
     end
   end

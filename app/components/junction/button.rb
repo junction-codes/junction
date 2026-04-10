@@ -14,12 +14,13 @@ module Junction
       ].freeze
 
       def initialize(type: :button, variant: :primary, size: :md, icon: false,
-                     **attrs)
+                     **user_attrs)
         @type = type
         @variant = variant.to_sym
         @size = size.to_sym
         @icon = icon
-        super(**attrs)
+
+        super(**user_attrs)
       end
 
       def view_template(&)

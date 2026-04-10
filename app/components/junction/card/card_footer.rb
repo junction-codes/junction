@@ -2,18 +2,20 @@
 
 module Junction
   module Components
-    # UI component to display a card footer.
-    class CardFooter < Base
-      def view_template(&)
-        div(**attrs, &)
-      end
+    module Card
+      # UI component to display a card footer.
+      class CardFooter < Base
+        def view_template(&)
+          div(**attrs, &)
+        end
 
-      private
+        private
 
-      def default_attrs
-        {
-          class: "items-center p-6 pt-0"
-        }
+        def default_attrs
+          {
+            class: "items-center p-6 pt-0"
+          }
+        end
       end
     end
   end

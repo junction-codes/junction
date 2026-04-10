@@ -50,7 +50,7 @@ module Junction
 
               # Domains table.
               div(class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
-                render Table do |table|
+                Table do |table|
                   table_header(table)
                   table_body(table)
                 end

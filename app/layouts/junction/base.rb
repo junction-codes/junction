@@ -3,6 +3,7 @@
 module Junction
   module Layouts
     class Base < Components::Base
+      include Junction::Components
       include Phlex::Rails::Helpers::CSPMetaTag
       include Phlex::Rails::Helpers::CSRFMetaTags
       include Phlex::Rails::Helpers::Flash

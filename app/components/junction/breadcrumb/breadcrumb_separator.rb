@@ -2,22 +2,24 @@
 
 module Junction
   module Components
-    # UI component to display a separator between breadcrumb items.
-    class BreadcrumbSeparator < Base
-      def view_template(&)
-        li(**attrs) do
-          block_given? ? yield : icon("chevron-right")
+    module Breadcrumb
+      # UI component to display a separator between breadcrumb items.
+      class BreadcrumbSeparator < Base
+        def view_template(&)
+          li(**attrs) do
+            block_given? ? yield : icon("chevron-right")
+          end
         end
-      end
 
-      private
+        private
 
-      def default_attrs
-        {
-          aria: { hidden: true },
-          class: "[&>svg]:w-3.5 [&>svg]:h-3.5",
-          role: "presentation"
-        }
+        def default_attrs
+          {
+            aria: { hidden: true },
+            class: "[&>svg]:w-3.5 [&>svg]:h-3.5",
+            role: "presentation"
+          }
+        end
       end
     end
   end

@@ -11,7 +11,7 @@ module Junction
       end
 
       def view_template
-        render Card.new(class: "bg-white dark:bg-gray-800 overflow-hidden") do |card|
+        render Card::Card.new(class: "bg-white dark:bg-gray-800 overflow-hidden") do |card|
           div(class: "flex items-start justify-between") do
             card.header do |header|
               header.title(class: "text-sm font-medium text-gray-500 dark:text-gray-400") { @title }

@@ -16,14 +16,14 @@ module Junction
       return if entity.blank?
 
       if allowed_to?(:show?, entity)
-        Components::Link(
+        render Components::Link.new(
           href: url_for(entity),
           variant: :link,
           data: { turbo_frame: "_top" },
           **user_attrs
         ) { entity.title }
       else
-        Components::Link(
+        render Components::Link.new(
           href: nil,
           variant: :disabled,
           title: "You do not have access to this #{entity.class.model_name.human}",

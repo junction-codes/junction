@@ -123,19 +123,20 @@ en:
     components:
       entity_preview:
         logo_alt: "Logo for %{name}"
-      immutable_field:
-        immutable: "%{label} cannot be changed after creation."
-      reference_field:
-        blank: "No %{label} selected"
-        logo_alt: "Logo for %{title}"
-      rich_select_field:
-        blank: "No %{label} selected"
+      field:
+        immutable:
+          immutable: "%{label} cannot be changed after creation."
+        reference:
+          blank: "No %{label} selected"
+          logo_alt: "Logo for %{title}"
+        rich_select:
+          blank: "No %{label} selected"
+        slug:
+          auto: "Auto"
+          edit: "Edit"
+          immutable: "%{label} cannot be changed after creation."
       search_bar:
         placeholder: "Search components, docs, etc."
-      slug_field:
-        auto: "Auto"
-        edit: "Edit"
-        immutable: "%{label} cannot be changed after creation."
 
     views:
       search:

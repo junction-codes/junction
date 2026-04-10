@@ -2,42 +2,44 @@
 
 module Junction
   module Components
-    # UI component to display the items for a pagination component.
-    class PaginationContent < Base
-      def view_template(&)
-        ul(**attrs, &)
-      end
+    module Pagination
+      # UI component to display the items for a pagination component.
+      class PaginationContent < Base
+        def view_template(&)
+          ul(**attrs, &)
+        end
 
-      def ellipsis(*, **, &)
-        PaginationEllipsis(*, **, &)
-      end
+        def ellipsis(...)
+          render Ellipsis.new(...)
+        end
 
-      def first(*, **, &)
-        PaginationFirst(*, **, &)
-      end
+        def first(...)
+          render First.new(...)
+        end
 
-      def item(*, **, &)
-        PaginationItem(*, **, &)
-      end
+        def item(...)
+          render PaginationItem.new(...)
+        end
 
-      def last(*, **, &)
-        PaginationLast(*, **, &)
-      end
+        def last(...)
+          render Last.new(...)
+        end
 
-      def next(*, **, &)
-        PaginationNext(*, **, &)
-      end
+        def next(...)
+          render Next.new(...)
+        end
 
-      def previous(*, **, &)
-        PaginationPrevious(*, **, &)
-      end
+        def previous(...)
+          render Previous.new(...)
+        end
 
-      private
+        private
 
-      def default_attrs
-        {
-          class: "flex flex-row items-center gap-1"
-        }
+        def default_attrs
+          {
+            class: "flex flex-row items-center gap-1"
+          }
+        end
       end
     end
   end

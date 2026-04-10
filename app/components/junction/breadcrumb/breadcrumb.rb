@@ -2,19 +2,21 @@
 
 module Junction
   module Components
-    # UI component to display a breadcrumb trail.
-    class Breadcrumb < Base
-      def view_template(&)
-        nav(**attrs, &)
-      end
+    module Breadcrumb
+      # UI component to display a breadcrumb trail.
+      class Breadcrumb < Base
+        def view_template(&)
+          nav(**attrs, &)
+        end
 
-      private
+        private
 
-      def default_attrs
-        {
-          aria: { label: "breadcrumb" },
-          class: "px-6 pt-3"
-        }
+        def default_attrs
+          {
+            aria: { label: "breadcrumb" },
+            class: "px-6 pt-3"
+          }
+        end
       end
     end
   end

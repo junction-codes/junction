@@ -2,34 +2,37 @@
 
 module Junction
   module Components
-    class DropdownMenu < Base
-      def initialize(options: {}, **attrs)
-        @options = options
-        super(**attrs)
-      end
+    module DropdownMenu
+      class DropdownMenu < Base
+        def initialize(options: {}, **user_attrs)
+          @options = options
 
-      def view_template(&)
-        div(**attrs, &)
-      end
+          super(**user_attrs)
+        end
 
-      def content(*, **, &)
-        render DropdownMenuContent.new(*, **, &)
-      end
+        def view_template(&)
+          div(**attrs, &)
+        end
 
-      def trigger(*, **, &)
-        render DropdownMenuTrigger.new(*, **, &)
-      end
+        def content(...)
+          render DropdownMenuContent.new(...)
+        end
 
-      private
+        def trigger(...)
+          render DropdownMenuTrigger.new(...)
+        end
 
-      def default_attrs
-        {
-          data: {
-            controller: "ruby-ui--dropdown-menu",
-            action: "click@window->ruby-ui--dropdown-menu#onClickOutside",
-            ruby_ui__dropdown_menu_options_value: @options.to_json
+        private
+
+        def default_attrs
+          {
+            data: {
+              controller: "ruby-ui--dropdown-menu",
+              action: "click@window->ruby-ui--dropdown-menu#onClickOutside",
+              ruby_ui__dropdown_menu_options_value: @options.to_json
+            }
           }
-        }
+        end
       end
     end
   end

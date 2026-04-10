@@ -2,23 +2,26 @@
 
 module Junction
   module Components
-    # UI component to display a link in a breadcrumb trail.
-    class BreadcrumbLink < Base
-      def initialize(href: "#", **attrs)
-        @href = href
-        super(**attrs)
-      end
+    module Breadcrumb
+      # UI component to display a link in a breadcrumb trail.
+      class BreadcrumbLink < Base
+        def initialize(href: "#", **user_attrs)
+          @href = href
 
-      def view_template(&)
-        a(href: @href, **attrs, &)
-      end
+          super(**user_attrs)
+        end
 
-      private
+        def view_template(&)
+          a(href: @href, **attrs, &)
+        end
 
-      def default_attrs
-        {
-          class: "transition-colors hover:text-foreground"
-        }
+        private
+
+        def default_attrs
+          {
+            class: "transition-colors hover:text-foreground"
+          }
+        end
       end
     end
   end
