@@ -2,9 +2,7 @@
 
 module Junction
   module Components
-    module Resource
-      extend Phlex::Kit
-    end
+    module Resource; end
 
     include Resource
   end

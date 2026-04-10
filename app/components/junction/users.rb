@@ -2,9 +2,7 @@
 
 module Junction
   module Components
-    module Users
-      extend Phlex::Kit
-    end
+    module Users; end
 
     include Users
   end

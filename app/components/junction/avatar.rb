@@ -2,9 +2,7 @@
 
 module Junction
   module Components
-    module Avatar
-      extend Phlex::Kit
-    end
+    module Avatar; end
 
     include Avatar
   end

@@ -2,9 +2,7 @@
 
 module Junction
   module Components
-    module Pagination
-      extend Phlex::Kit
-    end
+    module Pagination; end
 
     include Pagination
   end

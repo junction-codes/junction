@@ -2,9 +2,7 @@
 
 module Junction
   module Components
-    module DropdownMenu
-      extend Phlex::Kit
-    end
+    module DropdownMenu; end
 
     include DropdownMenu
   end

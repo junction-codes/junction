@@ -2,9 +2,7 @@
 
 module Junction
   module Components
-    module Group
-      extend Phlex::Kit
-    end
+    module Group; end
 
     include Group
   end

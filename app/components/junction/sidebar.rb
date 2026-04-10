@@ -2,9 +2,7 @@
 
 module Junction
   module Components
-    module Sidebar
-      extend Phlex::Kit
-    end
+    module Sidebar; end
 
     include Sidebar
   end

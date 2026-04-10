@@ -2,9 +2,7 @@
 
 module Junction
   module Components
-    module System
-      extend Phlex::Kit
-    end
+    module System; end
 
     include System
   end

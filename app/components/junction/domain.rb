@@ -2,9 +2,7 @@
 
 module Junction
   module Components
-    module Domain
-      extend Phlex::Kit
-    end
+    module Domain; end
 
     include Domain
   end

@@ -2,9 +2,7 @@
 
 module Junction
   module Components
-    module Role
-      extend Phlex::Kit
-    end
+    module Role; end
 
     include Role
   end

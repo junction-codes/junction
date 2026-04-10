@@ -2,9 +2,7 @@
 
 module Junction
   module Components
-    module Tabs
-      extend Phlex::Kit
-    end
+    module Tabs; end
 
     include Tabs
   end

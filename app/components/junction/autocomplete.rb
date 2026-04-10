@@ -2,9 +2,7 @@
 
 module Junction
   module Components
-    module Autocomplete
-      extend Phlex::Kit
-    end
+    module Autocomplete; end
 
     include Autocomplete
   end

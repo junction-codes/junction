@@ -2,9 +2,7 @@
 
 module Junction
   module Components
-    module Dashboard
-      extend Phlex::Kit
-    end
+    module Dashboard; end
 
     include Dashboard
   end

@@ -2,9 +2,7 @@
 
 module Junction
   module Components
-    module Api
-      extend Phlex::Kit
-    end
+    module Api; end
 
     include Api
   end

@@ -2,9 +2,7 @@
 
 module Junction
   module Components
-    module Card
-      extend Phlex::Kit
-    end
+    module Card; end
 
     include Card
   end

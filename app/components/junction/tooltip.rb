@@ -2,9 +2,7 @@
 
 module Junction
   module Components
-    module Tooltip
-      extend Phlex::Kit
-    end
+    module Tooltip; end
 
     include Tooltip
   end

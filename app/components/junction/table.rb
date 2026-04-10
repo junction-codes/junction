@@ -2,9 +2,7 @@
 
 module Junction
   module Components
-    module Table
-      extend Phlex::Kit
-    end
+    module Table; end
 
     include Table
   end

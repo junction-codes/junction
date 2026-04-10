@@ -2,9 +2,7 @@
 
 module Junction
   module Components
-    module Alert
-      extend Phlex::Kit
-    end
+    module Alert; end
 
     include Alert
   end

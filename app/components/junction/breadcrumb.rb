@@ -2,9 +2,7 @@
 
 module Junction
   module Components
-    module Breadcrumb
-      extend Phlex::Kit
-    end
+    module Breadcrumb; end
 
     include Breadcrumb
   end

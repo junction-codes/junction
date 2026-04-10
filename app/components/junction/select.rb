@@ -2,9 +2,7 @@
 
 module Junction
   module Components
-    module Select
-      extend Phlex::Kit
-    end
+    module Select; end
 
     include Select
   end

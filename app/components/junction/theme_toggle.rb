@@ -2,9 +2,7 @@
 
 module Junction
   module Components
-    module ThemeToggle
-      extend Phlex::Kit
-    end
+    module ThemeToggle; end
 
     include ThemeToggle
   end
