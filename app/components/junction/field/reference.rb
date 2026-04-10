@@ -43,6 +43,10 @@ module Junction
                 end
 
                 select.content(outlet_id: @form.field_id(@method)) do |content|
+                  content.item(value: "", selected: @value.blank?) do
+                    empty_content("itemContent")
+                  end
+
                   @options.each do |record|
                     content.item(value: record.id, selected: @value.present? && @value.id == record.id) do
                       item_content(record)
@@ -67,8 +71,8 @@ module Junction
 
         private
 
-        def empty_content
-          div(class: "flex items-center space-x-4 text-left", data_ruby_ui__select_target: "valueContent") do
+        def empty_content(target = "valueContent")
+          div(class: "flex items-center space-x-4 text-left", data_ruby_ui__select_target: target) do
             div(class: "h-6 w-6 rounded-md bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0") do
               icon(@icon, class: "h-6 w-6 text-gray-500")
             end
