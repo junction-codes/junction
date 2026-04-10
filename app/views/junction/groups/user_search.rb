@@ -15,13 +15,13 @@ module Junction
         def view_template
           turbo_frame_tag "member-search-results" do
             if @results.empty?
-              AutocompleteResultEmpty { t(".no_results") }
+              ResultEmpty { t(".no_results") }
               next
             end
 
-            AutocompleteResultList do
+            ResultList do |list|
               @results.each do |user|
-                AutocompleteResultItem(value: user.id.to_s, name: user.title) do
+                list.item(value: user.id.to_s, name: user.title) do
                   user.email_address
                 end
               end

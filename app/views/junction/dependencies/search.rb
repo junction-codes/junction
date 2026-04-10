@@ -15,13 +15,13 @@ module Junction
         def view_template
           turbo_frame_tag "dependency-search-results" do
             if @results.empty?
-              AutocompleteResultEmpty { t(".no_results") }
+              ResultEmpty { t(".no_results") }
               next
             end
 
-            AutocompleteResultList do
+            ResultList do |list|
               @results.each do |entity|
-                AutocompleteResultItem(
+                list.item(
                   value: "#{entity.class.name}:#{entity.id}",
                   name: entity.title
                 ) do

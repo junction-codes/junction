@@ -2,20 +2,22 @@
 
 module Junction
   module Components
-    # UI component to display a tooltip trigger.
-    class TooltipTrigger < Base
-      def view_template(&)
-        div(**attrs, &)
-      end
+    module Tooltip
+      # UI component to display a tooltip trigger.
+      class TooltipTrigger < Base
+        def view_template(&)
+          div(**attrs, &)
+        end
 
-      private
+        private
 
-      def default_attrs
-        {
-          data: { ruby_ui__tooltip_target: "trigger" },
-          variant: :outline,
-          class: "peer"
-        }
+        def default_attrs
+          {
+            data: { ruby_ui__tooltip_target: "trigger" },
+            variant: :outline,
+            class: "peer"
+          }
+        end
       end
     end
   end

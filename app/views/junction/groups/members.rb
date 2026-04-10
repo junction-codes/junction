@@ -146,7 +146,7 @@ module Junction
                     autocomplete_search_url_value: @search_url
                   }
                 ) do |f|
-                  AutocompleteField(
+                  Autocomplete(
                     label: t(".search_label"),
                     placeholder: t(".search_placeholder"),
                     hidden_field_name: "member[user_id]",

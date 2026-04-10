@@ -30,7 +30,7 @@ module Junction
               end
 
               main(class: "mt-6 max-w-2xl mx-auto") do
-                render RoleForm.new(role:, available_permissions:)
+                RoleForm(role:, available_permissions:)
               end
             end
           end

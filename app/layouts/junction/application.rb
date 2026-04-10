@@ -33,17 +33,17 @@ module Junction
 
               div(class: "fixed top-4 right-4 w-80 z-1000") do
                 flash&.each do |type, message|
-                  render Components::Alert.new(variant: type) do |alert|
+                  Alert(variant: type) do |alert|
                     alert.description { message }
                   end
                 end
               end
 
               div(data_sidebar_collapsed_value: "false", class: "flex flex-1 overflow-hidden") do
-                render Components::Sidebar.new
+                Sidebar()
 
                 main(data_sidebar_target: "content", class: "flex-1 overflow-y-auto transition-all duration-300 md:mx-10") do
-                  BreadcrumbTrail(items: breadcrumbs) if breadcrumbs.present?
+                  Trail(items: breadcrumbs) if breadcrumbs.present?
 
                   yield
                 end

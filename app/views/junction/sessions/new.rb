@@ -34,8 +34,8 @@ module Junction
                   end
 
                   form_with(url: session_url, class: "space-y-4 md:space-y-6", action: "#") do |form|
-                    TextField(form, :email_address, label: "Your email", type: "email", placeholder: "example@example.com", autofocus: true, autocomplete: "username")
-                    PasswordField(form, :password, label: "Password", placeholder: "••••••••", autocomplete: "current-password")
+                    Text(form, :email_address, label: "Your email", type: "email", placeholder: "example@example.com", autofocus: true, autocomplete: "username")
+                    Password(form, :password, label: "Password", placeholder: "••••••••", autocomplete: "current-password")
 
                     div(class: "flex items-center justify-between") do
                       a(href: new_password_path, class: "text-sm font-medium text-primary-600 hover:underline dark:text-primary-500") { plain("Forgot password?") }

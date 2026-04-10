@@ -2,18 +2,20 @@
 
 module Junction
   module Components
-    # UI component to display a dialog description.
-    class DialogDescription < Base
-      def view_template(&)
-        p(**attrs, &)
-      end
+    module Dialog
+      # UI component to display a dialog description.
+      class DialogDescription < Base
+        def view_template(&)
+          p(**attrs, &)
+        end
 
-      private
+        private
 
-      def default_attrs
-        {
-          class: "text-sm text-muted-foreground"
-        }
+        def default_attrs
+          {
+            class: "text-sm text-muted-foreground"
+          }
+        end
       end
     end
   end

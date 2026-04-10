@@ -19,7 +19,7 @@ module Junction
             next if @results.empty?
 
             div(class: "absolute left-0 right-0 z-50 mt-1 shadow-lg bg-white dark:bg-gray-800 rounded-md") do
-              AutocompleteResultList do
+              ResultList do
                 @results.each { |entity| result_link(entity) }
 
                 see_all_link

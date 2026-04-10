@@ -4,6 +4,7 @@ module Junction
   module Views
     # Base class for all Phlex views.
     class Base < Junction::Components::Base
+      include Junction::Components
       include Phlex::Rails::Helpers::Flash
       include Phlex::Rails::Helpers::FormWith
       include Phlex::Rails::Helpers::URLFor

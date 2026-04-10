@@ -93,7 +93,7 @@ module Junction
         end
 
         def api_tabs
-          render Tabs.new do |tabs|
+          Tabs do |tabs|
             tabs.list do |list|
               list.trigger(value: "dependencies") do
                 icon("blocks", class: "pe-2")
@@ -162,12 +162,12 @@ module Junction
         def definition_section
           div do
             h3(class: "text-xl font-semibold text-gray-800 dark:text-white mb-4") { "Definition" }
-            Tabs(default_value: "raw") do
-              TabsList do
-                TabsTrigger(value: "raw") { "Raw" }
+            Tabs(default_value: "raw") do |tabs|
+              tabs.list do |list|
+                list.trigger(value: "raw") { "Raw" }
               end
 
-              TabsContent(value: "raw", class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
+             tabs.content(value: "raw", class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
                 if @api.definition.present?
                   pre(class: "bg-gray-100 dark:bg-gray-900 p-4 rounded-lg overflow-x-auto") do
                     code(class: "language-yaml") do

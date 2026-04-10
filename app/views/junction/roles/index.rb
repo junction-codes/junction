@@ -40,7 +40,7 @@ module Junction
               end
 
               div(class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
-                render Table do |table|
+                Table do |table|
                   table.header do |header|
                     header.row do |row|
                       sort_url = ->(field, direction) {

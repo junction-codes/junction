@@ -23,7 +23,7 @@ module Junction
               style: "position: fixed; bottom: 2rem; right: 2rem; z-index: 50;",
               class: "rounded-full bg-white dark:bg-gray-800 shadow-lg p-3 flex items-center justify-center"
             ) do
-              render Components::ThemeToggle
+              ThemeToggle()
             end
           end
         end

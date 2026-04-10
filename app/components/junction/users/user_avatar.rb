@@ -2,30 +2,32 @@
 
 module Junction
   module Components
-    class UserAvatar < Base
-      def initialize(user:, size: :md, **user_attrs)
-        @user = user
-        @size = size
+    module Users
+      class UserAvatar < Base
+        def initialize(user:, size: :md, **user_attrs)
+          @user = user
+          @size = size
 
-        super(**user_attrs)
-      end
+          super(**user_attrs)
+        end
 
-      def view_template
-        Avatar(**attrs) do |avatar|
-          if @user.image_url.present?
-            avatar.image(src: @user.image_url, alt: @user.title)
-          else
-            avatar.fallback { icon("circle-user-round") }
+        def view_template
+          Avatar(**attrs) do |avatar|
+            if @user.image_url.present?
+              avatar.image(src: @user.image_url, alt: @user.title)
+            else
+              avatar.fallback { icon("circle-user-round") }
+            end
           end
         end
-      end
 
-      private
+        private
 
-      def default_attrs
-        {
-          size: @size
-        }
+        def default_attrs
+          {
+            size: @size
+          }
+        end
       end
     end
   end

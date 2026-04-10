@@ -26,7 +26,7 @@ module Junction
 
           # User preferences and menus.
           div(class: "flex items-center space-x-4") do
-            render Junction::Components::ThemeToggle
+            ThemeToggle()
 
             button(class: "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white") { icon("bell", class: "w-6 h-6") }
 

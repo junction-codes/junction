@@ -11,7 +11,7 @@ module Junction
       def view_template
         return if annotations.empty?
 
-        render Components::Card.new do |card|
+        Card do |card|
           card.header do |header|
             header.title { "Annotations" }
             header.description do
@@ -38,7 +38,7 @@ module Junction
       end
 
       def render_field_for(annotation)
-        TextField(
+        Text(
           @form,
           annotation[:key],
           label: "#{annotation[:title]} (#{annotation[:key]})",

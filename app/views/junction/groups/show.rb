@@ -90,7 +90,7 @@ module Junction
         end
 
         def group_tabs
-          render Tabs.new do |tabs|
+          Tabs do |tabs|
             tabs.list do |list|
               if @can_view_members
                 list.trigger(value: "members") do
