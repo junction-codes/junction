@@ -15,18 +15,7 @@ module Junction
       #
       # On a persisted record the identifier is shown read-only with a tooltip,
       # and a hidden input preserves the value for form submission.
-      class Slug < Type
-        CODE_CLASS = "font-mono text-sm text-gray-700 dark:text-gray-300 " \
-                     "bg-gray-100 dark:bg-gray-700 rounded px-2 py-1 " \
-                     "cursor-default"
-
-        INPUT_CLASS = "block w-full rounded-md border-0 py-1.5 text-gray-900 " \
-                      "shadow-sm ring-1 ring-inset ring-gray-300 " \
-                      "placeholder:text-gray-400 focus:ring-2 focus:ring-inset " \
-                      "focus:ring-blue-600 sm:text-sm sm:leading-6 " \
-                      "dark:bg-gray-700 dark:text-white dark:ring-gray-600 " \
-                      "dark:focus:ring-blue-500"
-
+      class Slug < FieldType
         # Initializes a new field component.
         #
         # @param form [ActionView::Helpers::FormBuilder] The form builder.
@@ -81,7 +70,7 @@ module Junction
         def render_read_only
           Tooltip do |tooltip|
             tooltip.trigger do
-              code(class: CODE_CLASS) do
+              code(class: Immutable::CODE_CLASSES) do
                 plain @form.object.public_send(@method)
                 span(class: "sr-only") { t(".immutable", label: label_text) }
               end
@@ -108,7 +97,7 @@ module Junction
             data: { slug_field_target: "slugInputWrapper" }
           ) do
             @form.text_field @method,
-              class: INPUT_CLASS,
+              class: Text::BASE_CLASSES,
               name: nil,
               placeholder:,
               data: {

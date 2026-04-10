@@ -8,7 +8,7 @@ module Junction
       # Renders permissions grouped by domain/context, then by all vs owned. Each
       # checkbox is labeled by access level with a tooltip for the full
       # description.
-      class Permissions < Type
+      class Permissions < FieldType
         # Initialize a new field component.
         #
         # @param form [ActionView::Helpers::FormBuilder] The form builder.

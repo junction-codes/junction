@@ -4,7 +4,7 @@ module Junction
   module Components
     module Field
       # Form field for selecting from a list of options with rich formatting.
-      class RichSelect < Type
+      class RichSelect < FieldType
         # Initializes a new field component.
         #
         # @param form [ActionView::Helpers::FormBuilder] The form builder.

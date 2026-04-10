@@ -10,9 +10,20 @@ module Junction
       # On a persisted record the current value is shown as styled code text
       # behind a tooltip that explains why the field cannot be edited. A hidden
       # input preserves the value for form submission.
-      class Immutable < Type
-        INPUT_CLASS = "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 dark:bg-gray-700 dark:text-white dark:ring-gray-600 dark:focus:ring-blue-500"
-        CODE_CLASS = "font-mono text-sm text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded px-2 py-1 cursor-default"
+      class Immutable < FieldType
+        CODE_CLASSES = %w[
+          font-mono
+          text-sm
+          text-gray-700
+          dark:text-gray-300
+          bg-gray-100
+          dark:bg-gray-700
+          rounded
+          px-2
+          py-1
+          cursor-default
+        ].freeze
+
 
         def view_template
           div(**attrs) do
@@ -22,7 +33,7 @@ module Junction
               if persisted?
                 Tooltip do |tooltip|
                   tooltip.trigger do
-                    code(class: CODE_CLASS) do
+                    code(class: CODE_CLASSES) do
                       plain @form.object.public_send(@method)
                       span(class: "sr-only") { t(".immutable", label: label_text) }
                     end
@@ -33,7 +44,7 @@ module Junction
 
                 @form.hidden_field @method
               else
-                @form.text_field @method, class: INPUT_CLASS, placeholder:
+                @form.text_field @method, class: Text::BASE_CLASSES, placeholder:
               end
             end
 

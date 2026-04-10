@@ -4,7 +4,7 @@ module Junction
   module Components
     module Field
       # Form field for a multi-line text input.
-      class TextArea < Type
+      class TextArea < FieldType
         def view_template
           div do
             render_label
@@ -29,7 +29,7 @@ module Junction
 
         def default_attrs
           {
-            class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 dark:bg-gray-700 dark:text-white dark:ring-gray-600 dark:focus:ring-blue-500",
+            class: Text::BASE_CLASSES,
             required: @required
           }
         end

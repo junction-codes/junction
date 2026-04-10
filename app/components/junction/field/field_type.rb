@@ -6,9 +6,15 @@ module Junction
       # Base class for all field components.
       #
       # @abstract
-      class Type < Base
-        LABEL_CLASS = "block text-sm font-medium leading-6 text-gray-900 " \
-                      "dark:text-white"
+      class FieldType < Base
+        LABEL_CLASSES = %w[
+          block
+          text-sm
+          font-medium
+          leading-6
+          text-gray-900
+          dark:text-white
+        ].freeze
 
         attr_reader :help_text, :placeholder
 
@@ -23,8 +29,8 @@ module Junction
         # @param placeholder [String] Optional placeholder text for the field.
         # @param required [Boolean] Whether the field is required.
         # @param user_attrs [Hash] Additional HTML attributes for the component.
-        def initialize(form, method, label: nil, help_text: nil, placeholder: nil,
-                       required: false, **user_attrs)
+        def initialize(form, method, label: nil, help_text: nil,
+                       placeholder: nil, required: false, **user_attrs)
           @form = form
           @method = method
           @label = label
@@ -78,7 +84,7 @@ module Junction
         def render_label
           return if label_text.blank?
 
-          @form.label @method, class: LABEL_CLASS do
+          @form.label @method, class: LABEL_CLASSES do
             plain label_text
             span(class: "text-red-500 ml-1") { " *" } if @required
           end

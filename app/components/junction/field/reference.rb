@@ -4,7 +4,7 @@ module Junction
   module Components
     module Field
       # Form field for selecting another entity.
-      class Reference < Type
+      class Reference < FieldType
         # Initializes a new field component.
         #
         # @param form [ActionView::Helpers::FormBuilder] The form builder.
