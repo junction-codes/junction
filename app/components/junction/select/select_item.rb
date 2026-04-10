@@ -4,10 +4,11 @@ module Junction
   module Components
     module Select
       class SelectItem < Base
-        def initialize(value: nil, selected: false, **attrs)
+        def initialize(value: nil, selected: false, **user_attrs)
           @value = value
           @selected = selected
-          super(**attrs)
+
+          super(**user_attrs)
         end
 
         def view_template(&block)

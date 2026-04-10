@@ -4,9 +4,10 @@ module Junction
   module Components
     module Tabs
       class Tabs < Base
-        def initialize(default: nil, **attrs)
+        def initialize(default: nil, **user_attrs)
           @default = default
-          super(**attrs)
+
+          super(**user_attrs)
         end
 
         def view_template(&)

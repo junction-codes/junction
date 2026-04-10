@@ -49,10 +49,11 @@ module Junction
         deprecated: :destructive
       }.freeze
 
-      def initialize(variant: :primary, size: :md, **args)
+      def initialize(variant: :primary, size: :md, **user_attrs)
         @variant = alias_variant(variant.to_sym)
         @size = size
-        super(**args)
+
+        super(**user_attrs)
       end
 
       def view_template(&)

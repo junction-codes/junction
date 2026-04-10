@@ -5,9 +5,10 @@ module Junction
     module Breadcrumb
       # UI component to display a link in a breadcrumb trail.
       class BreadcrumbLink < Base
-        def initialize(href: "#", **attrs)
+        def initialize(href: "#", **user_attrs)
           @href = href
-          super(**attrs)
+
+          super(**user_attrs)
         end
 
         def view_template(&)

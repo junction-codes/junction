@@ -5,10 +5,10 @@ module Junction
     module Dialog
       # UI component to display a dialog container.
       class Dialog < Base
-        def initialize(open: false, **attrs)
+        def initialize(open: false, **user_attrs)
           @open = open
 
-          super(**attrs)
+          super(**user_attrs)
         end
 
         def view_template(&)

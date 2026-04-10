@@ -4,9 +4,10 @@ module Junction
   module Components
     module DropdownMenu
       class DropdownMenu < Base
-        def initialize(options: {}, **attrs)
+        def initialize(options: {}, **user_attrs)
           @options = options
-          super(**attrs)
+
+          super(**user_attrs)
         end
 
         def view_template(&)

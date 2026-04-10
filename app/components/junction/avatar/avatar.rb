@@ -16,7 +16,7 @@ module Junction
         def initialize(size: :md, **user_attrs)
           @size = size
 
-          super(**attrs)
+          super(**user_attrs)
         end
 
         def view_template(&)

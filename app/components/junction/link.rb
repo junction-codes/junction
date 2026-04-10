@@ -3,12 +3,14 @@
 module Junction
   module Components
     class Link < Base
-      def initialize(href: "#", variant: :link, size: :md, icon: false, **attrs)
+      def initialize(href: "#", variant: :link, size: :md, icon: false,
+                     **user_attrs)
         @href = href
         @variant = variant.to_sym
         @size = size.to_sym
         @icon = icon
-        super(**attrs)
+
+        super(**user_attrs)
       end
 
       def view_template(&)

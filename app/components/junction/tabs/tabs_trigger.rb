@@ -4,9 +4,10 @@ module Junction
   module Components
     module Tabs
       class TabsTrigger < Base
-        def initialize(value:, **attrs)
+        def initialize(value:, **user_attrs)
           @value = value
-          super(**attrs)
+
+          super(**user_attrs)
         end
 
         def view_template(&)

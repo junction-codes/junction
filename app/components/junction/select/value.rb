@@ -4,9 +4,10 @@ module Junction
   module Components
     module Select
       class Value < Base
-        def initialize(placeholder: nil, **attrs)
+        def initialize(placeholder: nil, **user_attrs)
           @placeholder = placeholder
-          super(**attrs)
+
+          super(**user_attrs)
         end
 
         def view_template(&block)

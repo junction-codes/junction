@@ -5,11 +5,11 @@ module Junction
     module Avatar
       # UI component to display a user or entity's avatar image.
       class Image < Base
-        def initialize(src:, alt: "", **attrs)
+        def initialize(src:, alt: "", **user_attrs)
           @src = src
           @alt = alt
 
-          super(**attrs)
+          super(**user_attrs)
         end
 
         def view_template

@@ -26,7 +26,7 @@ module Junction
         def initialize(variant: :default, **user_attrs)
           @variant = VARIANTS.include?(variant.to_sym) ? variant.to_sym : :default
 
-          super(**attrs)
+          super(**user_attrs)
         end
 
         def view_template(&)

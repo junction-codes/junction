@@ -4,9 +4,10 @@ module Junction
   module Components
     module DropdownMenu
       class DropdownMenuItem < Base
-        def initialize(href: "#", **attrs)
+        def initialize(href: "#", **user_attrs)
           @href = href
-          super(**attrs)
+
+          super(**user_attrs)
         end
 
         def view_template(&)
