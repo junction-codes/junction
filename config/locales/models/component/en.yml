@@ -1,0 +1,11 @@
+en:
+  activerecord:
+    attributes:
+      junction/component:
+        component_type: "Type"
+        repository_url: "Repository URL"
+        title: "Component Name"
+    models:
+      junction/component:
+        one: Component
+        other: Components

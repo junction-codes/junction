@@ -1,0 +1,12 @@
+en:
+  activerecord:
+    attributes:
+      junction/group:
+        group_type: "Type"
+        parent_id: "Parent"
+        role_id: "Role"
+        title: "Group Name"
+    models:
+      junction/group:
+        one: Group
+        other: Groups

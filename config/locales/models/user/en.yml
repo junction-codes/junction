@@ -1,0 +1,15 @@
+en:
+  activerecord:
+    attributes:
+      junction/user:
+        email_address: "Email Address"
+        email_address_confirmation: "Confirm Email"
+        password: "New Password"
+        password_challenge: "Current Password"
+        password_confirmation: "Confirm Password"
+        pronouns: "Pronouns"
+        title: "Display Name"
+    models:
+      junction/user:
+        one: User
+        other: Users

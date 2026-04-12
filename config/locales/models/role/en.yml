@@ -1,0 +1,12 @@
+en:
+  activerecord:
+    attributes:
+      junction/role:
+        permissions: "Permissions"
+        permission_ids: "Permissions"
+        system: "System Role"
+        title: "Role name"
+    models:
+      junction/role:
+        one: Role
+        other: Roles

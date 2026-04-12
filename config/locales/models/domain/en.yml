@@ -1,0 +1,11 @@
+en:
+  activerecord:
+    attributes:
+      junction/domain:
+        image_url: "Logo URL"
+        status: "Domain Status"
+        title: "Domain Name"
+    models:
+      junction/domain:
+        one: Domain
+        other: Domains

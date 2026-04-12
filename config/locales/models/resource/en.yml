@@ -1,0 +1,10 @@
+en:
+  activerecord:
+    attributes:
+      junction/resource:
+        resource_type: "Type"
+        title: "Resource Name"
+    models:
+      junction/resource:
+        one: Resource
+        other: Resources
