@@ -1,0 +1,27 @@
+en:
+  junction:
+    components:
+      group:
+        group_edit_sidebar:
+          metadata: Metadata
+          danger_zone: Danger Zone
+          danger_zone_warning: These actions are irreversible. Please be certain.
+          delete: Delete Group
+          delete_confirm_title: Are you absolutely sure?
+          delete_confirm_body: This will permanently remove the Group.
+          cancel: Cancel
+          confirm_delete: Confirm Delete
+        group_filters:
+          all: All %{label}
+          placeholder: Name or description...
+          search: Search
+        group_form:
+          title: Group Details
+          description: >-
+            This information will be displayed on the group's main page.
+          parent_help: Select a parent for this group.
+          description_help: A brief, high-level summary of the group's mission.
+          namespace_help: >-
+            Namespaces allow the same identifier to exist in different contexts.
+          cancel: Cancel
+          save: Save Changes

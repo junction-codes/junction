@@ -1,0 +1,21 @@
+en:
+  junction:
+    views:
+      dependencies:
+        index:
+          title: Dependency Name
+          type: Type
+          actions: Actions
+          cancel: Cancel
+          confirm_title: Remove %{name}?
+          confirm_body: >-
+            This will remove %{name} as a dependency. The entity itself will not
+            be deleted.
+          confirm_delete: Remove Dependency
+          remove: Remove %{name} as a dependency
+          add_dependency: Add Dependency
+          add_dependency_title: Add a Dependency
+          search_label: Search
+          search_placeholder: Type to search APIs, Components, Resources...
+        search:
+          no_results: No matching entities found.

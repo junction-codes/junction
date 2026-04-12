@@ -1,0 +1,16 @@
+en:
+  junction:
+    views:
+      passwords:
+        edit:
+          back: Back to log in
+          submit: Reset password
+          reset: Reset your password
+          password: Enter new password
+          password_confirmation: Repeat new password
+        new:
+          back: Back to log in
+          submit: Submit
+          request: Request password reset
+          email: Your email
+          email_placeholder: example@example.com

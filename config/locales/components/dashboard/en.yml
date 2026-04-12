@@ -1,0 +1,23 @@
+en:
+  junction:
+    components:
+      dashboard:
+        dashboard_entity_metadata:
+          entity_label: "%{model}:"
+        dashboard_hero_card:
+          new_component: New component
+          new_system: New system
+          view_profile: View profile
+          welcome_title: Welcome, %{name}!
+          welcome_description: >-
+            A quick snapshot of your catalog and recent activity for %{name}.
+        dashboard_my_entities:
+          description: Catalog entities owned by your groups.
+          empty: No entities owned by your groups yet.
+          title: My catalog items
+        dashboard_updated_entities:
+          description: >-
+            Latest changes across APIs, components, domains, resources, and
+            systems.
+          empty: No catalog updates yet.
+          title: Recent catalog updates

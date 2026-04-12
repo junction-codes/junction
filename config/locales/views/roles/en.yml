@@ -1,0 +1,18 @@
+en:
+  junction:
+    views:
+      roles:
+        edit:
+          title: Edit Role
+          description: Update the role '%{name}'.
+        index:
+          new: New Role
+          permissions_all: All
+          permissions_all_read: All read
+        new:
+          title: New Role
+          description: Create a role and assign permissions.
+        show:
+          edit: Edit
+          back_to_roles: Back to roles
+          permissions: Permissions (%{count})

@@ -1,0 +1,6 @@
+en:
+  junction:
+    components:
+      dialog:
+        dialog_close:
+          close: Close

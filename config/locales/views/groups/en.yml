@@ -1,0 +1,37 @@
+en:
+  junction:
+    views:
+      groups:
+        edit:
+          title: Edit Group
+          description: Update the details for the '%{title}' group.
+        index:
+          new: New Group
+        members:
+          email: Email
+          name: Name
+          actions: Actions
+          cancel: Cancel
+          confirm_title: Remove %{name}?
+          confirm_body: >-
+            This will remove %{name} from the group. The user account will not
+            be deleted.
+          confirm_remove: Remove Member
+          remove: Remove %{name} as a member
+          add_member: Add Member
+          add_member_title: Add a Member
+          search_label: Search users
+          search_placeholder: Type to search by name or email...
+        new:
+          title: Create a New Group
+          description: Start by providing the basic details for your new group.
+        show:
+          edit: Edit Group
+          logo_alt: Logo for %{name}
+          no_owner: No owner
+          stat_total_systems: Total Systems
+          stat_total_components: Total Components
+          members: Members
+          part_of_parent: Part of the '%{parent_title}' Parent
+        user_search:
+          no_results: No matching users found.

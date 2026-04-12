@@ -1,0 +1,12 @@
+en:
+  junction:
+    views:
+      sessions:
+        new:
+          sign_in_heading: Sign in to your account
+          email: Your email
+          email_placeholder: example@example.com
+          password: Password
+          forgot: Forgot password?
+          submit: Submit
+          continue_with: Or continue with

@@ -1,0 +1,17 @@
+en:
+  junction:
+    components:
+      pagination:
+        ellipsis:
+          more: More pages
+        first:
+          first: First
+        last:
+          last: Last
+        next:
+          next: Next
+        per_page_selector:
+          per_page: "Rows per page:"
+          total: "Total results: %{count}"
+        previous:
+          previous: Previous

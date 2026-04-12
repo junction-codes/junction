@@ -1,0 +1,43 @@
+en:
+  junction:
+    components:
+      users:
+        user_edit_sidebar:
+          metadata: Metadata
+          danger_zone: Danger Zone
+          danger_zone_warning: These actions are irreversible. Please be certain.
+          delete: Delete User
+          delete_confirm_title: Are you absolutely sure?
+          delete_confirm_body: This will permanently remove the User.
+          cancel: Cancel
+          confirm_delete: Confirm Delete
+        user_filters:
+          all: All %{label}
+          placeholder: Name or email address...
+          search: Search
+        user_form:
+          title: User Details
+          description: >-
+            This information will be displayed on the user's main page.
+          namespace_help: >-
+            Namespaces allow the same identifier to exist in different contexts.
+          cancel: Cancel
+          save: Save Changes
+          basic_info_title: Basic Information
+          basic_info_description: >-
+            This information will be displayed on the user's main page.
+          pronouns_placeholder: e.g., they/them, he/him, she/her
+          image_url_placeholder: https://example.com/logo.png
+          email_settings_title: Email Settings
+          email_new: Enter the user's email address.
+          email_self: Change your email address.
+          email_other: Update the user's email address.
+          security_settings_title: Security Settings
+          security_settings_description: Change your password.
+          password_new: Set a password for the user.
+          password_self: Change your password.
+          password_other: Set a new password for the user.
+        user_menu:
+          account: My Account
+          profile: Profile
+          logout: Logout

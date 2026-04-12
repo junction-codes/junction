@@ -1,0 +1,22 @@
+en:
+  junction:
+    views:
+      resources:
+        edit:
+          title: Edit Resource
+          description: Update the details for the '%{title}' resource.
+        index:
+          new: New Resource
+        new:
+          title: Create a New Resource
+          description: >-
+            Start by providing the basic details for your new resource.
+        show:
+          edit: Edit Resource
+          dependents: Dependents
+          graph: Graph
+          logo_alt: Logo for %{name}
+          no_owner: No owner
+          stat_total_systems: Total Systems
+          stat_active_incidents: Active Incidents
+          part_of_system: Part of the '%{system_title}' System

@@ -1,0 +1,28 @@
+en:
+  junction:
+    components:
+      system:
+        system_edit_sidebar:
+          metadata: Metadata
+          danger_zone: Danger Zone
+          danger_zone_warning: These actions are irreversible. Please be certain.
+          delete: Delete System
+          delete_confirm_title: Are you absolutely sure?
+          delete_confirm_body: This will permanently remove the System.
+          cancel: Cancel
+          confirm_delete: Confirm Delete
+        system_filters:
+          all: All %{label}
+          placeholder: Name or description...
+          search: Search
+        system_form:
+          title: System Details
+          description: >-
+            This information will be displayed on the system's main page.
+          domain_help: Assign this system to an existing domain.
+          namespace_help: >-
+            Namespaces allow the same identifier to exist in different contexts.
+          owner_help: Assign an owner for this system.
+          description_help: A brief summary of the system's goals.
+          cancel: Cancel
+          save: Save Changes

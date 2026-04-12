@@ -1,0 +1,28 @@
+en:
+  junction:
+    components:
+      api:
+        api_edit_sidebar:
+          metadata: Metadata
+          danger_zone_title: Danger Zone
+          danger_zone_warning: These actions are irreversible. Please be certain.
+          delete: Delete API
+          delete_confirm_title: Are you absolutely sure?
+          delete_confirm_body: This will permanently remove the API.
+          cancel: Cancel
+          confirm_delete: Confirm Delete
+        api_filters:
+          all: All %{label}
+          placeholder: Name or description...
+          search: Search
+        api_form:
+          title: API Details
+          description: This information will be displayed on the API's main page.
+          owner_help: Assign an owner for this API.
+          system_help: System this API belongs to.
+          description_help: A brief summary of the API's goals.
+          definition_help: API spec definition.
+          namespace_help: >-
+            Namespaces allow the same identifier to exist in different contexts.
+          cancel: Cancel
+          save: Save Changes

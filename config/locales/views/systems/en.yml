@@ -1,0 +1,20 @@
+en:
+  junction:
+    views:
+      systems:
+        edit:
+          title: Edit System
+          description: Update the details for the '%{title}' system.
+        index:
+          new: New System
+        new:
+          title: Create a New System
+          description: Start by providing the basic details for your new system.
+        show:
+          edit: Edit System
+          logo_alt: Logo for %{name}
+          no_owner: No owner
+          stat_total_components: Total Components
+          stat_active_incidents: Active Incidents
+          entities: Entities
+          part_of_domain: Part of the '%{domain_title}' Domain

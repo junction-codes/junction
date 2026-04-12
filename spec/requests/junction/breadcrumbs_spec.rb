@@ -53,7 +53,7 @@ RSpec.describe "Junction::Breadcrumbs concern", type: :request do
     before { get components_path }
 
     it "includes breadcrumb for the home page" do
-      expect_breadcrumb_to_include(I18n.t("breadcrumbs.home"))
+      expect_breadcrumb_to_include(I18n.t("junction.breadcrumbs.home"))
     end
 
     it "includes breadcrumb for the index page" do
@@ -76,7 +76,7 @@ RSpec.describe "Junction::Breadcrumbs concern", type: :request do
     before { get component_path(component) }
 
     it "includes breadcrumb for the home page" do
-      expect_breadcrumb_to_include(I18n.t("breadcrumbs.home"))
+      expect_breadcrumb_to_include(I18n.t("junction.breadcrumbs.home"))
     end
 
     it "includes breadcrumb for the index page" do
@@ -117,12 +117,13 @@ RSpec.describe "Junction::Breadcrumbs concern", type: :request do
     before { get new_component_path }
 
     it "includes breadcrumb for the home page" do
-      expect_breadcrumb_to_include(I18n.t("breadcrumbs.home"))
+      expect_breadcrumb_to_include(I18n.t("junction.breadcrumbs.home"))
     end
 
     it "includes breadcrumb for the new page" do
       expect_breadcrumb_to_include(I18n.t(
-        "breadcrumbs.new", model: I18n.t("activerecord.models.junction/component.one")
+        "junction.breadcrumbs.new",
+        model: I18n.t("activerecord.models.junction/component.one")
       ))
     end
 
@@ -140,7 +141,7 @@ RSpec.describe "Junction::Breadcrumbs concern", type: :request do
     before { get edit_component_path(component) }
 
     it "includes breadcrumb for the edit page" do
-      expect_breadcrumb_to_include(I18n.t("breadcrumbs.edit"))
+      expect_breadcrumb_to_include(I18n.t("junction.breadcrumbs.edit"))
     end
 
     it "includes the component name in the breadcrumb" do
@@ -163,7 +164,7 @@ RSpec.describe "Junction::Breadcrumbs concern", type: :request do
 
       it "includes breadcrumb for the new page" do
         expect_breadcrumb_to_include(I18n.t(
-          "breadcrumbs.new",
+          "junction.breadcrumbs.new",
           model: I18n.t("activerecord.models.junction/component.one")
         ))
       end
@@ -177,7 +178,7 @@ RSpec.describe "Junction::Breadcrumbs concern", type: :request do
       end
 
       it "includes breadcrumb for the edit page" do
-        expect_breadcrumb_to_include(I18n.t("breadcrumbs.edit"))
+        expect_breadcrumb_to_include(I18n.t("junction.breadcrumbs.edit"))
       end
 
       it "includes the component name in the breadcrumb" do

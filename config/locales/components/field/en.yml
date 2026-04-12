@@ -1,0 +1,15 @@
+en:
+  junction:
+    components:
+      field:
+        immutable:
+          immutable: "%{label} cannot be changed after creation."
+        reference:
+          blank: No %{label} selected
+          logo_alt: Logo for %{title}
+        rich_select:
+          blank: No %{label} selected
+        slug:
+          auto: Auto
+          edit: Edit
+          immutable: "%{label} cannot be changed after creation."

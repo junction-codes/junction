@@ -1,0 +1,12 @@
+en:
+  junction:
+    components:
+      alert:
+        alert:
+          titles:
+            alert: Alert
+            default: Information
+            success: Success
+            warning: Warning
+        alert_close:
+          close: Close

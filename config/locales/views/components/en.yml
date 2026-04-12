@@ -1,0 +1,22 @@
+en:
+  junction:
+    views:
+      components:
+        edit:
+          title: Edit Component
+          description: Update the details for the '%{title}' component.
+        index:
+          new: New Component
+        new:
+          title: Create a New Component
+          description: >-
+            Start by providing the basic details for your new component.
+        show:
+          edit: Edit Component
+          logo_alt: Logo for %{name}
+          no_owner: No owner
+          stat_total_systems: Total Systems
+          stat_active_incidents: Active Incidents
+          dependents: Dependents
+          graph: Graph
+          part_of_system: Part of the '%{system_title}' System
