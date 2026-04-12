@@ -188,6 +188,8 @@ en:
           save: "Save Changes"
 
       dashboard:
+        dashboard_entity_metadata:
+          entity_label: "%{model}:"
         dashboard_hero_card:
           new_component: "New component"
           new_system: "New system"
@@ -196,10 +198,7 @@ en:
           welcome_description: "A quick snapshot of your catalog and recent activity for %{name}."
         dashboard_my_entities:
           description: "Catalog entities owned by your groups."
-          domain_label: "Domain:"
           empty: "No entities owned by your groups yet."
-          owner_label: "Owner:"
-          system_label: "System:"
           title: "My catalog items"
         dashboard_updated_entities:
           description: "Latest changes across APIs, components, domains, resources, and systems."
@@ -517,7 +516,7 @@ en:
       passwords:
         edit:
           back: "Back to log in"
-          submit: "Submit"
+          submit: "Reset password"
           reset: "Reset your password"
           password: "Enter new password"
           password_confirmation: "Repeat new password"

@@ -28,9 +28,18 @@ module Junction
             end
           end
 
-          association_link(:system, "#{Junction::System.model_name.human}:")
-          association_link(:domain, "#{Junction::Domain.model_name.human}:")
-          association_link(:owner, "#{ApplicationRecord.human_attribute_name(:owner_id)}:")
+          association_link(
+            :system,
+            t(".entity_label", model: Junction::System.model_name.human)
+          )
+          association_link(
+            :domain,
+            t(".entity_label", model: Junction::Domain.model_name.human)
+          )
+          association_link(
+            :owner,
+            t(".entity_label", model: ApplicationRecord.human_attribute_name(:owner_id))
+          )
         end
 
         private
