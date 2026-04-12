@@ -31,7 +31,8 @@ module Junction
             # Left side: logo, title, and description.
             div(class: "flex items-center space-x-6") do
               if @resource.image_url.present?
-                img(src: @resource.image_url, alt: "#{@resource.title} logo", class: "h-20 w-20 rounded-lg object-cover flex-shrink-0")
+                img(src: @resource.image_url, alt: t(".logo_alt", name: @resource.title),
+                    class: "h-20 w-20 rounded-lg object-cover flex-shrink-0")
               else
                 div(class: "h-20 w-20 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0") do
                   icon(@resource.icon, class: "h-10 w-10 text-gray-500")
@@ -43,19 +44,19 @@ module Junction
 
                 p(class: "mt-1 text-md text-gray-600 dark:text-gray-400 max-w-2xl") { @resource.description }
                 div(class: "mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400") do
-                  span(class: "font-semibold mr-2") { "Owner:" }
+                  span(class: "font-semibold mr-2") { "#{Junction::Resource.human_attribute_name(:owner)}:" }
 
                   if @resource.owner.present?
                     span do
                       render_view_link(@resource.owner, class: "p-0 inline")
                     end
                   else
-                    span { plain "NO OWNER" }
+                    span { plain t(".no_owner") }
                   end
                 end
 
                 div(class: "mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400") do
-                  span(class: "font-semibold mr-2") { "Type:" }
+                  span(class: "font-semibold mr-2") { "#{Junction::Resource.human_attribute_name(:type)}:" }
                   span { plain @resource.type }
                 end
               end
@@ -64,9 +65,9 @@ module Junction
                 break unless @resource.system.present?
 
                 if allowed_to?(:show?, @resource.system)
-                  Link(href: system_path(@resource.system)) { "Part of the '#{@resource.system.title}' System" }
+                  Link(href: system_path(@resource.system)) { t(".part_of_system", system_title: @resource.system.title) }
                 else
-                  Link(variant: :disabled) { "Part of the '#{@resource.system.title}' System" }
+                  Link(variant: :disabled) { t(".part_of_system", system_title: @resource.system.title) }
                 end
               end
             end
@@ -76,7 +77,7 @@ module Junction
               if @can_edit
                 Link(variant: :primary, href: edit_resource_path(@resource)) do
                   icon("pencil", class: "w-4 h-4 mr-2")
-                  plain "Edit Resource"
+                  plain t(".edit")
                 end
               end
             end
@@ -94,7 +95,7 @@ module Junction
             tabs.list do |list|
               list.trigger(value: "dependencies") do
                 icon("blocks", class: "pe-2")
-                plain "Dependencies"
+                plain Junction::Dependency.model_name.human(count: 2)
               end
 
               render_plugin_tab_triggers(@resource, list)
@@ -110,12 +111,15 @@ module Junction
 
         def dependencies_section
           div do
-            h3(class: "text-xl font-semibold text-gray-800 dark:text-white mb-4") { "Dependencies" }
+            h3(class: "text-xl font-semibold text-gray-800 dark:text-white mb-4") do
+              Junction::Dependency.model_name.human(count: 2)
+            end
+
             Tabs(default: "dependencies") do |tabs|
               tabs.list do |list|
-                list.trigger(value: "dependencies") { "Dependencies" }
-                list.trigger(value: "dependents") { "Dependents" }
-                list.trigger(value: "graph") { "Graph" }
+                list.trigger(value: "dependencies") { Junction::Dependency.model_name.human(count: 2) }
+                list.trigger(value: "dependents") { t(".dependents") }
+                list.trigger(value: "graph") { t(".graph") }
               end
 
               tabs.content(value: "dependencies") do

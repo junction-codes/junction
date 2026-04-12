@@ -41,7 +41,8 @@ module Junction
             # Left side: logo, title, and description.
             div(class: "flex items-center space-x-6") do
               if @group.image_url.present?
-                img(src: @group.image_url, alt: "#{@group.title} logo", class: "h-20 w-20 rounded-lg object-cover flex-shrink-0")
+                img(src: @group.image_url, alt: t(".logo_alt", name: @group.title),
+                    class: "h-20 w-20 rounded-lg object-cover flex-shrink-0")
               else
                 div(class: "h-20 w-20 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0") do
                   icon(@group.icon, class: "h-10 w-10 text-gray-500")
@@ -61,9 +62,9 @@ module Junction
                 break unless @group.parent.present?
 
                 if allowed_to?(:show?, @group.parent)
-                  Link(href: group_path(@group.parent)) { "Child of the '#{@group.parent.title}' Group" }
+                  Link(href: group_path(@group.parent)) { t(".part_of_parent", parent_title: @group.parent.title) }
                 else
-                  Link(variant: :disabled) { "Child of the '#{@group.parent.title}' Group" }
+                  Link(variant: :disabled) { t(".part_of_parent", parent_title: @group.parent.title) }
                 end
               end
             end
@@ -73,7 +74,7 @@ module Junction
               if @can_edit
                 Link(variant: :primary, href: edit_group_path(@group)) do
                   icon("pencil", class: "w-4 h-4 mr-2")
-                  plain "Edit Group"
+                  plain t(".edit")
                 end
               end
             end
@@ -82,8 +83,8 @@ module Junction
 
         def group_stats
           div(class: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6") do
-            render StatCard.new(title: "Total Systems", value: @group.systems.count, icon: "network")
-            render StatCard.new(title: "Total Components", value: @group.components.count, icon: "server")
+            render StatCard.new(title: t(".stat_total_systems"), value: @group.systems.count, icon: "network")
+            render StatCard.new(title: t(".stat_total_components"), value: @group.components.count, icon: "server")
 
             render_plugin_ui_components(context: @group, slot: :group_profile_cards)
           end
@@ -95,7 +96,7 @@ module Junction
               if @can_view_members
                 list.trigger(value: "members") do
                   icon("blocks", class: "pe-2")
-                  plain "Members"
+                  plain t(".members")
                 end
               end
 

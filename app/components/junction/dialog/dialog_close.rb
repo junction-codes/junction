@@ -8,7 +8,7 @@ module Junction
         def view_template
           Button(**attrs) do
             icon("x", class: "h-4 w-4")
-            span(class: "sr-only") { t("components.dialog.close") }
+            span(class: "sr-only") { t(".close") }
           end
         end
 

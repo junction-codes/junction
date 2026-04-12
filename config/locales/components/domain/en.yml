@@ -1,0 +1,28 @@
+en:
+  junction:
+    components:
+      domain:
+        domain_edit_sidebar:
+          metadata: Metadata
+          danger_zone: Danger Zone
+          danger_zone_warning: These actions are irreversible. Please be certain.
+          delete: Delete Domain
+          delete_confirm_title: Are you absolutely sure?
+          delete_confirm_body: This will permanently remove the Domain.
+          cancel: Cancel
+          confirm_delete: Confirm Delete
+        domain_filters:
+          all: All %{label}
+          placeholder: Name or description...
+          search: Search
+        domain_form:
+          title: Domain Details
+          description: >-
+            This information will be displayed on the domain's main page.
+          owner_help: Assign an owner for this domain.
+          description_help: A brief, high-level summary of the domain's mission.
+          image_url_placeholder: https://example.com/logo.png
+          namespace_help: >-
+            Namespaces allow the same identifier to exist in different contexts.
+          cancel: Cancel
+          save: Save Changes

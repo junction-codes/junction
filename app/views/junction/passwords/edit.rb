@@ -26,15 +26,15 @@ module Junction
               div(class: "w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700") do
                 div(class: "px-6 py-3 space-y-4 md:space-y-6 sm:p-8") do
                   h1(class: "text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white") do
-                    plain("Reset your password")
+                    plain t(".reset")
                   end
 
                   form_with(url: password_path(@token), class: "space-y-4 md:space-y-6", method: :put) do |form|
-                    Password(form, :password, label: "Enter new password", placeholder: "••••••••", required: true, autofocus: true, autocomplete: "new-password")
-                    Password(form, :password_confirmation, label: "Repeat new password", placeholder: "••••••••", required: true, autofocus: true, autocomplete: "new-password")
+                    Password(form, :password, label: t(".password"), placeholder: "••••••••", required: true, autofocus: true, autocomplete: "new-password")
+                    Password(form, :password_confirmation, label: t(".password_confirmation"), placeholder: "••••••••", required: true, autofocus: true, autocomplete: "new-password")
 
                     div(class: "flex items-center justify-between") do
-                      a(href: new_session_path, class: "text-sm font-medium text-primary-600 hover:underline dark:text-primary-500") { plain("Back to log in") }
+                      a(href: new_session_path, class: "text-sm font-medium text-primary-600 hover:underline dark:text-primary-500") { plain t(".back") }
                     end
 
                     if flash[:alert].present?
@@ -45,7 +45,7 @@ module Junction
 
                     div(class: "flex justify-between items-center") do
                       Button(type: "submit", variant: :primary, data: { form_target: "submit" }, class: "w-full") do
-                        plain "Reset password"
+                        plain t(".submit")
                       end
                     end
                   end

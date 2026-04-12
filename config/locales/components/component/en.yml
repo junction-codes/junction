@@ -1,0 +1,29 @@
+en:
+  junction:
+    components:
+      component:
+        component_edit_sidebar:
+          metadata: Metadata
+          danger_zone: Danger Zone
+          danger_zone_warning: These actions are irreversible. Please be certain.
+          delete: Delete Component
+          delete_confirm_title: Are you absolutely sure?
+          delete_confirm_body: This will permanently remove the Component.
+          cancel: Cancel
+          confirm_delete: Confirm Delete
+        component_filters:
+          all: All %{label}
+          placeholder: Name or description...
+          search: Search
+        component_form:
+          title: Component Details
+          description: >-
+            This information will be displayed on the component's main page.
+          owner_help: Assign an owner for this component.
+          system_help: System this component belongs to.
+          description_help: A brief summary of the component's goals.
+          repository_url_help: The URL of the component's repository.
+          namespace_help: >-
+            Namespaces allow the same identifier to exist in different contexts.
+          cancel: Cancel
+          save: Save Changes

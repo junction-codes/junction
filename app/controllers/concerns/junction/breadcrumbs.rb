@@ -47,17 +47,19 @@ module Junction
 
     # Get the model name from the controller name using I18n.
     #
-    # @param key [String] The translation key to use for the model name.
+    # @param count [Integer] The count to use for the model name.
     # @return [String] The model name.
-    def model_name(key = "other")
-      t("activerecord.models.junction/#{controller_name.singularize.to_sym}.#{key}")
+    def model_name(count: 2)
+      Junction.const_get(controller_name.singularize.to_s.classify)
+              .model_name
+              .human(count:)
     end
 
     # Build the breadcrumb item for the home page.
     #
     # @return [Hash] The breadcrumb item.
     def breadcrumb_home
-      { href: root_path, label: t("breadcrumbs.home") }
+      { href: root_path, label: t("junction.breadcrumbs.home") }
     end
 
     # Build the breadcrumb item for the index page.
@@ -84,7 +86,7 @@ module Junction
     #
     # @return [Hash] The breadcrumb item.
     def breadcrumb_edit
-      { label: t("breadcrumbs.edit") }
+      { label: t("junction.breadcrumbs.edit") }
     end
 
     # Build the breadcrumb item for the new page.
@@ -92,7 +94,7 @@ module Junction
     # @return [Hash] The breadcrumb item.
     def breadcrumb_new
       {
-        label: t("breadcrumbs.new", model: model_name("one"))
+        label: t("junction.breadcrumbs.new", model: model_name(count: 1))
       }
     end
   end

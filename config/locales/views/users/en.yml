@@ -1,0 +1,18 @@
+en:
+  junction:
+    views:
+      users:
+        edit:
+          title: Edit User
+          description: Update the details for the '%{title}' user.
+        index:
+          new: New User
+        new:
+          title: Create a New User
+          description: Start by providing the basic details for your new user.
+        show:
+          edit: Edit User
+          logo_alt: Avatar for %{name}
+          stat_total_groups: Total Groups
+          stat_total_systems: Total Systems
+          stat_total_components: Total Components

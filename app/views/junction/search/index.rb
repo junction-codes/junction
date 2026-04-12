@@ -35,13 +35,13 @@ module Junction
         def page_header
           div do
             h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") do
-              t("junction.views.search.index.title")
+              t(".title")
             end
 
             next unless @query.present?
 
             p(class: "mt-1 text-sm text-gray-500 dark:text-gray-400") do
-              t("junction.views.search.index.result_count", count: @pagy.count, query: @query)
+              t(".result_count", count: @pagy.count, query: @query)
             end
           end
         end

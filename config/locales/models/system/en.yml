@@ -1,0 +1,10 @@
+en:
+  activerecord:
+    attributes:
+      junction/system:
+        status: "System Status"
+        title: "System Name"
+    models:
+      junction/system:
+        one: System
+        other: Systems

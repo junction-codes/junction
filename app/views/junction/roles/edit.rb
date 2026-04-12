@@ -28,9 +28,9 @@ module Junction
           render Junction::Layouts::Application.new(breadcrumbs:) do
             div(class: "px-6 py-3 space-y-6") do
               div do
-                h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { t("views.roles.edit.title") }
+                h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { t(".title") }
                 p(class: "mt-1 text-sm text-gray-600 dark:text-gray-400") do
-                  plain t("views.roles.edit.description", name: @role.title)
+                  plain t(".description", name: @role.title)
                 end
               end
 

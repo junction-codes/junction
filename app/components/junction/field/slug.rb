@@ -5,13 +5,13 @@ module Junction
     module Field
       # Renders an auto-generated slug identifier field for entity forms.
       #
-      # On a new record the identifier is generated as the user types (auto mode).
-      # The field's value is derived from the form field specified by the `source`
-      # parameter. A link allows switching to manual mode.
+      # On a new record the identifier is generated as the user types (auto
+      # mode). The field's value is derived from the form field specified by the
+      # `source` parameter. A link allows switching to manual mode.
       #
       # In manual mode, the slug can be edited directly. There is no
-      # auto-generation in this mode. A link allows switching to auto mode, which
-      # regenerates the slug from the source field.
+      # auto-generation in this mode. A link allows switching to auto mode,
+      # which regenerates the slug from the source field.
       #
       # On a persisted record the identifier is shown read-only with a tooltip,
       # and a hidden input preserves the value for form submission.
@@ -21,16 +21,16 @@ module Junction
         # @param form [ActionView::Helpers::FormBuilder] The form builder.
         # @param method [Symbol] Method name for the field.
         # @param label [String] Optional, human-readable label for the field.
-        #   Defaults to the human-readable name of the field attribute. Set to an
-        #   empty string ("") to omit the label.
+        #   Defaults to the human-readable name of the field attribute. Set to
+        #   an empty string ("") to omit the label.
         # @param help_text [String] Optional help text for the field.
         # @param placeholder [String] Optional placeholder text for the field.
         # @param required [Boolean] Whether the field is required.
         # @param source [Symbol] Method name for the field whose input drives
         #   auto-generation.
         # @param user_attrs [Hash] Additional HTML attributes for the component.
-        def initialize(form, method, label: nil, help_text: nil, required: false,
-                       source: :title, **user_attrs)
+        def initialize(form, method, label: nil, help_text: nil,
+                       required: false, source: :title, **user_attrs)
           @source = source
 
           super(form, method, label:, help_text:, required:, **user_attrs)

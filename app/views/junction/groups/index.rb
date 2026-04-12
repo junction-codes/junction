@@ -35,9 +35,12 @@ module Junction
           render Junction::Layouts::Application.new(breadcrumbs:) do
             div(class: "px-6 py-3") do
               div(class: "flex justify-between items-center mb-6") do
-                h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { "Groups" }
+                h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") do
+                  Junction::Group.model_name.human(count: 2)
+                end
+
                 if @can_create
-                  Link(variant: :primary, href: new_group_path) { "New Group" }
+                  Link(variant: :primary, href: new_group_path) { t(".new") }
                 end
               end
 

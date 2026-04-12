@@ -20,8 +20,8 @@ module Junction
             # Basic information section.
             Card do |card|
               card.header do |header|
-                header.title { "Resource Details" }
-                header.description { "This information will be displayed on the resources's main page." }
+                header.title { t(".title") }
+                header.description { t(".description") }
               end
 
               card.content(class: "space-y-4") do
@@ -29,19 +29,19 @@ module Junction
                 Slug(f, :name)
                 Immutable(f, :namespace, placeholder: "default",
                               required: true,
-                              help_text: "Namespaces allow the same identifier to exist in different contexts.")
+                              help_text: t(".namespace_help"))
                 RichSelect(f, :type, required: true, options: Junction::CatalogOptions.resources)
 
                 Reference(f, :owner_id, required: true,
                               icon: "users-round", options: @available_owners,
                               value: @resource.owner,
-                              help_text: "Assign an owner for this resource.")
+                              help_text: t(".owner_help"))
                 Reference(f, :system_id, icon: "users-round",
                               options: @available_systems, value: @resource.system,
-                              help_text: "System this resource belongs to.")
+                              help_text: t(".system_help"))
 
-                TextArea(f, :description, required: true, help_text: "A brief summary of the resource's goals.")
-                Text(f, :image_url, help_text: "Optional URL for an image representing this resource.")
+                TextArea(f, :description, required: true, help_text: t(".description_help"))
+                Text(f, :image_url, help_text: t(".image_url_help"))
               end
             end
 
@@ -54,10 +54,10 @@ module Junction
 
             # Form actions.
             div(class: "flex items-center justify-end gap-x-4 pt-4") do
-              Link(href: cancel_path, class: "text-sm font-semibold leading-6") { "Cancel" }
+              Link(href: cancel_path, class: "text-sm font-semibold leading-6") { t(".cancel") }
               Button(type: "submit", variant: :primary, data: { form_target: "submit" }) do
                 icon("save", class: "w-4 h-4 mr-2")
-                plain "Save Changes"
+                plain t(".save")
               end
             end
           end

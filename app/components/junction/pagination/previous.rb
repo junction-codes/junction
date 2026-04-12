@@ -12,11 +12,11 @@ module Junction
                 yield if block_given?
 
                 icon("chevron-left", class: "h-4 w-4")
-                span(class: "sr-only") { t("components.pagination.previous") }
+                span(class: "sr-only") { t(".previous") }
               end
             end
 
-            t.content { t("components.pagination.previous") }
+            t.content { t(".previous") }
           end
         end
 
@@ -24,7 +24,7 @@ module Junction
 
         def default_attrs
           defaults = super
-          defaults[:aria][:label] = I18n.t("components.pagination.previous")
+          defaults[:aria][:label] = I18n.t("junction.components.pagination.previous.previous")
           defaults[:class] << "overflow-hidden relative"
 
           defaults

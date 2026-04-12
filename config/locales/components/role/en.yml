@@ -1,0 +1,23 @@
+en:
+  junction:
+    components:
+      role:
+        role_edit_sidebar:
+          metadata: Metadata
+          danger_zone: Danger Zone
+          danger_zone_warning: These actions are irreversible. Please be certain.
+          delete: Delete Role
+          delete_confirm_title: Are you absolutely sure?
+          delete_confirm_body: This will permanently remove the Role.
+          cancel: Cancel
+          confirm_delete: Confirm Delete
+        role_form:
+          title: Role Details
+          description: >-
+            This information will be displayed on the role's main page.
+          permissions_description: Select the permissions this role grants.
+          description_help: A brief summary of the role's goals.
+          namespace_help: >-
+            Namespaces allow the same identifier to exist in different contexts.
+          cancel: Cancel
+          save: Save Changes

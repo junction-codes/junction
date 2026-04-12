@@ -30,7 +30,7 @@ module Junction
             # Left side: logo, title, and description.
             div(class: "flex items-center space-x-6") do
               if @user.image_url.present?
-                img(src: @user.image_url, alt: "#{@user.title} logo", class: "h-20 w-20 rounded-lg object-cover flex-shrink-0")
+                img(src: @user.image_url, alt: t(".logo_alt", name: @user.title), class: "h-20 w-20 rounded-lg object-cover flex-shrink-0")
               else
                 div(class: "h-20 w-20 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0") do
                   icon("user-round", class: "h-10 w-10 text-gray-500")
@@ -52,7 +52,7 @@ module Junction
               if @can_edit
                 Link(variant: :primary, href: edit_user_path(@user)) do
                   icon("pencil", class: "w-4 h-4 mr-2")
-                  plain "Edit User"
+                  plain t(".edit")
                 end
               end
             end
@@ -61,9 +61,9 @@ module Junction
 
         def user_stats
           div(class: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6") do
-            render StatCard.new(title: "Total Groups", value: @user.group_memberships.count, icon: "users-round")
-            render StatCard.new(title: "Total Systems", value: @user.systems.count, icon: "network")
-            render StatCard.new(title: "Total Components", value: @user.components.count, icon: "server")
+            StatCard(title: t(".stat_total_groups"), value: @user.group_memberships.count, icon: "users-round")
+            StatCard(title: t(".stat_total_systems"), value: @user.systems.count, icon: "network")
+            StatCard(title: t(".stat_total_components"), value: @user.components.count, icon: "server")
 
             render_plugin_ui_components(context: @user, slot: :user_profile_cards)
           end

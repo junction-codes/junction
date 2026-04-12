@@ -31,7 +31,7 @@ module Junction
             # Left side: logo, title, and description.
             div(class: "flex items-center space-x-6") do
               if @system.image_url.present?
-                img(src: @system.image_url, alt: "#{@system.title} logo", class: "h-20 w-20 rounded-lg object-cover flex-shrink-0")
+                img(src: @system.image_url, alt: t(".logo_alt", name: @system.title), class: "h-20 w-20 rounded-lg object-cover flex-shrink-0")
               else
                 div(class: "h-20 w-20 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0") do
                   icon("network", class: "h-10 w-10 text-gray-500")
@@ -43,12 +43,12 @@ module Junction
 
                 p(class: "mt-1 text-md text-gray-600 dark:text-gray-400 max-w-2xl") { @system.description }
                 div(class: "mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400") do
-                  span(class: "font-semibold mr-2") { "Owner:" }
+                  span(class: "font-semibold mr-2") { "#{Junction::System.human_attribute_name(:owner)}:" }
 
                   if @system.owner.present?
                     span { render_view_link(@system.owner, class: "p-0 inline") }
                   else
-                    span { plain "NO OWNER" }
+                    span { plain t(".no_owner") }
                   end
                 end
               end
@@ -57,9 +57,9 @@ module Junction
                 break unless @system.domain.present?
 
                 if allowed_to?(:show?, @system.domain)
-                  Link(href: domain_path(@system.domain)) { "Part of the '#{@system.domain.title}' Domain" }
+                  Link(href: domain_path(@system.domain)) { t(".part_of_domain", domain_title: @system.domain.title) }
                 else
-                  Link(variant: :disabled) { "Part of the '#{@system.domain.title}' Domain" }
+                  Link(variant: :disabled) { t(".part_of_domain", domain_title: @system.domain.title) }
                 end
               end
             end
@@ -69,7 +69,7 @@ module Junction
               if @can_edit
                 Link(variant: :primary, href: edit_system_path(@system)) do
                   icon("pencil", class: "w-4 h-4 mr-2")
-                  plain "Edit System"
+                  plain t(".edit")
                 end
               end
             end
@@ -78,19 +78,19 @@ module Junction
 
         def system_stats
           div(class: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6") do
-            StatCard(title: "Total Components", value: @system.components.count, icon: "server")
-            StatCard(title: "Active Incidents", value: "1", icon: "siren", status: :warning)
+            StatCard(title: t(".stat_total_components"), value: @system.components.count, icon: "server")
+            StatCard(title: t(".stat_active_incidents"), value: "1", icon: "siren", status: :warning)
           end
         end
 
         def entities_section
           div do
-            h3(class: "text-xl font-semibold text-gray-800 dark:text-white mb-4") { "Entities" }
+            h3(class: "text-xl font-semibold text-gray-800 dark:text-white mb-4") { t(".entities") }
             Tabs(default: "apis") do |tabs|
               tabs.list do |list|
-                list.trigger(value: "apis") { "APIs" }
-                list.trigger(value: "components") { "Components" }
-                list.trigger(value: "resources") { "Resources" }
+                list.trigger(value: "apis") { Junction::Api.model_name.human(count: 2) }
+                list.trigger(value: "components") { Junction::Component.model_name.human(count: 2) }
+                list.trigger(value: "resources") { Junction::Resource.model_name.human(count: 2) }
               end
 
               tabs.content(value: "apis") do

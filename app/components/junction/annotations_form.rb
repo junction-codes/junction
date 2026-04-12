@@ -13,13 +13,8 @@ module Junction
 
         Card do |card|
           card.header do |header|
-            header.title { "Annotations" }
-            header.description do
-              plain <<~EOT
-                Metadata used to identify this entity within external systems
-                (e.g. monitoring, incident management, etc.).
-              EOT
-            end
+            header.title { t(".title") }
+            header.description { t(".description") }
           end
 
           card.content(class: "space-y-4") do

@@ -20,11 +20,11 @@ module Junction
           Card(**attrs) do |card|
             card.header do |header|
               header.title(class: "text-lg font-semibold text-gray-900 dark:text-white") do
-                t("dashboard.updated_entities.title")
+                t(".title")
               end
 
               header.description(class: "text-gray-600 dark:text-gray-400") do
-                t("dashboard.updated_entities.description")
+                t(".description")
               end
             end
 
@@ -79,7 +79,7 @@ module Junction
         # Renders an appropriate message when there are no updated entities.
         def empty_list
           p(class: "text-sm text-gray-500 dark:text-gray-400 py-2") do
-            t("dashboard.updated_entities.empty")
+            t(".empty")
           end
         end
       end

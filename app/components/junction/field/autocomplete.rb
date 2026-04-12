@@ -31,8 +31,8 @@ module Junction
         # @param placeholder [String] Placeholder text for the search input.
         # @param hidden_field_name [String] The `name` attribute for the hidden
         #   field that stores the selected value.
-        # @param frame_id [String] Turbo Frame ID used for the results list. Must
-        #   match the `turbo_frame_tag` ID in the search response view.
+        # @param frame_id [String] Turbo Frame ID used for the results list.
+        #   Must match the `turbo_frame_tag` ID in the search response view.
         # @param user_attrs [Hash] Additional HTML attributes for the component.
         def initialize(label:, placeholder:, hidden_field_name:, frame_id:,
                        **user_attrs)

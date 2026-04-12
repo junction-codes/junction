@@ -1,0 +1,23 @@
+en:
+  junction:
+    views:
+      apis:
+        edit:
+          title: Edit API
+          description: Update the details for the '%{title}' API.
+        index:
+          new: New API
+        new:
+          title: Create a New API
+          description: Start by providing the basic details for your new API.
+        show:
+          edit: Edit API
+          logo_alt: Logo for %{name}
+          no_owner: No owner
+          stat_total_systems: Total Systems
+          stat_active_incidents: Active Incidents
+          dependents: Dependents
+          graph: Graph
+          raw: Raw
+          no_definition: No definition available.
+          part_of_system: Part of the '%{system_title}' System

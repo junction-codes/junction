@@ -10,8 +10,8 @@ module Junction
         # @param form [ActionView::Helpers::FormBuilder] The form builder.
         # @param method [Symbol] Method name for the field.
         # @param label [String] Optional, human-readable label for the field.
-        #   Defaults to the human-readable name of the field attribute. Set to an
-        #   empty string ("") to omit the label.
+        #   Defaults to the human-readable name of the field attribute. Set to
+        #   an empty string ("") to omit the label.
         # @param help_text [String] Optional help text for the field.
         # @param required [Boolean] Whether the field is required.
         # @param options [Hash] The options for the field.

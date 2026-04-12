@@ -1,0 +1,8 @@
+en:
+  junction:
+    components:
+      annotations_form:
+        title: Annotations
+        description: >-
+          Metadata used to identify this entity within external systems (e.g.
+          monitoring, incident management, etc.).

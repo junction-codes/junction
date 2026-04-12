@@ -9,7 +9,8 @@ module Junction
         #
         # @param placement [String] The placement of the tooltip in relation to
         #   the trigger.
-        # @param user_attrs [Hash] Additional attributes to pass to the component.
+        # @param user_attrs [Hash] Additional attributes to pass to the
+        #   component.
         def initialize(placement: "top", **user_attrs)
           @placement = placement
           super(**user_attrs)

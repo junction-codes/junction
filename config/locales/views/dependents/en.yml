@@ -1,0 +1,7 @@
+en:
+  junction:
+    views:
+      dependents:
+        index:
+          title: Dependent Name
+          type: Type

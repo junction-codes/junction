@@ -1,0 +1,5 @@
+en:
+  junction:
+    components:
+      search_bar:
+        placeholder: Search components, docs, etc.

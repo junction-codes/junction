@@ -15,8 +15,8 @@ module Junction
             # Basic information section.
             Card do |card|
               card.header do |header|
-                header.title { "Basic Information" }
-                header.description { "This information will be displayed on the group's main page." }
+                header.title { t(".title") }
+                header.description { t(".description") }
               end
 
               card.content(class: "space-y-4") do
@@ -24,18 +24,18 @@ module Junction
                 Slug(f, :name)
                 Immutable(f, :namespace, placeholder: "default",
                               required: true,
-                              help_text: "Namespaces allow the same identifier to exist in different contexts.")
+                              help_text: t(".namespace_help"))
                 RichSelect(f, :type, required: true,
                                 options: Junction::CatalogOptions.group_types)
 
                 Reference(f, :parent_id, required: false, icon: "users-round",
                               options: @available_parents, value: @group.parent,
-                              help_text: "Select a parent for this group.")
+                              help_text: t(".parent_help"))
 
                 Text(f, :email, placeholder: "example@example.com")
                 Text(f, :image_url, placeholder: "https://example.com/logo.png")
                 TextArea(f, :description, required: true,
-                              help_text: "A brief, high-level summary of the group's mission.")
+                              help_text: t(".description_help"))
               end
             end
 
@@ -48,10 +48,10 @@ module Junction
 
             # Form actions.
             div(class: "flex items-center justify-end gap-x-4 pt-4") do
-              Link(href: cancel_path, class: "text-sm font-semibold leading-6") { "Cancel" }
+              Link(href: cancel_path, class: "text-sm font-semibold leading-6") { t(".cancel") }
               Button(type: "submit", variant: :primary, data: { form_target: "submit" }) do
                 icon("save", class: "w-4 h-4 mr-2")
-                plain "Save Changes"
+                plain t(".save")
               end
             end
           end

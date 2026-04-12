@@ -24,8 +24,8 @@ module Junction
             div(class: "grid grid-cols-1 md:grid-cols-4 gap-4") do
               bar.text_filter(
                 name: "q[title_or_email_address_cont]",
-                label: "Search",
-                placeholder: "Name or email address...",
+                label: t(".search"),
+                placeholder: t(".placeholder"),
                 value: @query.title_or_email_address_cont
               )
             end

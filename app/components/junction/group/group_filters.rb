@@ -27,18 +27,21 @@ module Junction
             div(class: "grid grid-cols-1 md:grid-cols-4 gap-4") do
               bar.text_filter(
                 name: "q[title_or_description_cont]",
-                label: "Search",
-                placeholder: "Name or description...",
+                label: t(".search"),
+                placeholder: t(".placeholder"),
                 value: @query.title_or_description_cont
               )
 
               bar.select_filter(
                 name: "q[type_eq]",
-                label: "Type",
+                label: Junction::Group.human_attribute_name(:type),
                 options: @available_types,
                 selected: @query.type_eq,
                 include_blank: true,
-                blank_label: "All Types"
+                blank_label: t(
+                  ".all",
+                  label: Junction::Group.human_attribute_name(:type).pluralize
+                )
               ) if @available_types.any?
             end
 

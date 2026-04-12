@@ -1,0 +1,9 @@
+en:
+  junction:
+    components:
+      sidebar:
+        sidebar:
+          dashboard: Dashboard
+          techdocs: TechDocs
+          cost_explorer: Cost Explorer
+          footer: Built using Junction

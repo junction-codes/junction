@@ -1,0 +1,29 @@
+en:
+  junction:
+    components:
+      resource:
+        resource_edit_sidebar:
+          metadata: Metadata
+          danger_zone: Danger Zone
+          danger_zone_warning: These actions are irreversible. Please be certain.
+          delete: Delete Resource
+          delete_confirm_title: Are you absolutely sure?
+          delete_confirm_body: This will permanently remove the Resource.
+          cancel: Cancel
+          confirm_delete: Confirm Delete
+        resource_filters:
+          all: All %{label}
+          placeholder: Name or description...
+          search: Search
+        resource_form:
+          title: Resource Details
+          description: >-
+            This information will be displayed on the resource's main page.
+          owner_help: Assign an owner for this resource.
+          system_help: System this resource belongs to.
+          description_help: A brief summary of the resource's goals.
+          image_url_help: Optional URL for an image representing this resource.
+          namespace_help: >-
+            Namespaces allow the same identifier to exist in different contexts.
+          cancel: Cancel
+          save: Save Changes

@@ -23,16 +23,16 @@ module Junction
             end
 
             menu.content do |content|
-              content.label { "My Account" }
+              content.label { t(".account") }
               content.separator
               content.item(href: user_path(@user)) do
                 icon("user-round")
-                plain "Profile"
+                plain t(".profile")
               end
 
               content.item(href: session_path, data_turbo_method: :delete) do
                 icon("log-out")
-                plain "Logout"
+                plain t(".logout")
               end
             end
           end

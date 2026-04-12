@@ -12,11 +12,13 @@ module Junction
         def view_template
           # Metadata section.
           Card do |card|
-            card.header { card.title { "Metadata" } }
+            card.header { card.title { t(".metadata") } }
             card.content do
               dl(class: "divide-y divide-gray-200 dark:divide-gray-700") do
-                metadata_row("Created At", @resource.created_at.strftime("%b %d, %Y"))
-                metadata_row("Last Updated", @resource.updated_at.strftime("%b %d, %Y"))
+                metadata_row(@resource.class.human_attribute_name(:created_at),
+                             @resource.created_at.strftime("%b %d, %Y"))
+                metadata_row(@resource.class.human_attribute_name(:updated_at),
+                             @resource.updated_at.strftime("%b %d, %Y"))
               end
             end
           end
@@ -25,26 +27,26 @@ module Junction
           if @can_destroy
             Card(class: "border-red-500/50 dark:border-red-500/30") do |card|
               card.header do
-                card.title(class: "text-red-700 dark:text-red-400") { "Danger Zone" }
+                card.title(class: "text-red-700 dark:text-red-400") { t(".danger_zone") }
               end
 
               card.content(class: "space-y-4") do
-                p(class: "text-sm text-gray-600 dark:text-gray-400") { "This action is irreversible. Please be certain." }
+                p(class: "text-sm text-gray-600 dark:text-gray-400") { t(".danger_zone_warning") }
 
                 Dialog do |dialog|
                   dialog.trigger do
                     Button(variant: :destructive, class: "w-full justify-center") do
                       icon("trash", class: "w-4 h-4 mr-2")
-                      plain "Delete Resource"
+                      plain t(".delete")
                     end
                   end
 
                   dialog.content do |content|
-                    content.header { |h| h.title { "Are you absolutely sure?" } }
-                    content.body { "This will permanently remove the resource." }
+                    content.header { |h| h.title { t(".delete_confirm_title") } }
+                    content.body { t(".delete_confirm_body") }
                     content.footer do
-                      Link(data: { action: "click->ruby-ui--dialog#dismiss" }) { "Cancel" }
-                      Link(variant: :destructive, href: resource_path(@resource), data_turbo_method: :delete) { "Confirm Delete" }
+                      Link(data: { action: "click->ruby-ui--dialog#dismiss" }) { t(".cancel") }
+                      Link(variant: :destructive, href: resource_path(@resource), data_turbo_method: :delete) { t(".confirm_delete") }
                     end
                   end
                 end
