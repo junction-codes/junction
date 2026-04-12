@@ -40,9 +40,12 @@ module Junction
             div(class: "px-6 py-3") do
               # Page header.
               div(class: "flex justify-between items-center mb-6") do
-                h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { "Domains" }
+                h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") do
+                  Junction::Domain.model_name.human(count: 2)
+                end
+
                 if @can_create
-                  Link(variant: :primary, href: new_domain_path) { "New Domain" }
+                  Link(variant: :primary, href: new_domain_path) { t(".new") }
                 end
               end
 

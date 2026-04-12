@@ -5,8 +5,8 @@ module Junction
     module Field
       # Form field for selecting permissions.
       #
-      # Renders permissions grouped by domain/context, then by all vs owned. Each
-      # checkbox is labeled by access level with a tooltip for the full
+      # Renders permissions grouped by domain/context, then by all vs owned.
+      # Each checkbox is labeled by access level with a tooltip for the full
       # description.
       class Permissions < FieldType
         # Initialize a new field component.
@@ -16,8 +16,8 @@ module Junction
         # @param available_permissions [Array<Junction::Permission>] Available
         #   permissions to select from.
         # @param label [String] Optional, human-readable label for the field.
-        #   Defaults to the human-readable name of the field attribute. Set to an
-        #   empty string ("") to omit the label.
+        #   Defaults to the human-readable name of the field attribute. Set to
+        #   an empty string ("") to omit the label.
         # @param help_text [String] Optional help text for the field.
         # @param required [Boolean] Whether the field is required.
         # @param user_attrs [Hash] Additional HTML attributes for the component.
@@ -48,8 +48,8 @@ module Junction
 
         # Groups permissions by domain and context.
         #
-        # @return [Array<Array<String, Array<Junction::Permission>>>] The grouped
-        #   permissions.
+        # @return [Array<Array<String, Array<Junction::Permission>>>] The
+        #   grouped permissions.
         def grouped_permissions
           @grouped_permissions ||= @available_permissions.group_by do |permission|
             "#{permission.domain}/#{permission.context}"

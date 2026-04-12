@@ -6,9 +6,9 @@ module Junction
       # UI component to display important messages to users.
       class Alert < Base
         BASE_CLASSES = "backdrop-blur relative w-full ring-1 ring-inset " \
-                      "rounded-lg px-4 py-4 text-sm " \
-                      "[&>svg+div]:translate-y-[-3px] [&>svg]:absolute " \
-                      "[&>svg]:start-4 [&>svg]:top-4 [&>svg~*]:ps-8"
+                       "rounded-lg px-4 py-4 text-sm " \
+                       "[&>svg+div]:translate-y-[-3px] [&>svg]:absolute " \
+                       "[&>svg]:start-4 [&>svg]:top-4 [&>svg~*]:ps-8"
         COLORS = {
           alert: "ring-destructive/20 bg-destructive/10 text-destructive [&>svg]:text-destructive/80",
           default: "ring-blue-900/20 bg-blue-900/20 text-foreground [&>svg]:opacity-80",
@@ -32,7 +32,7 @@ module Junction
         def view_template(&)
           div(**attrs) do
             icon(ICONS[@variant], class: "h-6 w-6")
-            render AlertTitle.new { t("components.alert.titles.#{@variant}") }
+            render AlertTitle.new { t(".titles.#{@variant}") }
 
             yield
 

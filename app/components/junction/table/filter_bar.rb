@@ -61,8 +61,8 @@ module Junction
         #
         # @param name [String] The name attribute for the select.
         # @param label [String] Label text for the select.
-        # @param entities [ActiveRecord::Relation] Available entities with name and
-        #  id attributes.
+        # @param entities [ActiveRecord::Relation] Available entities with name
+        #  and id attributes.
         # @param selected [String] Currently selected value.
         # @param include_blank [Boolean] Whether to include a blank option.
         # @param blank_label [String] Optional label for the blank option.
@@ -76,7 +76,8 @@ module Junction
         #
         # @param name [String] The name attribute for the select.
         # @param label [String] Label text for the select.
-        # @param options [Array<Array>] Available options as [label, value] pairs.
+        # @param options [Array<Array>] Available options as [label, value]
+        #   pairs.
         # @param selected [String] Currently selected value.
         # @param include_blank [Boolean] Whether to include a blank option.
         # @param blank_label [String] Optional label for the blank option.
@@ -126,7 +127,8 @@ module Junction
 
         # Renders options for a select filter.
         #
-        # @param options [Array<Array>] Available options as [label, value] pairs.
+        # @param options [Array<Array>] Available options as [label, value]
+        #   pairs.
         # @param selected [String] Currently selected value.
         def select_filter_options(options, selected: nil)
           options.each do |option|

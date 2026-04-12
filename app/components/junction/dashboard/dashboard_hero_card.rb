@@ -19,11 +19,11 @@ module Junction
           Card(**attrs) do |card|
             card.header do |header|
               header.title(class: "text-2xl font-bold text-gray-900 dark:text-white") do
-                t("dashboard.hero_card.welcome_title", name: @user.title)
+                t(".welcome_title", name: @user.title)
               end
 
               header.description(class: "text-gray-600 dark:text-gray-400") do
-                t("dashboard.hero_card.welcome_description", name: @user.title)
+                t(".welcome_description", name: @user.title)
               end
             end
 
@@ -58,17 +58,17 @@ module Junction
           div(class: "flex flex-wrap gap-3") do
             Link(variant: :outline, href: user_path(@user)) do
               icon("user-round", class: "w-4 h-4 mr-2")
-              plain t("dashboard.hero_card.view_profile")
+              plain t(".view_profile")
             end
 
             Link(variant: :primary, href: new_component_path) do
               icon("server", class: "w-4 h-4 mr-2")
-              plain t("dashboard.hero_card.new_component")
+              plain t(".new_component")
             end
 
             Link(variant: :secondary, href: new_system_path) do
               icon("network", class: "w-4 h-4 mr-2")
-              plain t("dashboard.hero_card.new_system")
+              plain t(".new_system")
             end
           end
         end

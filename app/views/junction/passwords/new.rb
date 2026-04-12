@@ -22,14 +22,14 @@ module Junction
               div(class: "w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700") do
                 div(class: "p-6 space-y-4 md:space-y-6 sm:p-8") do
                   h1(class: "text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white") do
-                    plain("Request password reset")
+                    plain t(".request")
                   end
 
                   form_with(url: passwords_path, class: "space-y-4 md:space-y-6") do |form|
-                    Text(form, :email_address, label: "Your email", type: "email", placeholder: "example@example.com", autofocus: true, autocomplete: "username")
+                    Text(form, :email_address, label: t(".email"), type: "email", placeholder: t(".email_placeholder"), autofocus: true, autocomplete: "username")
 
                     div(class: "flex items-center justify-between") do
-                      a(href: new_session_path, class: "text-sm font-medium text-primary-600 hover:underline dark:text-primary-500") { plain("Back to log in") }
+                      a(href: new_session_path, class: "text-sm font-medium text-primary-600 hover:underline dark:text-primary-500") { plain t(".back") }
                     end
                     if flash[:alert].present?
                       div(class: "mt-2 text-sm text-red-600 dark:text-red-400", id: "password_errors") do
@@ -39,7 +39,7 @@ module Junction
 
                     div(class: "flex justify-between items-center") do
                       Button(type: "submit", variant: :primary, data: { form_target: "submit" }, class: "w-full") do
-                        plain "Sign in"
+                        plain t(".submit")
                       end
                     end
                   end

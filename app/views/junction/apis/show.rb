@@ -33,7 +33,8 @@ module Junction
             # Left side: logo, title, and description.
             div(class: "flex items-center space-x-6") do
               if @api.image_url.present?
-                img(src: @api.image_url, alt: "#{@api.title} logo", class: "h-20 w-20 rounded-lg object-cover flex-shrink-0")
+                img(src: @api.image_url, alt: t(".logo_alt", name: @api.title),
+                    class: "h-20 w-20 rounded-lg object-cover flex-shrink-0")
               else
                 div(class: "h-20 w-20 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0") do
                   icon(@api.icon, class: "h-10 w-10 text-gray-500")
@@ -45,17 +46,17 @@ module Junction
 
                 p(class: "mt-1 text-md text-gray-600 dark:text-gray-400 max-w-2xl") { @api.description }
                 div(class: "mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400") do
-                  span(class: "font-semibold mr-2") { "Owner:" }
+                  span(class: "font-semibold mr-2") { "#{Junction::Api.human_attribute_name(:owner_id)}:" }
 
                   if @api.owner.present?
                     span { render_view_link(@api.owner, class: "p-0 inline") }
                   else
-                    span { plain "NO OWNER" }
+                    span { plain t(".no_owner") }
                   end
                 end
 
                 div(class: "mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400") do
-                  span(class: "font-semibold mr-2") { "Type:" }
+                  span(class: "font-semibold mr-2") { "#{Junction::Api.human_attribute_name(:type)}:" }
                   span { plain @api.type }
                 end
               end
@@ -64,9 +65,9 @@ module Junction
                 break unless @api.system.present?
 
                 if allowed_to?(:show?, @api.system)
-                  Link(href: system_path(@api.system)) { "Part of the '#{@api.system.title}' System" }
+                  Link(href: system_path(@api.system)) { t(".part_of_system", system_title: @api.system.title) }
                 else
-                  Link(variant: :disabled) { "Part of the '#{@api.system.title}' System" }
+                  Link(variant: :disabled) { t(".part_of_system", system_title: @api.system.title) }
                 end
               end
             end
@@ -76,7 +77,7 @@ module Junction
               if @can_edit
                 Link(variant: :primary, href: edit_api_path(@api)) do
                   icon("pencil", class: "w-4 h-4 mr-2")
-                  plain "Edit API"
+                  plain t(".edit")
                 end
               end
             end
@@ -86,7 +87,7 @@ module Junction
         def api_stats
           div(class: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6") do
             # TODO: Remove placeholder.
-            render StatCard.new(title: "Active Incidents", value: "1", icon: "siren", status: :warning)
+            render StatCard.new(title: t(".stat_active_incidents"), value: "1", icon: "siren", status: :warning)
 
             render_plugin_ui_components(context: @api, slot: :overview_cards)
           end
@@ -97,12 +98,12 @@ module Junction
             tabs.list do |list|
               list.trigger(value: "dependencies") do
                 icon("blocks", class: "pe-2")
-                plain "Dependencies"
+                plain Junction::Dependency.model_name.human(count: 2)
               end
 
               list.trigger(value: "definition") do
                 icon("file-text", class: "pe-2")
-                plain "Definition"
+                plain Junction::Api.human_attribute_name(:definition)
               end
 
               render_plugin_tab_triggers(@api, list)
@@ -122,30 +123,33 @@ module Junction
 
         def dependencies_section
           div do
-            h3(class: "text-xl font-semibold text-gray-800 dark:text-white mb-4") { "Dependencies" }
-              Tabs(default: "dependencies") do |tabs|
-                tabs.list do |list|
-                  list.trigger(value: "dependencies") { "Dependencies" }
-                  list.trigger(value: "dependents") { "Dependents" }
-                  list.trigger(value: "graph") { "Graph" }
-                end
+            h3(class: "text-xl font-semibold text-gray-800 dark:text-white mb-4") do
+              Junction::Dependency.model_name.human(count: 2)
+            end
 
-                tabs.content(value: "dependencies") do
-                  turbo_frame_tag "dependencies", src: api_dependencies_path(@api), loading: :lazy do
-                    div(class: "p-4") { Skeleton(class: "h-20") }
-                  end
-                end
+            Tabs(default: "dependencies") do |tabs|
+              tabs.list do |list|
+                list.trigger(value: "dependencies") { Junction::Dependency.model_name.human(count: 2) }
+                list.trigger(value: "dependents") { t(".dependents") }
+                list.trigger(value: "graph") { t(".graph") }
+              end
 
-                tabs.content(value: "dependents") do
-                  turbo_frame_tag "dependents", src: api_dependents_path(@api), loading: :lazy do
-                    div(class: "p-4") { Skeleton(class: "h-20") }
-                  end
-                end
-
-                tabs.content(value: "graph") do
-                  dependency_graph
+              tabs.content(value: "dependencies") do
+                turbo_frame_tag "dependencies", src: api_dependencies_path(@api), loading: :lazy do
+                  div(class: "p-4") { Skeleton(class: "h-20") }
                 end
               end
+
+              tabs.content(value: "dependents") do
+                turbo_frame_tag "dependents", src: api_dependents_path(@api), loading: :lazy do
+                  div(class: "p-4") { Skeleton(class: "h-20") }
+                end
+              end
+
+              tabs.content(value: "graph") do
+                dependency_graph
+              end
+            end
           end
         end
 
@@ -161,10 +165,13 @@ module Junction
 
         def definition_section
           div do
-            h3(class: "text-xl font-semibold text-gray-800 dark:text-white mb-4") { "Definition" }
+            h3(class: "text-xl font-semibold text-gray-800 dark:text-white mb-4") do
+              Junction::Api.human_attribute_name(:definition)
+            end
+
             Tabs(default_value: "raw") do |tabs|
               tabs.list do |list|
-                list.trigger(value: "raw") { "Raw" }
+                list.trigger(value: "raw") { t(".raw") }
               end
 
              tabs.content(value: "raw", class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
@@ -175,7 +182,7 @@ module Junction
                     end
                   end
                 else
-                  p(class: "text-gray-600 dark:text-gray-400") { "No definition available." }
+                  p(class: "text-gray-600 dark:text-gray-400") { t(".no_definition") }
                 end
               end
             end

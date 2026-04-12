@@ -31,8 +31,10 @@ module Junction
           div(class: "px-6 py-3 space-y-6") do
             # Page header.
             div do
-              h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { "Edit Group" }
-              p(class: "mt-1 text-sm text-gray-600 dark:text-gray-400") { "Update the details for the '#{@group.title}' group." }
+              h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { t(".title") }
+              p(class: "mt-1 text-sm text-gray-600 dark:text-gray-400") do
+                t(".description", title: @group.title)
+              end
             end
 
             # Two-column layout for form and sidebar.

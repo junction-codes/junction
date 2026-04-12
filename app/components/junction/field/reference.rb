@@ -10,23 +10,25 @@ module Junction
         # @param form [ActionView::Helpers::FormBuilder] The form builder.
         # @param method [Symbol] Method name for the field.
         # @param label [String] Optional, human-readable label for the field.
-        #   Defaults to the human-readable name of the field attribute. Set to an
-        #   empty string ("") to omit the label.
+        #   Defaults to the human-readable name of the field attribute. Set to
+        #   an empty string ("") to omit the label.
         # @param help_text [String] Optional help text for the field.
         # @param placeholder [String] Optional placeholder text for the field.
         # @param required [Boolean] Whether the field is required.
         # @param options [Array] The options for the field.
         # @param icon [String] Default icon for field options.
-        # @param value [ApplicationRecord] Currently selected value for the field.
+        # @param value [ApplicationRecord] Currently selected value for the
+        #   field.
         # @param user_attrs [Hash] Additional HTML attributes for the component.
-        def initialize(form, method, label: nil, help_text: nil, placeholder: nil,
-                       required: false, options: [], icon: "disc-2", value: nil,
-                       **user_attrs)
+        def initialize(form, method, label: nil, help_text: nil,
+                       placeholder: nil, required: false, options: [],
+                       icon: "disc-2", value: nil, **user_attrs)
           @value = value
           @options = options
           @icon = icon
 
-          super(form, method, label:, help_text:, placeholder:, required:, **user_attrs)
+          super(form, method, label:, help_text:, placeholder:, required:,
+                **user_attrs)
         end
 
         def view_template

@@ -33,9 +33,12 @@ module Junction
           render Junction::Layouts::Application.new(breadcrumbs:) do
             div(class: "px-6 py-3") do
               div(class: "flex justify-between items-center mb-6") do
-                h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { t("views.roles.index.title") }
+                h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") do
+                  Junction::Role.model_name.human(count: 2)
+                end
+
                 if @can_create
-                  Link(variant: :primary, href: new_role_path) { t("views.roles.index.new_role") }
+                  Link(variant: :primary, href: new_role_path) { t(".new") }
                 end
               end
 
@@ -71,8 +74,8 @@ module Junction
                         row.cell(class: "text-right") do
                           if role.system?
                             plain role.name == Junction::Permissions::UserPermissions::ADMIN_ROLE_NAME \
-                              ? t("views.roles.index.permissions_all")
-                              : t("views.roles.index.permissions_all_read")
+                              ? t(".permissions_all")
+                              : t(".permissions_all_read")
                           else
                             plain role.role_permissions.count
                           end

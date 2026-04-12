@@ -7,8 +7,8 @@ module Junction
       class PerPageSelector < Base
         # Initializes a new component.
         #
-        # @param per_page_url [#call] Callback that accepts a per-page integer and
-        #   returns a URL string.
+        # @param per_page_url [#call] Callback that accepts a per-page integer
+        #   and returns a URL string.
         # @param current [Integer] The current per-page setting.
         # @param options [Array<Integer>] Available per-page options.
         # @param total [Integer] The total number of results.
@@ -30,7 +30,7 @@ module Junction
         def view_template(&)
           div(class: "flex items-center justify-between text-sm text-gray-600 dark:text-gray-400", **attrs) do
             div(class: "flex items-center gap-2") do
-              span { t("components.pagination.rows_per_page") }
+              span { t(".per_page") }
 
               @options.each do |option|
                 if option == @current
@@ -46,7 +46,7 @@ module Junction
               end
             end
 
-            span { t("components.pagination.total_results", count: @total) }
+            span { t(".total", count: @total) }
           end
         end
       end

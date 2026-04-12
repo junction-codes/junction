@@ -18,10 +18,10 @@ module Junction
             security_settings(f)
 
             div(class: "flex items-center justify-end gap-x-4 pt-4") do
-              Link(href: cancel_path, class: "text-sm font-semibold leading-6") { "Cancel" }
+              Link(href: cancel_path, class: "text-sm font-semibold leading-6") { t(".cancel") }
               Button(type: "submit", variant: :primary, data: { form_target: "submit" }) do
                 icon("save", class: "w-4 h-4 mr-2")
-                plain "Save Changes"
+                plain t(".save")
               end
             end
           end
@@ -54,35 +54,35 @@ module Junction
         def basic_settings(form)
           Card do |card|
             card.header do |header|
-              header.title { "Basic Information" }
-              header.description { "This information will be displayed on the user's main page." }
+              header.title { t(".basic_info_title") }
+              header.description { t(".basic_info_description") }
             end
 
             card.content(class: "space-y-4") do
               Text(form, :title, required: true)
               Slug(form, :name)
               Immutable(form, :namespace, required: true,
-                            help_text: "Namespaces allow the same identifier to exist in different contexts.")
-              Text(form, :pronouns, placeholder: "e.g., they/them, he/him, she/her")
-              Text(form, :image_url, placeholder: "https://example.com/logo.png")
+                            help_text: t(".namespace_help"))
+              Text(form, :pronouns, placeholder: t(".pronouns_placeholder"))
+              Text(form, :image_url, placeholder: t(".image_url_placeholder"))
             end
           end
         end
 
         def email_description
           if new?
-            "Enter the user's email address."
+            t(".email_new")
           elsif self?
-            "Change your email address."
+            t(".email_self")
           else
-            "Update the user's email address."
+            t(".email_other")
           end
         end
 
         def email_settings(form)
           Card do |card|
             card.header do |header|
-              header.title { "Email Settings" }
+              header.title { t(".email_settings_title") }
               header.description { email_description }
             end
 
@@ -95,11 +95,11 @@ module Junction
 
         def password_description
           if new?
-            "Set a password for the user."
+            t(".password_new")
           elsif self?
-            "Change your password."
+            t(".password_self")
           else
-            "Set a new password for the user."
+            t(".password_other")
           end
         end
 
@@ -108,8 +108,8 @@ module Junction
 
           Card do |card|
             card.header do |header|
-              header.title { "Security Settings" }
-              header.description { "Change your password." }
+              header.title { t(".security_settings_title") }
+              header.description { password_description }
             end
 
             card.content(class: "space-y-4") do

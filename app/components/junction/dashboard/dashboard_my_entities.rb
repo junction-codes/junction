@@ -7,7 +7,8 @@ module Junction
       class DashboardMyEntities < Base
         # Initializes the component.
         #
-        # @param entities [Array<ApplicationRecord>] List of owned catalog entities.
+        # @param entities [Array<ApplicationRecord>] List of owned catalog
+        #   entities.
         # @param user_attrs [Hash] Additional HTML attributes for the component.
         def initialize(entities:, **user_attrs)
           @entities = entities
@@ -19,11 +20,11 @@ module Junction
           Card(**attrs) do |card|
             card.header do |header|
               header.title(class: "text-lg font-semibold text-gray-900 dark:text-white") do
-                t("dashboard.my_entities.title")
+                t(".title")
               end
 
               header.description(class: "text-gray-600 dark:text-gray-400") do
-                t("dashboard.my_entities.description")
+                t(".description")
               end
             end
 
@@ -64,7 +65,7 @@ module Junction
         # Renders an appropriate message when the user has no owned entities.
         def empty_list
           p(class: "text-sm text-gray-500 dark:text-gray-400 py-2") do
-            t("dashboard.my_entities.empty")
+            t(".empty")
           end
         end
       end

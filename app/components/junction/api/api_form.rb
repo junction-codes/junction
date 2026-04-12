@@ -20,8 +20,8 @@ module Junction
             # Basic information section.
             Card do |card|
               card.header do |header|
-                header.title { "API Details" }
-                header.description { "This information will be displayed on the API's main page." }
+                header.title { t(".title") }
+                header.description { t(".description") }
               end
 
               card.content(class: "space-y-4") do
@@ -29,7 +29,7 @@ module Junction
                 Slug(f, :name)
                 Immutable(f, :namespace, placeholder: "default",
                               required: true,
-                              help_text: "Namespaces allow the same identifier to exist in different contexts.")
+                              help_text: t(".namespace_help"))
                 RichSelect(f, :type, required: true, options: Junction::CatalogOptions.apis)
                 RichSelect(f, :lifecycle, required: true,
                                 options: Junction::CatalogOptions.lifecycles)
@@ -37,16 +37,16 @@ module Junction
                 Reference(f, :owner_id, icon: "users-round",
                               options: @available_owners, value: @api.owner,
                               required: true,
-                              help_text: "Assign an owner for this API.")
+                              help_text: t(".owner_help"))
                 Reference(f, :system_id, icon: "users-round",
                               options: @available_systems, value: @api.system,
                               required: true,
-                              help_text: "System this API belongs to.")
+                              help_text: t(".system_help"))
 
                 TextArea(f, :description, required: true,
-                              help_text: "A brief summary of the component's goals.")
+                              help_text: t(".description_help"))
                 TextArea(f, :definition, required: true,
-                              help_text: "API spec definition.", rows: 10)
+                              help_text: t(".definition_help"), rows: 10)
               end
             end
 
@@ -56,10 +56,10 @@ module Junction
 
             # Form actions.
             div(class: "flex items-center justify-end gap-x-4 pt-4") do
-              Link(href: cancel_path, class: "text-sm font-semibold leading-6") { "Cancel" }
+              Link(href: cancel_path, class: "text-sm font-semibold leading-6") { t(".cancel") }
               Button(type: "submit", variant: :primary, data: { form_target: "submit" }) do
                 icon("save", class: "w-4 h-4 mr-2")
-                plain "Save Changes"
+                plain t(".save")
               end
             end
           end

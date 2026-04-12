@@ -36,7 +36,7 @@ module Junction
 
                 div(class: "flex gap-2") do
                   if @can_edit && !@role.system?
-                    Link(variant: :primary, href: edit_role_path(@role)) { t("views.roles.show.edit") }
+                    Link(variant: :primary, href: edit_role_path(@role)) { t(".edit") }
                   end
                 end
               end
@@ -44,8 +44,7 @@ module Junction
               unless @role.system?
                 div(class: "bg-white dark:bg-gray-800 rounded-lg shadow p-6") do
                   h3(class: "text-lg font-semibold text-gray-900 dark:text-white mb-4") do
-                    plain t("views.roles.show.permissions")
-                    plain " (#{@role.role_permissions.count})"
+                    plain t(".permissions", count: @role.role_permissions.count)
                   end
 
                   ul(class: "list-disc list-inside space-y-1 text-sm text-gray-600 dark:text-gray-400") do

@@ -34,8 +34,10 @@ module Junction
         def template
           div(class: "px-6 py-3 space-y-6") do
             div do
-              h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { "Edit Component" }
-              p(class: "mt-1 text-sm text-gray-600 dark:text-gray-400") { "Update the details for the '#{@component.title}' component." }
+              h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { t(".title") }
+              p(class: "mt-1 text-sm text-gray-600 dark:text-gray-400") do
+                t(".description", title: @component.title)
+              end
             end
 
             div(class: "grid grid-cols-1 lg:grid-cols-3 gap-8") do

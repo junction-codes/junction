@@ -33,7 +33,8 @@ module Junction
             # Left side: logo, title, and description.
             div(class: "flex items-center space-x-6") do
               if @component.image_url.present?
-                img(src: @component.image_url, alt: "#{@component.title} logo", class: "h-20 w-20 rounded-lg object-cover flex-shrink-0")
+                img(src: @component.image_url, alt: t(".logo_alt", name: @component.title),
+                    class: "h-20 w-20 rounded-lg object-cover flex-shrink-0")
               else
                 div(class: "h-20 w-20 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0") do
                   icon(@component.icon, class: "h-10 w-10 text-gray-500")
@@ -45,24 +46,32 @@ module Junction
 
                 p(class: "mt-1 text-md text-gray-600 dark:text-gray-400 max-w-2xl") { @component.description }
                 div(class: "mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400") do
-                  span(class: "font-semibold mr-2") { "Owner:" }
+                  span(class: "font-semibold mr-2") do
+                    "#{Junction::Component.human_attribute_name(:owner_id)}:"
+                  end
 
                   if @component.owner.present?
                     span do
                       render_view_link(@component.owner, class: "p-0 inline")
                     end
                   else
-                    span { plain "NO OWNER" }
+                    span { plain t(".no_owner") }
                   end
                 end
 
                 div(class: "mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400") do
-                  span(class: "font-semibold mr-2") { "Type:" }
+                  span(class: "font-semibold mr-2") do
+                    "#{Junction::Component.human_attribute_name(:type)}:"
+                  end
+
                   span { plain @component.type }
                 end
 
                 div(class: "mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400") do
-                  span(class: "font-semibold mr-2") { "Repository:" }
+                  span(class: "font-semibold mr-2") do
+                    "#{Junction::Component.human_attribute_name(:repository_url)}:"
+                  end
+
                   span { Link(href: @component.repository_url, class: "p-0 text-blue-600 hover:underline dark:text-blue-400 inline") { @component.repository_url } }
                 end if @component.repository_url.present?
               end
@@ -71,9 +80,9 @@ module Junction
                 break unless @component.system.present?
 
                 if allowed_to?(:show?, @component.system)
-                  Link(href: system_path(@component.system)) { "Part of the '#{@component.system.title}' System" }
+                  Link(href: system_path(@component.system)) { t(".part_of_system", system_title: @component.system.title) }
                 else
-                  Link(variant: :disabled) { "Part of the '#{@component.system.title}' System" }
+                  Link(variant: :disabled) { t(".part_of_system", system_title: @component.system.title) }
                 end
               end
             end
@@ -83,7 +92,7 @@ module Junction
               if @can_edit
                 Link(variant: :primary, href: edit_component_path(@component)) do
                   icon("pencil", class: "w-4 h-4 mr-2")
-                  plain "Edit Component"
+                  plain t(".edit")
                 end
               end
             end
@@ -92,7 +101,7 @@ module Junction
 
         def component_stats
           div(class: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6") do
-            render StatCard.new(title: "Active Incidents", value: "1", icon: "siren", status: :warning)
+            render StatCard.new(title: t(".stat_active_incidents"), value: "1", icon: "siren", status: :warning)
 
             render_plugin_ui_components(context: @component, slot: :overview_cards)
           end
@@ -103,7 +112,7 @@ module Junction
             tabs.list do |list|
               list.trigger(value: "dependencies") do
                 icon("blocks", class: "pe-2")
-                plain "Dependencies"
+                plain Junction::Dependency.model_name.human(count: 2)
               end
 
               render_plugin_tab_triggers(@component, list)
@@ -119,12 +128,15 @@ module Junction
 
         def dependencies_section
           div do
-            h3(class: "text-xl font-semibold text-gray-800 dark:text-white mb-4") { "Dependencies" }
+            h3(class: "text-xl font-semibold text-gray-800 dark:text-white mb-4") do
+              Junction::Dependency.model_name.human(count: 2)
+            end
+
             Tabs(default: "dependencies") do |tabs|
               tabs.list do |list|
-                list.trigger(value: "dependencies") { "Dependencies" }
-                list.trigger(value: "dependents") { "Dependents" }
-                list.trigger(value: "graph") { "Graph" }
+                list.trigger(value: "dependencies") { Junction::Dependency.model_name.human(count: 2) }
+                list.trigger(value: "dependents") { t(".dependents") }
+                list.trigger(value: "graph") { t(".graph") }
               end
 
               tabs.content(value: "dependencies") do

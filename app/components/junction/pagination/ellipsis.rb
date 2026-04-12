@@ -13,12 +13,12 @@ module Junction
               li do
                 span(**attrs) do
                   span { "…" }
-                  span(class: "sr-only") { t("components.pagination.more_pages") }
+                  span(class: "sr-only") { t(".more") }
                 end
               end
             end
 
-            t.content { t("components.pagination.more_pages") }
+            t.content { t(".more") }
           end
         end
 
@@ -29,7 +29,7 @@ module Junction
             aria: {
               disabled: true,
               hidden: true,
-              label: I18n.t("components.pagination.more_pages")
+              label: I18n.t("junction.components.pagination.ellipsis.more")
             },
             class: [
               Link.new(variant: :disabled).attrs[:class],

@@ -24,15 +24,15 @@ module Junction
           form_with(model: @role, **attrs) do |f|
             Card do |card|
               card.header do |header|
-                header.title { t("components.role_form.basic_info_title") }
-                header.description { t("components.role_form.basic_info_description") }
+                header.title { t(".title") }
+                header.description { t(".description") }
               end
 
               card.content(class: "space-y-4") do
                 Text(f, :title, required: true)
                 Slug(f, :name)
                 Immutable(f, :namespace, required: true,
-                              help_text: "Namespaces allow the same identifier to exist in different contexts.")
+                              help_text: t(".namespace_help"))
                 TextArea(f, :description, required: true)
               end
             end
@@ -40,8 +40,8 @@ module Junction
             unless @role.system?
               Card do |card|
                 card.header do |header|
-                  header.title { t("components.role_form.permissions_title") }
-                  header.description { t("components.role_form.permissions_description") }
+                  header.title { @role.class.human_attribute_name(:permissions) }
+                  header.description { t(".permissions_description") }
                 end
 
                 card.content do
@@ -51,10 +51,10 @@ module Junction
             end
 
             div(class: "flex items-center justify-end gap-x-4 pt-4") do
-              Link(href: cancel_path, class: "text-sm font-semibold leading-6") { t("components.role_form.cancel") }
+              Link(href: cancel_path, class: "text-sm font-semibold leading-6") { t(".cancel") }
               Button(type: "submit", variant: :primary, data: { form_target: "submit" }) do
                 icon("save", class: "w-4 h-4 mr-2")
-                plain t("components.role_form.save")
+                plain t(".save")
               end
             end
           end

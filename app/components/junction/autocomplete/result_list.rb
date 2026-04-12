@@ -26,7 +26,8 @@ module Junction
           {
             role: "listbox",
             class: "border border-gray-200 dark:border-gray-600 rounded-md " \
-                   "overflow-hidden divide-y divide-gray-100 dark:divide-gray-700"
+                   "overflow-hidden divide-y divide-gray-100 " \
+                   "dark:divide-gray-700"
           }
         end
       end

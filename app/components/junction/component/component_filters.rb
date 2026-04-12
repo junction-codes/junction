@@ -8,14 +8,14 @@ module Junction
         # Initializes the component.
         #
         # @param query [Ransack::Search] Ransack query object for filtering.
-        # @param available_lifecycles [Array<Array>] Lifecycle options as [label,
-        #   value] pairs for filtering.
-        # @param available_owners [ActiveRecord::Relation] Owner options with name
-        #   and id attributes for filtering.
-        # @param available_systems [ActiveRecord::Relation] System options with name
-        #   and id attributes for filtering.
-        # @param available_types [Array<Array>] Type options as [label, value] pairs
-        #   for filtering.
+        # @param available_lifecycles [Array<Array>] Lifecycle options as
+        #   [label, value] pairs for filtering.
+        # @param available_owners [ActiveRecord::Relation] Owner options with
+        #   name and id attributes for filtering.
+        # @param available_systems [ActiveRecord::Relation] System options with
+        #   name and id attributes for filtering.
+        # @param available_types [Array<Array>] Type options as [label, value]
+        #   pairs for filtering.
         # @param user_attrs [Hash] Additional HTML attributes for the component.
         def initialize(query:, available_lifecycles: [], available_owners: [],
                       available_systems: [], available_types: [], **user_attrs)
@@ -37,45 +37,57 @@ module Junction
             div(class: "grid grid-cols-1 md:grid-cols-4 gap-4") do
               bar.text_filter(
                 name: "q[title_or_description_cont]",
-                label: "Search",
-                placeholder: "Name or description...",
+                label: t(".search"),
+                placeholder: t(".placeholder"),
                 value: @query.title_or_description_cont
               )
 
               bar.select_filter(
                 name: "q[type_eq]",
-                label: "Type",
+                label: Junction::Component.human_attribute_name(:type),
                 options: @available_types,
                 selected: @query.type_eq,
                 include_blank: true,
-                blank_label: "All Types"
+                blank_label: t(
+                  ".all",
+                  label: Junction::Component.human_attribute_name(:type).pluralize
+                )
               ) if @available_types.any?
 
               bar.entity_filter(
                 name: "q[system_id_eq]",
-                label: "System",
+                label: Junction::Component.human_attribute_name(:system_id),
                 entities: @available_systems,
                 selected: @query.system_id_eq,
                 include_blank: true,
-                blank_label: "All Systems"
+                blank_label: t(
+                  ".all",
+                  label: Junction::Component.human_attribute_name(:system_id).pluralize
+                )
               ) if @available_systems.any?
 
               bar.entity_filter(
                 name: "q[owner_id_eq]",
-                label: "Owner",
+                label: Junction::Component.human_attribute_name(:owner_id),
                 entities: @available_owners,
                 selected: @query.owner_id_eq,
                 include_blank: true,
-                blank_label: "All Owners"
+                blank_label: t(
+                  ".all",
+                  label: Junction::Component.human_attribute_name(:owner_id).pluralize
+                )
               ) if @available_owners.any?
 
               bar.select_filter(
                 name: "q[lifecycle_eq]",
-                label: "Lifecycle",
+                label: Junction::Component.human_attribute_name(:lifecycle),
                 options: @available_lifecycles,
                 selected: @query.lifecycle_eq,
                 include_blank: true,
-                blank_label: "All Lifecycles"
+                blank_label: t(
+                  ".all",
+                  label: Junction::Component.human_attribute_name(:lifecycle).pluralize
+                )
               ) if @available_lifecycles.any?
             end
 
