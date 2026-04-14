@@ -4,13 +4,12 @@
 #
 # @param source_factory [Symbol] Factory name for the source entity.
 # @param path_method [Symbol] Route helper method name for the index path.
-# @param url_method [Symbol] Route helper method name for the index URL.
 # @param read_permission [String] Permission string required to view the
 #   dependents.
-RSpec.shared_examples "a dependent index action" do |source_factory, path_method, url_method, read_permission|
+RSpec.shared_examples "a dependent index action" do |source_factory, path_method, read_permission|
   subject!(:source) { create(source_factory) }
 
-  let(:entity_dependents_path) { send(path_method, source) }
+  let(:entity_dependents_path) { send(path_method, namespace: source.namespace, name: source.name) }
 
   context "when the user is not authenticated" do
     it_behaves_like "an action that requires authentication", :get,
@@ -30,7 +29,7 @@ RSpec.shared_examples "a dependent index action" do |source_factory, path_method
       -> { { target: source } }
 
     it "renders a successful response" do
-      get send(url_method, source)
+      get entity_dependents_path
       expect(response).to be_successful
     end
   end

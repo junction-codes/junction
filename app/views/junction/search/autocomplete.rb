@@ -35,7 +35,7 @@ module Junction
         # @param entity [ApplicationRecord] The entity to link to.
         def result_link(entity)
           a(
-            href: url_for(entity),
+            href: junction_catalog_path(entity),
             data: { turbo_frame: "_top" },
             class: "flex items-center justify-between px-3 py-2 cursor-pointer " \
                    "hover:bg-gray-100 dark:hover:bg-gray-700 " \

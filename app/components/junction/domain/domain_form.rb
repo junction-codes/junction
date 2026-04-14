@@ -12,7 +12,8 @@ module Junction
         end
 
         def view_template
-          form_with(model: @domain, class: "space-y-8", data: { controller: "form", action: "submit->form#disable" }) do |f|
+          form_with(model: @domain, url: junction_catalog_form_url(@domain), class: "space-y-8",
+                    data: { controller: "form", action: "submit->form#disable" }) do |f|
             # Basic information section.
             Card do |card|
               card.header do |header|
@@ -51,7 +52,7 @@ module Junction
         private
 
         def cancel_path
-          @domain.id.nil? ? domains_path : domain_path(@domain)
+          @domain.id.nil? ? domains_path : junction_catalog_path(@domain)
         end
       end
     end

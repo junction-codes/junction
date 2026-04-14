@@ -24,10 +24,10 @@ module Junction
         query: @q,
         can_destroy: can_edit,
         can_create: can_edit,
-        create_url: can_edit ? group_members_path(@entity) : nil,
-        search_url: can_edit ? search_group_members_path(@entity) : nil,
+        create_url: can_edit ? junction_group_members_path(@entity) : nil,
+        search_url: can_edit ? junction_search_group_members_path(@entity) : nil,
         page_url: ->(page) {
-          group_members_path(
+          junction_group_members_path(
             @entity,
             page:,
             per_page: @pagy.options[:limit],
@@ -35,10 +35,10 @@ module Junction
           )
         },
         per_page_url: ->(per_page) {
-          group_members_path(@entity, per_page:, q: params[:q]&.to_unsafe_h)
+          junction_group_members_path(@entity, per_page:, q: params[:q]&.to_unsafe_h)
         },
         sort_url: ->(field, direction) {
-          group_members_path(
+          junction_group_members_path(
             @entity,
             q: (params[:q]&.to_unsafe_h || {}).merge("s" => "#{field} #{direction}"),
             per_page: @pagy.options[:limit]
@@ -55,11 +55,11 @@ module Junction
       membership = @entity.group_memberships.build(user:)
 
       if membership.save
-        redirect_back fallback_location: group_members_path(@entity),
+        redirect_back fallback_location: junction_group_members_path(@entity),
                       status: :see_other,
                       success: "User was successfully added to the group."
       else
-        redirect_back fallback_location: group_members_path(@entity),
+        redirect_back fallback_location: junction_group_members_path(@entity),
                       status: :see_other,
                       alert: membership.errors.full_messages.to_sentence
       end
@@ -86,7 +86,7 @@ module Junction
       authorize! @entity, to: :update?
       @entity.group_memberships.find_by!(user_id: params.expect(:id)).destroy!
 
-      redirect_back fallback_location: group_members_path(@entity),
+      redirect_back fallback_location: junction_group_members_path(@entity),
                     status: :see_other,
                     success: "User was successfully removed from the group."
     end
@@ -94,7 +94,7 @@ module Junction
     private
 
     def set_entity
-      @entity = Group.find(params.expect(:group_id))
+      @entity = Group.find_by!(namespace: params.expect(:namespace), name: params.expect(:name))
     end
 
     def authorize_users_access!

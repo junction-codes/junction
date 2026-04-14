@@ -11,7 +11,8 @@ module Junction
         end
 
         def view_template
-          form_with(model: @user, class: "space-y-8", data: { controller: "form", action: "submit->form#disable" }) do |f|
+          form_with(model: @user, url: junction_catalog_form_url(@user), class: "space-y-8",
+                    data: { controller: "form", action: "submit->form#disable" }) do |f|
             basic_settings(f)
             annotations(f)
             email_settings(f)
@@ -30,7 +31,7 @@ module Junction
         private
 
         def cancel_path
-          @user.id.nil? ? users_path : user_path(@user)
+          @user.id.nil? ? users_path : junction_catalog_path(@user)
         end
 
         def new?

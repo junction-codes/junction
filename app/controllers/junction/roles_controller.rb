@@ -4,8 +4,7 @@ module Junction
   # Controller for managing Roles.
   class RolesController < ApplicationController
     # Make sure the entity is set before any other helper methods are called.
-    before_action :set_entity, only: %i[ edit update destroy ]
-    before_action :eager_load_dependencies, only: %i[ show ]
+    before_action :set_entity, only: %i[show edit update destroy]
 
     include Breadcrumbs
     include Paginatable
@@ -56,7 +55,7 @@ module Junction
       @entity = Role.new(role_params.except(:permission_ids))
       if @entity.save
         sync_role_permissions
-        redirect_to @entity, success: "Role was successfully created."
+        redirect_to junction_catalog_path(@entity), success: "Role was successfully created."
       else
         render Views::Roles::New.new(
           role: @entity,
@@ -82,7 +81,7 @@ module Junction
       authorize! @entity
       if @entity.update(role_params.except(:permission_ids))
         sync_role_permissions unless @entity.system?
-        redirect_to @entity, success: "Role was successfully updated."
+        redirect_to junction_catalog_path(@entity), success: "Role was successfully updated."
       else
         render Views::Roles::Edit.new(
           role: @entity,
@@ -110,11 +109,9 @@ module Junction
     private
 
     def set_entity
-      @entity = Role.find(params.expect(:id))
-    end
-
-    def eager_load_dependencies
-      @entity = Role.includes(:role_permissions).find(params.expect(:id))
+      @entity = Role.includes(:role_permissions).find_by!(
+        namespace: params.expect(:namespace), name: params.expect(:name)
+      )
     end
 
     def role_params

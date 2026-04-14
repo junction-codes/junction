@@ -41,17 +41,17 @@ module Junction
         pagy: @pagy,
         query: @q,
         page_url: ->(page) {
-          systems_domain_path(
+          junction_systems_domain_path(
             @entity,
             page:,
             per_page: @pagy.options[:limit], q: params[:q]&.to_unsafe_h
           )
         },
         per_page_url: ->(per_page) {
-          systems_domain_path(@entity, per_page:, q: params[:q]&.to_unsafe_h)
+          junction_systems_domain_path(@entity, per_page:, q: params[:q]&.to_unsafe_h)
         },
         sort_url: ->(field, direction) {
-          systems_domain_path(
+          junction_systems_domain_path(
             @entity,
             q: (params[:q]&.to_unsafe_h || {}).merge("s" => "#{field} #{direction}"),
             per_page: @pagy.options[:limit]
@@ -95,7 +95,7 @@ module Junction
       @entity = Domain.new(domain_params)
 
       if @entity.save
-        redirect_to @entity, success: "Domain was successfully created."
+        redirect_to junction_catalog_path(@entity), success: "Domain was successfully created."
       else
         flash.now[:alert] = "There were errors creating the domain."
         render Views::Domains::New.new(domain: @entity, breadcrumbs:, available_owners:),
@@ -107,7 +107,7 @@ module Junction
     def update
       authorize! @entity
       if @entity.update(domain_params)
-        redirect_to @entity, success: "Domain was successfully updated."
+        redirect_to junction_catalog_path(@entity), success: "Domain was successfully updated."
       else
         flash.now[:alert] = "There were errors updating the domain."
         render Views::Domains::Edit.new(
@@ -140,7 +140,7 @@ module Junction
     end
 
     def set_entity
-      @entity = Domain.find(params.expect(:id))
+      @entity = Domain.find_by!(namespace: params.expect(:namespace), name: params.expect(:name))
     end
 
     def domain_params

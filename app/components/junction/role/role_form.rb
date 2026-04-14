@@ -21,7 +21,7 @@ module Junction
         end
 
         def view_template
-          form_with(model: @role, **attrs) do |f|
+          form_with(model: @role, url: junction_catalog_form_url(@role), **attrs) do |f|
             Card do |card|
               card.header do |header|
                 header.title { t(".title") }
@@ -66,7 +66,7 @@ module Junction
         #
         # @return [String] The path to return the user to.
         def cancel_path
-          @role.persisted? ? role_path(@role) : roles_path
+          @role.persisted? ? junction_catalog_path(@role) : roles_path
         end
 
         def default_attrs

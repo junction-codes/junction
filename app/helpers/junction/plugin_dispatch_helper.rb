@@ -108,16 +108,45 @@ module Junction
     # @return [String] The resolved URL or path.
     #
     # @raise [ArgumentError] If the route helper cannot be found.
-    def resolve_plugin_route(action, *args)
-      if respond_to?(action)
-        return public_send(action, *args)
-      elsif respond_to?(:main_app) && main_app.respond_to?(action)
-        return main_app.public_send(action, *args)
-      elsif Junction::Engine.routes.url_helpers.respond_to?(action)
-        return Junction::Engine.routes.url_helpers.public_send(action, *args)
+    def resolve_plugin_route(action, *args, **kwargs)
+      # If we have keyword arguments for a record, we need to remove them from
+      # the positional arguments and use the keyword arguments instead.
+      route_kwargs = plugin_route_kwargs(action, args, kwargs)
+      if route_kwargs
+        args = []
+        kwargs = route_kwargs
       end
 
-      raise ArgumentError, "Unknown plugin route helper: #{action}"
+      if respond_to?(action)
+        public_send(action, *args, **kwargs)
+      elsif respond_to?(:main_app) && main_app.respond_to?(action)
+        main_app.public_send(action, *args, **kwargs)
+      elsif Junction::Engine.routes.url_helpers.respond_to?(action)
+        Junction::Engine.routes.url_helpers.public_send(action, *args, **kwargs)
+      else
+        raise ArgumentError, "Unknown plugin route helper: #{action}"
+      end
+    end
+
+    # Builds keyword arguments for a plugin route helper.
+    #
+    # If the first argument is a record of the class that the route helper is
+    # mounted under, we build keyword arguments for the namespace and name of
+    # the record. Otherwise, we assume the helper accepts the current call
+    # signature and return +nil+.
+    #
+    # @param action [Symbol] The route helper method to call.
+    # @param args [Array] Positional arguments to pass to the route helper.
+    # @param kwargs [Hash] Keyword arguments to pass to the route helper.
+    # @return [Hash, nil] Keyword arguments to pass to the route helper, if any.
+    def plugin_route_kwargs(action, args, kwargs)
+      return nil unless args.size == 1
+
+      entity_class = Junction::PluginRegistry.plugin_route_helper_entity_classes[action]
+      record = args.first
+      return nil unless entity_class && record.is_a?(entity_class)
+
+      Junction::PathHelperOverrides.namespace_name_kwargs(record).merge(kwargs)
     end
   end
 end

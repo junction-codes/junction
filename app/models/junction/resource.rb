@@ -16,6 +16,10 @@ module Junction
 
     belongs_to :system, class_name: "Junction::System"
 
+    def to_param
+      [ namespace, name ].join("/")
+    end
+
     def self.ransackable_associations(auth_object = nil)
       %w[owner system]
     end

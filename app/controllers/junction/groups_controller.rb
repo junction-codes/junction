@@ -62,7 +62,7 @@ module Junction
       @entity = Group.new(group_params)
 
       if @entity.save
-        redirect_to @entity, success: "Group was successfully created."
+        redirect_to junction_catalog_path(@entity), success: "Group was successfully created."
       else
         flash.now[:alert] = "There were errors creating the group."
         render Views::Groups::New.new(group: @entity, breadcrumbs:, available_parents:),
@@ -74,7 +74,7 @@ module Junction
     def update
       authorize! @entity
       if @entity.update(group_params)
-        redirect_to @entity, success: "Group was successfully updated."
+        redirect_to junction_catalog_path(@entity), success: "Group was successfully updated."
       else
         flash.now[:alert] = "There were errors updating the group."
         render Views::Groups::Edit.new(
@@ -113,7 +113,7 @@ module Junction
 
     # Use callbacks to share common setup or constraints between actions.
     def set_entity
-      @entity = Group.find(params.expect(:id))
+      @entity = Group.find_by!(namespace: params.expect(:namespace), name: params.expect(:name))
     end
 
     # Only allow a list of trusted parameters through.

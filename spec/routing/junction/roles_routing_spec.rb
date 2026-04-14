@@ -13,11 +13,11 @@ RSpec.describe Junction::RolesController, type: :routing do
     end
 
     it "routes to #show" do
-      expect(get: "/roles/1").to route_to("junction/roles#show", id: "1")
+      expect(get: "/roles/default/myrole").to route_to("junction/roles#show", namespace: "default", name: "myrole")
     end
 
     it "routes to #edit" do
-      expect(get: "/roles/1/edit").to route_to("junction/roles#edit", id: "1")
+      expect(get: "/roles/default/myrole/edit").to route_to("junction/roles#edit", namespace: "default", name: "myrole")
     end
 
     it "routes to #create" do
@@ -25,15 +25,15 @@ RSpec.describe Junction::RolesController, type: :routing do
     end
 
     it "routes to #update via PUT" do
-      expect(put: "/roles/1").to route_to("junction/roles#update", id: "1")
+      expect(put: "/roles/default/myrole").to route_to("junction/roles#update", namespace: "default", name: "myrole")
     end
 
     it "routes to #update via PATCH" do
-      expect(patch: "/roles/1").to route_to("junction/roles#update", id: "1")
+      expect(patch: "/roles/default/myrole").to route_to("junction/roles#update", namespace: "default", name: "myrole")
     end
 
     it "routes to #destroy" do
-      expect(delete: "/roles/1").to route_to("junction/roles#destroy", id: "1")
+      expect(delete: "/roles/default/myrole").to route_to("junction/roles#destroy", namespace: "default", name: "myrole")
     end
   end
 end

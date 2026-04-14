@@ -50,7 +50,7 @@ module Junction
             # Right side: action buttons.
             div(class: "flex-shrink-0") do
               if @can_edit
-                Link(variant: :primary, href: edit_user_path(@user)) do
+                Link(variant: :primary, href: junction_edit_catalog_path(@user)) do
                   icon("pencil", class: "w-4 h-4 mr-2")
                   plain t(".edit")
                 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 RSpec.describe Junction::DomainsController, type: :routing do
@@ -11,28 +13,27 @@ RSpec.describe Junction::DomainsController, type: :routing do
     end
 
     it "routes to #show" do
-      expect(get: "/domains/1").to route_to("junction/domains#show", id: "1")
+      expect(get: "/domains/default/mydomain").to route_to("junction/domains#show", namespace: "default", name: "mydomain")
     end
 
     it "routes to #edit" do
-      expect(get: "/domains/1/edit").to route_to("junction/domains#edit", id: "1")
+      expect(get: "/domains/default/mydomain/edit").to route_to("junction/domains#edit", namespace: "default", name: "mydomain")
     end
-
 
     it "routes to #create" do
       expect(post: "/domains").to route_to("junction/domains#create")
     end
 
     it "routes to #update via PUT" do
-      expect(put: "/domains/1").to route_to("junction/domains#update", id: "1")
+      expect(put: "/domains/default/mydomain").to route_to("junction/domains#update", namespace: "default", name: "mydomain")
     end
 
     it "routes to #update via PATCH" do
-      expect(patch: "/domains/1").to route_to("junction/domains#update", id: "1")
+      expect(patch: "/domains/default/mydomain").to route_to("junction/domains#update", namespace: "default", name: "mydomain")
     end
 
     it "routes to #destroy" do
-      expect(delete: "/domains/1").to route_to("junction/domains#destroy", id: "1")
+      expect(delete: "/domains/default/mydomain").to route_to("junction/domains#destroy", namespace: "default", name: "mydomain")
     end
   end
 end

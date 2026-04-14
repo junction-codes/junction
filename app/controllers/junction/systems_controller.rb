@@ -66,7 +66,7 @@ module Junction
       @entity = System.new(system_params)
 
       if @entity.save
-        redirect_to @entity, success: "System was successfully created."
+        redirect_to junction_catalog_path(@entity), success: "System was successfully created."
       else
         flash.now[:alert] = "There were errors creating the system."
         render Views::Systems::New.new(system: @entity, breadcrumbs:, available_domains:, available_owners:),
@@ -78,7 +78,7 @@ module Junction
     def update
       authorize! @entity
       if @entity.update(system_params)
-        redirect_to @entity, success: "System was successfully updated."
+        redirect_to junction_catalog_path(@entity), success: "System was successfully updated."
       else
         flash.now[:alert] = "There were errors updating the system."
         render Views::Systems::Edit.new(
@@ -111,7 +111,7 @@ module Junction
         pagy: @pagy,
         query: @q,
         page_url: ->(page) {
-          apis_system_path(
+          junction_apis_system_path(
             @entity,
             page:,
             per_page: @pagy.options[:limit],
@@ -119,10 +119,10 @@ module Junction
           )
         },
         per_page_url: ->(per_page) {
-          apis_system_path(@entity, per_page:, q: params[:q]&.to_unsafe_h)
+          junction_apis_system_path(@entity, per_page:, q: params[:q]&.to_unsafe_h)
         },
         sort_url: ->(field, direction) {
-          apis_system_path(
+          junction_apis_system_path(
             @entity,
             q: (params[:q]&.to_unsafe_h || {}).merge("s" => "#{field} #{direction}"),
             per_page: @pagy.options[:limit]
@@ -143,7 +143,7 @@ module Junction
         pagy: @pagy,
         query: @q,
         page_url: ->(page) {
-          components_system_path(
+          junction_components_system_path(
             @entity,
             page:,
             per_page: @pagy.options[:limit],
@@ -151,10 +151,10 @@ module Junction
           )
         },
         per_page_url: ->(per_page) {
-          components_system_path(@entity, per_page:, q: params[:q]&.to_unsafe_h)
+          junction_components_system_path(@entity, per_page:, q: params[:q]&.to_unsafe_h)
         },
         sort_url: ->(field, direction) {
-          components_system_path(
+          junction_components_system_path(
             @entity,
             q: (params[:q]&.to_unsafe_h || {}).merge("s" => "#{field} #{direction}"),
             per_page: @pagy.options[:limit]
@@ -175,7 +175,7 @@ module Junction
         pagy: @pagy,
         query: @q,
         page_url: ->(page) {
-          resources_system_path(
+          junction_resources_system_path(
             @entity,
             page:,
             per_page: @pagy.options[:limit],
@@ -183,10 +183,10 @@ module Junction
           )
         },
         per_page_url: ->(per_page) {
-          resources_system_path(@entity, per_page:, q: params[:q]&.to_unsafe_h)
+          junction_resources_system_path(@entity, per_page:, q: params[:q]&.to_unsafe_h)
         },
         sort_url: ->(field, direction) {
-          resources_system_path(
+          junction_resources_system_path(
             @entity,
             q: (params[:q]&.to_unsafe_h || {}).merge("s" => "#{field} #{direction}"),
             per_page: @pagy.options[:limit]
@@ -216,7 +216,7 @@ module Junction
     end
 
     def set_entity
-      @entity = System.find(params.expect(:id))
+      @entity = System.find_by!(namespace: params.expect(:namespace), name: params.expect(:name))
     end
 
     def system_params

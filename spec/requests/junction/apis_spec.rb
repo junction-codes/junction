@@ -74,7 +74,7 @@ RSpec.describe "/apis", type: :request do
         :get, -> { api_path(api) }, %w[junction.codes/apis.all.read]
 
       it "returns http success" do
-        get "/apis/#{api.id}"
+        get api_path(api)
         expect(response).to have_http_status(:success)
       end
     end
@@ -96,7 +96,7 @@ RSpec.describe "/apis", type: :request do
         :get, -> { edit_api_path(api) }, %w[junction.codes/apis.all.write]
 
       it "returns http success" do
-        get "/apis/#{api.id}/edit"
+        get edit_api_path(api)
         expect(response).to have_http_status(:success)
       end
     end

@@ -14,6 +14,7 @@ module Junction
     include Authentication
     include PluginDispatchHelper
     include Engine.routes.url_helpers
+    include SluggableUrlsHelper
 
     protect_from_forgery with: :exception
 
@@ -61,7 +62,12 @@ module Junction
     #
     # @return [ApplicationRecord] The found entity.
     def set_entity
-      @entity = entity_class.find(params[entity_key])
+      id = params[entity_key]
+      @entity = if id.present? && id.to_s.match?(/\A\d+\z/)
+        entity_class.find(id)
+      else
+        entity_class.find_by!(namespace: params.expect(:namespace), name: params.expect(:name))
+      end
     end
   end
 end

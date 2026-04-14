@@ -9,7 +9,7 @@
 RSpec.shared_examples "a dependency search action" do |source_factory, path_method, read_permission|
   subject!(:source) { create(source_factory) }
 
-  let(:path) { send(path_method, source) }
+  let(:path) { send(path_method, namespace: source.namespace, name: source.name) }
 
   context "when the user is not authenticated" do
     it_behaves_like "an action that requires authentication", :get, -> { path }
