@@ -57,7 +57,7 @@ module Junction
             # Right side: action buttons.
             div(class: "flex-shrink-0") do
               if @can_edit
-                Link(variant: :primary, href: edit_domain_path(@domain)) do
+                Link(variant: :primary, href: junction_edit_catalog_path(@domain)) do
                   icon("pencil", class: "w-4 h-4 mr-2")
                   plain t(".edit")
                 end
@@ -83,7 +83,7 @@ module Junction
             end
 
             tabs.content(value: "systems") do
-              turbo_frame_tag "domain_systems", src: systems_domain_path(@domain), loading: :lazy do
+              turbo_frame_tag "domain_systems", src: junction_systems_domain_path(@domain), loading: :lazy do
                 div(class: "p-4") { Skeleton(class: "h-20") }
               end
             end

@@ -30,7 +30,7 @@ RSpec.describe "/resources", type: :request do
     end
 
     describe "GET /resources/:id" do
-      it_behaves_like 'an action that requires authentication', :get, -> { resource_path(resource.id) }
+      it_behaves_like 'an action that requires authentication', :get, -> { resource_path(resource) }
     end
 
     describe "GET /resources/new" do
@@ -38,7 +38,7 @@ RSpec.describe "/resources", type: :request do
     end
 
     describe "GET /resources/:id/edit" do
-      it_behaves_like 'an action that requires authentication', :get, -> { edit_resource_path(resource.id) }
+      it_behaves_like 'an action that requires authentication', :get, -> { edit_resource_path(resource) }
     end
 
     describe "POST /resources" do
@@ -46,11 +46,11 @@ RSpec.describe "/resources", type: :request do
     end
 
     describe "PATCH /resources/:id" do
-      it_behaves_like 'an action that requires authentication', :patch, -> { resource_path(resource.id) }
+      it_behaves_like 'an action that requires authentication', :patch, -> { resource_path(resource) }
     end
 
     describe "DELETE /resources/:id" do
-      it_behaves_like 'an action that requires authentication', :delete, -> { resource_path(resource.id) }
+      it_behaves_like 'an action that requires authentication', :delete, -> { resource_path(resource) }
     end
   end
 
@@ -72,11 +72,11 @@ RSpec.describe "/resources", type: :request do
 
     describe "GET /resources/:id" do
       it_behaves_like "an action that requires permission",
-        :get, -> { resource_path(resource.id) }, %w[junction.codes/resources.all.read]
+        :get, -> { resource_path(resource) }, %w[junction.codes/resources.all.read]
 
-      it "returns http success" do
-        get resource_url(resource.id)
-        expect(response).to have_http_status(:success)
+      it "redirects legacy numeric id to the canonical URL" do
+        get "/resources/#{resource.id}"
+        expect(response).to redirect_to(resource_path(resource))
       end
     end
 
@@ -94,7 +94,7 @@ RSpec.describe "/resources", type: :request do
 
     describe "GET /resources/:id/edit" do
       it_behaves_like "an action that requires permission",
-        :get, -> { edit_resource_path(resource.id) }, %w[junction.codes/resources.all.write]
+        :get, -> { edit_resource_path(resource) }, %w[junction.codes/resources.all.write]
 
       it "returns http success" do
         get edit_resource_url(resource)
@@ -137,7 +137,7 @@ RSpec.describe "/resources", type: :request do
 
     describe "PATCH /resources/:id" do
       it_behaves_like "an action that requires permission",
-        :patch, -> { resource_path(resource.id) },
+        :patch, -> { resource_path(resource) },
         %w[junction.codes/resources.all.write junction.codes/resources.owned.write],
         { resource: { type: "bucket" } }
 
@@ -171,7 +171,7 @@ RSpec.describe "/resources", type: :request do
 
     describe "DELETE /resources/:id" do
       it_behaves_like "an action that requires permission",
-        :delete, -> { resource_path(resource.id) },
+        :delete, -> { resource_path(resource) },
         %w[junction.codes/resources.all.destroy junction.codes/resources.owned.destroy]
 
       it "returns http success" do

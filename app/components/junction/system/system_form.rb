@@ -14,7 +14,8 @@ module Junction
         end
 
         def view_template
-          form_with(model: @system, class: "space-y-8", data: { controller: "form", action: "submit->form#disable" }) do |f|
+          form_with(model: @system, url: junction_catalog_form_url(@system), class: "space-y-8",
+                    data: { controller: "form", action: "submit->form#disable" }) do |f|
             # Basic information section.
             Card do |card|
               card.header do |header|
@@ -56,7 +57,7 @@ module Junction
         private
 
         def cancel_path
-          @system.id.nil? ? systems_path : system_path(@system)
+          @system.id.nil? ? systems_path : junction_catalog_path(@system)
         end
       end
     end

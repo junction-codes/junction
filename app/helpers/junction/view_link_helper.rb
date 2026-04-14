@@ -17,7 +17,8 @@ module Junction
 
       if allowed_to?(:show?, entity)
         render Components::Link.new(
-          href: url_for(entity),
+          # href: junction_catalog_path(entity),
+          href: resources_path(entity),
           variant: :link,
           data: { turbo_frame: "_top" },
           **user_attrs

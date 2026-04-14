@@ -51,11 +51,11 @@ module Junction
       @dependency = @source.dependencies.build(target_type:, target_id:)
 
       if @dependency.save
-        redirect_back fallback_location: url_for(@source),
+        redirect_back fallback_location: junction_catalog_path(@source),
                       status: :see_other,
                       success: "Dependency was successfully added."
       else
-        redirect_back fallback_location: url_for(@source),
+        redirect_back fallback_location: junction_catalog_path(@source),
                       status: :see_other,
                       alert: @dependency.errors.full_messages.to_sentence
       end
@@ -92,7 +92,7 @@ module Junction
       authorize! @dependency.source, to: :update?
       @dependency.destroy!
 
-      redirect_back fallback_location: url_for(@dependency.source),
+      redirect_back fallback_location: junction_catalog_path(@dependency.source),
                     status: :see_other,
                     success: "Dependency was successfully removed."
     end
@@ -132,20 +132,27 @@ module Junction
       [ value[0, i], value[i + 1..].to_i ]
     end
 
+    SOURCE_MODEL_BY_SCOPE = {
+      "api" => Api,
+      "component" => Component,
+      "resource" => Resource
+    }.freeze
+
     # Detects the source entity from nested route params.
     def set_source
       id_key = %i[api_id component_id resource_id].find { |key| params[key].present? }
 
-      @source = case id_key
-      when :api_id
-        Api.find(params.expect(id_key))
-      when :component_id
-        Component.find(params.expect(id_key))
-      when :resource_id
-        Resource.find(params.expect(id_key))
+      @source = if id_key
+        case id_key
+        when :api_id then Api.find(params.expect(id_key))
+        when :component_id then Component.find(params.expect(id_key))
+        when :resource_id then Resource.find(params.expect(id_key))
+        end
+      elsif (scope = params[:catalog_scope]).present?
+        klass = SOURCE_MODEL_BY_SCOPE.fetch(scope)
+        klass.find_by!(namespace: params.expect(:namespace), name: params.expect(:name))
       else
-        raise ActiveRecord::RecordNotFound,
-          "Couldn't find source for dependencies."
+        raise ActiveRecord::RecordNotFound, "Couldn't find source for dependencies."
       end
     end
 

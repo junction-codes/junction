@@ -77,7 +77,7 @@ module Junction
     # @return [Hash] The breadcrumb item.
     def breadcrumb_show
       {
-        href: send(:"#{controller_name.singularize}_path", @entity),
+        href: junction_catalog_path(@entity),
         label: @entity.title
       }
     end

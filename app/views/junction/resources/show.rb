@@ -65,7 +65,7 @@ module Junction
                 break unless @resource.system.present?
 
                 if allowed_to?(:show?, @resource.system)
-                  Link(href: system_path(@resource.system)) { t(".part_of_system", system_title: @resource.system.title) }
+                  Link(href: junction_catalog_path(@resource.system)) { t(".part_of_system", system_title: @resource.system.title) }
                 else
                   Link(variant: :disabled) { t(".part_of_system", system_title: @resource.system.title) }
                 end
@@ -75,7 +75,7 @@ module Junction
             # Right side: action buttons.
             div(class: "flex-shrink-0") do
               if @can_edit
-                Link(variant: :primary, href: edit_resource_path(@resource)) do
+                Link(variant: :primary, href: junction_edit_catalog_path(@resource)) do
                   icon("pencil", class: "w-4 h-4 mr-2")
                   plain t(".edit")
                 end
@@ -123,13 +123,13 @@ module Junction
               end
 
               tabs.content(value: "dependencies") do
-                turbo_frame_tag "dependencies", src: resource_dependencies_path(@resource), loading: :lazy do
+                turbo_frame_tag "dependencies", src: junction_dependencies_path(@resource), loading: :lazy do
                   div(class: "p-4") { Skeleton(class: "h-20") }
                 end
               end
 
               tabs.content(value: "dependents") do
-                turbo_frame_tag "dependents", src: resource_dependents_path(@resource), loading: :lazy do
+                turbo_frame_tag "dependents", src: junction_dependents_path(@resource), loading: :lazy do
                   div(class: "p-4") { Skeleton(class: "h-20") }
                 end
               end
@@ -144,7 +144,7 @@ module Junction
         def dependency_graph
           div do
             div(class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden p-5") do
-              div(data_controller: "graph", data_graph_url_value: dependency_graph_resource_path(@resource)) do
+              div(data_controller: "graph", data_graph_url_value: junction_dependency_graph_path(@resource)) do
                 div(data_graph_target: "container", class: "w-full h-60")
               end
             end

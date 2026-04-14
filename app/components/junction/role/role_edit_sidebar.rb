@@ -62,7 +62,7 @@ module Junction
 
                     content.footer do
                       Link(data: { action: "click->ruby-ui--dialog#dismiss" }) { t(".cancel") }
-                      Link(variant: :destructive, href: role_path(@role), data_turbo_method: :delete) do
+                      Link(variant: :destructive, href: junction_catalog_path(@role), data_turbo_method: :delete) do
                         t(".confirm_delete")
                       end
                     end

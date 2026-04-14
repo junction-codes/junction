@@ -25,7 +25,7 @@ module Junction
             menu.content do |content|
               content.label { t(".account") }
               content.separator
-              content.item(href: user_path(@user)) do
+              content.item(href: junction_catalog_path(@user)) do
                 icon("user-round")
                 plain t(".profile")
               end

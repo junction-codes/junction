@@ -11,7 +11,8 @@ module Junction
         end
 
         def view_template
-          form_with(model: @group, class: "space-y-8", data: { controller: "form", action: "submit->form#disable" }) do |f|
+          form_with(model: @group, url: junction_catalog_form_url(@group), class: "space-y-8",
+                    data: { controller: "form", action: "submit->form#disable" }) do |f|
             # Basic information section.
             Card do |card|
               card.header do |header|
@@ -60,7 +61,7 @@ module Junction
         private
 
         def cancel_path
-          @group.id.nil? ? groups_path : group_path(@group)
+          @group.id.nil? ? groups_path : junction_catalog_path(@group)
         end
       end
     end

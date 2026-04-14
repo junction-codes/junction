@@ -11,7 +11,7 @@ RSpec.shared_examples "a dependency creation action" do |source_factory, path_me
   subject!(:source) { create(source_factory) }
 
   let!(:target) { create(:api) }
-  let(:path) { send(path_method, source) }
+  let(:path) { send(path_method, namespace: source.namespace, name: source.name) }
   let(:valid_params) { { dependency: { target: "Junction::Api:#{target.id}" } } }
 
   context "when the user is not authenticated" do

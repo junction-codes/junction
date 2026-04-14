@@ -65,7 +65,7 @@ module Junction
                 break unless @api.system.present?
 
                 if allowed_to?(:show?, @api.system)
-                  Link(href: system_path(@api.system)) { t(".part_of_system", system_title: @api.system.title) }
+                  Link(href: junction_catalog_path(@api.system)) { t(".part_of_system", system_title: @api.system.title) }
                 else
                   Link(variant: :disabled) { t(".part_of_system", system_title: @api.system.title) }
                 end
@@ -75,7 +75,7 @@ module Junction
             # Right side: action buttons.
             div(class: "flex-shrink-0") do
               if @can_edit
-                Link(variant: :primary, href: edit_api_path(@api)) do
+                Link(variant: :primary, href: junction_edit_catalog_path(@api)) do
                   icon("pencil", class: "w-4 h-4 mr-2")
                   plain t(".edit")
                 end
@@ -135,13 +135,13 @@ module Junction
               end
 
               tabs.content(value: "dependencies") do
-                turbo_frame_tag "dependencies", src: api_dependencies_path(@api), loading: :lazy do
+                turbo_frame_tag "dependencies", src: junction_dependencies_path(@api), loading: :lazy do
                   div(class: "p-4") { Skeleton(class: "h-20") }
                 end
               end
 
               tabs.content(value: "dependents") do
-                turbo_frame_tag "dependents", src: api_dependents_path(@api), loading: :lazy do
+                turbo_frame_tag "dependents", src: junction_dependents_path(@api), loading: :lazy do
                   div(class: "p-4") { Skeleton(class: "h-20") }
                 end
               end
@@ -156,7 +156,7 @@ module Junction
         def dependency_graph
           div do
             div(class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden p-5") do
-              div(data_controller: "graph", data_graph_url_value: dependency_graph_api_path(@api)) do
+              div(data_controller: "graph", data_graph_url_value: junction_dependency_graph_path(@api)) do
                 div(data_graph_target: "container", class: "w-full h-60")
               end
             end

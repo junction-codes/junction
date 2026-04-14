@@ -73,9 +73,9 @@ RSpec.describe "/apis", type: :request do
       it_behaves_like "an action that requires permission",
         :get, -> { api_path(api) }, %w[junction.codes/apis.all.read]
 
-      it "returns http success" do
+      it "redirects legacy numeric id to the canonical URL" do
         get "/apis/#{api.id}"
-        expect(response).to have_http_status(:success)
+        expect(response).to redirect_to(api_path(api))
       end
     end
 
@@ -95,9 +95,9 @@ RSpec.describe "/apis", type: :request do
       it_behaves_like "an action that requires permission",
         :get, -> { edit_api_path(api) }, %w[junction.codes/apis.all.write]
 
-      it "returns http success" do
+      it "redirects legacy numeric id to the canonical edit URL" do
         get "/apis/#{api.id}/edit"
-        expect(response).to have_http_status(:success)
+        expect(response).to redirect_to(edit_api_path(api))
       end
     end
 

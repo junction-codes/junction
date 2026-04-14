@@ -74,55 +74,55 @@ RSpec.describe "/systems", type: :request do
         :get, -> { system_path(system) }, %w[junction.codes/systems.all.read]
 
       it "renders a successful response" do
-        get system_url(system)
+        get system_path(system)
         expect(response).to be_successful
       end
     end
 
     describe "GET /apis" do
       it_behaves_like "an action that requires permission",
-        :get, -> { apis_system_path(system) }, %w[junction.codes/systems.all.read]
+        :get, -> { system_apis_path(system) }, %w[junction.codes/systems.all.read]
 
       it_behaves_like "a paginated index",
-        -> { apis_system_path(system) },
+        -> { system_apis_path(system) },
         -> { system.apis.count },
         :api,
         -> { { system: } }
 
       it "renders a successful response" do
-        get apis_system_url(system)
+        get system_apis_path(system)
         expect(response).to be_successful
       end
     end
 
     describe "GET /components" do
       it_behaves_like "an action that requires permission",
-        :get, -> { components_system_path(system) }, %w[junction.codes/systems.all.read]
+        :get, -> { system_components_path(system) }, %w[junction.codes/systems.all.read]
 
       it_behaves_like "a paginated index",
-        -> { components_system_path(system) },
+        -> { system_components_path(system) },
         -> { system.components.count },
         :component,
         -> { { system: } }
 
       it "renders a successful response" do
-        get components_system_url(system)
+        get system_components_path(system)
         expect(response).to be_successful
       end
     end
 
     describe "GET /resources" do
       it_behaves_like "an action that requires permission",
-        :get, -> { resources_system_path(system) }, %w[junction.codes/systems.all.read]
+        :get, -> { system_resources_path(system) }, %w[junction.codes/systems.all.read]
 
       it_behaves_like "a paginated index",
-        -> { resources_system_path(system) },
+        -> { system_resources_path(system) },
         -> { system.resources.count },
         :resource,
         -> { { system: } }
 
       it "renders a successful response" do
-        get resources_system_url(system)
+        get system_resources_path(system)
         expect(response).to be_successful
       end
     end
@@ -142,7 +142,7 @@ RSpec.describe "/systems", type: :request do
         :get, -> { edit_system_path(system) }, %w[junction.codes/systems.all.write]
 
       it "renders a successful response" do
-        get edit_system_url(system)
+        get edit_system_path(system)
         expect(response).to be_successful
       end
     end
@@ -162,7 +162,7 @@ RSpec.describe "/systems", type: :request do
 
         it "redirects to the created system" do
           post systems_url, params: { system: valid_attributes }
-          expect(response).to redirect_to(system_url(Junction::System.last))
+          expect(response).to redirect_to(system_path(Junction::System.last))
         end
       end
 
@@ -194,21 +194,21 @@ RSpec.describe "/systems", type: :request do
         }
 
         it "updates the requested system" do
-          patch system_url(system), params: { system: new_attributes }
+          patch system_path(system), params: { system: new_attributes }
           system.reload
           expect(system.status).to eq("closed")
         end
 
         it "redirects to the system" do
-          patch system_url(system), params: { system: new_attributes }
+          patch system_path(system), params: { system: new_attributes }
           system.reload
-          expect(response).to redirect_to(system_url(system))
+          expect(response).to redirect_to(system_path(system))
         end
       end
 
       context "with invalid parameters" do
         it "renders a response with 422 status (i.e. to display the 'edit' template)" do
-          patch system_url(system), params: { system: invalid_attributes }
+          patch system_path(system), params: { system: invalid_attributes }
           expect(response).to have_http_status(:unprocessable_content)
         end
       end
@@ -221,12 +221,12 @@ RSpec.describe "/systems", type: :request do
 
       it "destroys the requested system" do
         expect {
-          delete system_url(system)
+          delete system_path(system)
         }.to change(Junction::System, :count).by(-1)
       end
 
       it "redirects to the systems list" do
-        delete system_url(system)
+        delete system_path(system)
         expect(response).to redirect_to(systems_url)
       end
     end

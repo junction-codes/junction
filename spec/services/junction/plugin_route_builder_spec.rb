@@ -18,7 +18,10 @@ RSpec.describe Junction::PluginRouteBuilder do
     before do
       allow(Junction::PluginRegistry).to receive(:actions).and_return(actions)
       allow(router).to receive(:get)
-      allow(router).to receive(:resources).with(:apis).and_yield
+      allow(router).to receive(:scope).with(
+        "/apis/:namespace/:name",
+        constraints: Junction::SluggableRouteConstraints::SLUG
+      ).and_yield
     end
 
     it "uses demodulized context for resource names" do

@@ -78,7 +78,7 @@ RSpec.describe "/components", type: :request do
         :get, -> { component_path(component) }, %w[junction.codes/components.all.read]
 
       it "renders a successful response" do
-        get component_url(component)
+        get component_path(component)
         expect(response).to be_successful
       end
     end
@@ -100,7 +100,7 @@ RSpec.describe "/components", type: :request do
         :get, -> { edit_component_path(component) }, %w[junction.codes/components.all.write]
 
       it "renders a successful response" do
-        get edit_component_url(component)
+        get edit_component_path(component)
         expect(response).to be_successful
       end
     end
@@ -120,7 +120,7 @@ RSpec.describe "/components", type: :request do
 
         it "redirects to the created component" do
           post components_url, params: { component: valid_attributes }
-          expect(response).to redirect_to(component_url(Junction::Component.last))
+          expect(response).to redirect_to(component_path(Junction::Component.last))
         end
       end
 
@@ -152,21 +152,21 @@ RSpec.describe "/components", type: :request do
         }
 
         it "updates the requested component" do
-          patch component_url(component), params: { component: new_attributes }
+          patch component_path(component), params: { component: new_attributes }
           component.reload
           expect(component.lifecycle).to eq("production")
         end
 
         it "redirects to the component" do
-          patch component_url(component), params: { component: new_attributes }
+          patch component_path(component), params: { component: new_attributes }
           component.reload
-          expect(response).to redirect_to(component_url(component))
+          expect(response).to redirect_to(component_path(component))
         end
       end
 
       context "with invalid parameters" do
         it "renders a response with 422 status" do
-          patch component_url(component), params: { component: invalid_attributes }
+          patch component_path(component), params: { component: invalid_attributes }
           expect(response).to have_http_status(:unprocessable_content)
         end
       end
@@ -179,12 +179,12 @@ RSpec.describe "/components", type: :request do
 
       it "destroys the requested component" do
         expect {
-          delete component_url(component)
+          delete component_path(component)
         }.to change(Junction::Component, :count).by(-1)
       end
 
       it "redirects to the components list" do
-        delete component_url(component)
+        delete component_path(component)
         expect(response).to redirect_to(components_url)
       end
     end

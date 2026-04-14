@@ -71,23 +71,23 @@ RSpec.describe "/domains", type: :request do
         :get, -> { domain_path(domain) }, %w[junction.codes/domains.all.read]
 
       it "renders a successful response" do
-        get domain_url(domain)
+        get domain_path(domain)
         expect(response).to be_successful
       end
     end
 
     describe "GET /systems" do
       it_behaves_like "an action that requires permission",
-        :get, -> { systems_domain_path(domain) }, %w[junction.codes/domains.all.read]
+        :get, -> { domain_systems_path(domain) }, %w[junction.codes/domains.all.read]
 
       it_behaves_like "a paginated index",
-        -> { systems_domain_path(domain) },
+        -> { domain_systems_path(domain) },
         -> { domain.systems.count },
         :system,
         -> { { domain: } }
 
       it "renders a successful response" do
-        get systems_domain_url(domain)
+        get domain_systems_path(domain)
         expect(response).to be_successful
       end
     end
@@ -107,7 +107,7 @@ RSpec.describe "/domains", type: :request do
         :get, -> { edit_domain_path(domain) }, %w[junction.codes/domains.all.write]
 
       it "renders a successful response" do
-        get edit_domain_url(domain)
+        get edit_domain_path(domain)
         expect(response).to be_successful
       end
     end
@@ -127,7 +127,7 @@ RSpec.describe "/domains", type: :request do
 
         it "redirects to the created domain" do
           post domains_url, params: { domain: valid_attributes }
-          expect(response).to redirect_to(domain_url(Junction::Domain.last))
+          expect(response).to redirect_to(domain_path(Junction::Domain.last))
         end
       end
 
@@ -159,21 +159,21 @@ RSpec.describe "/domains", type: :request do
         }
 
         it "updates the requested domain" do
-          patch domain_url(domain), params: { domain: new_attributes }
+          patch domain_path(domain), params: { domain: new_attributes }
           domain.reload
           expect(domain.status).to eq("closed")
         end
 
         it "redirects to the domain" do
-          patch domain_url(domain), params: { domain: new_attributes }
+          patch domain_path(domain), params: { domain: new_attributes }
           domain.reload
-          expect(response).to redirect_to(domain_url(domain))
+          expect(response).to redirect_to(domain_path(domain))
         end
       end
 
       context "with invalid parameters" do
         it "renders a response with 422 status (i.e. to display the 'edit' template)" do
-          patch domain_url(domain), params: { domain: invalid_attributes }
+          patch domain_path(domain), params: { domain: invalid_attributes }
           expect(response).to have_http_status(:unprocessable_content)
         end
       end
@@ -186,12 +186,12 @@ RSpec.describe "/domains", type: :request do
 
       it "destroys the requested domain" do
         expect {
-          delete domain_url(domain)
+          delete domain_path(domain)
         }.to change(Junction::Domain, :count).by(-1)
       end
 
       it "redirects to the domains list" do
-        delete domain_url(domain)
+        delete domain_path(domain)
         expect(response).to redirect_to(domains_url)
       end
     end

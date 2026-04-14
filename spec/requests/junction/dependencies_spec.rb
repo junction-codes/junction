@@ -5,19 +5,19 @@ require 'rails_helper'
 RSpec.describe "/dependencies", type: :request do
   describe "GET /apis/:id/dependencies" do
     it_behaves_like "a dependency index action",
-      :api, :api_dependencies_path, :api_dependencies_url,
+      :api, :api_dependencies_path,
       "junction.codes/apis.all.read"
   end
 
   describe "GET /components/:id/dependencies" do
     it_behaves_like "a dependency index action",
-      :component, :component_dependencies_path, :component_dependencies_url,
+      :component, :component_dependencies_path,
       "junction.codes/components.all.read"
   end
 
   describe "GET /resources/:id/dependencies" do
     it_behaves_like "a dependency index action",
-      :resource, :resource_dependencies_path, :resource_dependencies_url,
+      :resource, :resource_dependencies_path,
       "junction.codes/resources.all.read"
   end
 
@@ -69,7 +69,7 @@ RSpec.describe "/dependencies", type: :request do
   describe "GET /apis/:id/dependencies/search (viewable scope)" do
     subject!(:source) { create(:api) }
 
-    let(:path) { search_api_dependencies_path(source) }
+    let(:path) { search_api_dependencies_path(namespace: source.namespace, name: source.name) }
 
     context "when the user has owned.read for a target entity type" do
       let!(:owned_component) { create(:component, owner: user.groups.first) }

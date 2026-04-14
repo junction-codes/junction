@@ -57,7 +57,7 @@ module Junction
                 break unless @system.domain.present?
 
                 if allowed_to?(:show?, @system.domain)
-                  Link(href: domain_path(@system.domain)) { t(".part_of_domain", domain_title: @system.domain.title) }
+                  Link(href: junction_catalog_path(@system.domain)) { t(".part_of_domain", domain_title: @system.domain.title) }
                 else
                   Link(variant: :disabled) { t(".part_of_domain", domain_title: @system.domain.title) }
                 end
@@ -67,7 +67,7 @@ module Junction
             # Right side: action buttons.
             div(class: "flex-shrink-0") do
               if @can_edit
-                Link(variant: :primary, href: edit_system_path(@system)) do
+                Link(variant: :primary, href: junction_edit_catalog_path(@system)) do
                   icon("pencil", class: "w-4 h-4 mr-2")
                   plain t(".edit")
                 end
@@ -94,19 +94,19 @@ module Junction
               end
 
               tabs.content(value: "apis") do
-                turbo_frame_tag "system_apis", src: apis_system_path(@system), loading: :lazy do
+                turbo_frame_tag "system_apis", src: junction_apis_system_path(@system), loading: :lazy do
                   div(class: "p-4") { Skeleton(class: "h-20") }
                 end
               end
 
               tabs.content(value: "components") do
-                turbo_frame_tag "system_components", src: components_system_path(@system), loading: :lazy do
+                turbo_frame_tag "system_components", src: junction_components_system_path(@system), loading: :lazy do
                   div(class: "p-4") { Skeleton(class: "h-20") }
                 end
               end
 
               tabs.content(value: "resources") do
-                turbo_frame_tag "system_resources", src: resources_system_path(@system), loading: :lazy do
+                turbo_frame_tag "system_resources", src: junction_resources_system_path(@system), loading: :lazy do
                   div(class: "p-4") { Skeleton(class: "h-20") }
                 end
               end

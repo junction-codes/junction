@@ -8,9 +8,10 @@ module Junction
     # @param router [ActionDispatch::Routing::Mapper] The router to draw routes into.
     def self.draw(router)
       Junction::PluginRegistry.actions.each do |context, actions|
-        # Re-open the existing resource block in the router to add plugin actions.
-        resource_name = context.to_s.demodulize.underscore.pluralize.to_sym
-        router.resources resource_name do
+        resource_name = context.to_s.demodulize.underscore.pluralize
+        c = Junction::SluggableRouteConstraints::SLUG
+
+        router.scope("/#{resource_name}/:namespace/:name", constraints: c) do
           actions.each do |action|
             name = helper_name(action, context)
 
