@@ -1,0 +1,19 @@
+---
+- title: Artist Engagement Portal
+  name: artist-engagement-portal
+  status: active
+  domain: artists
+  owner: team-a
+  description: Everything related to artists
+- title: Audio Playback
+  name: audio-playback
+  status: active
+  domain: playback
+  owner: team-c
+  description: Audio playback system
+- title: Podcast
+  name: podcast
+  status: active
+  domain: playback
+  owner: team-b
+  description: Podcast playback

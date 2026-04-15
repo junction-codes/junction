@@ -1,0 +1,13 @@
+---
+- title: Artists
+  name: artists
+  status: active
+  description: Everything related to artists
+- title: Audio
+  name: audio
+  status: active
+  description: Everything related to audio
+- title: Playback
+  name: playback
+  status: active
+  description: Everything related to audio playback

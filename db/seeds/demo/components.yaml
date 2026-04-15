@@ -1,0 +1,100 @@
+---
+- title: Artist Lookup
+  name: artist-lookup
+  lifecycle: experimental
+  type: web
+  owner: team-a
+  description: Artist Lookup
+  system: artist-engagement-portal
+  annotations:
+    backstage.io/source-template: template:default/springboot-template
+    backstage.io/linguist: https://github.com/backstage/backstage/tree/master/plugins/playlist
+  dependencies:
+  - resource:artists-db
+- title: Petstore
+  name: petstore
+  lifecycle: experimental
+  type: web
+  owner: team-c
+  description: |-
+    [The Petstore](http://petstore.example.com) is an example API used to show features of the OpenAPI spec.
+    - First item
+    - Second item
+- title: Playback Sdk
+  name: playback-sdk
+  lifecycle: experimental
+  type: library
+  owner: team-c
+  description: Audio and video playback SDK
+  system: audio-playback
+- title: Playback Order
+  name: playback-order
+  lifecycle: production
+  type: web
+  owner: team-a
+  description: Playback Order
+  system: audio-playback
+- title: Podcast Api
+  name: podcast-api
+  lifecycle: experimental
+  type: web
+  owner: team-b
+  description: Podcast API
+  system: podcast
+- title: Queue Proxy
+  name: queue-proxy
+  lifecycle: production
+  type: web
+  owner: team-b
+  description: Queue Proxy
+  system: podcast
+- title: Searcher
+  name: searcher
+  lifecycle: production
+  type: web
+  owner: team-a
+  description: Searcher
+- title: Shuffle Api
+  name: shuffle-api
+  lifecycle: production
+  type: web
+  owner: team-a
+  description: Shuffle API
+  system: audio-playback
+- title: Wayback Archive
+  name: wayback-archive
+  lifecycle: production
+  type: web
+  owner: team-a
+  description: Archive of the wayback machine
+- title: Wayback Archive Ingestion
+  name: wayback-archive-ingestion
+  lifecycle: production
+  type: web
+  owner: team-d
+  description: Ingestion subsystem of the Wayback Archive
+  dependencies:
+  - component:wayback-archive
+- title: Wayback Archive Storage
+  name: wayback-archive-storage
+  lifecycle: production
+  type: web
+  owner: team-a
+  description: Storage subsystem of the Wayback Archive
+  dependencies:
+  - component:wayback-archive
+- title: Wayback Search
+  name: wayback-search
+  lifecycle: production
+  type: web
+  owner: team-a
+  description: Search of the wayback machine
+- title: Www Artist
+  name: www-artist
+  lifecycle: production
+  type: web
+  owner: team-a
+  description: Artist main website
+  system: artist-engagement-portal
+  annotations:
+    backstage.io/source-template: template:default/react-ssr-template

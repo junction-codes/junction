@@ -1,0 +1,7 @@
+---
+- title: Artists Db
+  name: artists-db
+  type: database
+  system: artist-engagement-portal
+  owner: team-a
+  description: Stores artist details

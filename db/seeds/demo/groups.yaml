@@ -1,0 +1,70 @@
+---
+- title: Junction
+  name: junction
+  description: The junction sub-department
+  group_type: product_area
+  email: junction@example.com
+  image_url: https://api.dicebear.com/7.x/identicon/svg?seed=Fluffy&backgroundColor=ffdfbf
+  members: []
+- title: Box Office
+  name: boxoffice
+  description: The boxoffice sub-department
+  group_type: product_area
+  email: boxoffice@example.com
+  members: []
+- title: Infrastructure
+  name: infrastructure
+  description: The infra department
+  group_type: business_unit
+  members: []
+- title: ACME Corp
+  name: acme-corp
+  description: The acme-corp organization
+  group_type: business_unit
+  email: info@example.com
+  image_url: https://api.dicebear.com/7.x/identicon/svg?seed=Maggie&flip=true&backgroundColor=ffdfbf
+  members: []
+- title: Team A
+  name: team-a
+  description: Team A
+  group_type: team
+  email: team-a@example.com
+  image_url: https://api.dicebear.com/7.x/identicon/svg?seed=Fluffy&backgroundType=solid,gradientLinear&backgroundColor=ffd5dc,b6e3f4
+  members:
+  - breanna.davison
+  - janelle.dawe
+  - nigel.manning
+  - guest
+- title: Team B
+  name: team-b
+  description: Team B
+  group_type: team
+  email: team-b@example.com
+  image_url: https://api.dicebear.com/7.x/identicon/svg?seed=Abby&backgroundType=solid,gradientLinear&backgroundColor=ffd5dc,b6e3f4
+  members:
+  - amelia.park
+  - colette.brock
+  - jenny.doe
+  - jonathon.page
+  - justine.barrow
+- title: Team C
+  name: team-c
+  description: Team C
+  group_type: team
+  email: team-c@example.com
+  image_url: https://api.dicebear.com/7.x/identicon/svg?seed=Loki&backgroundType=gradientLinear&backgroundColor=b6e3f4,ffd5dc,ffdfbf,c0aede
+  members:
+  - calum.leavy
+  - frank.tiernan
+  - peadar.macmahon
+  - sarah.gilroy
+  - tara.macgovern
+- title: Team D
+  name: team-d
+  description: Team D
+  group_type: team
+  email: team-d@example.com
+  image_url: https://api.dicebear.com/7.x/identicon/svg?seed=Bailey&backgroundType=gradientLinear&backgroundColor=b6e3f4,ffd5dc,ffdfbf,c0aede
+  members:
+  - eva.macdowell
+  - lucy.sheehan
