@@ -7,7 +7,7 @@ module Junction
 
     include Paginatable
 
-    # GET /[apis|components|resources]/:id/dependents
+    # GET /[apis|components|resources]/:namespace/:name/dependents
     def index
       authorize! @entity, to: :show?
 
@@ -38,15 +38,16 @@ module Junction
 
     private
 
-    # Detects the source entity from nested route params.
     def set_entity
-      @entity = if (id = params[:api_id])
-        Api.find(id)
-      elsif (id = params[:component_id])
-        Component.find(id)
-      elsif (id = params[:resource_id])
-        Resource.find(id)
+      attrs = sanitize_catalog_scope(params)
+      unless attrs.key?(:catalog_scope)
+        raise ActiveRecord::RecordNotFound, "Couldn't find source for dependents."
       end
+
+      klass = catalog_entity_class(attrs.expect(:catalog_scope))
+      raise ActiveRecord::RecordNotFound, "Couldn't find source for dependents." unless klass
+
+      @entity = klass.find_by!(namespace: attrs.expect(:namespace), name: attrs.expect(:name))
     end
 
     # Builds and executes a paginated query for dependents.

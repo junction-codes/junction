@@ -36,7 +36,7 @@ module Junction
 
                 div(class: "flex gap-2") do
                   if @can_edit && !@role.system?
-                    Link(variant: :primary, href: edit_role_path(@role)) { t(".edit") }
+                    Link(variant: :primary, href: junction_edit_catalog_path(@role)) { t(".edit") }
                   end
                 end
               end

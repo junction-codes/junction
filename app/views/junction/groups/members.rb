@@ -104,7 +104,7 @@ module Junction
                             ) { t(".cancel") }
                             Link(
                               variant: :destructive,
-                              href: group_member_path(@group, user),
+                              href: junction_group_member_path(@group, user),
                               data_turbo_method: :delete
                             ) { t(".confirm_remove") }
                           end

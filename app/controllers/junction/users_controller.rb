@@ -59,7 +59,7 @@ module Junction
       @entity = User.new(user_params)
 
       if @entity.save
-        redirect_to @entity, success: "User was successfully created."
+        redirect_to junction_catalog_path(@entity), success: "User was successfully created."
       else
         flash.now[:alert] = "There were errors creating the user."
         render Views::Users::New.new(user: @entity, breadcrumbs:), status: :unprocessable_content
@@ -70,7 +70,7 @@ module Junction
     def update
       authorize! @entity
       if @entity.update(user_update_params)
-        redirect_to @entity, success: "User was successfully updated."
+        redirect_to junction_catalog_path(@entity), success: "User was successfully updated."
       else
         flash.now[:alert] = "There were errors updating the user."
         render Views::Users::Edit.new(
@@ -93,7 +93,7 @@ module Junction
 
     # Use callbacks to share common setup or constraints between actions.
     def set_entity
-      @entity = User.find(params.expect(:id))
+      @entity = User.find_by!(namespace: params.expect(:namespace), name: params.expect(:name))
     end
 
     # Only allow a list of trusted parameters through.

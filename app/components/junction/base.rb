@@ -17,6 +17,7 @@ module Junction
       # Include engine and mounted helpers
       include Junction::Engine.routes.url_helpers
       include Rails.application.routes.mounted_helpers
+      include SluggableUrlsHelper
 
       register_output_helper :icon
       register_output_helper :line_chart

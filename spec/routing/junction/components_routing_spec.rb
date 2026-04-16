@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 RSpec.describe Junction::ComponentsController, type: :routing do
@@ -11,28 +13,52 @@ RSpec.describe Junction::ComponentsController, type: :routing do
     end
 
     it "routes to #show" do
-      expect(get: "/components/1").to route_to("junction/components#show", id: "1")
+      expect(get: "/components/default/mycomponent").to route_to(
+        "junction/components#show",
+        namespace: "default",
+        name: "mycomponent",
+        catalog_scope: "component"
+      )
     end
 
     it "routes to #edit" do
-      expect(get: "/components/1/edit").to route_to("junction/components#edit", id: "1")
+      expect(get: "/components/default/mycomponent/edit").to route_to(
+        "junction/components#edit",
+        namespace: "default",
+        name: "mycomponent",
+        catalog_scope: "component"
+      )
     end
-
 
     it "routes to #create" do
       expect(post: "/components").to route_to("junction/components#create")
     end
 
     it "routes to #update via PUT" do
-      expect(put: "/components/1").to route_to("junction/components#update", id: "1")
+      expect(put: "/components/default/mycomponent").to route_to(
+        "junction/components#update",
+        namespace: "default",
+        name: "mycomponent",
+        catalog_scope: "component"
+      )
     end
 
     it "routes to #update via PATCH" do
-      expect(patch: "/components/1").to route_to("junction/components#update", id: "1")
+      expect(patch: "/components/default/mycomponent").to route_to(
+        "junction/components#update",
+        namespace: "default",
+        name: "mycomponent",
+        catalog_scope: "component"
+      )
     end
 
     it "routes to #destroy" do
-      expect(delete: "/components/1").to route_to("junction/components#destroy", id: "1")
+      expect(delete: "/components/default/mycomponent").to route_to(
+        "junction/components#destroy",
+        namespace: "default",
+        name: "mycomponent",
+        catalog_scope: "component"
+      )
     end
   end
 end

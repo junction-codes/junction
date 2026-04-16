@@ -69,7 +69,7 @@ module Junction
       @entity = Api.new(api_params)
 
       if @entity.save
-        redirect_to @entity, success: "API was successfully created.", status: :see_other
+        redirect_to junction_catalog_path(@entity), success: "API was successfully created.", status: :see_other
       else
         flash.now[:alert] = "There were errors creating the API."
         render Views::Apis::New.new(api: @entity, breadcrumbs:, available_owners:, available_systems:),
@@ -81,7 +81,7 @@ module Junction
     def update
       authorize! @entity
       if @entity.update(api_params)
-        redirect_to @entity, success: "API was successfully updated.", status: :see_other
+        redirect_to junction_catalog_path(@entity), success: "API was successfully updated.", status: :see_other
       else
         flash.now[:alert] = "There were errors updating the API."
         render Views::Apis::Edit.new(
@@ -128,11 +128,13 @@ module Junction
     end
 
     def set_entity
-      @entity = Api.find(params.expect(:id))
+      @entity = Api.find_by!(namespace: params.expect(:namespace), name: params.expect(:name))
     end
 
     def eager_load_dependencies
-      @entity = Api.includes(:dependencies, :dependents).find(params.expect(:id))
+      @entity = Api.includes(:dependencies, :dependents).find_by!(
+        namespace: params.expect(:namespace), name: params.expect(:name)
+      )
     end
 
     def api_params

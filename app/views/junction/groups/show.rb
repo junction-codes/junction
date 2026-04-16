@@ -62,7 +62,7 @@ module Junction
                 break unless @group.parent.present?
 
                 if allowed_to?(:show?, @group.parent)
-                  Link(href: group_path(@group.parent)) { t(".part_of_parent", parent_title: @group.parent.title) }
+                  Link(href: junction_catalog_path(@group.parent)) { t(".part_of_parent", parent_title: @group.parent.title) }
                 else
                   Link(variant: :disabled) { t(".part_of_parent", parent_title: @group.parent.title) }
                 end
@@ -72,7 +72,7 @@ module Junction
             # Right side: action buttons.
             div(class: "flex-shrink-0") do
               if @can_edit
-                Link(variant: :primary, href: edit_group_path(@group)) do
+                Link(variant: :primary, href: junction_edit_catalog_path(@group)) do
                   icon("pencil", class: "w-4 h-4 mr-2")
                   plain t(".edit")
                 end
@@ -105,7 +105,7 @@ module Junction
 
             if @can_view_members
               tabs.content(value: "members") do
-                turbo_frame_tag "group_members", src: group_members_path(@group), loading: :lazy do
+                turbo_frame_tag "group_members", src: junction_group_members_path(@group), loading: :lazy do
                   div(class: "p-4") { Skeleton(class: "h-20") }
                 end
               end

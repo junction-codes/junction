@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 RSpec.describe Junction::SystemsController, type: :routing do
@@ -11,28 +13,27 @@ RSpec.describe Junction::SystemsController, type: :routing do
     end
 
     it "routes to #show" do
-      expect(get: "/systems/1").to route_to("junction/systems#show", id: "1")
+      expect(get: "/systems/default/mysystem").to route_to("junction/systems#show", namespace: "default", name: "mysystem")
     end
 
     it "routes to #edit" do
-      expect(get: "/systems/1/edit").to route_to("junction/systems#edit", id: "1")
+      expect(get: "/systems/default/mysystem/edit").to route_to("junction/systems#edit", namespace: "default", name: "mysystem")
     end
-
 
     it "routes to #create" do
       expect(post: "/systems").to route_to("junction/systems#create")
     end
 
     it "routes to #update via PUT" do
-      expect(put: "/systems/1").to route_to("junction/systems#update", id: "1")
+      expect(put: "/systems/default/mysystem").to route_to("junction/systems#update", namespace: "default", name: "mysystem")
     end
 
     it "routes to #update via PATCH" do
-      expect(patch: "/systems/1").to route_to("junction/systems#update", id: "1")
+      expect(patch: "/systems/default/mysystem").to route_to("junction/systems#update", namespace: "default", name: "mysystem")
     end
 
     it "routes to #destroy" do
-      expect(delete: "/systems/1").to route_to("junction/systems#destroy", id: "1")
+      expect(delete: "/systems/default/mysystem").to route_to("junction/systems#destroy", namespace: "default", name: "mysystem")
     end
   end
 end

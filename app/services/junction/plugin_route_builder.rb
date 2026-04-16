@@ -8,9 +8,12 @@ module Junction
     # @param router [ActionDispatch::Routing::Mapper] The router to draw routes into.
     def self.draw(router)
       Junction::PluginRegistry.actions.each do |context, actions|
-        # Re-open the existing resource block in the router to add plugin actions.
-        resource_name = context.to_s.demodulize.underscore.pluralize.to_sym
-        router.resources resource_name do
+        resource_name = context.to_s.demodulize.underscore.pluralize
+
+        router.scope(
+          "/#{resource_name}/:namespace/:name",
+          constraints: Junction::CatalogRouteConstraints::SLUG
+        ) do
           actions.each do |action|
             name = helper_name(action, context)
 
@@ -31,13 +34,8 @@ module Junction
     # @param action [Hash] The action definition.
     # @param context [Class] The entity class for the context.
     # @return [Symbol] The derived helper name.
-    def self.helper_name(action, context)
-      method_name = action[:method].to_s.delete_suffix("_path")
-
-      resource_prefix = context.to_s.demodulize.underscore
-      method_name = method_name.delete_prefix("#{resource_prefix}_")
-
-      method_name.to_sym
+    def self.helper_name(action, _context)
+      action[:method].to_s.delete_suffix("_path").to_sym
     end
   end
 end

@@ -96,7 +96,7 @@ module Junction
 
                     div do
                       div(class: "text-sm font-medium text-gray-900 dark:text-white") do
-                        a(href: user_path(user)) { user.title }
+                        a(href: junction_catalog_path(user)) { user.title }
                       end
 
                       div(class: "text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs") { user.pronouns }

@@ -16,7 +16,8 @@ module Junction
         end
 
         def view_template
-          form_with(model: @resource, class: "space-y-8", data: { controller: "form", action: "submit->form#disable" }) do |f|
+          form_with(model: @resource, url: junction_catalog_form_url(@resource), class: "space-y-8",
+                    data: { controller: "form", action: "submit->form#disable" }) do |f|
             # Basic information section.
             Card do |card|
               card.header do |header|
@@ -66,7 +67,7 @@ module Junction
         private
 
         def cancel_path
-          @resource.id.nil? ? resources_path : resource_path(@resource)
+          @resource.id.nil? ? resources_path : junction_catalog_path(@resource)
         end
       end
     end

@@ -50,7 +50,7 @@ module Junction
                         t.trigger do
                           # We've already checked access to the entity, so we can
                           # safely render the entity's link here.
-                          Link(href: url_for(entity), class: "p-0") do
+                          Link(href: junction_catalog_path(entity), class: "p-0") do
                             span(class: "inline-block max-w-[10em] truncate") do
                               entity.title
                             end

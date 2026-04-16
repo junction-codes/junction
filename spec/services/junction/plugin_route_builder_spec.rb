@@ -18,7 +18,10 @@ RSpec.describe Junction::PluginRouteBuilder do
     before do
       allow(Junction::PluginRegistry).to receive(:actions).and_return(actions)
       allow(router).to receive(:get)
-      allow(router).to receive(:resources).with(:apis).and_yield
+      allow(router).to receive(:scope).with(
+        "/apis/:namespace/:name",
+        constraints: Junction::CatalogRouteConstraints::SLUG
+      ).and_yield
     end
 
     it "uses demodulized context for resource names" do
@@ -28,11 +31,11 @@ RSpec.describe Junction::PluginRouteBuilder do
         .with("custom/path", to: "/junction/apis#index", as: :integration_api)
     end
 
-    it "avoids double-prefixed helper names" do
+    it "keeps the path helper basename so routes stay unique across catalog entities" do
       described_class.draw(router)
 
       expect(router).to have_received(:get)
-       .with("github/actions", to: "/junction/apis#index", as: :github_actions)
+       .with("github/actions", to: "/junction/apis#index", as: :api_github_actions)
     end
   end
 end

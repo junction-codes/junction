@@ -46,7 +46,7 @@ RSpec.describe "/groups/:group_id/members", type: :request do
         -> { { group: } }
 
       it "renders a successful response" do
-        get group_members_url(group)
+        get group_members_path(group)
         expect(response).to be_successful
       end
     end

@@ -56,7 +56,7 @@ module Junction
         # Renders quick action buttons for the user.
         def quick_actions
           div(class: "flex flex-wrap gap-3") do
-            Link(variant: :outline, href: user_path(@user)) do
+            Link(variant: :outline, href: junction_catalog_path(@user)) do
               icon("user-round", class: "w-4 h-4 mr-2")
               plain t(".view_profile")
             end

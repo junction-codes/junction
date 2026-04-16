@@ -72,7 +72,7 @@ module Junction
       @entity = Resource.new(resource_params)
 
       if @entity.save
-        redirect_to @entity, success: "Resource was successfully created."
+        redirect_to junction_catalog_path(@entity), success: "Resource was successfully created."
       else
         flash.now[:alert] = "There were errors creating the resource."
         render Views::Resources::New.new(resource: @entity, breadcrumbs:, available_owners:, available_systems:),
@@ -84,7 +84,7 @@ module Junction
     def update
       authorize! @entity
       if @entity.update(resource_params)
-        redirect_to @entity, success: "Resource was successfully updated."
+        redirect_to junction_catalog_path(@entity), success: "Resource was successfully updated."
       else
         flash.now[:alert] = "There were errors updating the resource."
         render Views::Resources::Edit.new(
@@ -122,12 +122,13 @@ module Junction
     end
 
     def set_entity
-      @entity = Resource.find(params.expect(:id))
+      @entity = Resource.find_by!(namespace: params.expect(:namespace), name: params.expect(:name))
     end
 
     def eager_load_dependencies
-      @entity = Resource.includes(:dependencies, :dependents)
-                        .find(params.expect(:id))
+      @entity = Resource.includes(:dependencies, :dependents).find_by!(
+        namespace: params.expect(:namespace), name: params.expect(:name)
+      )
     end
 
     def resource_params

@@ -8,7 +8,7 @@ module Junction
     before_action :set_source, only: %i[index create search]
     before_action :set_dependency, only: :destroy
 
-    # GET /[apis|components|resources]/:id/dependencies
+    # GET /[apis|components|resources]/:namespace/:name/dependencies
     def index
       authorize! @source, to: :show?
 
@@ -43,7 +43,7 @@ module Junction
       )
     end
 
-    # POST /[apis|components|resources]/:id/dependencies
+    # POST /[apis|components|resources]/:namespace/:name/dependencies
     def create
       authorize! @source, to: :update?
 
@@ -51,17 +51,17 @@ module Junction
       @dependency = @source.dependencies.build(target_type:, target_id:)
 
       if @dependency.save
-        redirect_back fallback_location: url_for(@source),
+        redirect_back fallback_location: junction_catalog_path(@source),
                       status: :see_other,
                       success: "Dependency was successfully added."
       else
-        redirect_back fallback_location: url_for(@source),
+        redirect_back fallback_location: junction_catalog_path(@source),
                       status: :see_other,
                       alert: @dependency.errors.full_messages.to_sentence
       end
     end
 
-    # GET /[apis|components|resources]/:id/dependencies/search
+    # GET /[apis|components|resources]/:namespace/:name/dependencies/search
     def search
       authorize! @source, to: :show?
 
@@ -92,7 +92,7 @@ module Junction
       authorize! @dependency.source, to: :update?
       @dependency.destroy!
 
-      redirect_back fallback_location: url_for(@dependency.source),
+      redirect_back fallback_location: junction_catalog_path(@dependency.source),
                     status: :see_other,
                     success: "Dependency was successfully removed."
     end
@@ -134,19 +134,15 @@ module Junction
 
     # Detects the source entity from nested route params.
     def set_source
-      id_key = %i[api_id component_id resource_id].find { |key| params[key].present? }
-
-      @source = case id_key
-      when :api_id
-        Api.find(params.expect(id_key))
-      when :component_id
-        Component.find(params.expect(id_key))
-      when :resource_id
-        Resource.find(params.expect(id_key))
-      else
-        raise ActiveRecord::RecordNotFound,
-          "Couldn't find source for dependencies."
+      attrs = sanitize_catalog_scope(params)
+      unless attrs.key?(:catalog_scope)
+        raise ActiveRecord::RecordNotFound, "Couldn't find source for dependencies."
       end
+
+      klass = catalog_entity_class(attrs.expect(:catalog_scope))
+      raise ActiveRecord::RecordNotFound, "Couldn't find source for dependencies." unless klass
+
+      @source = klass.find_by!(namespace: attrs.expect(:namespace), name: attrs.expect(:name))
     end
 
     def set_dependency

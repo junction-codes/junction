@@ -18,8 +18,9 @@ module Junction
     class << self
       # Delegate class methods to the singleton instance.
       delegate :actions, :annotations_for, :auth_providers, :components_for,
-               :permissions, :plugin, :plugins, :register_plugin, :reset!,
-               :resolve, :sidebar_links, :tabs_for,
+               :permissions, :plugin, :plugin_route_helper_entity_classes,
+               :plugins, :register_plugin, :reset!, :resolve, :sidebar_links,
+               :tabs_for,
                to: :instance
     end
 
@@ -177,6 +178,26 @@ module Junction
       trace "junction.registry.tabs_for", "junction.plugin.context" => ctx do
         memoize([ :tabs_for, ctx ]) do
           @plugins.values.flat_map { |plugin| plugin.tabs_for(ctx) }
+        end
+      end
+    end
+
+    # Maps plugin route helper symbols to the model classes they're mounted
+    # under.
+    #
+    # @return [Hash{Symbol => Class}]
+    def plugin_route_helper_entity_classes
+      memoize(:plugin_route_helper_entity_classes) do
+        {}.tap do |map|
+          @plugins.each_value do |plugin|
+            plugin.actions.each do |context, definitions|
+              context_class = context.constantize
+              definitions.each { |definition| map[definition[:method]] = context_class }
+            rescue NameError
+              Rails.logger.error \
+                "Plugin \"#{plugin.plugin_name}\" registered actions for unknown context: #{context}"
+            end
+          end
         end
       end
     end

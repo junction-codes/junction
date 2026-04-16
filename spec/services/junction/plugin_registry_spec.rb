@@ -44,6 +44,35 @@ RSpec.describe Junction::PluginRegistry do
       end
     end
 
+    context "with plugin route helpers" do
+      let(:methods) { super().merge(actions:) }
+      let(:actions) do
+        {
+          "Junction::Component" => [ {
+            method: :component_github_actions_path,
+            controller: "x",
+            action: "y",
+            path: "github/actions"
+          } ],
+          "Junction::Api" => [ {
+            method: :api_github_actions_path,
+            controller: "x",
+            action: "y",
+            path: "github/actions"
+          } ]
+        }
+      end
+
+      it "maps plugin route helpers to their entity classes" do
+        registry.register_plugin(plugin)
+
+        expect(registry.plugin_route_helper_entity_classes).to eq(
+          component_github_actions_path: Junction::Component,
+          api_github_actions_path: Junction::Api
+        )
+      end
+    end
+
     context "with an unknown context class" do
       let(:actions) { { "Unknown::Ghost" => [ { method: :ghost_path } ] } }
       let(:methods) { super().merge(actions:) }
