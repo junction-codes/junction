@@ -8,7 +8,7 @@ module Junction
     before_action :set_source, only: %i[index create search]
     before_action :set_dependency, only: :destroy
 
-    # GET /[apis|components|resources]/:id/dependencies
+    # GET /[apis|components|resources]/:namespace/:name/dependencies
     def index
       authorize! @source, to: :show?
 
@@ -43,7 +43,7 @@ module Junction
       )
     end
 
-    # POST /[apis|components|resources]/:id/dependencies
+    # POST /[apis|components|resources]/:namespace/:name/dependencies
     def create
       authorize! @source, to: :update?
 
@@ -61,7 +61,7 @@ module Junction
       end
     end
 
-    # GET /[apis|components|resources]/:id/dependencies/search
+    # GET /[apis|components|resources]/:namespace/:name/dependencies/search
     def search
       authorize! @source, to: :show?
 
@@ -134,20 +134,13 @@ module Junction
 
     # Detects the source entity from nested route params.
     def set_source
-      id_key = %i[api_id component_id resource_id].find { |key| params[key].present? }
-
-      @source = if id_key
-        case id_key
-        when :api_id then Api.find(params.expect(id_key))
-        when :component_id then Component.find(params.expect(id_key))
-        when :resource_id then Resource.find(params.expect(id_key))
-        end
-      elsif route_params.present?
-        klass = Junction.const_get(route_params[:catalog_scope].classify)
-        klass.find_by!(namespace: route_params[:namespace], name: route_params[:name])
-      else
+      attrs = sanitize_catalog_scope(params)
+      unless attrs.key?(:catalog_scope)
         raise ActiveRecord::RecordNotFound, "Couldn't find source for dependencies."
       end
+
+      klass = Junction.const_get(attrs[:catalog_scope].classify)
+      @source = klass.find_by!(namespace: attrs.expect(:namespace), name: attrs.expect(:name))
     end
 
     def set_dependency

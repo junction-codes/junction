@@ -10,16 +10,12 @@ module Junction
     private
 
     def sanitize_catalog_scope(attrs)
-      return attrs unless attrs.key?(:catalog_scope)
-      return attrs unless CATALOG_SCOPES.include?(attrs.expect(:catalog_scope))
+      return attrs unless attrs.include?(:catalog_scope)
+      return attrs if CATALOG_SCOPES.include?(attrs.expect(:catalog_scope))
 
       out = attrs.dup
       out.delete(:catalog_scope)
       out
-    end
-
-    def route_params
-      sanitize_catalog_scope(params.expect(:catalog_scope, :namespace, :name))
     end
   end
 end

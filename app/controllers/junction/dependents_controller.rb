@@ -7,7 +7,7 @@ module Junction
 
     include Paginatable
 
-    # GET /[apis|components|resources]/:id/dependents
+    # GET /[apis|components|resources]/:namespace/:name/dependents
     def index
       authorize! @entity, to: :show?
 
@@ -39,20 +39,13 @@ module Junction
     private
 
     def set_entity
-      id_key = %i[api_id component_id resource_id].find { |key| params[key].present? }
-
-      @entity = if id_key
-        case id_key
-        when :api_id then Api.find(params.expect(id_key))
-        when :component_id then Component.find(params.expect(id_key))
-        when :resource_id then Resource.find(params.expect(id_key))
-        end
-      elsif route_params.present?
-        klass = Junction.const_get(route_params[:catalog_scope].classify)
-        klass.find_by!(namespace: route_params[:namespace], name: route_params[:name])
-      else
+      attrs = sanitize_catalog_scope(params)
+      unless attrs.key?(:catalog_scope)
         raise ActiveRecord::RecordNotFound, "Couldn't find source for dependents."
       end
+
+      klass = Junction.const_get(attrs[:catalog_scope].classify)
+      @entity = klass.find_by!(namespace: attrs.expect(:namespace), name: attrs.expect(:name))
     end
 
     # Builds and executes a paginated query for dependents.
