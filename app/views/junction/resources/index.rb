@@ -97,8 +97,7 @@ module Junction
             @resources.each do |resource|
               body.row do |row|
                 row.cell { EntityPreview(entity: resource) }
-                row.cell { resources_path(resource) }
-                # row.cell { render_view_link(resource.system, class: "ps-0") }
+                row.cell { render_view_link(resource.system, class: "ps-0") }
                 row.cell { render_view_link(resource.owner, class: "ps-0") }
 
                 row.cell do
