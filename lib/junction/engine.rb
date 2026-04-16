@@ -11,6 +11,14 @@ module Junction
   class Engine < ::Rails::Engine
     ENGINE_CONFIG_PATH = root.join("config", "junction.yml").freeze
 
+    # Require from the engine so hosts do not depend on Bundler auto-require.
+    # The gem's Railtie registers too late if required only from a config
+    # initializer.
+    initializer "junction.omniauth_rails_csrf_protection", before: :load_config_initializers do
+      require "omniauth/rails_csrf_protection"
+      OmniAuth.config.request_validation_phase = OmniAuth::RailsCsrfProtection::TokenVerifier.new
+    end
+
     engine_name "junction"
     isolate_namespace Junction
 
@@ -77,6 +85,13 @@ module Junction
     config.to_prepare do
       Junction::PluginRegistry.reset!
       ActiveSupport.run_load_hooks(:junction_plugins)
+
+      # Development reload must not revert OmniAuth to the default Rack CSRF
+      # csrf checker.
+      require "omniauth/rails_csrf_protection"
+      unless OmniAuth.config.request_validation_phase.is_a?(OmniAuth::RailsCsrfProtection::TokenVerifier)
+        OmniAuth.config.request_validation_phase = OmniAuth::RailsCsrfProtection::TokenVerifier.new
+      end
     end
 
     initializer "junction.helpers", after: :load_config_initializers do |app|
