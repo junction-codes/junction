@@ -49,8 +49,6 @@ module Junction
     # @param record [ActiveRecord::Base] Record to generate the path for.
     # @param options [Hash] Additional options for the path.
     # @return [String] Path for the dependency graph for the entity.
-    #
-    # @todo Consider moving to a dependency graph helper module.
     def junction_dependency_graph_path(record, **options)
       helper_method = :"#{sluggable_model_name(record)}_dependency_graph_path"
       if respond_to?(helper_method)
@@ -67,8 +65,6 @@ module Junction
     # @param record [ActiveRecord::Base] Record to generate the path for.
     # @param options [Hash] Additional options for the path.
     # @return [String] Path for the dependencies for the entity.
-    #
-    # @todo Consider moving to a dependencies helper module.
     def junction_dependencies_path(record, **options)
       helper_method = :"#{sluggable_model_name(record)}_dependencies_path"
       if respond_to?(helper_method)
@@ -85,8 +81,6 @@ module Junction
     # @param record [ActiveRecord::Base] Record to generate the path for.
     # @param options [Hash] Additional options for the path.
     # @return [String] Path for the dependents for the entity.
-    #
-    # @todo Consider moving to a dependents helper module.
     def junction_dependents_path(record, **options)
       helper_method = :"#{sluggable_model_name(record)}_dependents_path"
       if respond_to?(helper_method)
@@ -103,8 +97,6 @@ module Junction
     # @param record [ActiveRecord::Base] Record to generate the path for.
     # @param options [Hash] Additional options for the path.
     # @return [String] Path for the search dependencies for the entity.
-    #
-    # @todo Consider moving to a dependencies helper module.
     def junction_search_dependencies_path(record, **options)
       helper_method = :"search_#{sluggable_model_name(record)}_dependencies_path"
       if respond_to?(helper_method)
@@ -137,8 +129,6 @@ module Junction
     # @param group [Junction::Group] Group to generate the path for.
     # @param options [Hash] Additional options for the path.
     # @return [String] Path for the group's members.
-    #
-    # @todo Consider moving to a group members helper module.
     def junction_group_members_path(group, **options)
       group_members_path(namespace: group.namespace, name: group.name, **options)
     end
@@ -149,8 +139,6 @@ module Junction
     # @param options [Hash] Additional options for the path.
     # @return [String] Path for the search action
     # for group members.
-    #
-    # @todo Consider moving to a group members helper module.
     def junction_search_group_members_path(group, **options)
       search_group_members_path(namespace: group.namespace, name: group.name, **options)
     end
@@ -162,8 +150,6 @@ module Junction
     #   for.
     # @param options [Hash] Additional options for the path.
     # @return [String] Path for the group member.
-    #
-    # @todo Consider moving to a group membership helper module.
     def junction_group_member_path(group, user, **options)
       member_id = user.respond_to?(:id) ? user.id : user
       group_member_path(namespace: group.namespace, name: group.name, id: member_id, **options)
@@ -198,8 +184,6 @@ module Junction
     #
     # @param record [ActiveRecord::Base] Record to derive the model name from.
     # @return [String] The model name.
-    #
-    # @todo Consider moving to a more generic helper.
     def sluggable_model_name(record)
       record.model_name.to_s.demodulize.downcase
     end
@@ -210,8 +194,6 @@ module Junction
     # @param model_name [String] Model name.
     # @param mode [Symbol] Helper mode (:path or :url).
     # @return [Symbol] The helper method name.
-    #
-    # @todo Consider moving to a more generic helper.
     def sluggable_helper_method(action, model_name, mode)
       helpers = []
       helpers << "edit" if action == :edit
