@@ -44,7 +44,9 @@ module Junction
         raise ActiveRecord::RecordNotFound, "Couldn't find source for dependents."
       end
 
-      klass = Junction.const_get(attrs[:catalog_scope].classify)
+      klass = catalog_entity_class(attrs.expect(:catalog_scope))
+      raise ActiveRecord::RecordNotFound, "Couldn't find source for dependents." unless klass
+
       @entity = klass.find_by!(namespace: attrs.expect(:namespace), name: attrs.expect(:name))
     end
 

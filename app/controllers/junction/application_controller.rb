@@ -9,6 +9,10 @@ module Junction
 
     private
 
+    def catalog_entity_class(scope)
+      Junction.const_get(scope.to_s.classify)
+    end
+
     def sanitize_catalog_scope(attrs)
       return attrs unless attrs.include?(:catalog_scope)
       return attrs if CATALOG_SCOPES.include?(attrs.expect(:catalog_scope))
