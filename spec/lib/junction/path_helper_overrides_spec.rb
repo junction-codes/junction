@@ -2,6 +2,8 @@
 
 require "rails_helper"
 
+require "junction/path_helper_overrides"
+
 RSpec.describe Junction::PathHelperOverrides do
   describe ".catalog_model_class" do
     it "returns Junction::Component for :component" do

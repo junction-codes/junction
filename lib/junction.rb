@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "omniauth/rails_csrf_protection"
 require "junction/engine"
 require "junction/version"
 require "junction/catalog_options"
