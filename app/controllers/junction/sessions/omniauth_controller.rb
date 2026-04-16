@@ -3,6 +3,7 @@
 module Junction
   class Sessions::OmniauthController < ApplicationController
     allow_unauthenticated_access only: %i[ callback ]
+    skip_verify_authorized if respond_to?(:skip_verify_authorized, true)
 
     # GET /auth/:provider/callback
     def callback
