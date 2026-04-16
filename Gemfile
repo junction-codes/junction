@@ -14,7 +14,7 @@ group :development, :test do
 
   gem "brakeman", "~> 8.0"
   gem "factory_bot_rails", "~> 6.5"
-  gem "faker", "~> 3.6"
+  gem "faker", "~> 3.7"
   gem "rspec-rails", "~> 8.0"
   gem "rubocop-capybara", "~> 2.22"
   gem "rubocop-rails-omakase"
@@ -25,7 +25,7 @@ group :development, :test do
 end
 
 group :development do
-  gem "puma", "~> 7.1"
+  gem "puma", "~> 8.0"
   gem "ruby_ui", "~> 1.1"
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console", "~> 4.3"
