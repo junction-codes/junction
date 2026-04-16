@@ -32,6 +32,7 @@ module Junction
       private
 
       def meta_tags
+        crawler_meta_tags
         meta name: "viewport", content: "width=device-width,initial-scale=1"
         meta name: "apple-mobile-web-app-capable", content: "yes"
         meta name: "mobile-web-app-capable", content: "yes"
