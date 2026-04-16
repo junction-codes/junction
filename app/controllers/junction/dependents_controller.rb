@@ -38,13 +38,6 @@ module Junction
 
     private
 
-    # Detects the source entity from nested route params.
-    SOURCE_MODEL_BY_SCOPE = {
-      "api" => Api,
-      "component" => Component,
-      "resource" => Resource
-    }.freeze
-
     def set_entity
       id_key = %i[api_id component_id resource_id].find { |key| params[key].present? }
 
@@ -54,8 +47,8 @@ module Junction
         when :component_id then Component.find(params.expect(id_key))
         when :resource_id then Resource.find(params.expect(id_key))
         end
-      elsif (scope = params[:catalog_scope]).present?
-        klass = SOURCE_MODEL_BY_SCOPE.fetch(scope)
+      elsif params[:catalog_scope].present?
+        klass = Junction.const_get(params.expect(:catalog_scope).classify)
         klass.find_by!(namespace: params.expect(:namespace), name: params.expect(:name))
       else
         raise ActiveRecord::RecordNotFound, "Couldn't find source for dependents."
