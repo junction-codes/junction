@@ -17,7 +17,7 @@ module Junction
       # control non-compliant crawlers; +/robots.txt+ states the same policy.
       CRAWLER_META_CONTENT =
         "noindex, nofollow, noarchive, nosnippet, noimageindex, notranslate, " \
-        "max-image-preview:none, max-snippet:0, max-video-preview:0".freeze
+        "max-image-preview:none, max-snippet:0, max-video-preview:0"
 
       def helpers
         @helpers ||= Junction::ApplicationController.helpers
