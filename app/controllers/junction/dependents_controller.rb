@@ -47,9 +47,9 @@ module Junction
         when :component_id then Component.find(params.expect(id_key))
         when :resource_id then Resource.find(params.expect(id_key))
         end
-      elsif params[:catalog_scope].present?
-        klass = Junction.const_get(params.expect(:catalog_scope).classify)
-        klass.find_by!(namespace: params.expect(:namespace), name: params.expect(:name))
+      elsif route_params.present?
+        klass = Junction.const_get(route_params[:catalog_scope].classify)
+        klass.find_by!(namespace: route_params[:namespace], name: route_params[:name])
       else
         raise ActiveRecord::RecordNotFound, "Couldn't find source for dependents."
       end
