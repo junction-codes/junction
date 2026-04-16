@@ -7,6 +7,8 @@ module Junction
   class RobotsController < ActionController::Base
     layout false
 
+    protect_from_forgery with: :exception
+
     CONTENT = Junction::Engine.root.join("public", "robots.txt").read.freeze
 
     # GET /robots.txt
