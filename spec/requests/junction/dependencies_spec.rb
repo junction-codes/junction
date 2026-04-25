@@ -21,6 +21,32 @@ RSpec.describe "/dependencies", type: :request do
       "junction.codes/resources.all.read"
   end
 
+  describe "GET /components/:namespace/:name/dependencies" do
+    subject!(:source) { create(:component) }
+
+    let(:path) do
+      component_dependencies_path(namespace: source.namespace, name: source.name)
+    end
+
+    before do
+      sign_in_user_with_permissions(%w[
+        junction.codes/components.all.read
+        junction.codes/components.all.write
+      ])
+      get path
+    end
+
+    it "returns a successful response" do
+      expect(response).to be_successful
+    end
+
+    it "embeds the dependency search path for the autocomplete Stimulus controller" do
+      expect(response.body).to include(
+        search_component_dependencies_path(namespace: source.namespace, name: source.name)
+      )
+    end
+  end
+
   describe "DELETE /dependencies/:id (source: api)" do
     it_behaves_like "a dependency deletion action",
       :api, "junction.codes/apis.all.write"
