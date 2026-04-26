@@ -16,6 +16,13 @@ RSpec.describe Junction::PluginRegistry do
 
   before { registry.reset! }
 
+  # Make sure later specs see a clean registry by resetting the process-wide
+  # singleton.
+  after do
+    registry.reset!
+    Junction::CorePlugin.register
+  end
+
   describe "#initialize" do
     it "initializes with an empty plugins hash" do
       expect(registry.plugins).to be_empty
