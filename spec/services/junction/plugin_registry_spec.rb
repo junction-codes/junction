@@ -7,7 +7,8 @@ RSpec.describe Junction::PluginRegistry do
 
   let(:methods) do
     { actions: {}, annotations_for: {}, auth_providers: {}, components_for: [],
-      permissions: [], sidebar_links: [], tabs_for: [] }
+      permissions: [], settings_menu_items: [], sidebar_links: [],
+      tabs_for: [] }
   end
 
   let(:plugin) do
@@ -161,6 +162,21 @@ RSpec.describe Junction::PluginRegistry do
         registry.register_plugin(plugin)
 
         expect(registry.sidebar_links).to eq([ { action: "/path", title: "Test Link" } ])
+      end
+    end
+  end
+
+  describe "#settings_menu_items" do
+    it_behaves_like "registry aggregation method", :settings_menu_items, [], {}
+
+    context "with registered settings menu items" do
+      let(:settings_menu_items) { [ { action: "/settings", title: "Settings Link" } ] }
+      let(:methods) { super().merge(settings_menu_items:) }
+
+      it "aggregates settings menu items from registered plugins" do
+        registry.register_plugin(plugin)
+
+        expect(registry.settings_menu_items).to eq([ { action: "/settings", title: "Settings Link" } ])
       end
     end
   end

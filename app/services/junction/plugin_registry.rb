@@ -19,8 +19,8 @@ module Junction
       # Delegate class methods to the singleton instance.
       delegate :actions, :annotations_for, :auth_providers, :components_for,
                :permissions, :plugin, :plugin_route_helper_entity_classes,
-               :plugins, :register_plugin, :reset!, :resolve, :sidebar_links,
-               :tabs_for,
+               :plugins, :register_plugin, :reset!, :resolve,
+               :settings_menu_items, :sidebar_links, :tabs_for,
                to: :instance
     end
 
@@ -165,6 +165,17 @@ module Junction
       trace "junction.registry.sidebar_links" do
         memoize(:sidebar_links) do
           @plugins.values.flat_map(&:sidebar_links)
+        end
+      end
+    end
+
+    # Retrieves all registered sidebar settings menu items.
+    #
+    # @return [Array<Hash>] An array of settings menu item definitions.
+    def settings_menu_items
+      trace "junction.registry.settings_menu_items" do
+        memoize(:settings_menu_items) do
+          @plugins.values.flat_map(&:settings_menu_items)
         end
       end
     end

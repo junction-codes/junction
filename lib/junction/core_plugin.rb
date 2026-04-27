@@ -8,7 +8,7 @@ module Junction
 
     domain DOMAIN
     description "Junction Core plugin"
-    icon "layout-grid"
+    icon "train-track"
     title "Junction Core"
     plugin_name "junction"
 
@@ -48,5 +48,26 @@ module Junction
         )
       end
     end
+
+    permission(
+      context: "plugins",
+      ownership: "all",
+      access: :read,
+      description: "Read access to all plugins"
+    )
+
+    settings_menu_item(
+      action: :roles_path,
+      title_i18n: "junction.components.sidebar.sidebar.roles",
+      icon: "shield-check",
+      access: { action: :index?, record: :roles }
+    )
+
+    settings_menu_item(
+      action: :plugins_path,
+      title_i18n: "junction.components.sidebar.sidebar.plugins",
+      icon: "blocks",
+      access: { action: :index?, record: :plugins }
+    )
   end
 end

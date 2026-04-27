@@ -98,4 +98,50 @@ RSpec.describe "/dashboard", type: :request do
       end
     end
   end
+
+  describe "sidebar settings menu visibility" do
+    it "does not render settings when no settings items are allowed" do
+      sign_in_user_with_permissions(%w[junction.codes/dashboards.all.read])
+      get dashboard_path
+      expect(response.body).not_to include("Settings")
+    end
+
+    it "renders settings when roles is allowed" do
+      sign_in_user_with_permissions(
+        %w[junction.codes/dashboards.all.read junction.codes/roles.all.read]
+      )
+      get dashboard_path
+      expect(response.body).to include("Settings")
+    end
+
+    it "renders roles in settings when roles is allowed" do
+      sign_in_user_with_permissions(
+        %w[junction.codes/dashboards.all.read junction.codes/roles.all.read]
+      )
+      get dashboard_path
+      expect(response.body).to include("Roles")
+    end
+
+    it "renders plugins in settings when plugins is allowed" do
+      sign_in_user_with_permissions(
+        %w[junction.codes/dashboards.all.read junction.codes/plugins.all.read]
+      )
+      get dashboard_path
+      expect(response.body).to include("Plugins")
+    end
+
+    it "renders plugin-registered settings items" do
+      allow(Junction::PluginRegistry).to receive(:settings_menu_items).and_return([
+        {
+          action: "/plugin-settings",
+          title: "Plugin Settings",
+          icon: "blocks",
+          disabled: false
+        }
+      ])
+      sign_in_user_with_permissions(%w[junction.codes/dashboards.all.read])
+      get dashboard_path
+      expect(response.body).to include("Plugin Settings")
+    end
+  end
 end

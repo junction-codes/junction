@@ -42,10 +42,13 @@ export default class extends Controller {
   }
 
   #computeTooltip() {
+    const strategy = this.optionsValue.strategy || "absolute";
+    this.contentTarget.style.position = strategy;
+
     computePosition(this.triggerTarget, this.contentTarget, {
       placement: this.optionsValue.placement || "top",
       middleware: [flip(), shift(), offset(8)],
-      strategy: this.optionsValue.strategy || "absolute",
+      strategy,
     }).then(({ x, y }) => {
       Object.assign(this.contentTarget.style, {
         left: `${x}px`,
