@@ -164,7 +164,7 @@ RSpec.describe Junction::ApplicationPlugin do
     it "raises when neither title nor title_i18n is provided" do
       expect {
         plugin_class.settings_menu_item(action: "/settings-path")
-      }.to raise_error(ArgumentError, /requires either title or title_i18n/)
+      }.to raise_error(ArgumentError, /require either title or title_i18n/)
     end
 
     it_behaves_like "plugin registration method allows multiple",
