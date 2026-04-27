@@ -116,6 +116,63 @@ RSpec.describe Junction::ApplicationPlugin do
                     { action: "/path2" }
   end
 
+  describe ".settings_menu_item" do
+    it "registers a settings item with explicit title" do
+      plugin_class.settings_menu_item(action: "/settings-path", title: "Settings Path")
+
+      expect(plugin_class.settings_menu_items).to contain_exactly({
+        action: "/settings-path",
+        title: "Settings Path",
+        title_i18n: nil,
+        icon: "test-icon",
+        disabled: false,
+        access: nil
+      })
+    end
+
+    it "registers a settings item with custom values" do
+      plugin_class.settings_menu_item(
+        action: :my_plugin_settings_path,
+        title: "Plugin Settings",
+        icon: "custom-icon",
+        disabled: true
+      )
+
+      expect(plugin_class.settings_menu_items).to contain_exactly({
+        action: :my_plugin_settings_path,
+        title: "Plugin Settings",
+        title_i18n: nil,
+        icon: "custom-icon",
+        disabled: true,
+        access: nil
+      })
+    end
+
+    it "registers a settings item with access requirements" do
+      access = { action: :index?, record: :roles }
+      plugin_class.settings_menu_item(action: :roles_path, title: "Roles", access:)
+
+      expect(plugin_class.settings_menu_items.first[:access]).to eq(access)
+    end
+
+    it "registers a settings item with an i18n title key" do
+      plugin_class.settings_menu_item(action: :roles_path, title_i18n: "junction.roles")
+
+      expect(plugin_class.settings_menu_items.first[:title_i18n]).to eq("junction.roles")
+    end
+
+    it "raises when neither title nor title_i18n is provided" do
+      expect {
+        plugin_class.settings_menu_item(action: "/settings-path")
+      }.to raise_error(ArgumentError, /requires either title or title_i18n/)
+    end
+
+    it_behaves_like "plugin registration method allows multiple",
+                    :settings_menu_item, :settings_menu_items,
+                    { action: "/settings-one", title: "Settings One" },
+                    { action: "/settings-two", title: "Settings Two" }
+  end
+
   describe ".for_entity" do
     let(:entity_scope) { instance_double(Junction::EntityScope) }
 

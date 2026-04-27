@@ -3,7 +3,10 @@ en:
     components:
       sidebar:
         sidebar:
-          dashboard: Dashboard
-          techdocs: TechDocs
           cost_explorer: Cost Explorer
+          dashboard: Dashboard
           footer: Built using Junction
+          plugins: Plugins
+          roles: Roles
+          settings: Settings
+          techdocs: TechDocs

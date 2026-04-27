@@ -3,6 +3,20 @@
 module Junction
   # Helper methods for rendering plugin-dispatched UI components.
   module PluginDispatchHelper
+    # Returns all registered settings menu items from plugins.
+    #
+    # @return [Array<Hash>] Resolved settings menu item hashes.
+    def plugin_settings_menu_items
+      Junction::PluginRegistry.settings_menu_items.filter_map do |item|
+        next unless settings_item_accessible?(item)
+
+        item.merge(
+          href: resolve_plugin_action(item[:action]),
+          title: resolve_title(item)
+        )
+      end
+    end
+
     # Renders all registered sidebar links.
     #
     # @param sidebar [SidebarComponent] The sidebar component to render links
@@ -57,6 +71,39 @@ module Junction
     end
 
     private
+
+    # Resolves a plugin action to a URL or path.
+    #
+    # @param action [Symbol, String] The action to resolve.
+    # @return [String] The resolved URL or path.
+    def resolve_plugin_action(action)
+      return action if action.is_a?(String) && action.start_with?("/")
+
+      resolve_plugin_route(action)
+    end
+
+    # Determines if a settings menu item is accessible to the current user.
+    #
+    # @param item [Hash] The settings menu item to check access for.
+    # @return [Boolean] Whether the item is accessible.
+    def settings_item_accessible?(item)
+      access = item[:access]
+      return true unless access
+
+      with = access[:with]
+      args = with ? { with: } : {}
+      allowed_to?(access[:action], access[:record], **args)
+    end
+
+    # Resolves the title for a an item that supports i18n.
+    #
+    # @param item [Hash] Item to resolve the title for.
+    # @return [String] The resolved title.
+    def resolve_title(item)
+      return item[:title] unless item[:title_i18n].present?
+
+      I18n.t(item[:title_i18n], default: item[:title])
+    end
 
     # Retrieves the UI components that are visible for the given context and
     # slot.
