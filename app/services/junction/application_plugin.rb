@@ -153,7 +153,7 @@ module Junction
     def self.settings_menu_item(action:, title: nil, title_i18n: nil, icon: nil,
                                 disabled: false, access: nil)
       if title.blank? && title_i18n.blank?
-        raise ArgumentError, "Settings menu items requires either title or title_i18n"
+        raise ArgumentError, "Settings menu items require either title or title_i18n"
       end
 
       @settings_menu_items ||= []

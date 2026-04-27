@@ -95,7 +95,7 @@ module Junction
       allowed_to?(access[:action], access[:record], **args)
     end
 
-    # Resolves the title for a an item that supports i18n.
+    # Resolves the title for an item that supports i18n.
     #
     # @param item [Hash] Item to resolve the title for.
     # @return [String] The resolved title.

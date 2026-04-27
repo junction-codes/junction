@@ -51,9 +51,10 @@ module Junction
                 render_sidebar_links(self)
               end
 
-              if plugin_settings_menu_items.any?
+              settings_menu_items = plugin_settings_menu_items
+              if settings_menu_items.any?
                 SettingsMenu(
-                  items: plugin_settings_menu_items,
+                  items: settings_menu_items,
                   title: t(".settings")
                 )
               end

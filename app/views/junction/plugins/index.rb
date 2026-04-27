@@ -10,7 +10,7 @@ module Junction
         # @param core_plugins [Array<Junction::ApplicationPlugin>] Plugins built
         #   into the core Junction Engine.
         # @param external_plugins [Array<Junction::ApplicationPlugin>] Plugins
-        #   built as external gems and mounted in the host application.-
+        #   built as external gems and mounted in the host application.
         # @param breadcrumbs [Array<Hash>] Breadcrumb trail items.
         def initialize(core_plugins:, external_plugins:, breadcrumbs: [])
           @core_plugins = core_plugins
@@ -51,7 +51,7 @@ module Junction
           section(class: "space-y-4") do
             h3(class: "text-lg font-medium text-gray-800 dark:text-white") { title }
 
-            if plugins.empty? && empty_message
+            if plugins.empty?
               p(class: "text-sm text-gray-500 dark:text-gray-400") { empty_message }
               next
             end
