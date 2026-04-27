@@ -1,0 +1,10 @@
+en:
+  junction:
+    views:
+      plugins:
+        index:
+          core_plugins: Junction Core
+          empty_description: No description available.
+          empty_plugins: No plugins are currently installed.
+          external_plugins: Junction Plugins
+          title: Plugins

@@ -24,6 +24,7 @@ module Junction
   #
   #   MyPlugin::Plugin.register
   class ApplicationPlugin
+    DEFAULT_ICON = "toy-brick"
     PLUGIN_NAME_REGEXP = /\A[a-z][a-z0-9_-]+\z/
 
     # @!group Plugin Identity DSL
@@ -54,7 +55,7 @@ module Junction
     # @param value [String, nil] The icon to set, or nil to get.
     # @return [String]
     def self.icon(value = nil)
-      value ? @icon = value : @icon
+      value ? @icon = value : @icon || DEFAULT_ICON
     end
 
     # Gets or sets the human-readable title for this plugin.
@@ -133,6 +134,36 @@ module Junction
         title: title || self.title,
         icon: icon || self.icon,
         disabled:
+      }
+    end
+
+    # Registers an item in the sidebar settings menu.
+    #
+    # @param action [String, Symbol] Rails route helper method or literal path.
+    # @param title [String] Item title.
+    # @param title_i18n [String] I18n key for title lookup at render time.
+    # @param icon [String] Item icon; defaults to plugin icon.
+    # @param disabled [Boolean] Whether the item is disabled.
+    # @param access [Hash] Optional access requirements.
+    # @option access [Symbol] :action Policy action to check.
+    # @option access [Object] :record Policy record to authorize against.
+    # @option access [Class] :with Optional policy class override.
+    #
+    # @raise [ArgumentError] If neither title nor title_i18n is provided.
+    def self.settings_menu_item(action:, title: nil, title_i18n: nil, icon: nil,
+                                disabled: false, access: nil)
+      if title.blank? && title_i18n.blank?
+        raise ArgumentError, "Settings menu items require either title or title_i18n"
+      end
+
+      @settings_menu_items ||= []
+      @settings_menu_items << {
+        action:,
+        title: title,
+        title_i18n:,
+        icon: icon || self.icon,
+        disabled:,
+        access:
       }
     end
 
@@ -250,6 +281,13 @@ module Junction
     # @return [Array<Hash>]
     def self.sidebar_links
       @sidebar_links || []
+    end
+
+    # All registered settings menu items for this plugin.
+    #
+    # @return [Array<Hash>]
+    def self.settings_menu_items
+      @settings_menu_items || []
     end
 
     # @!endgroup
