@@ -138,6 +138,12 @@ RSpec.describe "/domains", type: :request do
           post domains_url, params: { domain: valid_attributes }
           expect(response).to redirect_to(domain_path(Junction::Domain.last))
         end
+
+        it "assigns domain type from the type param" do
+          post domains_url, params: { domain: valid_attributes.merge(type: "product-group") }
+
+          expect(Junction::Domain.last.domain_type).to eq("product-group")
+        end
       end
 
       context "with invalid parameters" do
@@ -171,6 +177,12 @@ RSpec.describe "/domains", type: :request do
           patch domain_path(domain), params: { domain: new_attributes }
           domain.reload
           expect(domain.status).to eq("closed")
+        end
+
+        it "updates domain type from the type param" do
+          patch domain_path(domain), params: { domain: { type: "product-group" } }
+
+          expect(domain.reload.domain_type).to eq("product-group")
         end
 
         it "redirects to the domain" do

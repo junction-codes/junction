@@ -176,7 +176,7 @@ module Junction
     def domain_params
       sanitize_owner_id(params.expect(domain: [
         :description, :domain_type, :image_url, :name, :namespace, :owner_id,
-        :status, :title
+        :status, :title, :type
       ]))
     end
   end
