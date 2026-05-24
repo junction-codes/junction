@@ -64,14 +64,10 @@ export default class extends Controller {
   }
 
   onClick() {
-    this.toogleContent();
-
     if (this.openValue) {
-      this.filterItems();
-      this.setFocusAndCurrent();
-      this.focusFilterInput();
+      this.closeContent({restoreFocus: false});
     } else {
-      this.resetCurrent();
+      this.openContent();
     }
   }
 
@@ -223,12 +219,6 @@ export default class extends Controller {
     this.closeContent();
   }
 
-  toogleContent() {
-    this.openValue = !this.openValue;
-    this.contentTarget.classList.toggle("hidden");
-    this.triggerTarget.setAttribute("aria-expanded", this.openValue);
-  }
-
   setFloatingElement() {
     this.cleanup = autoUpdate(this.triggerTarget, this.contentTarget, () => {
       computePosition(this.triggerTarget, this.contentTarget, {
@@ -263,13 +253,31 @@ export default class extends Controller {
     );
   }
 
-  closeContent() {
-    this.toogleContent();
+  openContent() {
+    if (this.openValue) return;
+
+    this.setOpenState(true);
+    this.filterItems();
+    this.setFocusAndCurrent();
+    this.focusFilterInput();
+  }
+
+  closeContent({restoreFocus = true} = {}) {
+    if (!this.openValue) return;
+
+    this.setOpenState(false);
     this.resetCurrent();
     this.resetFilter();
-
     this.triggerTarget.removeAttribute("aria-activedescendant");
-    this.triggerTarget.focus({preventScroll: true});
+    if (restoreFocus) {
+      this.triggerTarget.focus({preventScroll: true});
+    }
+  }
+
+  setOpenState(isOpen) {
+    this.openValue = isOpen;
+    this.contentTarget.classList.toggle("hidden", !isOpen);
+    this.triggerTarget.setAttribute("aria-expanded", isOpen);
   }
 
   dispatchOnChange(oldValue, newValue) {

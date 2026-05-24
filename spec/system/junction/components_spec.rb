@@ -11,6 +11,25 @@ RSpec.describe "Junction::Components", :js, type: :system do
   end
 
   describe "new component rich select create flow" do
+    it "sets aria-expanded on the type trigger when opened" do
+      visit new_component_path
+      select = open_rich_select("Type")
+
+      expect(select).to have_css(
+        "[data-ruby-ui--select-target='trigger'][aria-expanded='true']"
+      )
+    end
+
+    it "shows type filter input when opened" do
+      visit new_component_path
+      select = open_rich_select("Type")
+
+      expect(select).to have_css(
+        "[data-ruby-ui--select-target='filterInput']",
+        visible: :visible
+      )
+    end
+
     it "shows known group for type options" do
       create(:component, component_type: "custom_widget")
 
