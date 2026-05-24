@@ -65,6 +65,27 @@ RSpec.describe "/domains", type: :request do
         get domains_url
         expect(response).to be_successful
       end
+
+      context "when listing domains with types" do
+        let!(:known_type_domain) {
+          create(:domain, title: "Known Type Domain", domain_type: "product-group")
+        }
+        let!(:unknown_type_domain) {
+          create(:domain, title: "Unknown Type Domain", domain_type: "custom_domain_type")
+        }
+
+        it "displays the catalog name for a known domain type" do
+          get domains_url
+
+          expect(response.body).to include("Product Group")
+        end
+
+        it "displays a humanized label for an unknown domain type" do
+          get domains_url
+
+          expect(response.body).to include("Custom domain type")
+        end
+      end
     end
 
     describe "GET /show" do
@@ -74,6 +95,26 @@ RSpec.describe "/domains", type: :request do
       it "renders a successful response" do
         get domain_path(domain)
         expect(response).to be_successful
+      end
+
+      context "when the domain has a known type" do
+        let!(:typed_domain) { create(:domain, domain_type: "product-group") }
+
+        it "displays the catalog name for the domain type" do
+          get domain_path(typed_domain)
+
+          expect(response.body).to include("Product Group")
+        end
+      end
+
+      context "when the domain has an unknown type" do
+        let!(:typed_domain) { create(:domain, domain_type: "custom_domain_type") }
+
+        it "displays a humanized label for the domain type" do
+          get domain_path(typed_domain)
+
+          expect(response.body).to include("Custom domain type")
+        end
       end
     end
 

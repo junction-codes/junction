@@ -110,7 +110,7 @@ module Junction
                   if Junction::CatalogOptions.domains.key?(domain.type)
                     Junction::CatalogOptions.domains[domain.type][:name]
                   else
-                    domain.type.capitalize
+                    domain.type.humanize
                   end
                 end
 
