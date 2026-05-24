@@ -4,11 +4,11 @@ module Junction
   # Controller for catalog options.
   class OptionsController < ApplicationController
     before_action :set_breadcrumbs
-    before_action :set_option_fields
 
     # GET /options
     def index
       authorize! :options
+      set_option_fields
 
       render Views::Options::Index.new(breadcrumbs:, fields: option_fields)
     end

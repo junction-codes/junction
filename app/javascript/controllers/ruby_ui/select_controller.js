@@ -31,7 +31,7 @@ export default class extends Controller {
 
   constructor(...args) {
     super(...args);
-    this.cleanup;
+    this.cleanup = () => {};
   }
 
   connect() {
@@ -268,7 +268,7 @@ export default class extends Controller {
     this.resetCurrent();
     this.resetFilter();
 
-    this.triggerTarget.setAttribute("aria-activedescendant", true);
+    this.triggerTarget.removeAttribute("aria-activedescendant");
     this.triggerTarget.focus({preventScroll: true});
   }
 

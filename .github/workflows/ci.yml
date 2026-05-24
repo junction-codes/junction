@@ -96,11 +96,6 @@ jobs:
       - name: Configure browser environment
         run: |
           echo "SYSTEM_TEST_BROWSER=${{ matrix.browser }}" >> "$GITHUB_ENV"
-          if [ "${{ matrix.browser }}" = "firefox" ]; then
-            echo "BROWSER_PATH=$(command -v firefox)" >> "$GITHUB_ENV"
-          else
-            echo "BROWSER_PATH=$(command -v chrome || command -v google-chrome || command -v google-chrome-stable)" >> "$GITHUB_ENV"
-          fi
 
       - name: Install icons
         run: bin/rails generate rails_icons:sync

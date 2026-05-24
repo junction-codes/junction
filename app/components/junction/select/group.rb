@@ -47,12 +47,9 @@ module Junction
         private
 
         def default_attrs
-          {
-            role: "group",
-            aria: {
-              label: @label
-            }
-          }
+          return {} unless @label.present?
+
+          { role: "group", aria: { label: @label } }
         end
       end
     end
