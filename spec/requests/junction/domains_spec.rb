@@ -6,6 +6,7 @@ RSpec.describe "/domains", type: :request do
   let(:valid_attributes) {
     {
       description: "A domain for testing purposes",
+      domain_type: "product-area",
       title: "Test Domain",
       image_url: "https://example.com/image.png",
       status: "active"
@@ -95,6 +96,14 @@ RSpec.describe "/domains", type: :request do
     describe "GET /new" do
       it_behaves_like "an action that requires permission",
         :get, -> { new_domain_path }, %w[junction.codes/domains.all.write]
+      it_behaves_like "a request with a rich select field",
+        request_proc: -> { new_domain_url },
+        known_label: "Known Types",
+        other_label: "Other Types",
+        search_placeholder: "Search Type",
+        create_hint: "Start typing to create a new Type.",
+        observed_value: "custom_domain_type",
+        setup_observed_value: -> { create(:domain, domain_type: "custom_domain_type") }
 
       it "renders a successful response" do
         get new_domain_url

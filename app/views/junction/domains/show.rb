@@ -33,12 +33,21 @@ module Junction
                 img(src: @domain.image_url, alt: t(".logo_alt", name: @domain.title), class: "h-20 w-20 rounded-lg object-cover flex-shrink-0")
               else
                 div(class: "h-20 w-20 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0") do
-                  icon("briefcase", class: "h-10 w-10 text-gray-500")
+                  icon(@domain.icon, class: "h-10 w-10 text-gray-500")
                 end
               end
 
               div do
                 h2(class: "text-3xl font-bold text-gray-900 dark:text-white") { @domain.title }
+                if @domain.type.present?
+                  p(class: "mt-1 text-sm text-gray-500 dark:text-gray-400") do
+                    if Junction::CatalogOptions.domains.key?(@domain.type)
+                      plain Junction::CatalogOptions.domains[@domain.type][:name]
+                    else
+                      plain @domain.type.humanize
+                    end
+                  end
+                end
                 p(class: "mt-1 text-md text-gray-600 dark:text-gray-400 max-w-2xl") { @domain.description }
                 div(class: "mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400") do
                   span(class: "font-semibold mr-2") { "#{Junction::Domain.human_attribute_name(:owner)}:" }

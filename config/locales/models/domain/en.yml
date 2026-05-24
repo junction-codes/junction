@@ -2,6 +2,7 @@ en:
   activerecord:
     attributes:
       junction/domain:
+        domain_type: "Type"
         image_url: "Logo URL"
         status: "Domain Status"
         title: "Domain Name"

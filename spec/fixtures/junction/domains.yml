@@ -1,6 +1,7 @@
 one:
   title: Domain One
   name: domain-one
+  domain_type: product-area
   description: MyText
   status: active
   image_url: https://example.com/image.png
@@ -9,6 +10,7 @@ one:
 two:
   title: Domain Two
   name: domain-two
+  domain_type: product-group
   description: MyText
   status: closed
   image_url:

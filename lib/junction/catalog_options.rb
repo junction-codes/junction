@@ -14,6 +14,7 @@ module Junction
     SECTION_BY_FIELD = {
       api_type: :apis,
       component_type: :kinds,
+      domain_type: :domains,
       group_type: :group_types,
       lifecycle: :lifecycles,
       resource_type: :resources
@@ -42,6 +43,10 @@ module Junction
 
     def self.apis
       options.fetch(:apis, {}.with_indifferent_access)
+    end
+
+    def self.domains
+      options.fetch(:domains, {}.with_indifferent_access)
     end
 
     def self.group_types

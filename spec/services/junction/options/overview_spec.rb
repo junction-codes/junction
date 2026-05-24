@@ -19,6 +19,9 @@ RSpec.describe Junction::Options::Overview do
           resources: {
             "queue" => { name: "Queue", icon: "rows-4" }
           },
+          domains: {
+            "product-area" => { name: "Product Area", icon: "box" }
+          },
           group_types: {
             "team" => { name: "Team", icon: "users-round" }
           },
@@ -39,6 +42,7 @@ RSpec.describe Junction::Options::Overview do
           api_type
           component_type
           resource_type
+          domain_type
           group_type
           lifecycle
         ])
@@ -60,6 +64,12 @@ RSpec.describe Junction::Options::Overview do
       labels = fields.to_h { |field| [ field[:id], field[:label] ] }
 
       expect(labels["resource_type"]).to eq("Resource Type")
+    end
+
+    it "uses explicit i18n field label for domain_type" do
+      labels = fields.to_h { |field| [ field[:id], field[:label] ] }
+
+      expect(labels["domain_type"]).to eq("Domain Type")
     end
 
     it "uses explicit i18n field label for group_type" do

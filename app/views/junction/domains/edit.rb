@@ -5,19 +5,22 @@ module Junction
     module Domains
       # Edit view for domains.
       class Edit < Views::Base
-        attr_reader :available_owners, :breadcrumbs, :can_destroy, :domain
+        attr_reader :available_owners, :breadcrumbs, :can_destroy, :domain,
+                    :type_options
 
         # Initializes the view.
         #
         # @param domain [Domain] The domain being modified.
         # @param available_owners [Array<Array>] Owner entity options with name
         #   and id attributes.
+        # @param type_options [Hash] Options for the domain type field.
         # @param can_destroy [Boolean] Whether the domain can be destroyed.
         # @param breadcrumbs [Array<Hash>] Breadcrumb items from the controller.
-        def initialize(domain:, available_owners:, can_destroy:,
+        def initialize(domain:, available_owners:, type_options:, can_destroy:,
                        breadcrumbs: [])
           @domain = domain
           @available_owners = available_owners
+          @type_options = type_options
           @can_destroy = can_destroy
           @breadcrumbs = breadcrumbs
         end
@@ -41,7 +44,7 @@ module Junction
             # Two-column layout for form and sidebar.
             div(class: "grid grid-cols-1 lg:grid-cols-3 gap-8") do
               main(class: "lg:col-span-2") do
-                DomainForm(domain:, available_owners:)
+                DomainForm(domain:, available_owners:, type_options:)
               end
 
               aside(class: "space-y-6") do
