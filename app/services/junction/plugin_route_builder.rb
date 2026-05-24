@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "junction/catalog_route_constraints"
+
 module Junction
   # Service to build plugin-defined routes into the main application router.
   class PluginRouteBuilder

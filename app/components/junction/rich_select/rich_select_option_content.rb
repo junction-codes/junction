@@ -5,8 +5,8 @@ module Junction
     module RichSelect
       # Renders the content for a single rich select option.
       class RichSelectOptionContent < Base
-        ICON_WRAPPER_CLASS = "h-6 w-6 rounded-md bg-gray-200 dark:bg-gray-700" \
-          "flex items-center justify-center flex-shrink-0"
+        ICON_WRAPPER_CLASS = "h-6 w-6 rounded-md bg-gray-200 " \
+          "dark:bg-gray-700 flex items-center justify-center flex-shrink-0"
 
         # Initializes a new component.
         #

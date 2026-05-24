@@ -5,8 +5,8 @@ module Junction
     module RichSelect
       # Renders the create-new-option action row for rich select menus.
       class RichSelectCreateAction < Base
-        ICON_WRAPPER_CLASS = "h-6 w-6 rounded-md bg-gray-200 dark:bg-gray-700" \
-          "flex items-center justify-center flex-shrink-0"
+        ICON_WRAPPER_CLASS = "h-6 w-6 rounded-md bg-gray-200 " \
+          "dark:bg-gray-700 flex items-center justify-center flex-shrink-0"
 
         # Initializes a new component.
         #
@@ -68,11 +68,6 @@ module Junction
                 "keydown.enter->ruby-ui--select#createFromQuery"
             }
           }
-        end
-
-        def icon_wrapper_class
-          "h-6 w-6 rounded-md bg-gray-200 dark:bg-gray-700 flex " \
-            "items-center justify-center flex-shrink-0"
         end
       end
     end

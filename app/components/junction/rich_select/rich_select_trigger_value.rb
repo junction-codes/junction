@@ -40,8 +40,8 @@ module Junction
 
         # Returns the option data for the currently selected option, if any.
         #
-        # If no value is currently select, data representing the blank option is
-        # returned.
+        # If no value is currently selected, data representing the blank option
+        # is returned.
         #
         # @return [Hash] The option data.
         def selected_option
