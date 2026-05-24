@@ -51,37 +51,22 @@ rescue ActiveRecord::PendingMigrationError => e
   abort e.to_s.strip
 end
 
-SYSTEM_TEST_BROWSER = ENV.fetch("SYSTEM_TEST_BROWSER", "chrome")
-
-def system_test_driver_options(browser = SYSTEM_TEST_BROWSER)
-  options = {
+Capybara.register_driver :cuprite do |app|
+  Capybara::Cuprite::Driver.new(
+    app,
+    window_size: [ 1400, 900 ],
     process_timeout: 30,
     # Keep CI/container runs stable; opt in when actively debugging.
     inspector: false,
     # Set to false for debugging
-    headless: true
-  }
-
-  if browser == "firefox"
-    options[:browser_name] = :firefox
-  else
-    options[:browser_options] = {
+    headless: true,
+    browser_options: {
       # Required for Docker/CI environments.
       'no-sandbox': nil,
       # Helpful in CI environments to avoid limited resource problems.
       'disable-gpu': nil,
       'disable-dev-shm-usage': nil
     }
-  end
-
-  options
-end
-
-Capybara.register_driver :cuprite do |app|
-  Capybara::Cuprite::Driver.new(
-    app,
-    window_size: [ 1400, 900 ],
-    **system_test_driver_options
   )
 end
 
@@ -100,7 +85,20 @@ RSpec.configure do |config|
   config.prepend_before(:each, :js, type: :system) do
     driven_by :cuprite,
       screen_size: [ 1400, 900 ],
-      options: system_test_driver_options
+      options: {
+        process_timeout: 30,
+        # Keep CI/container runs stable; opt in when actively debugging.
+        inspector: false,
+        # Set to false for debugging
+        headless: true,
+        browser_options: {
+          # Required for Docker/CI environments.
+          'no-sandbox': nil,
+          # Helpful in CI environments to avoid limited resource problems.
+          'disable-gpu': nil,
+          'disable-dev-shm-usage': nil
+        }
+      }
   end
 
   # Configure fixtures.
