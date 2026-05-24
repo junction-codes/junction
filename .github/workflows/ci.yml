@@ -58,6 +58,14 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - browser: chrome
+            report_coverage: true
+          - browser: firefox
+            report_coverage: false
 
     services:
       postgres:
@@ -71,7 +79,7 @@ jobs:
 
     steps:
       - name: Install packages
-        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y build-essential git libpq-dev libyaml-dev pkg-config google-chrome-stable
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y build-essential git libpq-dev libyaml-dev pkg-config
 
       - name: Checkout code
         uses: actions/checkout@v6
@@ -81,6 +89,23 @@ jobs:
         with:
           ruby-version: .ruby-version
           bundler-cache: true
+
+      - name: Set up Chrome
+        if: matrix.browser == 'chrome'
+        uses: browser-actions/setup-chrome@v1
+
+      - name: Set up Firefox
+        if: matrix.browser == 'firefox'
+        uses: browser-actions/setup-firefox@v1
+
+      - name: Configure browser environment
+        run: |
+          echo "SYSTEM_TEST_BROWSER=${{ matrix.browser }}" >> "$GITHUB_ENV"
+          if [ "${{ matrix.browser }}" = "firefox" ]; then
+            echo "BROWSER_PATH=$(command -v firefox)" >> "$GITHUB_ENV"
+          else
+            echo "BROWSER_PATH=$(command -v chrome || command -v google-chrome || command -v google-chrome-stable)" >> "$GITHUB_ENV"
+          fi
 
       - name: Install icons
         run: bin/rails generate rails_icons:sync
@@ -92,7 +117,7 @@ jobs:
         run: bin/rails db:test:prepare assets:precompile spec
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v6
-        if: always()
+        if: always() && matrix.report_coverage
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
@@ -100,6 +125,6 @@ jobs:
         uses: actions/upload-artifact@v7
         if: failure()
         with:
-          name: screenshots
+          name: screenshots-${{ matrix.browser }}
           path: ${{ github.workspace }}/tmp/screenshots
           if-no-files-found: ignore

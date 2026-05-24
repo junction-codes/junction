@@ -8,6 +8,7 @@ module Junction
     before_action :eager_load_dependencies, only: %i[ dependency_graph ]
 
     include Breadcrumbs
+    include CatalogOptionSets
     include HasDependencyGraph
     include HasOwner
     include Paginatable
@@ -50,7 +51,8 @@ module Junction
         resource: Resource.new,
         breadcrumbs:,
         available_owners:,
-        available_systems:
+        available_systems:,
+        type_options: resource_type_options
       )
     end
 
@@ -62,7 +64,8 @@ module Junction
         breadcrumbs:,
         can_destroy: allowed_to?(:destroy?, @entity),
         available_owners:,
-        available_systems:
+        available_systems:,
+        type_options: resource_type_options
       )
     end
 
@@ -75,7 +78,13 @@ module Junction
         redirect_to junction_catalog_path(@entity), success: "Resource was successfully created."
       else
         flash.now[:alert] = "There were errors creating the resource."
-        render Views::Resources::New.new(resource: @entity, breadcrumbs:, available_owners:, available_systems:),
+        render Views::Resources::New.new(
+          resource: @entity,
+          breadcrumbs:,
+          available_owners:,
+          available_systems:,
+          type_options: resource_type_options
+        ),
                status: :unprocessable_content
       end
     end
@@ -92,7 +101,8 @@ module Junction
           breadcrumbs:,
           can_destroy: allowed_to?(:destroy?, @entity),
           available_owners:,
-          available_systems:
+          available_systems:,
+          type_options: resource_type_options
         ), status: :unprocessable_content
       end
     end
@@ -119,6 +129,16 @@ module Junction
     # @return [Array<Array(String, String)>] Array of [name, key] pairs for types.
     def available_types
       CatalogOptions.resources.map { |key, opts| [ opts[:name], key ] }
+    end
+
+    # Options for the resource type field.
+    #
+    # @return [Hash] Hash of options.
+    def resource_type_options
+      catalog_options_for(
+        Junction::CatalogOptions.resources,
+        [ Junction::Resource, :resource_type ]
+      )
     end
 
     def set_entity

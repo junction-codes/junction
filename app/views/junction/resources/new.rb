@@ -6,7 +6,7 @@ module Junction
       # Creation view for resources.
       class New < Views::Base
         attr_reader :available_owners, :available_systems, :breadcrumbs,
-                     :resource
+                     :resource, :type_options
 
         # Initializes the view.
         #
@@ -15,13 +15,15 @@ module Junction
         #   and id attributes.
         # @param available_systems [Array<Array>] System entity options with
         #   name and id attributes.
+        # @param type_options [Hash] Options for the resource type field.
         # @param breadcrumbs [Array<Hash>] Breadcrumb items from the controller.
         def initialize(resource:, available_owners:, available_systems:,
-                       breadcrumbs: [])
-          @resource = resource
+                       type_options:, breadcrumbs: [])
           @available_owners = available_owners
           @available_systems = available_systems
           @breadcrumbs = breadcrumbs
+          @resource = resource
+          @type_options = type_options
         end
 
         def view_template
@@ -38,7 +40,12 @@ module Junction
             end
 
             main(class: "mt-6 max-w-2xl mx-auto") do
-              ResourceForm(resource:, available_owners:, available_systems:)
+              ResourceForm(
+                resource:,
+                available_owners:,
+                available_systems:,
+                type_options:
+              )
             end
           end
         end

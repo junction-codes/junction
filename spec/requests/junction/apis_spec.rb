@@ -19,6 +19,7 @@ RSpec.describe "/apis", type: :request do
 
   let(:invalid_attributes) {
     {
+      definition: nil,
       lifecycle: "invalid_lifecycle",
       type: "invalid_type"
     }
@@ -84,6 +85,22 @@ RSpec.describe "/apis", type: :request do
     describe "GET /apis/new" do
       it_behaves_like "an action that requires permission",
         :get, -> { new_api_path }, %w[junction.codes/apis.all.write]
+      it_behaves_like "a request with a rich select field",
+        request_proc: -> { new_api_url },
+        known_label: "Known Types",
+        other_label: "Other Types",
+        search_placeholder: "Search Type",
+        create_hint: "Start typing to create a new Type.",
+        observed_value: "custom_gateway",
+        setup_observed_value: -> { create(:api, api_type: "custom_gateway") }
+      it_behaves_like "a request with a rich select field",
+        request_proc: -> { new_api_url },
+        known_label: "Known Lifecycles",
+        other_label: "Other Lifecycles",
+        search_placeholder: "Search Lifecycle",
+        create_hint: "Start typing to create a new Lifecycle.",
+        observed_value: "legacy_preview",
+        setup_observed_value: -> { create(:api, lifecycle: "legacy_preview") }
 
       it "returns http success" do
         get "/apis/new"

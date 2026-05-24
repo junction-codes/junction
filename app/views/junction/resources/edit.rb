@@ -6,7 +6,7 @@ module Junction
       # Edit view for resources.
       class Edit < Views::Base
         attr_reader :available_owners, :available_systems, :breadcrumbs,
-                     :can_destroy, :resource
+                     :can_destroy, :resource, :type_options
 
         # Initializes the view.
         #
@@ -15,15 +15,17 @@ module Junction
         #   and id attributes.
         # @param available_systems [Array<Array>] System entity options with
         #   name and id attributes.
+        # @param type_options [Hash] Options for the resource type field.
         # @param can_destroy [Boolean] Whether the resource can be destroyed.
         # @param breadcrumbs [Array<Hash>] Breadcrumb items from the controller.
         def initialize(resource:, available_owners:, available_systems:,
-                       can_destroy:, breadcrumbs: [])
-          @resource = resource
+                       type_options:, can_destroy:, breadcrumbs: [])
           @available_owners = available_owners
-          @can_destroy = can_destroy
           @available_systems = available_systems
           @breadcrumbs = breadcrumbs
+          @can_destroy = can_destroy
+          @resource = resource
+          @type_options = type_options
         end
 
         def view_template
@@ -41,7 +43,12 @@ module Junction
 
             div(class: "grid grid-cols-1 lg:grid-cols-3 gap-8") do
               main(class: "lg:col-span-2") do
-                ResourceForm(resource:, available_owners:, available_systems:)
+                ResourceForm(
+                  resource:,
+                  available_owners:,
+                  available_systems:,
+                  type_options:
+                )
               end
 
               aside(class: "space-y-6") do

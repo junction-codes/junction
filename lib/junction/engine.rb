@@ -83,6 +83,7 @@ module Junction
     # Re-register core plugin after code reload (development) so annotations and
     # permissions remain available when PluginRegistry is reset.
     config.to_prepare do
+      Junction::CatalogOptions.reset!
       Junction::PluginRegistry.reset!
       ActiveSupport.run_load_hooks(:junction_plugins)
 

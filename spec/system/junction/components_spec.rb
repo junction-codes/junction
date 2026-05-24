@@ -1,9 +1,61 @@
 require 'rails_helper'
 
-RSpec.describe "Junction::Components", type: :system do
+RSpec.describe "Junction::Components", :js, type: :system do
   before do
-    driven_by(:rack_test)
+    sign_in_with_permissions(
+      %w[
+        junction.codes/components.all.read
+        junction.codes/components.all.write
+      ]
+    )
   end
 
-  pending "add some scenarios (or delete) #{__FILE__}"
+  describe "new component rich select create flow" do
+    it "shows known group for type options" do
+      create(:component, component_type: "custom_widget")
+
+      visit new_component_path
+      select = open_rich_select("Type")
+
+      expect(select).to have_text(/known types/i)
+    end
+
+    it "shows other group for type options" do
+      create(:component, component_type: "custom_widget")
+
+      visit new_component_path
+      select = open_rich_select("Type")
+
+      expect(select).to have_text(/other types/i)
+    end
+
+    it "keeps focus in the filter input when create is clicked with blank query" do
+      visit new_component_path
+      select = open_rich_select("Type")
+
+      select.find("[data-kind='create-action']").click
+
+      expect(select).to have_css("[data-ruby-ui--select-target='filterInput']", focused: true)
+    end
+
+    it "stores the entered value when creating a new type option" do
+      visit new_component_path
+      select = open_rich_select("Type")
+      select.find("[data-ruby-ui--select-target='filterInput']").set("brand_new_type")
+
+      select.find("[data-kind='create-action']").click
+
+      expect(find_by_id('component_type', visible: :hidden).value).to eq("brand_new_type")
+    end
+
+    it "shows created option description after selecting a new type value" do
+      visit new_component_path
+      select = open_rich_select("Type")
+      select.find("[data-ruby-ui--select-target='filterInput']").set("brand_new_type")
+
+      select.find("[data-kind='create-action']").click
+
+      expect(page).to have_text("This option will be created.")
+    end
+  end
 end

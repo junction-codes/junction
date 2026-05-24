@@ -130,6 +130,22 @@ RSpec.describe "/dashboard", type: :request do
       expect(response.body).to include("Plugins")
     end
 
+    it "renders settings when catalog options is allowed" do
+      sign_in_user_with_permissions(
+        %w[junction.codes/dashboards.all.read junction.codes/options.all.read]
+      )
+      get dashboard_path
+      expect(response.body).to include("Settings")
+    end
+
+    it "renders catalog options in settings when allowed" do
+      sign_in_user_with_permissions(
+        %w[junction.codes/dashboards.all.read junction.codes/options.all.read]
+      )
+      get dashboard_path
+      expect(response.body).to include("Catalog Options")
+    end
+
     it "renders plugin-registered settings items" do
       allow(Junction::PluginRegistry).to receive(:settings_menu_items).and_return([
         {

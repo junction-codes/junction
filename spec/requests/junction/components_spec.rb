@@ -88,6 +88,22 @@ RSpec.describe "/components", type: :request do
     describe "GET /components/new" do
       it_behaves_like "an action that requires permission",
         :get, -> { new_component_path }, %w[junction.codes/components.all.write]
+      it_behaves_like "a request with a rich select field",
+        request_proc: -> { new_component_url },
+        known_label: "Known Types",
+        other_label: "Other Types",
+        search_placeholder: "Search Type",
+        create_hint: "Start typing to create a new Type.",
+        observed_value: "custom_widget",
+        setup_observed_value: -> { create(:component, component_type: "custom_widget") }
+      it_behaves_like "a request with a rich select field",
+        request_proc: -> { new_component_url },
+        known_label: "Known Lifecycles",
+        other_label: "Other Lifecycles",
+        search_placeholder: "Search Lifecycle",
+        create_hint: "Start typing to create a new Lifecycle.",
+        observed_value: "legacy_preview",
+        setup_observed_value: -> { create(:component, lifecycle: "legacy_preview") }
 
       it "renders a successful response" do
         get new_component_url

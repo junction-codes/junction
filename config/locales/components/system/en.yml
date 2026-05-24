@@ -13,7 +13,7 @@ en:
           confirm_delete: Confirm Delete
         system_filters:
           all: All %{label}
-          placeholder: Name or description...
+          placeholder: Name or description…
           search: Search
         system_form:
           title: System Details

@@ -13,7 +13,7 @@ en:
           confirm_delete: Confirm Delete
         resource_filters:
           all: All %{label}
-          placeholder: Name or description...
+          placeholder: Name or description…
           search: Search
         resource_form:
           title: Resource Details

@@ -11,10 +11,10 @@ module Junction
     attribute :lifecycle, :string, default: "experimental"
     alias_attribute :type, :component_type
 
-    validates :component_type, presence: true, inclusion: { in: Junction::CatalogOptions.kinds.keys }
+    validates :component_type, presence: true
     validates :description, presence: true
     validates :image_url, allow_blank: true, format: URI::DEFAULT_PARSER.make_regexp(%w[http https])
-    validates :lifecycle, presence: true, inclusion: { in: Junction::CatalogOptions.lifecycles.keys }
+    validates :lifecycle, presence: true
 
     belongs_to :system, optional: true, class_name: "Junction::System"
 

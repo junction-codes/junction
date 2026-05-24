@@ -1,0 +1,32 @@
+# Junction Configuration
+#
+# This file allows you to customize Junction's behavior.
+# Copy this file to your host application's config/junction.yml to override defaults.
+#
+# Access configuration values via:
+#   Junction.config.icon
+#   Junction.config.title
+#   Junction.config.allow_demo_mode
+
+default: &default
+  # Icon used in UI components (must be a valid rails_icons icon name)
+  icon: train-track
+
+  # Application title shown in navigation
+  title: Junction
+
+  # Allow unauthenticated access (useful for demos/testing)
+  # Can also be set via JUNCTION_DEMO_MODE environment variable
+  allow_demo_mode: false
+
+development:
+  <<: *default
+  allow_demo_mode: false
+
+test:
+  <<: *default
+  allow_demo_mode: true
+
+production:
+  <<: *default
+  allow_demo_mode: false

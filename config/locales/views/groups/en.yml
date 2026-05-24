@@ -21,7 +21,7 @@ en:
           add_member: Add Member
           add_member_title: Add a Member
           search_label: Search users
-          search_placeholder: Type to search by name or email...
+          search_placeholder: Type to search by name or email…
         new:
           title: Create a New Group
           description: Start by providing the basic details for your new group.

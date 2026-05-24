@@ -13,7 +13,7 @@ en:
           confirm_delete: Confirm Delete
         component_filters:
           all: All %{label}
-          placeholder: Name or description...
+          placeholder: Name or description…
           search: Search
         component_form:
           title: Component Details

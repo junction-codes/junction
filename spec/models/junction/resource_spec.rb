@@ -15,6 +15,12 @@ RSpec.describe Junction::Resource, type: :model do
     it "is valid with valid attributes" do
       expect(resource).to be_valid
     end
+
+    it "accepts arbitrary resource_type values" do
+      resource.resource_type = "cache"
+
+      expect(resource).to be_valid
+    end
   end
 
   describe "associations" do

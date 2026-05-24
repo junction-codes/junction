@@ -12,7 +12,7 @@ module Junction
 
     validates :description, presence: true
     validates :image_url, allow_blank: true, format: URI::DEFAULT_PARSER.make_regexp(%w[http https])
-    validates :resource_type, presence: true, inclusion: { in: Junction::CatalogOptions.resources.keys }
+    validates :resource_type, presence: true
 
     belongs_to :system, class_name: "Junction::System"
 

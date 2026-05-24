@@ -13,6 +13,7 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 # return unless Rails.env.test?
 require 'rspec/rails'
 require 'faker'
+require 'capybara/cuprite'
 
 # Include additional support.
 require "junction/testing"
@@ -22,6 +23,8 @@ require_relative 'support/shoulda'
 
 # Include helpers.
 require_relative 'support/helpers/authentication_helper'
+require_relative 'support/helpers/system_authentication_helper'
+require_relative 'support/helpers/rich_select_system_helper'
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
@@ -48,21 +51,37 @@ rescue ActiveRecord::PendingMigrationError => e
   abort e.to_s.strip
 end
 
-Capybara.register_driver :cuprite do |app|
-  Capybara::Cuprite::Driver.new(
-    app,
-    window_size: [ 1400, 900 ],
-    browser_options: {
+SYSTEM_TEST_BROWSER = ENV.fetch("SYSTEM_TEST_BROWSER", "chrome")
+
+def system_test_driver_options(browser = SYSTEM_TEST_BROWSER)
+  options = {
+    process_timeout: 30,
+    # Keep CI/container runs stable; opt in when actively debugging.
+    inspector: false,
+    # Set to false for debugging
+    headless: true
+  }
+
+  if browser == "firefox"
+    options[:browser_name] = :firefox
+  else
+    options[:browser_options] = {
       # Required for Docker/CI environments.
       'no-sandbox': nil,
       # Helpful in CI environments to avoid limited resource problems.
       'disable-gpu': nil,
       'disable-dev-shm-usage': nil
-    },
-    # Enable debugging in development
-    inspector: true,
-    # Set to false for debugging
-    headless: true
+    }
+  end
+
+  options
+end
+
+Capybara.register_driver :cuprite do |app|
+  Capybara::Cuprite::Driver.new(
+    app,
+    window_size: [ 1400, 900 ],
+    **system_test_driver_options
   )
 end
 
@@ -73,10 +92,15 @@ RSpec.configure do |config|
   # Include helpers.
   config.include AuthenticationHelper, type: :request
   config.include Junction::Engine.routes.url_helpers, type: :request
+  config.include Junction::Engine.routes.url_helpers, type: :system
+  config.include SystemAuthenticationHelper, type: :system
+  config.include RichSelectSystemHelper, type: :system
 
   # Configure system tests.
-  config.before(:each, :js, type: :system) do
-    driven_by :cuprite
+  config.prepend_before(:each, :js, type: :system) do
+    driven_by :cuprite,
+      screen_size: [ 1400, 900 ],
+      options: system_test_driver_options
   end
 
   # Configure fixtures.
