@@ -146,6 +146,9 @@ export default class extends Controller {
     const query = this.currentQuery().toLowerCase();
     const hasQuery = query.length > 0;
 
+    this.resetCurrent();
+    this.triggerTarget.removeAttribute("aria-activedescendant");
+
     let visibleOptionCount = 0;
     this.optionItems().forEach((item) => {
       const searchValue = (item.dataset.search || "").toLowerCase();

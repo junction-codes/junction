@@ -45,7 +45,7 @@ module Junction
         end
 
         def view_template
-          Select(**attrs, data: { ruby_ui__select_allow_create_value: @allow_create.to_s }) do |select|
+          Select(**select_attrs) do |select|
             select.input(value: @value, id: @input_id, name: @input_name)
             select.trigger(class: "h-auto") do |trigger|
               trigger.value(id: @input_id, class: "px-2") do
@@ -77,6 +77,13 @@ module Junction
         end
 
         private
+
+        def select_attrs
+          merged_data = attrs.fetch(:data, {}).merge(
+            ruby_ui__select_allow_create_value: @allow_create.to_s
+          )
+          attrs.merge(data: merged_data)
+        end
 
         def option_set
           @option_set ||= RichSelectOptionSet.new(@options, default_icon: @icon)
