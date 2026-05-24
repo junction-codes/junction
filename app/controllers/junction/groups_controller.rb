@@ -7,6 +7,7 @@ module Junction
     before_action :set_entity, only: %i[ show edit update destroy ]
 
     include Breadcrumbs
+    include CatalogOptionSets
     include Paginatable
 
     # GET /groups
@@ -42,7 +43,12 @@ module Junction
     # GET /groups/new
     def new
       authorize! Group
-      render Views::Groups::New.new(group: Group.new, breadcrumbs:, available_parents:)
+      render Views::Groups::New.new(
+        group: Group.new,
+        breadcrumbs:,
+        available_parents:,
+        type_options: group_type_options
+      )
     end
 
     # GET /groups/:id/edit
@@ -52,7 +58,8 @@ module Junction
         group: @entity,
         breadcrumbs:,
         can_destroy: allowed_to?(:destroy?, @entity),
-        available_parents:
+        available_parents:,
+        type_options: group_type_options
       )
     end
 
@@ -65,7 +72,12 @@ module Junction
         redirect_to junction_catalog_path(@entity), success: "Group was successfully created."
       else
         flash.now[:alert] = "There were errors creating the group."
-        render Views::Groups::New.new(group: @entity, breadcrumbs:, available_parents:),
+        render Views::Groups::New.new(
+          group: @entity,
+          breadcrumbs:,
+          available_parents:,
+          type_options: group_type_options
+        ),
                status: :unprocessable_content
       end
     end
@@ -81,7 +93,8 @@ module Junction
           group: @entity,
           breadcrumbs:,
           can_destroy: allowed_to?(:destroy?, @entity),
-          available_parents:
+          available_parents:,
+          type_options: group_type_options
         ), status: :unprocessable_content
       end
     end
@@ -109,6 +122,16 @@ module Junction
     #   types.
     def available_types
       CatalogOptions.group_types.map { |key, opts| [ opts[:name], key ] }
+    end
+
+    # Options for the group type field.
+    #
+    # @return [Hash] Hash of options.
+    def group_type_options
+      catalog_options_for(
+        Junction::CatalogOptions.group_types,
+        [ Junction::Group, :group_type ]
+      )
     end
 
     # Use callbacks to share common setup or constraints between actions.

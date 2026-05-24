@@ -9,10 +9,13 @@ module Junction
 
         include PluginDispatchHelper
 
-        def initialize(component:, available_owners:, available_systems:)
+        def initialize(component:, available_owners:, available_systems:,
+                       type_options:, lifecycle_options:)
           @component = component
           @available_owners = available_owners
           @available_systems = available_systems
+          @type_options = type_options
+          @lifecycle_options = lifecycle_options
         end
 
         def view_template
@@ -31,10 +34,10 @@ module Junction
                 Immutable(f, :namespace, placeholder: "default",
                               required: true,
                               help_text: t(".namespace_help"))
-                RichSelect(f, :type, required: true,
-                              options: Junction::CatalogOptions.kinds)
-                RichSelect(f, :lifecycle, required: true,
-                                options: Junction::CatalogOptions.lifecycles)
+                RichSelectField(f, :type, required: true,
+                                   options: @type_options)
+                RichSelectField(f, :lifecycle, required: true,
+                                   options: @lifecycle_options)
 
                 Reference(f, :owner_id, icon: "users-round",
                               options: @available_owners, value: @component.owner,

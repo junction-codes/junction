@@ -50,7 +50,7 @@ module Junction
       }.freeze
 
       def initialize(variant: :primary, size: :md, **user_attrs)
-        @variant = alias_variant(variant.to_sym)
+        @variant = resolve_variant(variant)
         @size = size
 
         super(**user_attrs)
@@ -61,6 +61,13 @@ module Junction
       end
 
       private
+
+      def resolve_variant(variant)
+        key = alias_variant(variant.to_sym)
+        return key if COLORS.key?(key)
+
+        :outline
+      end
 
       def alias_variant(variant)
         COLOR_ALIASES.fetch(variant, variant)

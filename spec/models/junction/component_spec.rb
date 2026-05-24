@@ -19,14 +19,14 @@ RSpec.describe Junction::Component, type: :model do
       expect(component).to be_valid
     end
 
-    it "is invalid with an unknown component_type" do
-      component.component_type = "invalid_type"
-      expect(component).not_to be_valid
+    it "accepts arbitrary component_type values" do
+      component.component_type = "vendor_job"
+      expect(component).to be_valid
     end
 
-    it "is invalid with an unknown lifecycle" do
-      component.lifecycle = "invalid_lifecycle"
-      expect(component).not_to be_valid
+    it "accepts arbitrary lifecycle values" do
+      component.lifecycle = "legacy"
+      expect(component).to be_valid
     end
   end
 

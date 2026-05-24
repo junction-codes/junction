@@ -8,6 +8,7 @@ module Junction
     before_action :eager_load_dependencies, only: %i[ dependency_graph ]
 
     include Breadcrumbs
+    include CatalogOptionSets
     include HasDependencyGraph
     include HasOwner
     include Paginatable
@@ -47,8 +48,14 @@ module Junction
     # GET /api/new
     def new
       authorize! Api
-      render Views::Apis::New.new(api: Api.new, breadcrumbs:, available_owners:,
-                                  available_systems:)
+      render Views::Apis::New.new(
+        api: Api.new,
+        breadcrumbs:,
+        available_owners:,
+        available_systems:,
+        type_options: api_type_options,
+        lifecycle_options: api_lifecycle_options
+      )
     end
 
     # GET /api/:id/edit
@@ -59,7 +66,9 @@ module Junction
         breadcrumbs:,
         can_destroy: allowed_to?(:destroy?, @entity),
         available_owners:,
-        available_systems:
+        available_systems:,
+        type_options: api_type_options,
+        lifecycle_options: api_lifecycle_options
       )
     end
 
@@ -72,7 +81,14 @@ module Junction
         redirect_to junction_catalog_path(@entity), success: "API was successfully created.", status: :see_other
       else
         flash.now[:alert] = "There were errors creating the API."
-        render Views::Apis::New.new(api: @entity, breadcrumbs:, available_owners:, available_systems:),
+        render Views::Apis::New.new(
+          api: @entity,
+          breadcrumbs:,
+          available_owners:,
+          available_systems:,
+          type_options: api_type_options,
+          lifecycle_options: api_lifecycle_options
+        ),
                status: :unprocessable_content
       end
     end
@@ -89,7 +105,9 @@ module Junction
           breadcrumbs:,
           can_destroy: allowed_to?(:destroy?, @entity),
           available_owners:,
-          available_systems:
+          available_systems:,
+          type_options: api_type_options,
+          lifecycle_options: api_lifecycle_options
         ), status: :unprocessable_content
       end
     end
@@ -125,6 +143,27 @@ module Junction
     #   types.
     def available_types
       Junction::CatalogOptions.apis.map { |key, opts| [ opts[:name], key ] }
+    end
+
+    # Options for the API type field.
+    #
+    # @return [Hash] Hash of options.
+    def api_type_options
+      catalog_options_for(
+        Junction::CatalogOptions.apis,
+        [ Junction::Api, :api_type ]
+      )
+    end
+
+    # Options for the lifecycle field.
+    #
+    # @return [Hash] Hash of options.
+    def api_lifecycle_options
+      catalog_options_for(
+        Junction::CatalogOptions.lifecycles,
+        [ Junction::Api, :lifecycle ],
+        [ Junction::Component, :lifecycle ]
+      )
     end
 
     def set_entity

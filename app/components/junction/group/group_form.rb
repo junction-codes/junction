@@ -5,9 +5,10 @@ module Junction
     module Group
       # Form for creating and editing groups.
       class GroupForm < Base
-        def initialize(group:, available_parents:)
+        def initialize(group:, available_parents:, type_options:)
           @group = group
           @available_parents = available_parents
+          @type_options = type_options
         end
 
         def view_template
@@ -26,8 +27,8 @@ module Junction
                 Immutable(f, :namespace, placeholder: "default",
                               required: true,
                               help_text: t(".namespace_help"))
-                RichSelect(f, :type, required: true,
-                                options: Junction::CatalogOptions.group_types)
+                RichSelectField(f, :type, required: true,
+                                   options: @type_options)
 
                 Reference(f, :parent_id, required: false, icon: "users-round",
                               options: @available_parents, value: @group.parent,

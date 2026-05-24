@@ -1,0 +1,25 @@
+en:
+  junction:
+    views:
+      options:
+        index:
+          description: View known and custom option usage across the catalog.
+          empty: No option fields are configured.
+          empty_known: No known options are defined for this field.
+          empty_other: No arbitrary values are currently present.
+          field_labels:
+            api_type: API Type
+            component_type: Component Type
+            group_type: Group Type
+            lifecycle: Lifecycle
+            resource_type: Resource Type
+          known: Known options
+          known_vs_other: Known vs Other Usage
+          option_description: Description
+          option_label: Label
+          option_value: Value
+          other: Other options
+          records: Records
+          records_total: "%{count} records"
+          title: Catalog Options
+          value_breakdown: Top values

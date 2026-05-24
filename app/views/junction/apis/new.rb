@@ -5,7 +5,8 @@ module Junction
     module Apis
       # Creation view for APIs.
       class New < Views::Base
-        attr_reader :api, :available_owners, :available_systems, :breadcrumbs
+        attr_reader :api, :available_owners, :available_systems, :breadcrumbs,
+                    :lifecycle_options, :type_options
 
         # Initializes the view.
         #
@@ -14,13 +15,17 @@ module Junction
         #   and id attributes.
         # @param available_systems [Array<Array>] System entity options with name
         #   and id attributes.
+        # @param lifecycle_options [Hash] Options for the lifecycle field.
+        # @param type_options [Hash] Options for the API type field.
         # @param breadcrumbs [Array<Hash>] Breadcrumb items from the controller.
         def initialize(api:, available_owners:, available_systems:,
-                       breadcrumbs: [])
+                       lifecycle_options:, type_options:, breadcrumbs: [])
           @api = api
           @available_owners = available_owners
           @available_systems = available_systems
           @breadcrumbs = breadcrumbs
+          @lifecycle_options = lifecycle_options
+          @type_options = type_options
         end
 
         def view_template
@@ -37,7 +42,13 @@ module Junction
             end
 
             main(class: "mt-6 max-w-2xl mx-auto") do
-              ApiForm(api:, available_owners:, available_systems:)
+              ApiForm(
+                api:,
+                available_owners:,
+                available_systems:,
+                lifecycle_options:,
+                type_options:
+              )
             end
           end
         end

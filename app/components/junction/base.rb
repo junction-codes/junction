@@ -20,6 +20,8 @@ module Junction
       include SluggableUrlsHelper
 
       register_output_helper :icon
+      register_output_helper :bar_chart
+      register_output_helper :column_chart
       register_output_helper :line_chart
       register_output_helper :pie_chart
       register_output_helper :render_view_link

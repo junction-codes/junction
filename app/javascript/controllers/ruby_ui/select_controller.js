@@ -10,18 +10,34 @@ import {
 // import { computePosition, autoUpdate, offset, flip } from "@floating-ui/dom";
 
 export default class extends Controller {
-  static targets = ["trigger", "content", "input", "value", "item", "valueContent"];
-  static values = {open: Boolean};
+  static targets = [
+    "trigger",
+    "content",
+    "input",
+    "value",
+    "item",
+    "valueContent",
+    "filterInput",
+    "emptyState",
+  ];
+  static values = {
+    open: Boolean,
+    allowCreate: {
+      type: Boolean,
+      default: false,
+    },
+  };
   static outlets = ["ruby-ui--select-item"];
 
   constructor(...args) {
     super(...args);
-    this.cleanup;
+    this.cleanup = () => {};
   }
 
   connect() {
     this.setFloatingElement();
     this.generateItemsIds();
+    this.filterItems();
   }
 
   disconnect() {
@@ -48,38 +64,50 @@ export default class extends Controller {
   }
 
   onClick() {
-    this.toogleContent();
-
     if (this.openValue) {
-      this.setFocusAndCurrent();
+      this.closeContent({restoreFocus: false});
     } else {
-      this.resetCurrent();
+      this.openContent();
     }
   }
 
   handleKeyDown(event) {
     event.preventDefault();
 
-    const currentIndex = this.itemTargets.findIndex(
+    const visibleItems = this.visibleItems();
+    if (visibleItems.length === 0) return;
+
+    const currentIndex = visibleItems.findIndex(
       (item) => item.getAttribute("aria-current") === "true",
     );
+    if (currentIndex === -1) {
+      this.setAriaCurrentAndActiveDescendant(0, visibleItems);
+      return;
+    }
 
-    if (currentIndex + 1 < this.itemTargets.length) {
-      this.itemTargets[currentIndex].removeAttribute("aria-current");
-      this.setAriaCurrentAndActiveDescendant(currentIndex + 1);
+    if (currentIndex + 1 < visibleItems.length) {
+      visibleItems[currentIndex].removeAttribute("aria-current");
+      this.setAriaCurrentAndActiveDescendant(currentIndex + 1, visibleItems);
     }
   }
 
   handleKeyUp(event) {
     event.preventDefault();
 
-    const currentIndex = this.itemTargets.findIndex(
+    const visibleItems = this.visibleItems();
+    if (visibleItems.length === 0) return;
+
+    const currentIndex = visibleItems.findIndex(
       (item) => item.getAttribute("aria-current") === "true",
     );
+    if (currentIndex === -1) {
+      this.setAriaCurrentAndActiveDescendant(visibleItems.length - 1, visibleItems);
+      return;
+    }
 
     if (currentIndex > 0) {
-      this.itemTargets[currentIndex].removeAttribute("aria-current");
-      this.setAriaCurrentAndActiveDescendant(currentIndex - 1);
+      visibleItems[currentIndex].removeAttribute("aria-current");
+      this.setAriaCurrentAndActiveDescendant(currentIndex - 1, visibleItems);
     }
   }
 
@@ -88,8 +116,77 @@ export default class extends Controller {
     this.closeContent();
   }
 
+  createFromQuery(event) {
+    event.preventDefault();
+
+    const createAction = this.createActionElement();
+    if (!createAction) return;
+
+    const query = this.currentQuery();
+    if (!query) {
+      this.focusFilterInput();
+      return;
+    }
+
+    const oldValue = this.inputTarget.value;
+    this.inputTarget.value = query;
+
+    const content = createAction.querySelector(
+      "[data-ruby-ui--select-target='itemContent']",
+    );
+    if (content) {
+      this.valueContentTarget.innerHTML = content.innerHTML;
+    }
+
+    this.dispatchOnChange(oldValue, query);
+    this.closeContent();
+  }
+
+  filterItems() {
+    const query = this.currentQuery().toLowerCase();
+    const hasQuery = query.length > 0;
+
+    this.resetCurrent();
+    this.triggerTarget.removeAttribute("aria-activedescendant");
+
+    let visibleOptionCount = 0;
+    this.optionItems().forEach((item) => {
+      const searchValue = (item.dataset.search || "").toLowerCase();
+      const match = !hasQuery || searchValue.includes(query);
+      item.classList.toggle("hidden", !match);
+      if (match) visibleOptionCount += 1;
+    });
+
+    const blankItem = this.blankItem();
+    if (blankItem) {
+      blankItem.classList.toggle("hidden", hasQuery);
+    }
+
+    if (this.hasEmptyStateTarget) {
+      const showEmpty = hasQuery && visibleOptionCount === 0 && !this.allowCreateValue;
+      this.emptyStateTarget.classList.toggle("hidden", !showEmpty);
+    }
+
+    const createAction = this.createActionElement();
+    if (createAction && this.allowCreateValue) {
+      const queryText = this.currentQuery();
+      const defaultLabel = createAction.dataset.defaultLabel || "";
+      const selectedDescription = createAction.dataset.selectedDescription || "";
+      const defaultDescription = createAction.dataset.defaultDescription || "";
+      createAction.dataset.value = queryText;
+      const labelEl = createAction.querySelector("[data-create-action-label]");
+      const descriptionEl = createAction.querySelector("[data-create-action-description]");
+
+      if (labelEl) labelEl.textContent = queryText || defaultLabel;
+      if (descriptionEl) {
+        descriptionEl.textContent = queryText ? selectedDescription : defaultDescription;
+      }
+    }
+  }
+
   setFocusAndCurrent() {
-    const selectedItem = this.itemTargets.find(
+    const visibleItems = this.visibleItems();
+    const selectedItem = visibleItems.find(
       (item) => item.getAttribute("aria-selected") === "true",
     );
 
@@ -101,11 +198,14 @@ export default class extends Controller {
         selectedItem.getAttribute("id"),
       );
     } else {
-      this.itemTarget.focus({preventScroll: true});
-      this.itemTarget.setAttribute("aria-current", "true");
+      const firstItem = visibleItems[0];
+      if (!firstItem) return;
+
+      firstItem.focus({preventScroll: true});
+      firstItem.setAttribute("aria-current", "true");
       this.triggerTarget.setAttribute(
         "aria-activedescendant",
-        this.itemTarget.getAttribute("id"),
+        firstItem.getAttribute("id"),
       );
     }
   }
@@ -119,13 +219,7 @@ export default class extends Controller {
     if (this.element.contains(event.target)) return;
 
     event.preventDefault();
-    this.toogleContent();
-  }
-
-  toogleContent() {
-    this.openValue = !this.openValue;
-    this.contentTarget.classList.toggle("hidden");
-    this.triggerTarget.setAttribute("aria-expanded", this.openValue);
+    this.closeContent();
   }
 
   setFloatingElement() {
@@ -150,8 +244,10 @@ export default class extends Controller {
     });
   }
 
-  setAriaCurrentAndActiveDescendant(currentIndex) {
-    const currentItem = this.itemTargets[currentIndex];
+  setAriaCurrentAndActiveDescendant(currentIndex, items = this.visibleItems()) {
+    const currentItem = items[currentIndex];
+    if (!currentItem) return;
+
     currentItem.focus({preventScroll: true});
     currentItem.setAttribute("aria-current", "true");
     this.triggerTarget.setAttribute(
@@ -160,12 +256,31 @@ export default class extends Controller {
     );
   }
 
-  closeContent() {
-    this.toogleContent();
-    this.resetCurrent();
+  openContent() {
+    if (this.openValue) return;
 
-    this.triggerTarget.setAttribute("aria-activedescendant", true);
-    this.triggerTarget.focus({preventScroll: true});
+    this.setOpenState(true);
+    this.filterItems();
+    this.setFocusAndCurrent();
+    this.focusFilterInput();
+  }
+
+  closeContent({restoreFocus = true} = {}) {
+    if (!this.openValue) return;
+
+    this.setOpenState(false);
+    this.resetCurrent();
+    this.resetFilter();
+    this.triggerTarget.removeAttribute("aria-activedescendant");
+    if (restoreFocus) {
+      this.triggerTarget.focus({preventScroll: true});
+    }
+  }
+
+  setOpenState(isOpen) {
+    this.openValue = isOpen;
+    this.contentTarget.classList.toggle("hidden", !isOpen);
+    this.triggerTarget.setAttribute("aria-expanded", isOpen);
   }
 
   dispatchOnChange(oldValue, newValue) {
@@ -177,5 +292,44 @@ export default class extends Controller {
     });
 
     this.inputTarget.dispatchEvent(event);
+  }
+
+  visibleItems() {
+    return this.scopedItems().filter((item) => !item.classList.contains("hidden"));
+  }
+
+  optionItems() {
+    return this.scopedItems().filter((item) => item.dataset.kind === "option");
+  }
+
+  blankItem() {
+    return this.scopedItems().find((item) => item.dataset.kind === "blank");
+  }
+
+  focusFilterInput() {
+    if (!this.hasFilterInputTarget) return;
+
+    this.filterInputTarget.focus({preventScroll: true});
+  }
+
+  resetFilter() {
+    if (this.hasFilterInputTarget) {
+      this.filterInputTarget.value = "";
+    }
+    this.filterItems();
+  }
+
+  scopedItems() {
+    return [...this.contentTarget.querySelectorAll("[data-ruby-ui--select-target='item']")];
+  }
+
+  currentQuery() {
+    return this.hasFilterInputTarget
+      ? this.filterInputTarget.value.trim()
+      : "";
+  }
+
+  createActionElement() {
+    return this.contentTarget.querySelector("[data-kind='create-action']");
   }
 }

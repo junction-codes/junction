@@ -13,7 +13,7 @@ en:
           confirm_delete: Confirm Delete
         user_filters:
           all: All %{label}
-          placeholder: Name or email address...
+          placeholder: Name or email address…
           search: Search
         user_form:
           title: User Details

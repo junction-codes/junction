@@ -8,6 +8,7 @@ Junction::Engine.routes.draw do
   resource :session, controller: "sessions"
   resource :dashboard, only: :show, controller: "dashboards"
   resources :passwords, param: :token, controller: "passwords"
+  resources :options, only: :index, controller: "options"
   resources :plugins, only: :index, controller: "plugins"
 
   Junction::CatalogRoutes.draw(self)

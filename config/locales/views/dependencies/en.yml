@@ -16,6 +16,6 @@ en:
           add_dependency: Add Dependency
           add_dependency_title: Add a Dependency
           search_label: Search
-          search_placeholder: Type to search APIs, Components, Resources...
+          search_placeholder: Type to search APIs, Components, Resources…
         search:
           no_results: No matching entities found.

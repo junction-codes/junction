@@ -13,7 +13,7 @@ en:
           confirm_delete: Confirm Delete
         group_filters:
           all: All %{label}
-          placeholder: Name or description...
+          placeholder: Name or description…
           search: Search
         group_form:
           title: Group Details

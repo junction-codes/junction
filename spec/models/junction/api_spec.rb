@@ -19,6 +19,16 @@ RSpec.describe Junction::Api, type: :model do
     it "is valid with valid attributes" do
       expect(api).to be_valid
     end
+
+    it "accepts arbitrary api_type values" do
+      api.api_type = "vendor_event"
+      expect(api).to be_valid
+    end
+
+    it "accepts arbitrary lifecycle values" do
+      api.lifecycle = "legacy"
+      expect(api).to be_valid
+    end
   end
 
   describe "associations" do

@@ -13,11 +13,11 @@ module Junction
 
     belongs_to :system
 
-    validates :api_type, presence: true, inclusion: { in: Junction::CatalogOptions.apis.keys }
+    validates :api_type, presence: true
     validates :definition, presence: true
     validates :description, presence: true
     validates :image_url, allow_blank: true, format: URI::DEFAULT_PARSER.make_regexp(%w[http https])
-    validates :lifecycle, presence: true, inclusion: { in: Junction::CatalogOptions.lifecycles.keys }
+    validates :lifecycle, presence: true
 
     def self.ransackable_associations(auth_object = nil)
       %w[owner system]

@@ -5,18 +5,21 @@ module Junction
     module Groups
       # Creation view for groups.
       class New < Views::Base
-        attr_reader :available_parents, :breadcrumbs, :group
+        attr_reader :available_parents, :breadcrumbs, :group, :type_options
 
         # Initializes the view.
         #
         # @param group [Group] The group being created.
         # @param available_parents [Array<Array>] Parent entity options with
         #   name and id attributes.
+        # @param type_options [Hash] Options for the group type field.
         # @param breadcrumbs [Array<Hash>] Breadcrumb items from the controller.
-        def initialize(group:, available_parents:, breadcrumbs: [])
-          @group = group
+        def initialize(group:, available_parents:, type_options:,
+                       breadcrumbs: [])
           @available_parents = available_parents
           @breadcrumbs = breadcrumbs
+          @group = group
+          @type_options = type_options
         end
 
         def view_template
@@ -34,7 +37,7 @@ module Junction
             end
 
             main(class: "mt-6 max-w-2xl mx-auto") do
-              GroupForm(group:, available_parents:)
+              GroupForm(group:, available_parents:, type_options:)
             end
           end
         end

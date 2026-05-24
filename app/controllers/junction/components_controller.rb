@@ -8,6 +8,7 @@ module Junction
     before_action :eager_load_dependencies, only: %i[ dependency_graph ]
 
     include Breadcrumbs
+    include CatalogOptionSets
     include HasDependencyGraph
     include HasOwner
     include Paginatable
@@ -51,7 +52,9 @@ module Junction
         component: Component.new,
         breadcrumbs:,
         available_owners:,
-        available_systems:
+        available_systems:,
+        type_options: component_type_options,
+        lifecycle_options: component_lifecycle_options
       )
     end
 
@@ -63,7 +66,9 @@ module Junction
         breadcrumbs:,
         can_destroy: allowed_to?(:destroy?, @entity),
         available_owners:,
-        available_systems:
+        available_systems:,
+        type_options: component_type_options,
+        lifecycle_options: component_lifecycle_options
       )
     end
 
@@ -76,7 +81,14 @@ module Junction
         redirect_to junction_catalog_path(@entity), success: "Component was successfully created."
       else
         flash.now[:alert] = "There were errors creating the component."
-        render Views::Components::New.new(component: @entity, breadcrumbs:, available_owners:, available_systems:),
+        render Views::Components::New.new(
+          component: @entity,
+          breadcrumbs:,
+          available_owners:,
+          available_systems:,
+          type_options: component_type_options,
+          lifecycle_options: component_lifecycle_options
+        ),
                status: :unprocessable_content
       end
     end
@@ -93,7 +105,9 @@ module Junction
           breadcrumbs:,
           can_destroy: allowed_to?(:destroy?, @entity),
           available_owners:,
-          available_systems:
+          available_systems:,
+          type_options: component_type_options,
+          lifecycle_options: component_lifecycle_options
         ), status: :unprocessable_content
       end
     end
@@ -129,6 +143,27 @@ module Junction
     #   types.
     def available_types
       Junction::CatalogOptions.kinds.map { |key, opts| [ opts[:name], key ] }
+    end
+
+    # Options for the component type field.
+    #
+    # @return [Hash] Hash of options.
+    def component_type_options
+      catalog_options_for(
+        Junction::CatalogOptions.kinds,
+        [ Junction::Component, :component_type ]
+      )
+    end
+
+    # Options for the lifecycle field.
+    #
+    # @return [Hash] Hash of options.
+    def component_lifecycle_options
+      catalog_options_for(
+        Junction::CatalogOptions.lifecycles,
+        [ Junction::Api, :lifecycle ],
+        [ Junction::Component, :lifecycle ]
+      )
     end
 
     def set_entity

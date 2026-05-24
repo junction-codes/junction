@@ -56,6 +56,13 @@ module Junction
       description: "Read access to all plugins"
     )
 
+    permission(
+      context: "options",
+      ownership: "all",
+      access: :read,
+      description: "Read access to catalog options"
+    )
+
     settings_menu_item(
       action: :roles_path,
       title_i18n: "junction.components.sidebar.sidebar.roles",
@@ -68,6 +75,13 @@ module Junction
       title_i18n: "junction.components.sidebar.sidebar.plugins",
       icon: "blocks",
       access: { action: :index?, record: :plugins }
+    )
+
+    settings_menu_item(
+      action: :options_path,
+      title_i18n: "junction.components.sidebar.sidebar.options",
+      icon: "list-filter",
+      access: { action: :index?, record: :options }
     )
   end
 end

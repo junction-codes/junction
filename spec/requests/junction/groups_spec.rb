@@ -79,6 +79,14 @@ RSpec.describe "/groups", type: :request do
     describe "GET /new" do
       it_behaves_like "an action that requires permission",
         :get, -> { new_group_path }, %w[junction.codes/groups.all.write]
+      it_behaves_like "a request with a rich select field",
+        request_proc: -> { new_group_url },
+        known_label: "Known Types",
+        other_label: "Other Types",
+        search_placeholder: "Search Type",
+        create_hint: "Start typing to create a new Type.",
+        observed_value: "working_group",
+        setup_observed_value: -> { create(:group, group_type: "working_group") }
 
       it "renders a successful response" do
         get new_group_url

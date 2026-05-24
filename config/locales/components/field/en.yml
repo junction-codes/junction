@@ -9,6 +9,13 @@ en:
           logo_alt: Logo for %{title}
         rich_select:
           blank: No %{label} selected
+          create_blank_label: Create…
+          create_hint: Start typing to create a new %{label}.
+          create_selected_description: This option will be created.
+          known_group: Known %{label}
+          no_results: No results found.
+          other_group: Other %{label}
+          search_placeholder: Search %{label}
         slug:
           auto: Auto
           edit: Edit
