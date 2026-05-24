@@ -30,6 +30,26 @@ RSpec.describe "Junction::Components", :js, type: :system do
       )
     end
 
+    it "closes the menu from filter input when escape is pressed" do
+      visit new_component_path
+      select = open_rich_select("Type")
+
+      select.find("[data-ruby-ui--select-target='filterInput']").send_keys(:escape)
+
+      expect(select).to have_css(
+        "[data-ruby-ui--select-target='trigger'][aria-expanded='false']"
+      )
+    end
+
+    it "moves focus from filter input to options on arrow down" do
+      visit new_component_path
+      select = open_rich_select("Type")
+
+      select.find("[data-ruby-ui--select-target='filterInput']").send_keys(:down)
+
+      expect(select).to have_css("[data-ruby-ui--select-target='item']", focused: true)
+    end
+
     it "shows known group for type options" do
       create(:component, component_type: "custom_widget")
 

@@ -27,12 +27,18 @@ module Junction
           {
             type: "text",
             placeholder: @placeholder,
+            aria: {
+              label: @placeholder
+            },
             class: "w-full rounded-md border border-input bg-white " \
               "dark:bg-gray-900 px-2 py-1 text-sm",
             data: {
               ruby_ui__select_target: "filterInput",
               action: "input->ruby-ui--select#filterItems " \
-                "keydown.enter->ruby-ui--select#createFromQuery"
+                "keydown.enter->ruby-ui--select#createFromQuery " \
+                "keydown.esc->ruby-ui--select#handleEsc " \
+                "keydown.down->ruby-ui--select#handleKeyDown " \
+                "keydown.up->ruby-ui--select#handleKeyUp"
             }
           }
         end
