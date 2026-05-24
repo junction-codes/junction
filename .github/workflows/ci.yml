@@ -64,8 +64,6 @@ jobs:
         include:
           - browser: chrome
             report_coverage: true
-          - browser: firefox
-            report_coverage: false
 
     services:
       postgres:
@@ -92,11 +90,8 @@ jobs:
 
       - name: Set up Chrome
         if: matrix.browser == 'chrome'
-        uses: browser-actions/setup-chrome@v1
+        uses: browser-actions/setup-chrome@v2
 
-      - name: Set up Firefox
-        if: matrix.browser == 'firefox'
-        uses: browser-actions/setup-firefox@v1
 
       - name: Configure browser environment
         run: |
