@@ -67,12 +67,10 @@ RSpec.describe "/domains", type: :request do
       end
 
       context "when listing domains with types" do
-        let!(:known_type_domain) {
+        before do
           create(:domain, title: "Known Type Domain", domain_type: "product-group")
-        }
-        let!(:unknown_type_domain) {
           create(:domain, title: "Unknown Type Domain", domain_type: "custom_domain_type")
-        }
+        end
 
         it "displays the catalog name for a known domain type" do
           get domains_url
