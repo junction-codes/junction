@@ -17,7 +17,7 @@ group :development, :test do
   gem "faker", "~> 3.8"
   gem "rspec-rails", "~> 8.0"
   gem "rubocop-capybara", "~> 2.23"
-  gem "rubocop-rails-omakase"
+  gem "rubocop-rails-omakase", "~> 1.1"
   gem "rubocop-rspec", "~> 3.8"
   gem "simplecov", "~> 0.22"
   gem "shoulda-matchers", "~> 7.0"

@@ -26,6 +26,7 @@ RSpec.describe Junction::CatalogOptions do
         {
           apis: { "" => { name: "Blank" } },
           kinds: {},
+          domains: {},
           resources: {},
           group_types: {},
           lifecycles: {}

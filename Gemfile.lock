@@ -458,7 +458,7 @@ DEPENDENCIES
   puma (~> 8.0)
   rspec-rails (~> 8.0)
   rubocop-capybara (~> 2.23)
-  rubocop-rails-omakase
+  rubocop-rails-omakase (~> 1.1)
   rubocop-rspec (~> 3.8)
   ruby_ui (~> 1.2)
   shoulda-matchers (~> 7.0)

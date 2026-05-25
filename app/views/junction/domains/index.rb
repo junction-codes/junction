@@ -5,8 +5,9 @@ module Junction
     module Domains
       # Index view for domains.
       class Index < Views::Base
-        attr_reader :available_owners, :available_statuses, :breadcrumbs,
-                     :can_create, :domains, :pagy, :query, :query_params
+        attr_reader :available_owners, :available_statuses, :available_types,
+                     :breadcrumbs, :can_create, :domains, :pagy, :query,
+                     :query_params
 
         # Initializes the view.
         #
@@ -19,12 +20,14 @@ module Junction
         #   and id attributes.
         # @param available_statuses [Array<Array>] Status options as [label,
         #   value] pairs for filtering.
+        # @param available_types [Array<Array>] Type options as [label, value]
+        #   pairs for filtering.
         # @param can_create [Boolean] Whether the user can create domains.
         # @param breadcrumbs [Array<Hash>] Breadcrumb items from the controller.
         # @param query_params [Hash] Query parameters from the controller.
         def initialize(domains:, query:, pagy:, available_owners:,
-                       available_statuses:, can_create: true, breadcrumbs: [],
-                       query_params: {})
+                       available_statuses:, available_types:, can_create: true,
+                       breadcrumbs: [], query_params: {})
           @domains = domains
           @query = query
           @query_params = query_params
@@ -32,6 +35,7 @@ module Junction
           @can_create = can_create
           @available_owners = available_owners
           @available_statuses = available_statuses
+          @available_types = available_types
           @breadcrumbs = breadcrumbs
         end
 
@@ -49,7 +53,12 @@ module Junction
                 end
               end
 
-              DomainFilters(query:, available_owners:, available_statuses:)
+              DomainFilters(
+                query:,
+                available_owners:,
+                available_statuses:,
+                available_types:
+              )
 
               # Domains table.
               div(class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
@@ -80,7 +89,7 @@ module Junction
                 )
               }
 
-              %w[title status owner_id].each do |field|
+              %w[title type status owner_id].each do |field|
                 row.sortable_head(field:, sort_url:, **sort_attrs(query, field)) do
                   Domain.human_attribute_name(field)
                 end
@@ -94,6 +103,16 @@ module Junction
             @domains.each do |domain|
               body.row do |row|
                 row.cell { EntityPreview(entity: domain) }
+
+                row.cell do
+                  break unless domain.type.present?
+
+                  if Junction::CatalogOptions.domains.key?(domain.type)
+                    Junction::CatalogOptions.domains[domain.type][:name]
+                  else
+                    domain.type.humanize
+                  end
+                end
 
                 row.cell do
                   Badge(variant: domain.status&.to_sym) { domain.status&.titleize }

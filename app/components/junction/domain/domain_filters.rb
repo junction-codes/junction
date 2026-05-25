@@ -12,12 +12,15 @@ module Junction
         #   name and id attributes for filtering.
         # @param available_statuses [Array<Array>] Status options as [label,
         #   value] pairs for filtering.
+        # @param available_types [Array<Array>] Type options as [label, value]
+        #   pairs for filtering.
         # @param user_attrs [Hash] Additional HTML attributes for the component.
         def initialize(query:, available_owners: [], available_statuses: [],
-                       **user_attrs)
+                       available_types: [], **user_attrs)
           @query = query
           @available_owners = available_owners
           @available_statuses = available_statuses
+          @available_types = available_types
 
           super(**user_attrs)
         end
@@ -35,6 +38,18 @@ module Junction
                 placeholder: t(".placeholder"),
                 value: @query.title_or_description_cont
               )
+
+              bar.select_filter(
+                name: "q[type_eq]",
+                label: Junction::Domain.human_attribute_name(:type),
+                options: @available_types,
+                selected: @query.type_eq,
+                include_blank: true,
+                blank_label: t(
+                  ".all",
+                  label: Junction::Domain.human_attribute_name(:type).pluralize
+                )
+              ) if @available_types.any?
 
               bar.select_filter(
                 name: "q[status_eq]",

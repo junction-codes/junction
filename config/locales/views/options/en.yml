@@ -10,6 +10,7 @@ en:
           field_labels:
             api_type: API Type
             component_type: Component Type
+            domain_type: Domain Type
             group_type: Group Type
             lifecycle: Lifecycle
             resource_type: Resource Type

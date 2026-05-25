@@ -6,9 +6,10 @@ module Junction
       class DomainForm < Base
         include Phlex::Rails::Helpers::FormWith
 
-        def initialize(domain:, available_owners:)
+        def initialize(domain:, available_owners:, type_options:)
           @domain = domain
           @available_owners = available_owners
+          @type_options = type_options
         end
 
         def view_template
@@ -26,6 +27,7 @@ module Junction
                 Slug(f, :name)
                 Immutable(f, :namespace, placeholder: "default", required: true,
                               help_text: t(".namespace_help"))
+                RichSelectField(f, :type, required: true, options: @type_options)
                 Text(f, :status, required: true)
                 Text(f, :image_url, placeholder: t(".image_url_placeholder"))
 

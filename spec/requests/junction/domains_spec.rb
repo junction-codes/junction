@@ -6,6 +6,7 @@ RSpec.describe "/domains", type: :request do
   let(:valid_attributes) {
     {
       description: "A domain for testing purposes",
+      domain_type: "product-area",
       title: "Test Domain",
       image_url: "https://example.com/image.png",
       status: "active"
@@ -64,6 +65,25 @@ RSpec.describe "/domains", type: :request do
         get domains_url
         expect(response).to be_successful
       end
+
+      context "when listing domains with types" do
+        before do
+          create(:domain, title: "Known Type Domain", domain_type: "product-group")
+          create(:domain, title: "Unknown Type Domain", domain_type: "custom_domain_type")
+        end
+
+        it "displays the catalog name for a known domain type" do
+          get domains_url
+
+          expect(response.body).to include("Product Group")
+        end
+
+        it "displays a humanized label for an unknown domain type" do
+          get domains_url
+
+          expect(response.body).to include("Custom domain type")
+        end
+      end
     end
 
     describe "GET /show" do
@@ -73,6 +93,26 @@ RSpec.describe "/domains", type: :request do
       it "renders a successful response" do
         get domain_path(domain)
         expect(response).to be_successful
+      end
+
+      context "when the domain has a known type" do
+        let!(:typed_domain) { create(:domain, domain_type: "product-group") }
+
+        it "displays the catalog name for the domain type" do
+          get domain_path(typed_domain)
+
+          expect(response.body).to include("Product Group")
+        end
+      end
+
+      context "when the domain has an unknown type" do
+        let!(:typed_domain) { create(:domain, domain_type: "custom_domain_type") }
+
+        it "displays a humanized label for the domain type" do
+          get domain_path(typed_domain)
+
+          expect(response.body).to include("Custom domain type")
+        end
       end
     end
 
@@ -95,6 +135,14 @@ RSpec.describe "/domains", type: :request do
     describe "GET /new" do
       it_behaves_like "an action that requires permission",
         :get, -> { new_domain_path }, %w[junction.codes/domains.all.write]
+      it_behaves_like "a request with a rich select field",
+        request_proc: -> { new_domain_url },
+        known_label: "Known Types",
+        other_label: "Other Types",
+        search_placeholder: "Search Type",
+        create_hint: "Start typing to create a new Type.",
+        observed_value: "custom_domain_type",
+        setup_observed_value: -> { create(:domain, domain_type: "custom_domain_type") }
 
       it "renders a successful response" do
         get new_domain_url
@@ -129,6 +177,12 @@ RSpec.describe "/domains", type: :request do
           post domains_url, params: { domain: valid_attributes }
           expect(response).to redirect_to(domain_path(Junction::Domain.last))
         end
+
+        it "assigns domain type from the type param" do
+          post domains_url, params: { domain: valid_attributes.merge(type: "product-group") }
+
+          expect(Junction::Domain.last.domain_type).to eq("product-group")
+        end
       end
 
       context "with invalid parameters" do
@@ -162,6 +216,12 @@ RSpec.describe "/domains", type: :request do
           patch domain_path(domain), params: { domain: new_attributes }
           domain.reload
           expect(domain.status).to eq("closed")
+        end
+
+        it "updates domain type from the type param" do
+          patch domain_path(domain), params: { domain: { type: "product-group" } }
+
+          expect(domain.reload.domain_type).to eq("product-group")
         end
 
         it "redirects to the domain" do

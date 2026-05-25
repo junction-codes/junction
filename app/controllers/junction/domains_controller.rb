@@ -7,6 +7,7 @@ module Junction
     before_action :set_entity, only: %i[show edit update destroy systems]
 
     include Breadcrumbs
+    include CatalogOptionSets
     include HasOwner
     include Paginatable
 
@@ -25,7 +26,8 @@ module Junction
         breadcrumbs:,
         can_create: allowed_to?(:create?, Domain),
         available_owners:,
-        available_statuses:
+        available_statuses:,
+        available_types:
       )
     end
 
@@ -74,8 +76,12 @@ module Junction
     # GET /domains/new
     def new
       authorize! Domain
-      render Views::Domains::New.new(domain: Domain.new, breadcrumbs:,
-                                     available_owners:)
+      render Views::Domains::New.new(
+        domain: Domain.new,
+        breadcrumbs:,
+        available_owners:,
+        type_options: domain_type_options
+      )
     end
 
     # GET /domains/:id/edit
@@ -85,7 +91,8 @@ module Junction
         domain: @entity,
         breadcrumbs:,
         can_destroy: allowed_to?(:destroy?, @entity),
-        available_owners:
+        available_owners:,
+        type_options: domain_type_options
       )
     end
 
@@ -98,8 +105,12 @@ module Junction
         redirect_to junction_catalog_path(@entity), success: "Domain was successfully created."
       else
         flash.now[:alert] = "There were errors creating the domain."
-        render Views::Domains::New.new(domain: @entity, breadcrumbs:, available_owners:),
-               status: :unprocessable_content
+        render Views::Domains::New.new(
+          domain: @entity,
+          breadcrumbs:,
+          available_owners:,
+          type_options: domain_type_options
+        ), status: :unprocessable_content
       end
     end
 
@@ -114,7 +125,8 @@ module Junction
           domain: @entity,
           breadcrumbs:,
           can_destroy: allowed_to?(:destroy?, @entity),
-          available_owners:
+          available_owners:,
+          type_options: domain_type_options
         ), status: :unprocessable_content
       end
     end
@@ -128,6 +140,24 @@ module Junction
     end
 
     private
+
+    # Returns an array of available types for domains.
+    #
+    # @return [Array<Array(String, String)>] Array of [name, key] pairs for
+    #   types.
+    def available_types
+      CatalogOptions.domains.map { |key, opts| [ opts[:name], key ] }
+    end
+
+    # Options for the domain type field.
+    #
+    # @return [Hash] Hash of options.
+    def domain_type_options
+      catalog_options_for(
+        Junction::CatalogOptions.domains,
+        [ Junction::Domain, :domain_type ]
+      )
+    end
 
     # Returns an array of available statuses for domains.
     #
@@ -145,7 +175,8 @@ module Junction
 
     def domain_params
       sanitize_owner_id(params.expect(domain: [
-        :description, :image_url, :name, :namespace, :owner_id, :status, :title
+        :description, :domain_type, :image_url, :name, :namespace, :owner_id,
+        :status, :title, :type
       ]))
     end
   end

@@ -24,6 +24,11 @@ module Junction
           sources: [ Source.new(model: Junction::Resource, column: :resource_type) ]
         ),
         FieldConfig.new(
+          id: :domain_type,
+          section: :domains,
+          sources: [ Source.new(model: Junction::Domain, column: :domain_type) ]
+        ),
+        FieldConfig.new(
           id: :group_type,
           section: :group_types,
           sources: [ Source.new(model: Junction::Group, column: :group_type) ]

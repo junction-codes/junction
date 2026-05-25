@@ -5,6 +5,7 @@ RSpec.describe "domains/index", type: :view do
     assign(:domains, [
       Junction::Domain.create!(
         title: "Name",
+        domain_type: "product-area",
         description: "MyText",
         status: "active",
         image_url: "https://example.com/image.png",
@@ -12,6 +13,7 @@ RSpec.describe "domains/index", type: :view do
       ),
       Junction::Domain.create!(
         title: "Second Name",
+        domain_type: "product-group",
         description: "MyText",
         status: "closed",
         image_url: nil,

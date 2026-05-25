@@ -20,6 +20,16 @@ apis:
     icon: bubbles
     description: Specification for building SOAP APIs.
 
+domains:
+  product-area:
+    name: Product Area
+    icon: box
+    description: A broad product area encompassing multiple systems and groups.
+  product-group:
+    name: Product Group
+    icon: layers
+    description: A grouping of related systems within a product area.
+
 group_types:
   business_unit:
     name: Business Unit
