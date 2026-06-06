@@ -18,7 +18,7 @@ group :development, :test do
   gem "rspec-rails", "~> 8.0"
   gem "rubocop-capybara", "~> 2.23"
   gem "rubocop-rails-omakase", "~> 1.1"
-  gem "rubocop-rspec", "~> 3.8"
+  gem "rubocop-rspec", "~> 3.10"
   gem "simplecov", "~> 0.22"
   gem "shoulda-matchers", "~> 7.0"
   gem "vcr", "~> 6.3"
