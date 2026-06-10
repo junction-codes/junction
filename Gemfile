@@ -26,7 +26,7 @@ end
 
 group :development do
   gem "puma", "~> 8.0"
-  gem "ruby_ui", "~> 1.2"
+  gem "ruby_ui", "~> 1.3"
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console", "~> 4.3"
 end
