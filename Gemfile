@@ -26,7 +26,7 @@ end
 
 group :development do
   gem "puma", "~> 8.0"
-  gem "ruby_ui", "~> 1.2"
+  gem "ruby_ui", "~> 1.3"
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console", "~> 4.3"
 end
@@ -35,5 +35,5 @@ group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara", "~> 3.4"
   gem "cuprite", "~> 0.17"
-  gem "simplecov-cobertura", "~> 3.1"
+  gem "simplecov-cobertura", "~> 3.2"
 end
