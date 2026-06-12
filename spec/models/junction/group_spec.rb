@@ -21,10 +21,19 @@ RSpec.describe Junction::Group, type: :model do
   end
 
   describe "associations" do
-    it { is_expected.to have_many(:children).class_name("Group").with_foreign_key("parent_id").dependent(:destroy) }
+    it do
+      expect(group).to have_many(:children).class_name("Junction::Group")
+                                           .with_foreign_key("parent_id")
+                                           .dependent(:destroy)
+    end
+
     it { is_expected.to have_many(:group_memberships).dependent(:destroy) }
     it { is_expected.to have_many(:members).through(:group_memberships).source(:user) }
-    it { is_expected.to belong_to(:parent).class_name("Group").optional }
+
+    it do
+      expect(group).to belong_to(:parent).class_name("Junction::Group")
+                                         .optional
+    end
   end
 
   describe "parent validations" do
