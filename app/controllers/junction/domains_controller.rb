@@ -9,14 +9,18 @@ module Junction
     include Breadcrumbs
     include CatalogOptionSets
     include HasOwner
+    include HasTreeParent
     include Paginatable
+
+    PARENT_CANDIDATE_COLUMNS = %i[description id image_url name namespace title].freeze
+    private_constant :PARENT_CANDIDATE_COLUMNS
 
     # GET /domains
     def index
       authorize! Domain
       @q = index_scope_for(Domain).ransack(params[:q])
       @q.sorts = "title asc" if @q.sorts.empty?
-      @pagy, domains = paginate(@q.result)
+      @pagy, domains = paginate(@q.result.includes(:parent, :owner))
 
       render Views::Domains::Index.new(
         domains:,
@@ -80,6 +84,8 @@ module Junction
         domain: Domain.new,
         breadcrumbs:,
         available_owners:,
+        available_parents:,
+        parent_editable: true,
         type_options: domain_type_options
       )
     end
@@ -92,6 +98,8 @@ module Junction
         breadcrumbs:,
         can_destroy: allowed_to?(:destroy?, @entity),
         available_owners:,
+        available_parents:,
+        parent_editable: parent_editable_for?(@entity),
         type_options: domain_type_options
       )
     end
@@ -109,6 +117,8 @@ module Junction
           domain: @entity,
           breadcrumbs:,
           available_owners:,
+          available_parents:,
+          parent_editable: parent_editable_for?(@entity),
           type_options: domain_type_options
         ), status: :unprocessable_content
       end
@@ -126,6 +136,8 @@ module Junction
           breadcrumbs:,
           can_destroy: allowed_to?(:destroy?, @entity),
           available_owners:,
+          available_parents:,
+          parent_editable: parent_editable_for?(@entity),
           type_options: domain_type_options
         ), status: :unprocessable_content
       end
@@ -173,11 +185,27 @@ module Junction
       @entity = Domain.find_by!(namespace: params.expect(:namespace), name: params.expect(:name))
     end
 
+    # Returns the available parents for the current Domain and user.
+    #
+    # @return [ActiveRecord::Relation<Domain>] List of parent candidates.
+    def available_parents
+      parent_candidates_for(
+        Domain,
+        scope: index_scope_for(Domain),
+        columns: PARENT_CANDIDATE_COLUMNS
+      )
+    end
+
+
     def domain_params
-      sanitize_owner_id(params.expect(domain: [
+      attrs = params.expect(domain: [
         :description, :domain_type, :image_url, :name, :namespace, :owner_id,
-        :status, :title, :type
-      ]))
+        :parent_id, :status, :title, :type
+      ])
+
+      sanitize_owner_id(
+        sanitize_tree_parent_id(attrs, parent_candidates: available_parents)
+      )
     end
   end
 end

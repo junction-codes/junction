@@ -32,6 +32,6 @@ en:
           stat_total_systems: Total Systems
           stat_total_components: Total Components
           members: Members
-          part_of_parent: Part of the '%{parent_title}' Parent
+          part_of_parent: Part of the '%{parent_title}' Group
         user_search:
           no_results: No matching users found.

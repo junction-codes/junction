@@ -23,7 +23,58 @@ RSpec.describe Junction::Domain, type: :model do
   describe "associations" do
     it_behaves_like "a model that can be owned"
 
+    it do
+      expect(domain).to have_many(:children).class_name("Junction::Domain")
+                                            .with_foreign_key("parent_id")
+                                            .dependent(:destroy)
+    end
+
+    it do
+      expect(domain).to belong_to(:parent).class_name("Junction::Domain")
+                                          .optional
+    end
+
     it { is_expected.to have_many(:systems) }
+  end
+
+  describe "parent validations" do
+    it "rejects assigning the domain as its own parent" do
+      domain = create(:domain)
+      domain.parent = domain
+
+      expect(domain).not_to be_valid
+    end
+
+    it "allows a parent in a different namespace" do
+      parent = create(:domain, namespace: "other")
+      domain = build(:domain, parent: parent, namespace: "default")
+
+      expect(domain).to be_valid
+    end
+
+    it "rejects assigning a descendant as parent" do
+      parent = create(:domain)
+      child = create(:domain, parent: parent)
+      parent.parent = child
+
+      expect(parent).not_to be_valid
+    end
+  end
+
+  describe "#descendant_ids" do
+    it "returns an empty array for a domain with no children" do
+      domain = create(:domain)
+
+      expect(domain.descendant_ids).to eq([])
+    end
+
+    it "returns direct and nested child ids" do
+      parent = create(:domain)
+      child = create(:domain, parent: parent)
+      grandchild = create(:domain, parent: child)
+
+      expect(parent.descendant_ids).to contain_exactly(child.id, grandchild.id)
+    end
   end
 
   describe "defaults" do

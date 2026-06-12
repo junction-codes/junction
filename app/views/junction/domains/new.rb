@@ -5,7 +5,8 @@ module Junction
     module Domains
       # Creation view for domains.
       class New < Views::Base
-        attr_reader :available_owners, :breadcrumbs, :domain, :type_options
+        attr_reader :available_owners, :available_parents, :breadcrumbs, :domain,
+                    :parent_editable, :type_options
 
         # Initializes the view.
         #
@@ -14,11 +15,18 @@ module Junction
         #   and id attributes.
         # @param type_options [Hash] Options for the domain type field.
         # @param breadcrumbs [Array<Hash>] Breadcrumb items from the controller.
-        def initialize(domain:, available_owners:, type_options:, breadcrumbs: [])
+        # @param available_parents [ActiveRecord::Relation] Parent options.
+        # @param parent_editable [Boolean] Whether the parent field should be
+        #   editable.
+        def initialize(domain:, available_owners:, type_options:,
+                       available_parents: [], breadcrumbs: [],
+                       parent_editable: true)
           @domain = domain
           @available_owners = available_owners
           @type_options = type_options
+          @available_parents = available_parents
           @breadcrumbs = breadcrumbs
+          @parent_editable = parent_editable
         end
 
         def view_template
@@ -35,7 +43,13 @@ module Junction
             end
 
             main(class: "mt-6 max-w-2xl mx-auto") do
-              DomainForm(domain:, available_owners:, type_options:)
+              DomainForm(
+                domain:,
+                available_owners:,
+                available_parents:,
+                parent_editable:,
+                type_options:
+              )
             end
           end
         end

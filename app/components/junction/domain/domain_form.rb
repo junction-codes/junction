@@ -6,9 +6,12 @@ module Junction
       class DomainForm < Base
         include Phlex::Rails::Helpers::FormWith
 
-        def initialize(domain:, available_owners:, type_options:)
+        def initialize(domain:, available_owners:, type_options:,
+                       available_parents: [], parent_editable: true)
           @domain = domain
           @available_owners = available_owners
+          @available_parents = available_parents
+          @parent_editable = parent_editable
           @type_options = type_options
         end
 
@@ -34,6 +37,11 @@ module Junction
                 Reference(f, :owner_id, icon: "users-round",
                               options: @available_owners, value: @domain.owner,
                               help_text: t(".owner_help"))
+
+                Reference(f, :parent_id, icon: "briefcase",
+                              options: @available_parents, value: @domain.parent,
+                              disabled: !@parent_editable,
+                              help_text: t(".parent_help"))
 
                 TextArea(f, :description, required: true,
                               help_text: t(".description_help"))

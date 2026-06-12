@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 module Junction
+  # @todo Include Junction::TreeParent (children, descendant_ids) and
+  #   Junction::TreeChild (parent, cycle validations) for aligned hierarchy
+  #   behavior.
   class Group < ApplicationRecord
     include Annotated
     include Sluggable

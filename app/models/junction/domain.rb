@@ -4,6 +4,8 @@ module Junction
   class Domain < ApplicationRecord
     include Ownable
     include Sluggable
+    include TreeChild
+    include TreeParent
 
     attribute :status, :string, default: "active"
     alias_attribute :type, :domain_type
@@ -16,11 +18,12 @@ module Junction
     has_many :systems, class_name: "Junction::System"
 
     def self.ransackable_associations(auth_object = nil)
-      %w[owner]
+      %w[owner parent children]
     end
 
     def self.ransackable_attributes(auth_object = nil)
-      %w[created_at description domain_type name owner_id status title type updated_at]
+      %w[created_at description domain_type name owner_id parent_id status title
+         type updated_at]
     end
 
     def icon

@@ -60,6 +60,18 @@ module Junction
                     span { plain t(".no_owner") }
                   end
                 end
+
+                if @domain.parent.present?
+                  p(class: "mt-1 text-md text-gray-600 dark:text-gray-400 max-w-2xl") do
+                    if allowed_to?(:show?, @domain.parent)
+                      Link(href: junction_catalog_path(@domain.parent)) do
+                        t(".part_of_parent", parent_title: @domain.parent.title)
+                      end
+                    else
+                      plain t(".part_of_parent", parent_title: @domain.parent.title)
+                    end
+                  end
+                end
               end
             end
 

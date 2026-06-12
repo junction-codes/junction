@@ -121,11 +121,33 @@ end
 def import_domains(path)
   return unless File.exist?(Rails.root.join(path, 'domains.yaml'))
 
-  YAML.load_file(Rails.root.join(path, 'domains.yaml'), symbolize_names: true).each do |domain|
-    next if Junction::Domain.find_by(name: domain[:name], namespace: domain.fetch(:namespace, "default"))
+  domains = YAML.load_file(Rails.root.join(path, 'domains.yaml'), symbolize_names: true)
+
+  domains.each do |domain|
+    next if Junction::Domain.find_by(
+      name: domain[:name],
+      namespace: domain.fetch(:namespace, "default")
+    )
 
     Rails.logger.info "Creating domain #{domain[:title]}"
-    Junction::Domain.create(domain)
+    Junction::Domain.create(domain.except(:parent))
+  end
+
+  domains.each do |domain|
+    next if domain[:parent].blank?
+
+    record = Junction::Domain.find_by(
+      name: domain[:name],
+      namespace: domain.fetch(:namespace, "default")
+    )
+    parent = Junction::Domain.find_by(
+      name: domain[:parent],
+      namespace: domain.fetch(:namespace, "default")
+    )
+
+    next unless record && parent
+
+    record.update!(parent_id: parent.id)
   end
 end
 

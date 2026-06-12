@@ -70,7 +70,30 @@ module Junction
         #
         # @return [Array<String>] Errors for the field.
         def errors
-          @errors ||= @form.object&.errors&.[](@method) || []
+          @errors ||= field_errors
+        end
+
+        # Gather errors for a field, handling aliases.
+        #
+        # When the form binds an alias (e.g. +type+ for +domain_type+),
+        # validations attach to the underlying attribute. We check the model's
+        # +attribute_aliases+ to see if this field has been aliased.
+        #
+        # @return [Array<String>] Errors for the field.
+        def field_errors
+          object_errors = @form.object&.errors
+          return [] unless object_errors
+
+          messages = object_errors[@method]
+          return messages if messages.present?
+
+          object_class = @form.object.class
+          if object_class.respond_to?(:attribute_aliases)
+            aliased_column = object_class.attribute_aliases[@method.to_s]
+            return object_errors[aliased_column] if aliased_column.present?
+          end
+
+          []
         end
 
         # Returns whether the form object has been persisted.

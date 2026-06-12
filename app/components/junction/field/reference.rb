@@ -19,13 +19,16 @@ module Junction
         # @param icon [String] Default icon for field options.
         # @param value [ApplicationRecord] Currently selected value for the
         #   field.
+        # @param disabled [Boolean] Whether the form element is disabled.
         # @param user_attrs [Hash] Additional HTML attributes for the component.
         def initialize(form, method, label: nil, help_text: nil,
                        placeholder: nil, required: false, options: [],
-                       icon: "disc-2", value: nil, **user_attrs)
+                       icon: "disc-2", value: nil, disabled: false,
+                       **user_attrs)
           @value = value
           @options = options
           @icon = icon
+          @disabled = disabled
 
           super(form, method, label:, help_text:, placeholder:, required:,
                 **user_attrs)
@@ -36,25 +39,10 @@ module Junction
             render_label
 
             div(class: "mt-2") do
-              Select(**attrs) do |select|
-                select.input(value: @value&.id, id: @form.field_id(@method), name: @form.field_name(@method))
-                select.trigger(class: "h-auto") do |trigger|
-                  trigger.value(id: @form.field_id(@method), class: "px-2") do
-                    @value.present? ? item_content(@value, "valueContent") : empty_content
-                  end
-                end
-
-                select.content(outlet_id: @form.field_id(@method)) do |content|
-                  content.item(value: "", selected: @value.blank?) do
-                    empty_content("itemContent")
-                  end
-
-                  @options.each do |record|
-                    content.item(value: record.id, selected: @value.present? && @value.id == record.id) do
-                      item_content(record)
-                    end
-                  end
-                end
+              if @disabled
+                render_disabled_field
+              else
+                render_select_field
               end
             end
 
@@ -73,6 +61,43 @@ module Junction
 
         private
 
+        def render_disabled_field
+          div(
+            class: "rounded-md border border-gray-300 dark:border-gray-600 " \
+                   "bg-gray-50 dark:bg-gray-800 px-3 py-2 cursor-not-allowed",
+            role: "group",
+            aria_disabled: "true",
+            aria_labelledby: @form.field_id(@method)
+          ) do
+            @value.present? ? item_content(@value) : empty_content
+          end
+
+          @form.hidden_field @method, value: @value&.id
+        end
+
+        def render_select_field
+          Select(**attrs) do |select|
+            select.input(value: @value&.id, id: @form.field_id(@method), name: @form.field_name(@method))
+            select.trigger(class: "h-auto") do |trigger|
+              trigger.value(id: @form.field_id(@method), class: "px-2") do
+                @value.present? ? item_content(@value, "valueContent") : empty_content
+              end
+            end
+
+            select.content(outlet_id: @form.field_id(@method)) do |content|
+              content.item(value: "", selected: @value.blank?) do
+                empty_content("itemContent")
+              end
+
+              @options.each do |record|
+                content.item(value: record.id, selected: @value.present? && @value.id == record.id) do
+                  item_content(record)
+                end
+              end
+            end
+          end
+        end
+
         def empty_content(target = "valueContent")
           div(class: "flex items-center space-x-4 text-left", data_ruby_ui__select_target: target) do
             div(class: "h-6 w-6 rounded-md bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0") do
@@ -87,7 +112,7 @@ module Junction
         end
 
         def item_content(record, target = "itemContent")
-          div(class: "flex items-center space-x-4 text-left", data_ruby_ui__select_target: target) do
+          div(class: "flex items-center space-x-4 text-left w-full", data_ruby_ui__select_target: target) do
             if record.image_url.present?
               img(src: record.image_url, alt: t(".logo_alt", title: record.title), class: "h-6 w-6 rounded-md object-cover flex-shrink-0")
             else
@@ -96,10 +121,33 @@ module Junction
               end
             end
 
-            div do
-              div(class: "text-sm font-medium text-gray-900 dark:text-white") { record.title }
-              div(class: "text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs") { record.description }
+            div(class: "flex-1 min-w-0") do
+              div(class: "flex items-center justify-between gap-2 w-full min-w-0") do
+                span(class: "text-sm font-medium text-gray-900 dark:text-white truncate min-w-0") do
+                  record.title
+                end
+
+                render_namespace(record)
+              end
+
+              render_subtitle(record)
             end
+          end
+        end
+
+        def render_namespace(record)
+          return unless record.respond_to?(:namespace) && record.namespace.present?
+
+          span(class: "text-sm text-gray-500 dark:text-gray-400 flex-shrink-0") do
+            record.namespace
+          end
+        end
+
+        def render_subtitle(record)
+          return unless record.respond_to?(:description) && record.description.present?
+
+          div(class: "text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs") do
+            record.description
           end
         end
 

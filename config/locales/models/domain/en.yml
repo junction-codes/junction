@@ -4,6 +4,7 @@ en:
       junction/domain:
         domain_type: "Type"
         image_url: "Logo URL"
+        parent_id: "Parent"
         status: "Domain Status"
         title: "Domain Name"
     models:
