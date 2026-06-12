@@ -240,15 +240,24 @@ module Junction
         return out
       end
 
-      allowed = parent_candidates.pluck(:id)
       out[:parent_id] = if id.blank?
         nil
-      elsif allowed.include?(id.to_i) || id.to_i == @entity&.parent_id
+      elsif parent_id_allowed?(id.to_i)
         id.to_i
       end
 
       out["parent_id"] = out[:parent_id] if out.key?("parent_id")
       out
+    end
+
+    # Determines if the submitted parent id is an allowed candidate.
+    #
+    # @param parent_id [Integer] Parent domain id.
+    # @return [Boolean] Whether the parent id is allowed.
+    def parent_id_allowed?(parent_id)
+      return true if parent_id == @entity&.parent_id
+
+      parent_candidates.where(id: parent_id).exists?
     end
   end
 end

@@ -262,7 +262,7 @@ RSpec.describe "/domains", type: :request do
       end
     end
 
-     describe "parent assignment" do
+    describe "parent assignment" do
       let!(:parent_domain) { create(:domain, title: "Parent Area", name: "parent-area") }
 
       it "creates a domain with a valid parent_id" do

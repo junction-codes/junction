@@ -38,12 +38,12 @@ module Junction
     # @return [Array<Integer>] IDs for all descendant domains.
     def descendant_ids
       ids = []
-      queue = children.pluck(:id)
-      while queue.any?
-        child_id = queue.shift
-        ids << child_id
-        queue.concat(self.class.where(parent_id: child_id).pluck(:id))
+      level_ids = children.pluck(:id)
+      while level_ids.any?
+        ids.concat(level_ids)
+        level_ids = self.class.where(parent_id: level_ids).pluck(:id)
       end
+
       ids
     end
 

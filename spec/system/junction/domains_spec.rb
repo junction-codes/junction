@@ -157,36 +157,36 @@ RSpec.describe "Junction::Domains", type: :system do
     end
 
     it "creates a child domain with a selected parent" do
-        visit new_domain_path
-        fill_required_domain_fields(title: "Nested Child", description: "Nested description")
-        select_parent(parent_domain)
-        submit_domain_form
+      visit new_domain_path
+      fill_required_domain_fields(title: "Nested Child", description: "Nested description")
+      select_parent(parent_domain)
+      submit_domain_form
 
-        expect(page).to have_link("Parent Area", href: domain_path(parent_domain))
+      expect(page).to have_link("Parent Area", href: domain_path(parent_domain))
     end
 
     it "assigns a parent to a root domain" do
-        root = create(:domain, title: "Orphan Root", name: "orphan-root", parent: nil)
-        visit edit_domain_path(root)
-        select_parent(parent_domain)
-        submit_domain_form
+      root = create(:domain, title: "Orphan Root", name: "orphan-root", parent: nil)
+      visit edit_domain_path(root)
+      select_parent(parent_domain)
+      submit_domain_form
 
-        expect(root.reload.parent_id).to eq(parent_domain.id)
+      expect(root.reload.parent_id).to eq(parent_domain.id)
     end
 
     it "clears the parent on edit" do
-        visit edit_domain_path(child_domain)
-        clear_parent
-        submit_domain_form
+      visit edit_domain_path(child_domain)
+      clear_parent
+      submit_domain_form
 
-        expect(page).to have_no_text("Part of the")
+      expect(page).to have_no_text("Part of the")
     end
 
     it "changes the parent to another domain" do
-        other_parent = create(:domain, title: "Other Parent", name: "other-parent", parent: nil)
-        visit edit_domain_path(child_domain)
-        select_parent(other_parent)
-        submit_domain_form
+      other_parent = create(:domain, title: "Other Parent", name: "other-parent", parent: nil)
+      visit edit_domain_path(child_domain)
+      select_parent(other_parent)
+      submit_domain_form
 
       expect(child_domain.reload.parent_id).to eq(other_parent.id)
     end
