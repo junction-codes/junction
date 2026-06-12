@@ -196,6 +196,12 @@ RSpec.describe "/domains", type: :request do
           post domains_url, params: { domain: invalid_attributes }
           expect(response).to have_http_status(:unprocessable_content)
         end
+
+        it "displays the type validation error under the type field" do
+          post domains_url, params: { domain: valid_attributes.except(:domain_type) }
+
+          expect(response.body).to include('id="type_errors"')
+        end
       end
     end
 
@@ -253,6 +259,66 @@ RSpec.describe "/domains", type: :request do
       it "redirects to the domains list" do
         delete domain_path(domain)
         expect(response).to redirect_to(domains_url)
+      end
+    end
+
+     describe "parent assignment" do
+      let!(:parent_domain) { create(:domain, title: "Parent Area", name: "parent-area") }
+
+      it "creates a domain with a valid parent_id" do
+        post domains_url, params: {
+          domain: valid_attributes.merge(parent_id: parent_domain.id)
+        }
+
+        expect(Junction::Domain.last.parent_id).to eq(parent_domain.id)
+      end
+
+      it "updates a domain with a valid parent_id" do
+        patch domain_path(domain), params: { domain: { parent_id: parent_domain.id } }
+
+        expect(domain.reload.parent_id).to eq(parent_domain.id)
+      end
+
+      it "creates a domain with a parent in a different namespace" do
+        cross_ns_parent = create(:domain, namespace: "backstage", name: "backstage-parent")
+        post domains_url, params: {
+          domain: valid_attributes.merge(parent_id: cross_ns_parent.id, namespace: "default")
+        }
+
+        expect(Junction::Domain.last.parent_id).to eq(cross_ns_parent.id)
+      end
+
+      context "when the parent is outside the user's readable scope" do
+        let(:user) do
+          create_user_with_permissions(%w[
+            junction.codes/domains.owned.read
+            junction.codes/domains.owned.write
+          ])
+        end
+        let!(:scoped_parent) { create(:domain, owner: create(:group)) }
+
+        before { sign_in(user: user, password: "Password1!") }
+
+        it "does not assign an inaccessible parent on create" do
+          post domains_url, params: {
+            domain: valid_attributes.merge(
+              owner_id: user.groups.first.id,
+              parent_id: scoped_parent.id
+            )
+          }
+
+          expect(Junction::Domain.last.parent_id).to be_nil
+        end
+
+        it "does not change parent_id to an inaccessible parent on update" do
+          owned_domain = create(:domain, owner: user.groups.first)
+
+          patch domain_path(owned_domain), params: {
+            domain: { parent_id: scoped_parent.id }
+          }
+
+          expect(owned_domain.reload.parent_id).to be_nil
+        end
       end
     end
   end

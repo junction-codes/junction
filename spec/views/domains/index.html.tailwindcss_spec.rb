@@ -17,7 +17,8 @@ RSpec.describe "domains/index", type: :view do
         description: "MyText",
         status: "closed",
         image_url: nil,
-        owner: nil
+        owner: nil,
+        parent: Junction::Domain.first
       )
     ])
   end

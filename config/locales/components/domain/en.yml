@@ -20,6 +20,9 @@ en:
           description: >-
             This information will be displayed on the domain's main page.
           owner_help: Assign an owner for this domain.
+          parent_help: >-
+            Optionally nest this domain under a parent. Deleting a parent
+            removes its child domains.
           description_help: A brief, high-level summary of the domain's mission.
           image_url_placeholder: https://example.com/logo.png
           namespace_help: >-

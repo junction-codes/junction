@@ -14,3 +14,4 @@
   domain_type: product-group
   status: active
   description: Official demo of Junction
+  parent: junction

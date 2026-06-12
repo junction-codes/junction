@@ -16,7 +16,7 @@ module Junction
       authorize! Domain
       @q = index_scope_for(Domain).ransack(params[:q])
       @q.sorts = "title asc" if @q.sorts.empty?
-      @pagy, domains = paginate(@q.result)
+      @pagy, domains = paginate(@q.result.includes(:parent, :owner))
 
       render Views::Domains::Index.new(
         domains:,
@@ -80,6 +80,8 @@ module Junction
         domain: Domain.new,
         breadcrumbs:,
         available_owners:,
+        available_parents:,
+        parent_editable: true,
         type_options: domain_type_options
       )
     end
@@ -92,6 +94,8 @@ module Junction
         breadcrumbs:,
         can_destroy: allowed_to?(:destroy?, @entity),
         available_owners:,
+        available_parents:,
+        parent_editable: parent_editable?(@entity),
         type_options: domain_type_options
       )
     end
@@ -109,6 +113,8 @@ module Junction
           domain: @entity,
           breadcrumbs:,
           available_owners:,
+          available_parents:,
+          parent_editable: parent_editable?(@entity),
           type_options: domain_type_options
         ), status: :unprocessable_content
       end
@@ -126,6 +132,8 @@ module Junction
           breadcrumbs:,
           can_destroy: allowed_to?(:destroy?, @entity),
           available_owners:,
+          available_parents:,
+          parent_editable: parent_editable?(@entity),
           type_options: domain_type_options
         ), status: :unprocessable_content
       end
@@ -173,11 +181,74 @@ module Junction
       @entity = Domain.find_by!(namespace: params.expect(:namespace), name: params.expect(:name))
     end
 
+    # Returns the available parents for the current Domain and user.
+    #
+    # @return [ActiveRecord::Relation<Domain>] List of parent candidates.
+    def available_parents
+      parent_candidates
+    end
+
+    # Computes the candidate parents for the current Domain.
+    #
+    # Excludes the entity itself and its descendants to prevent circular
+    # hierarchy, and entities that the user doesn't have access to.
+    #
+    # @return [ActiveRecord::Relation<Domain>] Candidate parent domains.
+    def parent_candidates
+      scope = index_scope_for(Domain)
+      return Domain.none unless scope
+
+      scope = scope.select(:id, :title, :description, :image_url, :namespace, :name)
+        .order(:title)
+      return scope unless @entity&.persisted?
+
+      scope.where.not(id: [ @entity.id, *@entity.descendant_ids ])
+    end
+
+    # Determines if the parent domain is editable for the given domain.
+    #
+    # @param domain [Domain] Domain whose parent will be checked.
+    # @return [Boolean] Whether the user should be able to edit the parent.
+    def parent_editable?(domain = @entity)
+      domain.parent.blank? || allowed_to?(:show?, domain.parent)
+    end
+
     def domain_params
-      sanitize_owner_id(params.expect(domain: [
+      attrs = params.expect(domain: [
         :description, :domain_type, :image_url, :name, :namespace, :owner_id,
-        :status, :title, :type
-      ]))
+        :parent_id, :status, :title, :type
+      ])
+      sanitize_owner_id(sanitize_parent_id(attrs))
+    end
+
+    # Sanitizes the parent_id parameter.
+    #
+    # If the current Domain is persisted and the user is not allowed to edit the
+    # parent, the parent_id is set to the current parent_id.
+    #
+    # @param attrs [Hash] Permitted parameters hash.
+    # @return [Hash] Sanitized parameters hash.
+    def sanitize_parent_id(attrs)
+      out = attrs.dup
+      return out unless out.key?("parent_id") || out.key?(:parent_id)
+
+      id = out[:parent_id] || out["parent_id"]
+
+      if @entity&.persisted? && !parent_editable?(@entity)
+        out[:parent_id] = @entity.parent_id
+        out["parent_id"] = out[:parent_id] if out.key?("parent_id")
+        return out
+      end
+
+      allowed = parent_candidates.pluck(:id)
+      out[:parent_id] = if id.blank?
+        nil
+      elsif allowed.include?(id.to_i) || id.to_i == @entity&.parent_id
+        id.to_i
+      end
+
+      out["parent_id"] = out[:parent_id] if out.key?("parent_id")
+      out
     end
   end
 end

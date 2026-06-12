@@ -5,21 +5,28 @@ module Junction
     module Domains
       # Edit view for domains.
       class Edit < Views::Base
-        attr_reader :available_owners, :breadcrumbs, :can_destroy, :domain,
-                    :type_options
+        attr_reader :available_owners, :available_parents, :breadcrumbs,
+                    :can_destroy, :domain, :parent_editable, :type_options
 
         # Initializes the view.
         #
         # @param domain [Domain] The domain being modified.
         # @param available_owners [Array<Array>] Owner entity options with name
         #   and id attributes.
+        # @param available_parents [ActiveRecord::Relation] Parent domain
+        #   options.
+        # @param parent_editable [Boolean] Whether the parent field should be
+        #   editable.
         # @param type_options [Hash] Options for the domain type field.
         # @param can_destroy [Boolean] Whether the domain can be destroyed.
         # @param breadcrumbs [Array<Hash>] Breadcrumb items from the controller.
         def initialize(domain:, available_owners:, type_options:, can_destroy:,
+                       available_parents: [], parent_editable: true,
                        breadcrumbs: [])
           @domain = domain
           @available_owners = available_owners
+          @available_parents = available_parents
+          @parent_editable = parent_editable
           @type_options = type_options
           @can_destroy = can_destroy
           @breadcrumbs = breadcrumbs
@@ -44,7 +51,13 @@ module Junction
             # Two-column layout for form and sidebar.
             div(class: "grid grid-cols-1 lg:grid-cols-3 gap-8") do
               main(class: "lg:col-span-2") do
-                DomainForm(domain:, available_owners:, type_options:)
+                DomainForm(
+                  domain:,
+                  available_owners:,
+                  available_parents:,
+                  parent_editable:,
+                  type_options:
+                )
               end
 
               aside(class: "space-y-6") do

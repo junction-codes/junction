@@ -89,7 +89,7 @@ module Junction
                 )
               }
 
-              %w[title type status owner_id].each do |field|
+              %w[title type status owner_id parent_id].each do |field|
                 row.sortable_head(field:, sort_url:, **sort_attrs(query, field)) do
                   Domain.human_attribute_name(field)
                 end
@@ -119,6 +119,7 @@ module Junction
                 end
 
                 row.cell { render_view_link(domain.owner, class: "ps-0") }
+                row.cell { render_view_link(domain.parent, class: "ps-0") }
               end
             end
           end
