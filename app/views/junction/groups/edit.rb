@@ -6,22 +6,24 @@ module Junction
       # Edit view for groups.
       class Edit < Views::Base
         attr_reader :available_parents, :breadcrumbs, :can_destroy, :group,
-                    :type_options
+                    :parent_editable, :type_options
 
         # Initializes the view.
         #
         # @param group [Group] The group being modified.
-        # @param available_parents [Array<Array>] Parent entity options with
-        #   name and id attributes.
+        # @param available_parents [ActiveRecord::Relation] Parent options.
         # @param type_options [Hash] Options for the group type field.
         # @param can_destroy [Boolean] Whether the group can be destroyed.
         # @param breadcrumbs [Array<Hash>] Breadcrumb items from the controller.
+        # @param parent_editable [Boolean] Whether the parent field should be
+        #   editable.
         def initialize(group:, available_parents:, type_options:, can_destroy:,
-                       breadcrumbs: [])
+                       breadcrumbs: [], parent_editable: true)
           @available_parents = available_parents
           @breadcrumbs = breadcrumbs
           @can_destroy = can_destroy
           @group = group
+          @parent_editable = parent_editable
           @type_options = type_options
         end
 
@@ -44,7 +46,12 @@ module Junction
             # Two-column layout for form and sidebar.
             div(class: "grid grid-cols-1 lg:grid-cols-3 gap-8") do
               main(class: "lg:col-span-2") do
-                GroupForm(group:, available_parents:, type_options:)
+                GroupForm(
+                  group:,
+                  available_parents:,
+                  parent_editable:,
+                  type_options:
+                )
               end
 
               aside(class: "space-y-6") do

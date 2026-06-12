@@ -8,7 +8,11 @@ module Junction
 
     include Breadcrumbs
     include CatalogOptionSets
+    include HasTreeParent
     include Paginatable
+
+    PARENT_CANDIDATE_COLUMNS = %i[description id image_url name namespace title].freeze
+    private_constant :PARENT_CANDIDATE_COLUMNS
 
     # GET /groups
     def index
@@ -47,6 +51,7 @@ module Junction
         group: Group.new,
         breadcrumbs:,
         available_parents:,
+        parent_editable: true,
         type_options: group_type_options
       )
     end
@@ -59,6 +64,7 @@ module Junction
         breadcrumbs:,
         can_destroy: allowed_to?(:destroy?, @entity),
         available_parents:,
+        parent_editable: parent_editable_for?(@entity),
         type_options: group_type_options
       )
     end
@@ -76,6 +82,7 @@ module Junction
           group: @entity,
           breadcrumbs:,
           available_parents:,
+          parent_editable: parent_editable_for?(@entity),
           type_options: group_type_options
         ),
                status: :unprocessable_content
@@ -94,6 +101,7 @@ module Junction
           breadcrumbs:,
           can_destroy: allowed_to?(:destroy?, @entity),
           available_parents:,
+          parent_editable: parent_editable_for?(@entity),
           type_options: group_type_options
         ), status: :unprocessable_content
       end
@@ -109,14 +117,24 @@ module Junction
 
     private
 
-    # Returns a collection of available parents for groups.
+    # Returns the available parents for the current group and user.
     #
-    # @return [ActiveRecord::Relation] Collection of parents.
-    #
-    # @todo Use Junction::HasTreeParent for candidate filtering,
-    #   parent_editable?, and sanitize_parent_id.
+    # @return [ActiveRecord::Relation<Group>] List of parent candidates.
     def available_parents
-      Group.select(:description, :id, :image_url, :title).order(:title)
+      parent_candidates_for(
+        Group,
+        scope: group_read_scope,
+        columns: PARENT_CANDIDATE_COLUMNS
+      )
+    end
+
+    # Groups the current user may reference as a parent.
+    #
+    # @return [ActiveRecord::Relation, nil]
+    def group_read_scope
+      return Group.all if allowed_to?(:index_all?, Group)
+
+      Group.where(id: current_user.deep_group_ids) if allowed_to?(:index_owned?, Group)
     end
 
     # Returns an array of available types for groups.
@@ -149,10 +167,12 @@ module Junction
     # @todo We should support some sanitation of annotations, particularly those
     # that are used for access controls.
     def group_params
-      params.expect(group: [
+      attrs = params.expect(group: [
         :description, :email, :group_type, :image_url, :name, :namespace,
         :parent_id, :title, :type, annotations: {}
       ])
+
+      sanitize_tree_parent_id(attrs, parent_candidates: available_parents)
     end
   end
 end

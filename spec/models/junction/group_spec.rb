@@ -20,11 +20,51 @@ RSpec.describe Junction::Group, type: :model do
     end
   end
 
-  describe 'associations' do
-    it { is_expected.to have_many(:children).class_name('Group').with_foreign_key('parent_id').dependent(:destroy) }
+  describe "associations" do
+    it { is_expected.to have_many(:children).class_name("Group").with_foreign_key("parent_id").dependent(:destroy) }
     it { is_expected.to have_many(:group_memberships).dependent(:destroy) }
     it { is_expected.to have_many(:members).through(:group_memberships).source(:user) }
-    it { is_expected.to belong_to(:parent).class_name('Group').optional }
+    it { is_expected.to belong_to(:parent).class_name("Group").optional }
+  end
+
+  describe "parent validations" do
+    it "rejects assigning the group as its own parent" do
+      group = create(:group)
+      group.parent = group
+
+      expect(group).not_to be_valid
+    end
+
+    it "allows a parent in a different namespace" do
+      parent = create(:group, namespace: "other")
+      group = build(:group, parent: parent, namespace: "default")
+
+      expect(group).to be_valid
+    end
+
+    it "rejects assigning a descendant as parent" do
+      parent = create(:group)
+      child = create(:group, parent: parent)
+      parent.parent = child
+
+      expect(parent).not_to be_valid
+    end
+  end
+
+  describe "#descendant_ids" do
+    it "returns an empty array for a group with no children" do
+      group = create(:group)
+
+      expect(group.descendant_ids).to eq([])
+    end
+
+    it "returns direct and nested child ids" do
+      parent = create(:group)
+      child = create(:group, parent: parent)
+      grandchild = create(:group, parent: child)
+
+      expect(parent.descendant_ids).to contain_exactly(child.id, grandchild.id)
+    end
   end
 
   describe 'defaults' do
