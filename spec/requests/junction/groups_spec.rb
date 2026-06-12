@@ -171,6 +171,50 @@ RSpec.describe "/groups", type: :request do
       end
     end
 
+    describe "parent assignment" do
+      let!(:parent_group) { create(:group, title: "Parent Team", name: "parent-team") }
+
+      it "creates a group with a valid parent_id" do
+        post groups_url, params: {
+          group: valid_attributes.merge(parent_id: parent_group.id)
+        }
+
+        expect(Junction::Group.last.parent_id).to eq(parent_group.id)
+      end
+
+      it "updates a group with a valid parent_id" do
+        patch group_url(group), params: { group: { parent_id: parent_group.id } }
+
+        expect(group.reload.parent_id).to eq(parent_group.id)
+      end
+
+      it "creates a group with a parent in a different namespace" do
+        cross_ns_parent = create(:group, namespace: "backstage", name: "backstage-parent")
+        post groups_url, params: {
+          group: valid_attributes.merge(parent_id: cross_ns_parent.id, namespace: "default")
+        }
+
+        expect(Junction::Group.last.parent_id).to eq(cross_ns_parent.id)
+      end
+
+      context "when editing a group with descendants" do
+        let!(:child_group) { create(:group, parent: parent_group) }
+
+        before do
+          create(:group, parent: child_group)
+          get edit_group_url(child_group)
+        end
+
+        it "excludes the group from parent candidates" do
+          expect(response.body).not_to include("value=\"#{child_group.id}\"")
+        end
+
+        it "includes ancestor groups in parent candidates" do
+          expect(response.body).to include("value=\"#{parent_group.id}\"")
+        end
+      end
+    end
+
     describe "DELETE /destroy" do
       it_behaves_like "an action that requires permission",
         :delete, -> { group_path(group) },

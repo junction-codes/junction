@@ -5,9 +5,11 @@ module Junction
     module Group
       # Form for creating and editing groups.
       class GroupForm < Base
-        def initialize(group:, available_parents:, type_options:)
+        def initialize(group:, available_parents:, type_options:,
+                       parent_editable: true)
           @group = group
           @available_parents = available_parents
+          @parent_editable = parent_editable
           @type_options = type_options
         end
 
@@ -32,6 +34,7 @@ module Junction
 
                 Reference(f, :parent_id, required: false, icon: "users-round",
                               options: @available_parents, value: @group.parent,
+                              disabled: !@parent_editable,
                               help_text: t(".parent_help"))
 
                 Text(f, :email, placeholder: "example@example.com")

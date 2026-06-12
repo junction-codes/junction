@@ -2,9 +2,6 @@
 
 module Junction
   # Controller helpers for assigning a parent within a tree hierarchy.
-  #
-  # @todo Refactor Junction::GroupsController to use this concern for parent
-  #   candidate filtering, parent_editable?, and sanitize_parent_id.
   module HasTreeParent
     extend ActiveSupport::Concern
 
