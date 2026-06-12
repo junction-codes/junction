@@ -24,14 +24,14 @@ RSpec.describe Junction::Domain, type: :model do
     it_behaves_like "a model that can be owned"
 
     it do
-      expect(subject).to have_many(:children).class_name("Junction::Domain")
-                                             .with_foreign_key("parent_id")
-                                             .dependent(:destroy)
+      expect(domain).to have_many(:children).class_name("Junction::Domain")
+                                            .with_foreign_key("parent_id")
+                                            .dependent(:destroy)
     end
 
     it do
-      expect(subject).to belong_to(:parent).class_name("Junction::Domain")
-                                           .optional
+      expect(domain).to belong_to(:parent).class_name("Junction::Domain")
+                                          .optional
     end
 
     it { is_expected.to have_many(:systems) }
