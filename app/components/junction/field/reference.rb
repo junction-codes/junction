@@ -62,8 +62,13 @@ module Junction
         private
 
         def render_disabled_field
-          div(class: "rounded-md border border-gray-300 dark:border-gray-600 " \
-                    "bg-gray-50 dark:bg-gray-800 px-3 py-2 cursor-not-allowed") do
+          div(
+            class: "rounded-md border border-gray-300 dark:border-gray-600 " \
+                   "bg-gray-50 dark:bg-gray-800 px-3 py-2 cursor-not-allowed",
+            role: "group",
+            aria_disabled: "true",
+            aria_labelledby: @form.field_id(@method)
+          ) do
             @value.present? ? item_content(@value) : empty_content
           end
 

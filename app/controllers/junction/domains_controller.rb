@@ -9,7 +9,11 @@ module Junction
     include Breadcrumbs
     include CatalogOptionSets
     include HasOwner
+    include HasTreeParent
     include Paginatable
+
+    PARENT_CANDIDATE_COLUMNS = %i[description id image_url name namespace title].freeze
+    private_constant :PARENT_CANDIDATE_COLUMNS
 
     # GET /domains
     def index
@@ -95,7 +99,7 @@ module Junction
         can_destroy: allowed_to?(:destroy?, @entity),
         available_owners:,
         available_parents:,
-        parent_editable: parent_editable?(@entity),
+        parent_editable: parent_editable_for?(@entity),
         type_options: domain_type_options
       )
     end
@@ -114,7 +118,7 @@ module Junction
           breadcrumbs:,
           available_owners:,
           available_parents:,
-          parent_editable: parent_editable?(@entity),
+          parent_editable: parent_editable_for?(@entity),
           type_options: domain_type_options
         ), status: :unprocessable_content
       end
@@ -133,7 +137,7 @@ module Junction
           can_destroy: allowed_to?(:destroy?, @entity),
           available_owners:,
           available_parents:,
-          parent_editable: parent_editable?(@entity),
+          parent_editable: parent_editable_for?(@entity),
           type_options: domain_type_options
         ), status: :unprocessable_content
       end
@@ -185,79 +189,23 @@ module Junction
     #
     # @return [ActiveRecord::Relation<Domain>] List of parent candidates.
     def available_parents
-      parent_candidates
+      parent_candidates_for(
+        Domain,
+        scope: index_scope_for(Domain),
+        columns: PARENT_CANDIDATE_COLUMNS
+      )
     end
 
-    # Computes the candidate parents for the current Domain.
-    #
-    # Excludes the entity itself and its descendants to prevent circular
-    # hierarchy, and entities that the user doesn't have access to.
-    #
-    # @return [ActiveRecord::Relation<Domain>] Candidate parent domains.
-    def parent_candidates
-      scope = index_scope_for(Domain)
-      return Domain.none unless scope
-
-      scope = scope.select(:id, :title, :description, :image_url, :namespace, :name)
-        .order(:title)
-      return scope unless @entity&.persisted?
-
-      scope.where.not(id: [ @entity.id, *@entity.descendant_ids ])
-    end
-
-    # Determines if the parent domain is editable for the given domain.
-    #
-    # @param domain [Domain] Domain whose parent will be checked.
-    # @return [Boolean] Whether the user should be able to edit the parent.
-    def parent_editable?(domain = @entity)
-      domain.parent.blank? || allowed_to?(:show?, domain.parent)
-    end
 
     def domain_params
       attrs = params.expect(domain: [
         :description, :domain_type, :image_url, :name, :namespace, :owner_id,
         :parent_id, :status, :title, :type
       ])
-      sanitize_owner_id(sanitize_parent_id(attrs))
-    end
 
-    # Sanitizes the parent_id parameter.
-    #
-    # If the current Domain is persisted and the user is not allowed to edit the
-    # parent, the parent_id is set to the current parent_id.
-    #
-    # @param attrs [Hash] Permitted parameters hash.
-    # @return [Hash] Sanitized parameters hash.
-    def sanitize_parent_id(attrs)
-      out = attrs.dup
-      return out unless out.key?("parent_id") || out.key?(:parent_id)
-
-      id = out[:parent_id] || out["parent_id"]
-
-      if @entity&.persisted? && !parent_editable?(@entity)
-        out[:parent_id] = @entity.parent_id
-        out["parent_id"] = out[:parent_id] if out.key?("parent_id")
-        return out
-      end
-
-      out[:parent_id] = if id.blank?
-        nil
-      elsif parent_id_allowed?(id.to_i)
-        id.to_i
-      end
-
-      out["parent_id"] = out[:parent_id] if out.key?("parent_id")
-      out
-    end
-
-    # Determines if the submitted parent id is an allowed candidate.
-    #
-    # @param parent_id [Integer] Parent domain id.
-    # @return [Boolean] Whether the parent id is allowed.
-    def parent_id_allowed?(parent_id)
-      return true if parent_id == @entity&.parent_id
-
-      parent_candidates.where(id: parent_id).exists?
+      sanitize_owner_id(
+        sanitize_tree_parent_id(attrs, parent_candidates: available_parents)
+      )
     end
   end
 end

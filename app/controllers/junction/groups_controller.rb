@@ -112,6 +112,9 @@ module Junction
     # Returns a collection of available parents for groups.
     #
     # @return [ActiveRecord::Relation] Collection of parents.
+    #
+    # @todo Use Junction::HasTreeParent for candidate filtering,
+    #   parent_editable?, and sanitize_parent_id.
     def available_parents
       Group.select(:description, :id, :image_url, :title).order(:title)
     end
