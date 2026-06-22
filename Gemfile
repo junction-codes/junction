@@ -16,7 +16,7 @@ group :development, :test do
   gem "factory_bot_rails", "~> 6.5"
   gem "faker", "~> 3.8"
   gem "rspec-rails", "~> 8.0"
-  gem "rubocop-capybara", "~> 2.23"
+  gem "rubocop-capybara", "~> 3.0"
   gem "rubocop-rails-omakase", "~> 1.1"
   gem "rubocop-rspec", "~> 3.10"
   gem "simplecov", "~> 0.22"
