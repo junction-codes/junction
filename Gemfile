@@ -16,17 +16,17 @@ group :development, :test do
   gem "factory_bot_rails", "~> 6.5"
   gem "faker", "~> 3.8"
   gem "rspec-rails", "~> 8.0"
-  gem "rubocop-capybara", "~> 2.23"
+  gem "rubocop-capybara", "~> 3.0"
   gem "rubocop-rails-omakase", "~> 1.1"
   gem "rubocop-rspec", "~> 3.10"
-  gem "simplecov", "~> 0.22"
+  gem "simplecov", "~> 1.0"
   gem "shoulda-matchers", "~> 8.0"
   gem "vcr", "~> 6.3"
 end
 
 group :development do
   gem "puma", "~> 8.0"
-  gem "ruby_ui", "~> 1.3"
+  gem "ruby_ui", "~> 1.4"
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console", "~> 4.3"
 end
@@ -35,5 +35,5 @@ group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara", "~> 3.4"
   gem "cuprite", "~> 0.17"
-  gem "simplecov-cobertura", "~> 3.2"
+  gem "simplecov-cobertura", "~> 4.0"
 end
