@@ -27,6 +27,11 @@ module Junction
               t(".other_help")
             end
 
+            div(class: "grid grid-cols-1 gap-4 md:grid-cols-2") do
+              span(class: Field::FieldType::LABEL_CLASSES) { t(".name") }
+              span(class: Field::FieldType::LABEL_CLASSES) { t(".value") }
+            end
+
             div(data: { annotations_form_target: "list" }, class: "space-y-4") do
               @context.other_annotation_rows.each do |row|
                 div(class: "grid grid-cols-1 gap-4 md:grid-cols-2 other-annotation-row") do

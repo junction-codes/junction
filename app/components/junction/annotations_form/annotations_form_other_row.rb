@@ -20,51 +20,27 @@ module Junction
 
         def view_template
           div do
-            label(for: key_id, class: Field::FieldType::LABEL_CLASSES) do
-              t(".name")
-            end
-            div(class: "mt-2") do
-              input(
-                type: "text",
-                id: key_id,
-                name: @key_name,
-                value: @key_value,
-                class: Field::Text::BASE_CLASSES
-              )
-            end
+            input(
+              type: "text",
+              name: @key_name,
+              value: @key_value,
+              aria: { label: t(".name") },
+              class: Field::Text::BASE_CLASSES
+            )
           end
 
           div do
-            label(for: value_id, class: Field::FieldType::LABEL_CLASSES) do
-              t(".value")
-            end
-            div(class: "mt-2") do
-              input(
-                type: "text",
-                id: value_id,
-                name: @value_name,
-                value: @value_value,
-                class: Field::Text::BASE_CLASSES
-              )
-            end
+            input(
+              type: "text",
+              name: @value_name,
+              value: @value_value,
+              aria: { label: t(".value") },
+              class: Field::Text::BASE_CLASSES
+            )
           end
         end
 
         private
-
-        # ID for the annotation key field.
-        #
-        # @return [String] HTML ID for the key field.
-        def key_id
-          @key_id ||= "annotation_key_#{object_id}_#{@key_name.hash.abs}"
-        end
-
-        # ID for the annotation value field.
-        #
-        # @return [String] HTML ID for the value field.
-        def value_id
-          @value_id ||= "annotation_value_#{object_id}_#{@value_name.hash.abs}"
-        end
 
         def t(key, options = {})
           return super(key, **options) unless key[0] == "."
