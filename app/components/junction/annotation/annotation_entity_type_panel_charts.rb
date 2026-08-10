@@ -35,11 +35,11 @@ module Junction
 
             div(class: "bg-white dark:bg-gray-800 rounded-lg shadow p-4 space-y-3") do
               h4(class: "text-sm font-semibold text-gray-900 dark:text-gray-100") do
-                t(".value_breakdown")
+                t(".top_keys")
               end
 
-              bar_chart panel.dig(:charts, :value_breakdown),
-                        id: annotation_chart_id(panel, "value-breakdown"),
+              bar_chart panel.dig(:charts, :top_keys),
+                        id: annotation_chart_id(panel, "top-keys"),
                         height: "280px",
                         library: { indexAxis: "y" }
             end

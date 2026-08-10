@@ -32,6 +32,15 @@ module Junction
               span(class: Field::FieldType::LABEL_CLASSES) { t(".value") }
             end
 
+            # Marks the section as submitted so removing every row is
+            # persisted rather than being treated as "no rows given". The
+            # blank key is discarded when the rows are merged.
+            input(
+              type: "hidden",
+              name: "#{@form.object_name}[other_annotations][][key]",
+              value: ""
+            )
+
             div(data: { annotations_form_target: "list" }, class: "space-y-4") do
               @context.other_annotation_rows.each do |row|
                 other_annotation_row(key_value: row[:key], value_value: row[:value])

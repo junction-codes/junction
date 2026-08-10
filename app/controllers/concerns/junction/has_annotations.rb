@@ -24,18 +24,5 @@ module Junction
     def sanitize_annotations(attrs)
       attrs
     end
-
-    # Permits entity params including annotation entries.
-    #
-    # @param scope [Symbol] Top-level params key.
-    # @param keys [Array] Additional permitted keys.
-    # @yield [Hash] Optional block for further sanitization.
-    # @return [Hash] Permitted and sanitized parameters.
-    def permit_annotated_params(scope, *keys, &block)
-      attrs = sanitize_annotations(
-        params.expect(scope => [ *keys, *annotation_param_entries ])
-      )
-      block ? yield(attrs) : attrs
-    end
   end
 end

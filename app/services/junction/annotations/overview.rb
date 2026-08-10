@@ -124,17 +124,21 @@ module Junction
               t(".known") => known_total,
               t(".other") => other_total
             },
-            value_breakdown: top_keys.to_h { |row| [ row[:key], row[:count] ] }
+            top_keys: top_keys.to_h { |row| [ row[:key], row[:count] ] }
           }
         }
       end
 
       # Converts an annotation key to a URL slug.
       #
+      # Slugs are unique across all known annotation keys. Keys that would share
+      # a slug (e.g. +team.name+ and +team/name+) are disambiguated with a
+      # numeric suffix.
+      #
       # @param key [String] Key for the annotation.
       # @return [String] URL-friendly slug for the annotation key.
       def slug_for(key)
-        key.to_s.tr("./", "--")
+        slugs_by_key.fetch(key.to_s) { base_slug(key) }
       end
 
       # Resolves a URL slug to an annotation key.
@@ -142,10 +146,47 @@ module Junction
       # @param slug [String] URL-friendly slug for the annotation key.
       # @return [String, nil] The original annotation key, or nil if not found.
       def key_for_slug(slug)
-        annotation_keys.find { |key| slug_for(key) == slug }
+        keys_by_slug[slug.to_s]
       end
 
       private
+
+      # Maps each annotation key to its unique slug.
+      #
+      # @return [Hash<String, String>] Map of annotation key to slug.
+      def slugs_by_key
+        @slugs_by_key ||= keys_by_slug.invert
+      end
+
+      # Maps each unique slug to its annotation key.
+      #
+      # @return [Hash<String, String>] Map of slug to annotation key.
+      def keys_by_slug
+        @keys_by_slug ||= annotation_keys.each_with_object({}) do |key, map|
+          map[unique_slug(base_slug(key), map)] = key
+        end
+      end
+
+      # Builds the unqualified slug for an annotation key.
+      #
+      # @param key [String] Key for the annotation.
+      # @return [String] URL-friendly slug, which may not be unique.
+      def base_slug(key)
+        key.to_s.parameterize.presence || "annotation"
+      end
+
+      # Suffixes a slug until it no longer collides with an existing one.
+      #
+      # @param slug [String] The desired slug.
+      # @param taken [Hash] Map of slugs already in use.
+      # @return [String] A slug that is not yet in use.
+      def unique_slug(slug, taken)
+        return slug unless taken.key?(slug)
+
+        suffix = 2
+        suffix += 1 while taken.key?("#{slug}-#{suffix}")
+        "#{slug}-#{suffix}"
+      end
 
       # Collects all of the unique annotation keys.
       #
@@ -185,14 +226,14 @@ module Junction
       def key_value_counts(model)
         sql = <<~SQL.squish
           SELECT key, value, COUNT(*) AS count
-          FROM #{model.table_name}, jsonb_each(COALESCE(annotations, '{}'::jsonb))
+          FROM #{model.table_name}, jsonb_each_text(COALESCE(annotations, '{}'::jsonb))
           GROUP BY key, value
         SQL
 
         model.connection.select_all(sql).map do |row|
           {
             key: row["key"],
-            value: row["value"],
+            value: row["value"].to_s,
             count: row["count"].to_i
           }
         end
@@ -204,19 +245,32 @@ module Junction
       # @param key [String] Key for the annotation.
       # @return [Array<Hash>] List of raw rows matching the key and model.
       def rows_for(model, key)
-        raw_rows.select do |row|
-          row[:key] == key && row_for_model?(row, model)
+        rows_by_type_and_key.fetch([ entity_type_id_for(model), key ], [])
+      end
+
+      # Indexes the raw rows by entity type and annotation key.
+      #
+      # @return [Hash<Array, Array<Hash>>] Map of [entity type id, key] to rows.
+      def rows_by_type_and_key
+        @rows_by_type_and_key ||= raw_rows.group_by do |row|
+          [ row[:entity_type_id], row[:key] ]
         end
       end
 
-      # Checks whether a raw row belongs to the given model.
+      # Indexes the raw rows by annotation key.
       #
-      # @param row [Hash] A raw annotation row.
+      # @return [Hash<String, Array<Hash>>] Map of annotation key to rows.
+      def rows_by_key
+        @rows_by_key ||= raw_rows.group_by { |row| row[:key] }
+      end
+
+      # Resolves the entity type id registered for a model.
+      #
       # @param model [Class] The model class for the entity type.
-      # @return [Boolean] Whether the row's entity type matches the model.
-      def row_for_model?(row, model)
-        entity_type = ENTITY_TYPES.find { |type| type.model == model }
-        row[:entity_type_id] == entity_type.id
+      # @return [String, nil] The entity type id, or nil if unregistered.
+      def entity_type_id_for(model)
+        @entity_type_ids ||= ENTITY_TYPES.to_h { |type| [ type.model, type.id ] }
+        @entity_type_ids[model]
       end
 
       # Sums the total number of records annotated with a given key.
@@ -224,7 +278,16 @@ module Junction
       # @param key [String] Key for the annotation.
       # @return [Integer] Total count of records annotated with the key.
       def total_count_for_key(key)
-        value_rows_for_key(key).sum { |row| row[:count] }
+        total_counts_by_key.fetch(key, 0)
+      end
+
+      # Sums the raw row counts for every annotation key.
+      #
+      # @return [Hash<String, Integer>] Map of annotation key to total count.
+      def total_counts_by_key
+        @total_counts_by_key ||= rows_by_key.transform_values do |rows|
+          rows.sum { |row| row[:count] }
+        end
       end
 
       # Groups the raw rows for a key by value, summing their counts.
@@ -233,12 +296,19 @@ module Junction
       # @return [Array<Hash>] List of value/count pairs, sorted by count
       #   descending, then value.
       def value_rows_for_key(key)
-        raw_rows.select { |row| row[:key] == key }
-                .group_by { |row| row[:value] }
-                .map do |value, rows|
-          { value:, count: rows.sum { |row| row[:count] } }
+        value_rows_by_key.fetch(key, [])
+      end
+
+      # Groups the raw rows of every key by value, summing their counts.
+      #
+      # @return [Hash<String, Array<Hash>>] Map of annotation key to its
+      #   value/count pairs, sorted by count descending, then value.
+      def value_rows_by_key
+        @value_rows_by_key ||= rows_by_key.transform_values do |rows|
+          rows.group_by { |row| row[:value] }
+              .map { |value, grouped| { value:, count: grouped.sum { |row| row[:count] } } }
+              .sort_by { |row| [ -row[:count], row[:value] ] }
         end
-                .sort_by { |row| [ -row[:count], row[:value] ] }
       end
 
       # Groups the raw rows for a model by key, summing their counts.
@@ -246,9 +316,18 @@ module Junction
       # @param model [Class] The model class for the entity type.
       # @return [Hash] Map of annotation key to total count for the model.
       def key_counts_for_model(model)
-        raw_rows.select { |row| row_for_model?(row, model) }
-                .group_by { |row| row[:key] }
-                .transform_values { |rows| rows.sum { |row| row[:count] } }
+        key_counts_by_type.fetch(entity_type_id_for(model), {})
+      end
+
+      # Sums the raw row counts per entity type and annotation key.
+      #
+      # @return [Hash<String, Hash>] Map of entity type id to a map of
+      #   annotation key and total count.
+      def key_counts_by_type
+        @key_counts_by_type ||= raw_rows.each_with_object({}) do |row, counts|
+          keys = counts[row[:entity_type_id]] ||= Hash.new(0)
+          keys[row[:key]] += row[:count]
+        end
       end
 
       # Counts the records for a model that have at least one annotation.

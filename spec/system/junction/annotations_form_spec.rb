@@ -86,4 +86,27 @@ RSpec.describe "Junction::Annotations forms", type: :system do
       expect(component.reload[:annotations]).to eq("existing/key" => "existing-value")
     end
   end
+
+  describe "removing every row", :js do
+    let(:component) do
+      create(:component, annotations: { "existing/key" => "existing-value", "region" => "us-east" })
+    end
+
+    before do
+      sign_in_with_permissions(%w[
+        junction.codes/components.all.read
+        junction.codes/components.all.write
+      ])
+      visit edit_component_path(component)
+
+      all("[data-annotations-form-target='list'] .other-annotation-row").each do |row|
+        within(row) { click_button "Remove annotation" }
+      end
+      click_button "Save Changes"
+    end
+
+    it "drops every annotation on save" do
+      expect(component.reload[:annotations]).to eq({})
+    end
+  end
 end

@@ -52,7 +52,7 @@ module Junction
         #
         # @param known [Boolean] Whether the annotation is known.
         def render_known_other_badge(known)
-          Badge(variant: known ? :default : :secondary) do
+          Badge(variant: known ? :primary : :secondary) do
             known ? t(".known_badge") : t(".other_badge")
           end
         end
