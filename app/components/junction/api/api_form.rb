@@ -54,9 +54,7 @@ module Junction
               end
             end
 
-            f.fields_for :annotations, @api.annotations do |annotations_form|
-              AnnotationsForm(form: annotations_form, context: @api)
-            end
+            AnnotationsForm(form: f, context: @api)
 
             # Form actions.
             div(class: "flex items-center justify-end gap-x-4 pt-4") do

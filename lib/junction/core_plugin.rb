@@ -63,6 +63,13 @@ module Junction
       description: "Read access to catalog options"
     )
 
+    permission(
+      context: "annotations",
+      ownership: "all",
+      access: :read,
+      description: "Read access to annotations overview"
+    )
+
     settings_menu_item(
       action: :roles_path,
       title_i18n: "junction.components.sidebar.sidebar.roles",
@@ -82,6 +89,13 @@ module Junction
       title_i18n: "junction.components.sidebar.sidebar.options",
       icon: "list-filter",
       access: { action: :index?, record: :options }
+    )
+
+    settings_menu_item(
+      action: :annotations_path,
+      title_i18n: "junction.components.sidebar.sidebar.annotations",
+      icon: "tags",
+      access: { action: :index?, record: :annotations }
     )
   end
 end

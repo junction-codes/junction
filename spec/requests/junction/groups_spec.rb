@@ -163,6 +163,28 @@ RSpec.describe "/groups", type: :request do
         end
       end
 
+      context "with custom annotations" do
+        it "persists arbitrary annotation keys" do
+          patch group_url(group), params: {
+            group: { other_annotations: [ { key: "custom/key", value: "saved" } ] }
+          }
+
+          expect(group.reload[:annotations]["custom/key"]).to eq("saved")
+        end
+
+        it "persists arbitrary annotation keys from indexed form params" do
+          patch group_url(group), params: {
+            group: {
+              other_annotations: {
+                "0" => { "key" => "custom/key", "value" => "saved" }
+              }
+            }
+          }
+
+          expect(group.reload[:annotations]["custom/key"]).to eq("saved")
+        end
+      end
+
       context "with invalid parameters" do
         it "renders a response with 422 status (i.e. to display the 'edit' template)" do
           patch group_url(group), params: { group: invalid_attributes }

@@ -2,7 +2,15 @@ en:
   junction:
     components:
       annotations_form:
-        title: Annotations
+        add_row: Add annotation
         description: >-
           Metadata used to identify this entity within external systems (e.g.
           monitoring, incident management, etc.).
+        known: Known annotations
+        name: Name
+        other: Other annotations
+        other_help: >-
+          Custom annotation keys. Known annotation keys cannot be duplicated
+          here.
+        title: Annotations
+        value: Value

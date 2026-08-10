@@ -1,0 +1,15 @@
+en:
+  junction:
+    views:
+      annotations:
+        index:
+          annotations_tab: Annotations
+          description: View known and custom annotation usage across the catalog.
+          entity_type_tab: Entity Types
+          known: Known annotations
+          other: Other annotations
+          title: Annotations
+        keys:
+          empty: No annotations are currently present.
+        entity_types:
+          empty_entity_types: No entity types are configured.

@@ -11,6 +11,14 @@ Junction::Engine.routes.draw do
   resources :options, only: :index, controller: "options"
   resources :plugins, only: :index, controller: "plugins"
 
+  scope :annotations, controller: "annotations" do
+    get "/", action: :index, as: :annotations
+    get "keys", action: :keys, as: :annotation_keys
+    get "keys/:annotation_key", action: :annotation_key, as: :annotation_key
+    get "entity-types", action: :entity_types, as: :annotation_entity_types
+    get "entity-types/:entity_type", action: :entity_type, as: :annotation_entity_type
+  end
+
   Junction::CatalogRoutes.draw(self)
 
   resources :dependencies, only: :destroy

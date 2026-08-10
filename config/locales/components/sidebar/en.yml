@@ -3,6 +3,7 @@ en:
     components:
       sidebar:
         sidebar:
+          annotations: Annotations
           cost_explorer: Cost Explorer
           dashboard: Dashboard
           footer: Built using Junction
