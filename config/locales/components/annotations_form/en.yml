@@ -12,5 +12,6 @@ en:
         other_help: >-
           Custom annotation keys. Known annotation keys cannot be duplicated
           here.
+        remove_row: Remove annotation
         title: Annotations
         value: Value

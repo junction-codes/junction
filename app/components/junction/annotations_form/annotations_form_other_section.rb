@@ -34,24 +34,12 @@ module Junction
 
             div(data: { annotations_form_target: "list" }, class: "space-y-4") do
               @context.other_annotation_rows.each do |row|
-                div(class: "grid grid-cols-1 gap-4 md:grid-cols-2 other-annotation-row") do
-                  AnnotationsFormOtherRow(
-                    key_name: "#{@form.object_name}[other_annotations][][key]",
-                    value_name: "#{@form.object_name}[other_annotations][][value]",
-                    key_value: row[:key],
-                    value_value: row[:value]
-                  )
-                end
+                other_annotation_row(key_value: row[:key], value_value: row[:value])
               end
             end
 
             template(data: { annotations_form_target: "rowTemplate" }) do
-              div(class: "grid grid-cols-1 gap-4 md:grid-cols-2 other-annotation-row") do
-                AnnotationsFormOtherRow(
-                  key_name: "#{@form.object_name}[other_annotations][][key]",
-                  value_name: "#{@form.object_name}[other_annotations][][value]"
-                )
-              end
+              other_annotation_row
             end
 
             Button(
@@ -66,6 +54,34 @@ module Junction
         end
 
         private
+
+        # Renders a single other-annotation row with a delete button.
+        #
+        # @param key_value [String] Value of the key field.
+        # @param value_value [String] Value of the value field.
+        def other_annotation_row(key_value: nil, value_value: nil)
+          div(class: "flex items-center gap-2 other-annotation-row") do
+            div(class: "grid flex-1 grid-cols-1 gap-4 md:grid-cols-2") do
+              AnnotationsFormOtherRow(
+                key_name: "#{@form.object_name}[other_annotations][][key]",
+                value_name: "#{@form.object_name}[other_annotations][][value]",
+                key_value:,
+                value_value:
+              )
+            end
+
+            Button(
+              type: "button",
+              variant: :ghost,
+              size: :sm,
+              icon: true,
+              aria: { label: t(".remove_row") },
+              data: { action: "click->annotations-form#remove" }
+            ) do
+              icon("trash", class: "w-4 h-4")
+            end
+          end
+        end
 
         def t(key, options = {})
           return super(key, **options) unless key[0] == "."

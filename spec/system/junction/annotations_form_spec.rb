@@ -61,4 +61,29 @@ RSpec.describe "Junction::Annotations forms", type: :system do
       )
     end
   end
+
+  describe "removing a row", :js do
+    let(:component) do
+      create(:component, annotations: { "existing/key" => "existing-value", "region" => "us-east" })
+    end
+
+    before do
+      sign_in_with_permissions(%w[
+        junction.codes/components.all.read
+        junction.codes/components.all.write
+      ])
+      visit edit_component_path(component)
+
+      # jsonb does not preserve key insertion order, so locate the row by its
+      # rendered value instead of assuming a fixed position.
+      row = all("[data-annotations-form-target='list'] .other-annotation-row")
+        .find { |candidate| candidate.find_field("Name").value == "region" }
+      within(row) { click_button "Remove annotation" }
+      click_button "Save Changes"
+    end
+
+    it "drops the removed annotation on save" do
+      expect(component.reload[:annotations]).to eq("existing/key" => "existing-value")
+    end
+  end
 end

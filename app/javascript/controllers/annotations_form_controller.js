@@ -9,4 +9,9 @@ export default class extends Controller {
     const fragment = this.rowTemplateTarget.content.cloneNode(true)
     this.listTarget.appendChild(fragment)
   }
+
+  remove(event) {
+    event.preventDefault()
+    event.target.closest(".other-annotation-row").remove()
+  }
 }
