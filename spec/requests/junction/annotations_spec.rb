@@ -17,6 +17,13 @@ RSpec.describe "Junction::AnnotationsController", type: :request do
 
     it_behaves_like "an annotations overview lazy frame",
       "annotations_entity_types", -> { annotation_entity_types_path }
+
+    it "warns that annotations must not be used for secrets" do
+      sign_in_user_with_permissions(%w[junction.codes/annotations.all.read])
+      get annotations_path
+
+      expect(response.body).to include("Never use annotations for secrets")
+    end
   end
 
   describe "GET /annotations/keys" do
@@ -76,6 +83,10 @@ RSpec.describe "Junction::AnnotationsController", type: :request do
 
     it "renders other annotation fields with bare-bracket array notation" do
       expect(response.body).to include("other_annotations][][key]")
+    end
+
+    it "warns that annotations must not be used for secrets" do
+      expect(response.body).to include("Never use them for secrets")
     end
   end
 end

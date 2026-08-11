@@ -8,6 +8,10 @@ en:
           entity_type_tab: Entity Types
           known: Known annotations
           other: Other annotations
+          secret_warning: >-
+            Annotation keys and values are listed here in plain text for every
+            entity type. Never use annotations for secrets such as tokens,
+            passwords, or API keys.
           title: Annotations
         keys:
           empty: No annotations are currently present.

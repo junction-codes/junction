@@ -22,6 +22,8 @@ module Junction
             end
 
             card.content(class: "space-y-6") do
+              secret_warning
+
               AnnotationsFormKnownSection(
                 form: @form,
                 context: @context,
@@ -34,6 +36,13 @@ module Junction
         end
 
         private
+
+        # Warns that annotations are not a suitable place for secrets.
+        def secret_warning
+          Alert(variant: :warning, dismissible: false) do |alert|
+            alert.description { t(".secret_warning") }
+          end
+        end
 
         # Retrieves the known annotations for the entity's type.
         #

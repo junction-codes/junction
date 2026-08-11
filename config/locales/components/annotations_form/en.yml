@@ -13,5 +13,8 @@ en:
           Custom annotation keys. Known annotation keys cannot be duplicated
           here.
         remove_row: Remove annotation
+        secret_warning: >-
+          Annotation values are stored and displayed in plain text. Never use
+          them for secrets such as tokens, passwords, or API keys.
         title: Annotations
         value: Value

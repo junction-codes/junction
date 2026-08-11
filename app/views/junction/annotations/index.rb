@@ -23,6 +23,8 @@ module Junction
                 t(".description")
               end
 
+              secret_warning
+
               Tabs(default: "annotations") do |tabs|
                 tabs.list do |list|
                   list.trigger(value: "annotations") { t(".annotations_tab") }
@@ -46,6 +48,15 @@ module Junction
                 end
               end
             end
+          end
+        end
+
+        private
+
+        # Warns that annotations are not a suitable place for secrets.
+        def secret_warning
+          Alert(variant: :warning, dismissible: false) do |alert|
+            alert.description { t(".secret_warning") }
           end
         end
       end

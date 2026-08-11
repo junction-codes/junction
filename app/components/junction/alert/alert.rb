@@ -23,8 +23,15 @@ module Junction
         }.freeze
         VARIANTS = %i[ alert default success warning ].freeze
 
-        def initialize(variant: :default, **user_attrs)
+        # Initializes a new component.
+        #
+        # @param variant [Symbol] Alert variant to display.
+        # @param dismissible [Boolean] Whether the alert can be dismissed by
+        #   the user.
+        # @param user_attrs [Hash] Additional HTML attributes for the component.
+        def initialize(variant: :default, dismissible: true, **user_attrs)
           @variant = VARIANTS.include?(variant.to_sym) ? variant.to_sym : :default
+          @dismissible = dismissible
 
           super(**user_attrs)
         end
@@ -32,25 +39,25 @@ module Junction
         def view_template(&)
           div(**attrs) do
             icon(ICONS[@variant], class: "h-6 w-6")
-            render AlertTitle.new { t(".titles.#{@variant}") }
+            AlertTitle { t(".titles.#{@variant}") }
 
             yield
 
-            render AlertClose.new
+            render AlertClose.new if @dismissible
           end
         end
 
         def description(...)
-          render AlertDescription.new(...)
+          AlertDescription(...)
         end
 
         private
 
         def default_attrs
-          {
-            class: [ BASE_CLASSES, COLORS[@variant] ],
-            data: { controller: "alert" }
-          }
+          attrs = { class: [ BASE_CLASSES, COLORS[@variant] ] }
+          attrs[:data] = { controller: "alert" } if @dismissible
+
+          attrs
         end
       end
     end
