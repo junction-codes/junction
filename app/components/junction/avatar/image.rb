@@ -20,8 +20,17 @@ module Junction
 
         def default_attrs
           {
-            loading: "lazy",
-            class: "aspect-square h-full w-full",
+            # NB: do not set loading: "lazy" here. The avatar controller hides a
+            # not-yet-loaded image with `display: none` (the `hidden` class) so
+            # the fallback shows. The browser never fetches a `loading="lazy"`
+            # image that generates no box, so its `load` event never fires and
+            # the image stays hidden forever.
+            data: {
+              ruby_ui__avatar_target: "image",
+              action: "load->ruby-ui--avatar#showImage " \
+                      "error->ruby-ui--avatar#showFallback"
+            },
+            class: "relative aspect-square h-full w-full",
             alt: @alt,
             src: @src
           }
