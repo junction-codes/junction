@@ -58,7 +58,9 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
-
+    permissions:
+      code-quality: write
+      contents: read
     services:
       postgres:
         image: postgres
