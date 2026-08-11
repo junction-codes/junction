@@ -27,6 +27,17 @@ RSpec.shared_examples "an annotations form" do |factory, edit_path, permissions,
     it "renders the known annotation field" do
       expect(page).to have_text(known_key)
     end
+
+    describe "after saving a known annotation" do
+      before do
+        fill_in known_key, with: "known-value"
+        click_button "Save Changes"
+      end
+
+      it "persists the annotation" do
+        expect(entity.reload[:annotations][known_key]).to eq("known-value")
+      end
+    end
   end
 
   describe "after saving a custom annotation" do

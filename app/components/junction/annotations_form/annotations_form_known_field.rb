@@ -16,18 +16,12 @@ module Junction
         end
 
         def view_template
-          div do
-            label(class: Field::FieldType::LABEL_CLASSES) do
-              "#{@annotation[:title]} (#{@annotation[:key]})"
-            end
-            div(class: "mt-2") do
-              @annotations_form.text_field(
-                @annotation[:key],
-                class: Field::Text::BASE_CLASSES,
-                placeholder: @annotation[:placeholder]
-              )
-            end
-          end
+          Text(
+            @annotations_form,
+            @annotation[:key],
+            label: "#{@annotation[:title]} (#{@annotation[:key]})",
+            placeholder: @annotation[:placeholder]
+          )
         end
       end
     end

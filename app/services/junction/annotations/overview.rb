@@ -6,6 +6,11 @@ module Junction
     class Overview
       EntityType = Struct.new(:id, :model, keyword_init: true)
 
+      # Maximum number of distinct values charted for a single annotation key.
+      # Remaining values are aggregated into a single "other" bucket so that
+      # high-cardinality annotations can't produce an unbounded chart.
+      VALUE_CHART_LIMIT = 10
+
       ENTITY_TYPES = [
         EntityType.new(id: "apis", model: Junction::Api),
         EntityType.new(id: "components", model: Junction::Component),
@@ -37,7 +42,7 @@ module Junction
         return nil if key.blank?
 
         entity_rows = ENTITY_TYPES.filter_map do |entity_type|
-          rows = rows_for(entity_type.model, key)
+          rows = value_rows_for(entity_type.model, key)
           next if rows.empty?
 
           {
@@ -48,7 +53,6 @@ module Junction
           }
         end
 
-        value_rows = value_rows_for_key(key)
         {
           id: slug_for(key),
           label: key,
@@ -57,7 +61,7 @@ module Junction
           total_count: total_count_for_key(key),
           entity_types: entity_rows,
           charts: {
-            value_breakdown: value_rows.to_h { |row| [ row[:value], row[:count] ] },
+            value_breakdown: value_breakdown_chart(key),
             by_entity_type: entity_rows.to_h { |row| [ entity_label(row[:type_id]), row[:count] ] }
           }
         }
@@ -87,23 +91,24 @@ module Junction
         entity_type = ENTITY_TYPES.find { |type| type.id == id }
         return nil unless entity_type
 
-        known_keys = PluginRegistry.annotations_for(entity_type.model).keys
-        key_counts = key_counts_for_model(entity_type.model)
+        known_annotations = PluginRegistry.annotations_for(entity_type.model)
+        known_keys = known_annotations.keys
+        rows_by_key = value_rows_by_key_for(entity_type.model)
+
         known_rows = known_keys.map do |key|
-          rows = rows_for(entity_type.model, key)
+          rows = rows_by_key.fetch(key, [])
           {
             key:,
-            title: PluginRegistry.annotations_for(entity_type.model).dig(key, :title),
+            title: known_annotations.dig(key, :title),
             count: rows.sum { |row| row[:count] },
             top_value: rows.max_by { |row| row[:count] }&.fetch(:value)
           }
         end
 
-        other_rows = key_counts.except(*known_keys).map do |key, count|
-          rows = rows_for(entity_type.model, key)
+        other_rows = rows_by_key.except(*known_keys).map do |key, rows|
           {
             key:,
-            count:,
+            count: rows.sum { |row| row[:count] },
             top_value: rows.max_by { |row| row[:count] }&.fetch(:value)
           }
         end
@@ -193,7 +198,7 @@ module Junction
       # @return [Array<String>] List of unique annotation keys.
       def annotation_keys
         @annotation_keys ||= begin
-          keys = raw_rows.map { |row| row[:key] }
+          keys = key_counts_by_type.values.flat_map(&:keys)
           keys.concat(registered_keys)
           keys.uniq.sort
         end
@@ -208,25 +213,36 @@ module Junction
         end.uniq
       end
 
-      # Collects all of the raw annotation rows.
+      # Counts the annotated records of an entity type, per annotation key.
       #
-      # @return [Array<Hash>] List of raw annotation rows.
-      def raw_rows
-        @raw_rows ||= ENTITY_TYPES.flat_map do |entity_type|
-          key_value_counts(entity_type.model).map do |row|
-            row.merge(entity_type_id: entity_type.id)
-          end
+      # Values are not expanded, so the result is bounded by the number of
+      # distinct keys rather than the number of distinct key/value pairs.
+      #
+      # @param model [Class] The model class for the entity type.
+      # @return [Hash<String, Integer>] Map of annotation key to record count.
+      def key_counts(model)
+        sql = <<~SQL.squish
+          SELECT key, COUNT(*) AS count
+          FROM #{model.table_name}, jsonb_each_text(COALESCE(annotations, '{}'::jsonb))
+          GROUP BY key
+        SQL
+
+        model.connection.select_all(sql).to_h do |row|
+          [ row["key"], row["count"].to_i ]
         end
       end
 
-      # Collects the key-value counts for a given entity type.
+      # Counts the annotated records of an entity type, per key and value.
       #
       # @param model [Class] The model class for the entity type.
-      # @return [Array<Hash>] List of key-value counts for the entity type.
-      def key_value_counts(model)
+      # @param key [String] Restricts the query to a single annotation key.
+      # @return [Array<Hash>] List of key/value counts for the entity type.
+      def key_value_counts(model, key: nil)
+        conditions = key.nil? ? "" : model.sanitize_sql_array([ "WHERE key = ?", key ])
         sql = <<~SQL.squish
           SELECT key, value, COUNT(*) AS count
           FROM #{model.table_name}, jsonb_each_text(COALESCE(annotations, '{}'::jsonb))
+          #{conditions}
           GROUP BY key, value
         SQL
 
@@ -239,38 +255,68 @@ module Junction
         end
       end
 
-      # Filters the raw rows to those for a given key and model.
+      # Value counts for a single entity type and annotation key.
       #
       # @param model [Class] The model class for the entity type.
       # @param key [String] Key for the annotation.
-      # @return [Array<Hash>] List of raw rows matching the key and model.
-      def rows_for(model, key)
-        rows_by_type_and_key.fetch([ entity_type_id_for(model), key ], [])
+      # @return [Array<Hash>] List of value/count pairs, sorted by count
+      #   descending, then value.
+      def value_rows_for(model, key)
+        @value_rows_for ||= {}
+        @value_rows_for[[ model, key ]] ||=
+          merge_value_rows(key_value_counts(model, key:))
       end
 
-      # Indexes the raw rows by entity type and annotation key.
-      #
-      # @return [Hash<Array, Array<Hash>>] Map of [entity type id, key] to rows.
-      def rows_by_type_and_key
-        @rows_by_type_and_key ||= raw_rows.group_by do |row|
-          [ row[:entity_type_id], row[:key] ]
-        end
-      end
-
-      # Indexes the raw rows by annotation key.
-      #
-      # @return [Hash<String, Array<Hash>>] Map of annotation key to rows.
-      def rows_by_key
-        @rows_by_key ||= raw_rows.group_by { |row| row[:key] }
-      end
-
-      # Resolves the entity type id registered for a model.
+      # Value counts for every annotation key of a single entity type.
       #
       # @param model [Class] The model class for the entity type.
-      # @return [String, nil] The entity type id, or nil if unregistered.
-      def entity_type_id_for(model)
-        @entity_type_ids ||= ENTITY_TYPES.to_h { |type| [ type.model, type.id ] }
-        @entity_type_ids[model]
+      # @return [Hash<String, Array<Hash>>] Map of annotation key to its
+      #   value/count pairs, sorted by count descending, then value.
+      def value_rows_by_key_for(model)
+        @value_rows_by_key_for ||= {}
+        @value_rows_by_key_for[model] ||=
+          key_value_counts(model).group_by { |row| row[:key] }
+                                 .transform_values { |rows| merge_value_rows(rows) }
+      end
+
+      # Value counts for an annotation key across every entity type.
+      #
+      # @param key [String] Key for the annotation.
+      # @return [Array<Hash>] List of value/count pairs, sorted by count
+      #   descending, then value.
+      def value_rows_for_key(key)
+        @value_rows_for_key ||= {}
+        @value_rows_for_key[key] ||= merge_value_rows(
+          ENTITY_TYPES.flat_map { |entity_type| value_rows_for(entity_type.model, key) }
+        )
+      end
+
+      # Groups rows by value, summing their counts.
+      #
+      # @param rows [Array<Hash>] Rows with +:value+ and +:count+.
+      # @return [Array<Hash>] List of value/count pairs, sorted by count
+      #   descending, then value.
+      def merge_value_rows(rows)
+        rows.group_by { |row| row[:value] }
+            .map { |value, grouped| { value:, count: grouped.sum { |row| row[:count] } } }
+            .sort_by { |row| [ -row[:count], row[:value] ] }
+      end
+
+      # Builds the value breakdown chart data for an annotation key.
+      #
+      # Only the most used values are charted, the rest are summed into a single
+      # bucket so that high-cardinality annotations stay renderable.
+      #
+      # @param key [String] Key for the annotation.
+      # @return [Hash<String, Integer>] Map of annotation value to record count.
+      def value_breakdown_chart(key)
+        rows = value_rows_for_key(key)
+        return rows.to_h { |row| [ row[:value], row[:count] ] } if rows.size <= VALUE_CHART_LIMIT
+
+        charted = rows.first(VALUE_CHART_LIMIT)
+        remainder = rows.drop(VALUE_CHART_LIMIT).sum { |row| row[:count] }
+        charted.to_h { |row| [ row[:value], row[:count] ] }
+               .merge(t(".other_values", count: rows.size - VALUE_CHART_LIMIT) => remainder)
       end
 
       # Sums the total number of records annotated with a given key.
@@ -281,52 +327,26 @@ module Junction
         total_counts_by_key.fetch(key, 0)
       end
 
-      # Sums the raw row counts for every annotation key.
+      # Sums the per-entity-type key counts for every annotation key.
       #
       # @return [Hash<String, Integer>] Map of annotation key to total count.
       def total_counts_by_key
-        @total_counts_by_key ||= rows_by_key.transform_values do |rows|
-          rows.sum { |row| row[:count] }
+        @total_counts_by_key ||= begin
+          totals = Hash.new(0)
+          key_counts_by_type.each_value do |counts|
+            counts.each { |key, count| totals[key] += count }
+          end
+          totals
         end
       end
 
-      # Groups the raw rows for a key by value, summing their counts.
-      #
-      # @param key [String] Key for the annotation.
-      # @return [Array<Hash>] List of value/count pairs, sorted by count
-      #   descending, then value.
-      def value_rows_for_key(key)
-        value_rows_by_key.fetch(key, [])
-      end
-
-      # Groups the raw rows of every key by value, summing their counts.
-      #
-      # @return [Hash<String, Array<Hash>>] Map of annotation key to its
-      #   value/count pairs, sorted by count descending, then value.
-      def value_rows_by_key
-        @value_rows_by_key ||= rows_by_key.transform_values do |rows|
-          rows.group_by { |row| row[:value] }
-              .map { |value, grouped| { value:, count: grouped.sum { |row| row[:count] } } }
-              .sort_by { |row| [ -row[:count], row[:value] ] }
-        end
-      end
-
-      # Groups the raw rows for a model by key, summing their counts.
-      #
-      # @param model [Class] The model class for the entity type.
-      # @return [Hash] Map of annotation key to total count for the model.
-      def key_counts_for_model(model)
-        key_counts_by_type.fetch(entity_type_id_for(model), {})
-      end
-
-      # Sums the raw row counts per entity type and annotation key.
+      # Counts the records per entity type and annotation key.
       #
       # @return [Hash<String, Hash>] Map of entity type id to a map of
       #   annotation key and total count.
       def key_counts_by_type
-        @key_counts_by_type ||= raw_rows.each_with_object({}) do |row, counts|
-          keys = counts[row[:entity_type_id]] ||= Hash.new(0)
-          keys[row[:key]] += row[:count]
+        @key_counts_by_type ||= ENTITY_TYPES.to_h do |entity_type|
+          [ entity_type.id, key_counts(entity_type.model) ]
         end
       end
 

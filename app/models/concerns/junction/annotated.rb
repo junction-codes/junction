@@ -91,7 +91,7 @@ module Junction
 
     # Builds a hash of other annotations, excluding known annotation keys.
     #
-    # @param known_keys [Array<String>] The list of known annotation keys to0
+    # @param known_keys [Array<String>] The list of known annotation keys to
     #   exclude.
     # @return [Hash<String, String>] A hash of user-supplied (other) annotation
     #   keys and values.

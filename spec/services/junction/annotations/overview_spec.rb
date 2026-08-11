@@ -53,6 +53,29 @@ RSpec.describe Junction::Annotations::Overview do
         expect(panel.dig(:charts, :value_breakdown)).to eq({ "org/repo" => 1 })
       end
     end
+
+    context "with more distinct values than the chart limit" do
+      subject(:chart) do
+        overview.annotation_key_detail(overview.slug_for("region"))
+                .dig(:charts, :value_breakdown)
+      end
+
+      let(:limit) { described_class::VALUE_CHART_LIMIT }
+
+      before do
+        (limit + 2).times do |index|
+          create(:component, annotations: { "region" => format("region-%02d", index) })
+        end
+      end
+
+      it "charts no more than the limit plus the aggregate bucket" do
+        expect(chart.size).to eq(limit + 1)
+      end
+
+      it "aggregates the remaining values into a single bucket" do
+        expect(chart["2 other values"]).to eq(2)
+      end
+    end
   end
 
   describe "#entity_type_detail" do

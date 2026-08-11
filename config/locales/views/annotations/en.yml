@@ -8,6 +8,9 @@ en:
           entity_type_tab: Entity Types
           known: Known annotations
           other: Other annotations
+          other_values:
+            one: 1 other value
+            other: "%{count} other values"
           secret_warning: >-
             Annotation keys and values are listed here in plain text for every
             entity type. Never use annotations for secrets such as tokens,
