@@ -1,0 +1,8 @@
+en:
+  junction:
+    components:
+      annotation_entity_type_panel_table:
+        key: Annotation key
+        annotation_title: Title
+        records: Records
+        top_value: Top value

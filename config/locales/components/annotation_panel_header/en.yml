@@ -1,0 +1,7 @@
+en:
+  junction:
+    components:
+      annotation_panel_header:
+        other_badge: Other
+        known_badge: Known
+        records_total: "%{count} records"

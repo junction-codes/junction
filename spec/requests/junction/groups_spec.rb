@@ -102,6 +102,14 @@ RSpec.describe "/groups", type: :request do
         get edit_group_url(group)
         expect(response).to be_successful
       end
+
+      it "renders the marker input for the other annotations section" do
+        get edit_group_url(group)
+
+        expect(response.body).to include(
+          %(<input type="hidden" name="group[other_annotations][][key]" value="">)
+        )
+      end
     end
 
     describe "POST /create" do
@@ -160,6 +168,38 @@ RSpec.describe "/groups", type: :request do
           patch group_url(group), params: { group: new_attributes }
           group.reload
           expect(response).to redirect_to(group_url(group))
+        end
+      end
+
+      context "with custom annotations" do
+        it "persists arbitrary annotation keys" do
+          patch group_url(group), params: {
+            group: { other_annotations: [ { key: "custom/key", value: "saved" } ] }
+          }
+
+          expect(group.reload[:annotations]["custom/key"]).to eq("saved")
+        end
+
+        it "persists arbitrary annotation keys from indexed form params" do
+          patch group_url(group), params: {
+            group: {
+              other_annotations: {
+                "0" => { "key" => "custom/key", "value" => "saved" }
+              }
+            }
+          }
+
+          expect(group.reload[:annotations]["custom/key"]).to eq("saved")
+        end
+
+        it "removes arbitrary annotations when only the blank marker row is sent" do
+          group.update!(annotations: { "custom/key" => "saved" })
+
+          patch group_url(group), params: {
+            group: { other_annotations: [ { key: "" } ] }
+          }
+
+          expect(group.reload[:annotations]).not_to have_key("custom/key")
         end
       end
 

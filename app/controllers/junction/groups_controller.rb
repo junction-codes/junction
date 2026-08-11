@@ -8,6 +8,7 @@ module Junction
 
     include Breadcrumbs
     include CatalogOptionSets
+    include HasAnnotations
     include HasTreeParent
     include Paginatable
 
@@ -164,13 +165,11 @@ module Junction
     #
     # @return [Hash] The permitted parameters.
     #
-    # @todo We should support some sanitation of annotations, particularly those
-    # that are used for access controls.
     def group_params
-      attrs = params.expect(group: [
+      attrs = sanitize_annotations(params.expect(group: [
         :description, :email, :group_type, :image_url, :name, :namespace,
-        :parent_id, :title, :type, annotations: {}
-      ])
+        :parent_id, :title, :type, *annotation_param_entries
+      ]))
 
       sanitize_tree_parent_id(attrs, parent_candidates: available_parents)
     end

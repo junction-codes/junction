@@ -1,0 +1,8 @@
+en:
+  junction:
+    components:
+      annotation_entity_type_panel:
+        known: Known annotations
+        other: Other annotations
+        empty_known: No known annotations are defined for this entity type.
+        empty_other: No arbitrary annotations are currently present.

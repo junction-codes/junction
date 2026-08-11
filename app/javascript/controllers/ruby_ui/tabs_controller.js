@@ -29,6 +29,20 @@ export default class extends Controller {
     this.activeContentTarget() &&
       this.activeContentTarget().classList.remove("hidden");
     this.activeTriggerTarget().dataset.state = "active";
+    this.refreshChartsInActivePanel();
+  }
+
+  refreshChartsInActivePanel() {
+    const panel = this.activeContentTarget();
+    if (!panel || !window.Chartkick) return;
+
+    requestAnimationFrame(() => {
+      window.Chartkick.eachChart((chart) => {
+        if (!panel.contains(chart.element)) return;
+
+        chart.getChartObject()?.resize?.();
+      });
+    });
   }
 
   activeTriggerTarget() {

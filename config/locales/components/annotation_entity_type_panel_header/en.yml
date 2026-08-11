@@ -1,0 +1,5 @@
+en:
+  junction:
+    components:
+      annotation_entity_type_panel_header:
+        records_total: "%{count} records"

@@ -146,6 +146,14 @@ RSpec.describe "/dashboard", type: :request do
       expect(response.body).to include("Catalog Options")
     end
 
+    it "renders annotations in settings when allowed" do
+      sign_in_user_with_permissions(
+        %w[junction.codes/dashboards.all.read junction.codes/annotations.all.read]
+      )
+      get dashboard_path
+      expect(response.body).to include("Annotations")
+    end
+
     it "renders plugin-registered settings items" do
       allow(Junction::PluginRegistry).to receive(:settings_menu_items).and_return([
         {

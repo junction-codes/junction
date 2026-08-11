@@ -9,6 +9,7 @@ module Junction
 
     include Breadcrumbs
     include CatalogOptionSets
+    include HasAnnotations
     include HasDependencyGraph
     include HasOwner
     include Paginatable
@@ -152,10 +153,10 @@ module Junction
     end
 
     def resource_params
-      sanitize_owner_id(params.expect(resource: [
+      sanitize_owner_id(sanitize_annotations(params.expect(resource: [
         :description, :image_url, :name, :namespace, :owner_id, :resource_type,
-        :system_id, :title, :type, annotations: {}
-      ]))
+        :system_id, :title, :type, *annotation_param_entries
+      ])))
     end
   end
 end

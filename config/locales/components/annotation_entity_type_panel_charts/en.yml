@@ -1,0 +1,6 @@
+en:
+  junction:
+    components:
+      annotation_entity_type_panel_charts:
+        known_vs_other: Known vs Other Usage
+        top_keys: Top annotation keys

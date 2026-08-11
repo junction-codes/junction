@@ -47,9 +47,7 @@ module Junction
         end
 
         def annotations(form)
-          form.fields_for :annotations, @user.annotations do |annotations_form|
-            AnnotationsForm(form: annotations_form, context: @user)
-          end
+          AnnotationsForm(form:, context: @user)
         end
 
         def basic_settings(form)

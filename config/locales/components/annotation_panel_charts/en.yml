@@ -1,0 +1,6 @@
+en:
+  junction:
+    components:
+      annotation_panel_charts:
+        by_entity_type: Usage by entity type
+        value_breakdown: Value breakdown

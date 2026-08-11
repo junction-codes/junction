@@ -15,6 +15,11 @@ require 'rspec/rails'
 require 'faker'
 require 'capybara/cuprite'
 
+# Let fill_in/find_field match on aria-label, matching how assistive tech
+# computes accessible names for inputs that rely on aria-label instead of a
+# visible <label>.
+Capybara.enable_aria_label = true
+
 # Include additional support.
 require "junction/testing"
 require_relative 'support/factorybot'

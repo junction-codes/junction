@@ -7,6 +7,7 @@ module Junction
     before_action :set_entity, only: %i[ show edit update destroy ]
 
     include Breadcrumbs
+    include HasAnnotations
     include Paginatable
 
     # GET /users
@@ -98,11 +99,11 @@ module Junction
 
     # Only allow a list of trusted parameters through.
     def user_params
-      params.expect(user: [
+      sanitize_annotations(params.expect(user: [
         :email_address, :email_address_confirmation, :image_url, :name,
         :namespace, :owner_id, :password, :password_challenge,
-        :password_confirmation, :pronouns, :title, annotations: {}
-      ])
+        :password_confirmation, :pronouns, :title, *annotation_param_entries
+      ]))
     end
 
     def user_update_params
