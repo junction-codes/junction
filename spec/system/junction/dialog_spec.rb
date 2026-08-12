@@ -51,5 +51,46 @@ RSpec.describe "Junction::Dialog", :js, type: :system do
 
       expect(page).to have_no_css("#{dialog}[open]")
     end
+
+    it "closes when the backdrop is clicked" do
+      click_at(*point_outside_dialog)
+
+      expect(page).to have_no_css("#{dialog}[open]")
+    end
+
+    # Clicks on the dialog's own padding target the <dialog> element just like
+    # backdrop clicks do, so they must be told apart by pointer position.
+    it "stays open when its own padding is clicked" do
+      click_at(*point_in_dialog_padding)
+
+      expect(page).to have_css("#{dialog}[open]")
+    end
+  end
+
+  # A point a few pixels inside the dialog's top-left corner: within the
+  # element, inside its p-6 padding, and not over any child.
+  def point_in_dialog_padding
+    rect = dialog_rect
+    [ rect["left"] + 6, rect["top"] + 6 ]
+  end
+
+  # A point in the top-left of the viewport, well clear of the centred dialog.
+  def point_outside_dialog
+    [ 5, 5 ]
+  end
+
+  def dialog_rect
+    page.evaluate_script(<<~JS)
+      (() => {
+        const r = document.querySelector(
+          "dialog[data-ruby-ui--dialog-target='dialog']"
+        ).getBoundingClientRect();
+        return { left: r.left, top: r.top };
+      })()
+    JS
+  end
+
+  def click_at(x, y)
+    page.driver.browser.mouse.click(x: x.to_i, y: y.to_i)
   end
 end

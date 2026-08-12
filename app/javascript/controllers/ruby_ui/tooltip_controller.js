@@ -13,7 +13,11 @@ export default class extends Controller {
     element.setAttribute("data-placement", this.placementValue);
     document.body.appendChild(element);
 
-    this.triggerTarget.setAttribute("aria-describedby", element.id);
+    // The trigger target is a wrapper element; describe the focusable control
+    // inside it, since aria-describedby is not inherited by descendants.
+    const described = this.describedElement();
+    described.setAttribute("aria-describedby", element.id);
+
     element.addEventListener("animationend", (event) =>
       this.animationEnd(event),
     );
@@ -21,7 +25,7 @@ export default class extends Controller {
     const onBeforeCache = () => this.unmount();
     document.addEventListener("turbo:before-cache", onBeforeCache);
 
-    this.mounted = { element, onBeforeCache };
+    this.mounted = { element, onBeforeCache, described };
     this.mounted.stopAutoUpdate = autoUpdate(this.triggerTarget, element, () =>
       this.reposition(),
     );
@@ -37,9 +41,19 @@ export default class extends Controller {
 
     this.mounted.stopAutoUpdate?.();
     this.mounted.element.remove();
-    this.triggerTarget.removeAttribute("aria-describedby");
+    this.mounted.described.removeAttribute("aria-describedby");
 
     this.mounted = null;
+  }
+
+  // The focusable control the tooltip describes. Falls back to the wrapper so
+  // a trigger with no focusable child still gets the association.
+  describedElement() {
+    return (
+      this.triggerTarget.querySelector(
+        "a[href], button, input, select, textarea, [tabindex]",
+      ) || this.triggerTarget
+    );
   }
 
   disconnect() {

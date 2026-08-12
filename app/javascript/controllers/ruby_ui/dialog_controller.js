@@ -33,7 +33,19 @@ export default class extends Controller {
   }
 
   backdropClick(e) {
-    if (e.target === this.dialogTarget) {
+    // Clicks on the ::backdrop target the dialog element, but so do clicks on
+    // the dialog's own padding. Only dismiss when the pointer is outside the
+    // dialog's bounds.
+    if (e.target !== this.dialogTarget) return
+
+    const rect = this.dialogTarget.getBoundingClientRect()
+    const outside =
+      e.clientX < rect.left ||
+      e.clientX > rect.right ||
+      e.clientY < rect.top ||
+      e.clientY > rect.bottom
+
+    if (outside) {
       this.dismiss()
     }
   }
