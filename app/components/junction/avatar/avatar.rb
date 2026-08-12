@@ -35,6 +35,9 @@ module Junction
 
         def default_attrs
           {
+            data: {
+              controller: "ruby-ui--avatar"
+            },
             class: [ "relative flex shrink-0 overflow-hidden rounded-full", SIZES[@size] ]
           }
         end

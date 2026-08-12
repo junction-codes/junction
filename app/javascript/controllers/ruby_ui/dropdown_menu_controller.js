@@ -46,7 +46,7 @@ export default class extends Controller {
     this.contentTarget.style.position = strategy;
 
     computePosition(this.triggerTarget, this.contentTarget, {
-      placement: this.optionsValue.placement || "top",
+      placement: this.optionsValue.placement || "bottom",
       middleware: [flip(), shift(), offset(8)],
       strategy,
     }).then(({ x, y }) => {
@@ -77,12 +77,18 @@ export default class extends Controller {
     this.#addEventListeners();
     this.#computeTooltip();
     this.contentTarget.classList.remove("hidden");
+
+    // Lift the open menu above sibling dropdowns/elements. The container has no
+    // static z-index, so closed siblings stack in normal flow and never cover
+    // it.
+    this.element.style.zIndex = "50";
   }
 
   close() {
     this.openValue = false;
     this.#removeEventListeners();
     this.contentTarget.classList.add("hidden");
+    this.element.style.zIndex = "";
   }
 
   #handleKeydown(e) {
@@ -104,7 +110,8 @@ export default class extends Controller {
   }
 
   #updateSelectedItem(direction) {
-    // Check if any of the menuItemTargets have aria-selected="true" and set the selectedIndex to that index
+    // Check if any of the menuItemTargets have aria-selected="true" and set the
+    // selectedIndex to that index
     this.menuItemTargets.forEach((item, index) => {
       if (item.getAttribute("aria-selected") === "true") {
         this.selectedIndex = index;

@@ -105,7 +105,8 @@ module Junction
                             Link(
                               variant: :destructive,
                               href: junction_group_member_path(@group, user),
-                              data_turbo_method: :delete
+                              data_turbo_method: :delete,
+                              data_turbo_frame: "_top"
                             ) { t(".confirm_remove") }
                           end
                         end
@@ -141,7 +142,11 @@ module Junction
                 form_with(
                   url: @create_url,
                   method: :post,
+                  # The dialog lives inside this frame, so the submission would
+                  # be frame-scoped and land the lazy frame markup here instead
+                  # of the refreshed table. Break out so the flash renders too.
                   data: {
+                    turbo_frame: "_top",
                     controller: "autocomplete",
                     autocomplete_search_url_value: @search_url
                   }

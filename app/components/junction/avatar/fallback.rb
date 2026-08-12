@@ -13,7 +13,11 @@ module Junction
 
         def default_attrs
           {
-            class: "flex h-full w-full items-center justify-center rounded-full bg-muted"
+            data: {
+              ruby_ui__avatar_target: "fallback"
+            },
+            class: "absolute inset-0 flex items-center justify-center " \
+                   "rounded-full bg-muted"
           }
         end
       end

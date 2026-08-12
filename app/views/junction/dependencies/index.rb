@@ -104,7 +104,8 @@ module Junction
                             Link(
                               variant: :destructive,
                               href: dependency_path(dep_id),
-                              data_turbo_method: :delete
+                              data_turbo_method: :delete,
+                              data_turbo_frame: "_top"
                             ) { t(".confirm_delete") }
                           end
                         end
@@ -141,6 +142,7 @@ module Junction
                   url: @create_url,
                   method: :post,
                   data: {
+                    turbo_frame: "_top",
                     controller: "autocomplete",
                     autocomplete_search_url_value: @search_url
                   }
