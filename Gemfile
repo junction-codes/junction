@@ -19,7 +19,7 @@ group :development, :test do
   gem "rubocop-capybara", "~> 3.0"
   gem "rubocop-rails-omakase", "~> 1.1"
   gem "rubocop-rspec", "~> 3.10"
-  gem "simplecov", "~> 1.0"
+  gem "simplecov", "~> 1.1"
   gem "shoulda-matchers", "~> 8.0"
   gem "vcr", "~> 6.3"
 end
