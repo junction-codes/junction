@@ -55,3 +55,6 @@
 .claude
 .idea
 .cursor
+
+# Ignore RSpec example status, used by --only-failures and --next-failure.
+/spec/examples.txt

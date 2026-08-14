@@ -71,6 +71,11 @@ RSpec.configure do |config|
   # particularly slow.
   config.profile_examples = 10
 
+  # Records each example's outcome so `bundle exec rspec --only-failures` and
+  # `--next-failure` can re-run just what broke, rather than the whole suite.
+  # The file is generated, and is gitignored.
+  config.example_status_persistence_file_path = "spec/examples.txt"
+
   # Run specs in random order to surface order dependencies. If you find an
   # order dependency and want to debug it, you can fix the order by providing
   # the seed, which is printed after each run.
