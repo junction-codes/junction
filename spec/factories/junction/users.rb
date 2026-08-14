@@ -6,6 +6,6 @@ FactoryBot.define do
     sequence(:email_address) { |n| "user-#{n}@example.com" }
     password { Faker::Internet.password(max_length: 72, special_characters: true) }
     password_confirmation { password }
-    image_url { Faker::Internet.url }
+    image_url { TEST_IMAGE_URL }
   end
 end

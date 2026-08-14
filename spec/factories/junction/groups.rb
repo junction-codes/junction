@@ -6,7 +6,7 @@ FactoryBot.define do
     description { Faker::Lorem.paragraph }
     sequence(:email) { |n| "group-#{n}@example.com" }
     group_type { Junction::CatalogOptions.group_types.keys.sample }
-    image_url { Faker::Internet.url }
+    image_url { TEST_IMAGE_URL }
     parent { nil }
 
     trait :with_parent do

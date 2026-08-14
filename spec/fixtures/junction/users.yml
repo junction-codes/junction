@@ -1,4 +1,6 @@
-<% password_digest = BCrypt::Password.create("password") %>
+<%# Cheapest cost: verification cost comes from the stored digest, so a
+    production-cost digest here would slow down every sign-in. %>
+<% password_digest = BCrypt::Password.create("password", cost: BCrypt::Engine::MIN_COST) %>
 
 one:
   title: One User

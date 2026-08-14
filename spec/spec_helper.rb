@@ -3,8 +3,8 @@
 require 'simplecov'
 
 SimpleCov.start 'rails' do
-  add_filter '/spec/'
-  add_filter '/test/'
+  skip '/spec/'
+  skip '/test/'
 end
 
 # Codecov doesn't support SimpleCov's native JSON formatter, we use the

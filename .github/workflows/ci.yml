@@ -57,10 +57,25 @@ jobs:
         run: bin/rubocop -f github
 
   test:
+    name: test (${{ matrix.slice.name }})
     runs-on: ubuntu-latest
     permissions:
       code-quality: write
       contents: read
+    strategy:
+      # Report every failing slice, not just the first one to go red.
+      fail-fast: false
+      matrix:
+        # The browser-driven specs take roughly as long as everything else put
+        # together, so splitting them off halves wall-clock time. Each slice
+        # writes its own coverage result.
+        slice:
+          - name: system
+            args: spec/system
+            browser: true
+          - name: rest
+            args: --exclude-pattern "system/**/*_spec.rb"
+            browser: false
     services:
       postgres:
         image: postgres
@@ -77,36 +92,43 @@ jobs:
 
       - name: Checkout code
         uses: actions/checkout@v7
-
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: .ruby-version
           bundler-cache: true
-
       - name: Set up Chrome
+        if: matrix.slice.browser
         uses: browser-actions/setup-chrome@v2
-
       - name: Install icons
         run: bin/rails generate rails_icons:sync
-
+      - name: Prepare database and assets
+        env:
+          RAILS_ENV: test
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432
+        run: bin/rails db:test:prepare assets:precompile
       - name: Run tests
         env:
           RAILS_ENV: test
           DATABASE_URL: postgres://postgres:postgres@localhost:5432
-        run: bin/rails db:test:prepare assets:precompile spec
+        run: bundle exec rspec ${{ matrix.slice.args }}
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v7
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          flags: ${{ matrix.slice.name }}
+      # Each slice covers only part of the app, so these two reports are only
+      # meaningful if GitHub combines them per commit. That is undocumented, so
+      # check the reported total: ~96% means the labels merged, ~65% or a lone
+      # slice's number means they did not.
       - name: Upload coverage report to GitHub
         if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
         uses: actions/upload-code-coverage@v1
         with:
           file: coverage/coverage.xml
           language: Ruby
-
+          label: code-coverage/${{ matrix.slice.name }}
       - name: Keep screenshots from failed system tests
         uses: actions/upload-artifact@v7
         if: failure()

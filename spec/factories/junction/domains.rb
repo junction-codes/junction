@@ -5,7 +5,7 @@ FactoryBot.define do
     sequence(:title) { |n| "Domain #{n}" }
     description { Faker::Lorem.paragraph }
     domain_type { Junction::CatalogOptions.domains.keys.sample }
-    image_url { "https://example.com/image.png" }
+    image_url { TEST_IMAGE_URL }
     parent { nil }
     status { [ "active", "closed" ].sample }
     association :owner, factory: :group

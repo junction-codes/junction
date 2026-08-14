@@ -42,7 +42,13 @@ RSpec.shared_examples "a paginated index" do |path, model_class, factory, opts_p
     end
 
     context "when the total number of pages is greater than the ungapped max pages" do
-      let(:total_records) { 100 }
+      # Smallest count that spills into one more page than the component
+      # renders ungapped, which is all it takes to produce an ellipsis. Each
+      # extra record here is created once per usage of this shared example, so
+      # overshooting is expensive across the suite.
+      let(:total_records) do
+        Junction::Components::PaginationNav::UNGAPPED_MAX_PAGES * 10 + 1
+      end
 
       it "renders an ellipsis" do
         get index_path, params: { page: 1 }
