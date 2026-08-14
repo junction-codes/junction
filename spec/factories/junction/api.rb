@@ -6,7 +6,7 @@ FactoryBot.define do
     description { Faker::Lorem.paragraph }
     api_type { Junction::CatalogOptions.apis.keys.sample }
     lifecycle { Junction::CatalogOptions.lifecycles.keys.sample }
-    image_url { 'https://example.com/image.png' }
+    image_url { TEST_IMAGE_URL }
     definition { Faker::Json.shallow_json }
 
     association :owner, factory: :group

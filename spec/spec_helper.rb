@@ -3,8 +3,8 @@
 require 'simplecov'
 
 SimpleCov.start 'rails' do
-  add_filter '/spec/'
-  add_filter '/test/'
+  skip '/spec/'
+  skip '/test/'
 end
 
 # Codecov doesn't support SimpleCov's native JSON formatter, we use the
@@ -70,6 +70,11 @@ RSpec.configure do |config|
   # end of the spec run, to help surface which specs are running
   # particularly slow.
   config.profile_examples = 10
+
+  # Records each example's outcome so `bundle exec rspec --only-failures` and
+  # `--next-failure` can re-run just what broke, rather than the whole suite.
+  # The file is generated, and is gitignored.
+  config.example_status_persistence_file_path = "spec/examples.txt"
 
   # Run specs in random order to surface order dependencies. If you find an
   # order dependency and want to debug it, you can fix the order by providing

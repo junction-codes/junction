@@ -12,6 +12,12 @@ Rails.application.configure do
   # Eager loading causes problems since we've implemented an engine.
   config.eager_load = false
 
+  # Hash passwords with the cheapest bcrypt cost. The suite signs in on nearly
+  # every example, and production cost (12) adds ~0.5s per hash. Fixtures must
+  # use BCrypt::Engine::MIN_COST too, since verification cost is determined by
+  # the stored digest rather than this setting.
+  config.active_model.secure_password_min_cost = true
+
   # Configure public file server for tests with cache-control for performance.
   config.public_file_server.headers = { "cache-control" => "public, max-age=3600" }
 

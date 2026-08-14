@@ -15,15 +15,19 @@ RSpec.shared_examples "a paginated index" do |path, model_class, factory, opts_p
     let(:record_count) do
       model_class.is_a?(Proc) ? instance_exec(&model_class) : model_class.count
     end
+    let(:default_per_page) { Junction::Paginatable::DEFAULT_PER_PAGE }
 
     before { create_list(factory, total_records, **factory_opts) }
 
     let(:index_path) { instance_exec(&path) }
-    let(:total_records) { 12 }
 
-    it "defaults to 10 results per page" do
+    # Enough to spill onto a second page without paying for more records than
+    # these examples need.
+    let(:total_records) { default_per_page + 2 }
+
+    it "defaults to the configured number of results per page" do
       get index_path
-      expect(response.body.scan(/<tr/).length).to eq(10 + 1)
+      expect(response.body.scan(/<tr/).length).to eq(default_per_page + 1)
     end
 
     it "respects a valid per_page parameter" do
@@ -33,16 +37,24 @@ RSpec.shared_examples "a paginated index" do |path, model_class, factory, opts_p
 
     it "falls back to the default for an invalid per_page value" do
       get index_path, params: { per_page: 999 }
-      expect(response.body.scan(/<tr/).length).to eq(10 + 1)
+      expect(response.body.scan(/<tr/).length).to eq(default_per_page + 1)
     end
 
     it "returns the second page" do
       get index_path, params: { page: 2 }
-      expect(response.body.scan(/<tr/).length).to eq((record_count - 10) + 1)
+      expect(response.body.scan(/<tr/).length)
+        .to eq((record_count - default_per_page) + 1)
     end
 
     context "when the total number of pages is greater than the ungapped max pages" do
-      let(:total_records) { 100 }
+      # Smallest count that spills into one more page than the component
+      # renders ungapped, which is all it takes to produce an ellipsis. Each
+      # extra record here is created once per usage of this shared example, so
+      # overshooting is expensive across the suite.
+      let(:total_records) do
+        Junction::Components::PaginationNav::UNGAPPED_MAX_PAGES *
+          default_per_page + 1
+      end
 
       it "renders an ellipsis" do
         get index_path, params: { page: 1 }

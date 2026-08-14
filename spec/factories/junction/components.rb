@@ -6,6 +6,6 @@ FactoryBot.define do
     description { Faker::Lorem.paragraph }
     component_type { Junction::CatalogOptions.kinds.keys.sample }
     lifecycle { Junction::CatalogOptions.lifecycles.keys.sample }
-    image_url { 'https://example.com/image.png' }
+    image_url { TEST_IMAGE_URL }
   end
 end
