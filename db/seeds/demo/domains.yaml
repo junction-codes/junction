@@ -17,6 +17,7 @@
   name: playback
   type: product-group
   status: active
+  owner: user-owner
   parent: audio
   description: |
     Everything related to audio playback.
