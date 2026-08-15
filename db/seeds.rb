@@ -134,6 +134,8 @@ def import_domains(path)
     next if Junction::Domain.find_by(name: domain[:name], namespace: namespace)
 
     Rails.logger.info "Creating domain #{domain[:title]}"
+    domain[:owner] = find_reference(Junction::Group, domain[:owner], namespace) if domain[:owner].present?
+
     Junction::Domain.create(domain.except(:parent))
   end
 
