@@ -12,12 +12,18 @@ RSpec.describe "Junction::Domains", type: :system do
   let(:parent_domain) { create(:domain, title: "Parent Area", name: "parent-area", parent: nil) }
   let(:child_domain) { create(:domain, title: "Child Group", name: "child-group", parent: parent_domain) }
 
-  def sign_in_domain_admin
+  let(:domain_admin) do
     sign_in_with_permissions(%w[
       junction.codes/domains.all.read
       junction.codes/domains.all.write
       junction.codes/domains.all.destroy
     ])
+  end
+
+  let(:owner_group) { domain_admin.groups.first }
+
+  def sign_in_domain_admin
+    domain_admin
   end
 
   def sign_in_existing_user(user)
@@ -28,11 +34,13 @@ RSpec.describe "Junction::Domains", type: :system do
   end
 
   def fill_required_domain_fields(title:, description: "A domain description",
-                                 status: "active", domain_type: "product-area")
+                                 status: "active", domain_type: "product-area",
+                                 owner: owner_group)
     fill_in "domain_title", with: title
     fill_in "domain_description", with: description
     fill_in "domain_status", with: status
     find(:xpath, "//input[@name='domain[type]']", visible: :all).set(domain_type)
+    find(:xpath, "//input[@name='domain[owner_id]']", visible: :all).set(owner.id)
   end
 
   def submit_domain_form

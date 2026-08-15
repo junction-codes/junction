@@ -37,7 +37,7 @@ module Junction
 
                 Reference(f, :owner_id, icon: "users-round",
                               options: @available_owners, value: @system.owner,
-                              help_text: t(".owner_help"))
+                              required: true, help_text: t(".owner_help"))
 
                 TextArea(f, :description, required: true, help_text: t(".description_help"))
               end

@@ -10,10 +10,6 @@ FactoryBot.define do
     status { [ "active", "closed" ].sample }
     association :owner, factory: :group
 
-    trait :without_owner do
-      owner { nil }
-    end
-
     trait :with_parent do
       association :parent, factory: :domain
     end

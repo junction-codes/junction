@@ -44,7 +44,6 @@ module Junction
                               help_text: t(".owner_help"))
                 Reference(f, :system_id, icon: "users-round",
                               options: @available_systems, value: @api.system,
-                              required: true,
                               help_text: t(".system_help"))
 
                 TextArea(f, :description, required: true,

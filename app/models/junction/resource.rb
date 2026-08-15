@@ -14,7 +14,7 @@ module Junction
     validates :image_url, allow_blank: true, format: URI::DEFAULT_PARSER.make_regexp(%w[http https])
     validates :resource_type, presence: true
 
-    belongs_to :system, class_name: "Junction::System"
+    belongs_to :system, optional: true, class_name: "Junction::System"
 
     def self.ransackable_associations(auth_object = nil)
       %w[owner system]

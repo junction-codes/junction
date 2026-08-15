@@ -9,6 +9,7 @@ RSpec.describe "/domains", type: :request do
       domain_type: "product-area",
       title: "Test Domain",
       image_url: "https://example.com/image.png",
+      owner_id: junction_groups(:one).id,
       status: "active"
     }
   }
@@ -182,6 +183,21 @@ RSpec.describe "/domains", type: :request do
           post domains_url, params: { domain: valid_attributes.merge(type: "product-group") }
 
           expect(Junction::Domain.last.domain_type).to eq("product-group")
+        end
+      end
+
+      context "with an owner outside the user's groups" do
+        let(:foreign_attributes) { valid_attributes.merge(owner_id: create(:group).id) }
+
+        it "does not create a new Domain" do
+          expect {
+            post domains_url, params: { domain: foreign_attributes }
+          }.not_to change(Junction::Domain, :count)
+        end
+
+        it "renders a response with 422 status" do
+          post domains_url, params: { domain: foreign_attributes }
+          expect(response).to have_http_status(:unprocessable_content)
         end
       end
 

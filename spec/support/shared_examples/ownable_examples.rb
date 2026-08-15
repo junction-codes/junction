@@ -2,7 +2,7 @@
 
 RSpec.shared_examples 'a model that can be owned' do
   describe 'ownable associations' do
-    it { is_expected.to belong_to(:owner).class_name("Group").optional }
+    it { is_expected.to belong_to(:owner).class_name("Group").required }
   end
 
   describe 'ownable behavior' do
@@ -13,6 +13,12 @@ RSpec.shared_examples 'a model that can be owned' do
 
       subject.save!
       expect(subject.owner).to eq(group)
+    end
+
+    it 'is invalid without an owner' do
+      subject.owner = nil
+
+      expect(subject).not_to be_valid
     end
   end
 end

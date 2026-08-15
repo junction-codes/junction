@@ -1,3 +1,5 @@
+# These entities must have an owner. Group two has no members, so they are not
+# owned by any signed in user, which the dashboard empty states rely on.
 one:
   title: System One
   name: system-one
@@ -5,7 +7,7 @@ one:
   status: active
   image_url: https://example.com/image.png
   domain:
-  owner:
+  owner: two
 
 two:
   title: System Two
@@ -14,4 +16,4 @@ two:
   status: active
   image_url:
   domain:
-  owner:
+  owner: two

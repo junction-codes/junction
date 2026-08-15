@@ -40,7 +40,9 @@ module Junction
     # Sanitize owner_id input in permitted params.
     #
     # The `owner_id` parameter is only permitted (set) if the user is permitted
-    # to assign it to the entity.
+    # to assign it to the entity. An entity may keep the owner it already has,
+    # even when that group is outside the user's hierarchy. On create there is
+    # no entity yet, so only the user's own groups are allowed.
     #
     # @param attrs [Hash] Permitted parameters hash.
     # @return [Hash] Sanitized parameters hash.
@@ -50,7 +52,7 @@ module Junction
 
       id = (out[:owner_id] || out["owner_id"])
       out[:owner_id] = if id.present?
-        (allowed_owner_ids.include?(id.to_i) || id.to_i == entity.owner_id) ? id.to_i : nil
+        (allowed_owner_ids.include?(id.to_i) || id.to_i == @entity&.owner_id) ? id.to_i : nil
       end
 
       out["owner_id"] = out[:owner_id] if out.key?("owner_id")

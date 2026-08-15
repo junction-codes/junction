@@ -18,7 +18,7 @@ RSpec.describe "domains/edit", type: :view do
       description: "MyText",
       status: "active",
       image_url: "https://example.com/image.png",
-      owner: nil,
+      owner: create(:group),
       parent: parent
     )
   }
