@@ -36,7 +36,7 @@ module Junction
 
                 Reference(f, :owner_id, icon: "users-round",
                               options: @available_owners, value: @domain.owner,
-                              help_text: t(".owner_help"))
+                              required: true, help_text: t(".owner_help"))
 
                 Reference(f, :parent_id, icon: "briefcase",
                               options: @available_parents, value: @domain.parent,

@@ -9,7 +9,7 @@ RSpec.describe "components/index", type: :view do
         lifecycle: "production",
         component_type: "api",
         image_url: "https://example.com/image.png",
-        owner: nil
+        owner: create(:group)
       ),
       Junction::Component.create!(
         title: "Second Name",
@@ -17,7 +17,7 @@ RSpec.describe "components/index", type: :view do
         lifecycle: "experimental",
         component_type: "worker",
         image_url: nil,
-        owner: nil
+        owner: create(:group)
       )
     ])
   end

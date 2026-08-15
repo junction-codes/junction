@@ -11,7 +11,7 @@ RSpec.describe "systems/index", type: :view do
         status: "active",
         image_url: "https://example.com/image.png",
         domain: junction_domains(:one),
-        owner: nil
+        owner: create(:group)
       ),
       Junction::System.create!(
         title: "Second Name",
@@ -19,7 +19,7 @@ RSpec.describe "systems/index", type: :view do
         status: "closed",
         image_url: nil,
         domain: junction_domains(:two),
-        owner: nil
+        owner: create(:group)
       )
     ])
   end

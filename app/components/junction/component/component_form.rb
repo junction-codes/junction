@@ -41,7 +41,7 @@ module Junction
 
                 Reference(f, :owner_id, icon: "users-round",
                               options: @available_owners, value: @component.owner,
-                              help_text: t(".owner_help"))
+                              required: true, help_text: t(".owner_help"))
                 Reference(f, :system_id, icon: "users-round",
                               options: @available_systems, value: @component.system,
                               help_text: t(".system_help"))

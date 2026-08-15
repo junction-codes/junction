@@ -11,7 +11,7 @@ module Junction
     attribute :lifecycle, :string, default: "experimental"
     alias_attribute :type, :api_type
 
-    belongs_to :system
+    belongs_to :system, optional: true
 
     validates :api_type, presence: true
     validates :definition, presence: true

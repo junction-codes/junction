@@ -8,7 +8,7 @@ RSpec.describe "components/show", type: :view do
       lifecycle: "production",
       component_type: "api",
       image_url: "https://example.com/image.png",
-      owner: nil
+      owner: create(:group)
     ))
   end
 

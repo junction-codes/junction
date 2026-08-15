@@ -28,6 +28,6 @@ RSpec.describe Junction::Resource, type: :model do
     it_behaves_like "a model that can be depended on"
     it_behaves_like "a model that can be owned"
 
-    it { is_expected.to belong_to(:system) }
+    it { is_expected.to belong_to(:system).optional }
   end
 end

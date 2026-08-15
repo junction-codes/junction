@@ -1,3 +1,6 @@
+# Components must have an owner. Specs sign in as user one, who is not a member
+# of group two, so these components are never owned by the signed in user, which
+# the dashboard empty states rely on.
 one:
   title: Component One
   name: component-one
@@ -6,7 +9,7 @@ one:
   component_type: api
   repository_url: MyString
   image_url: https://example.com/image.png
-  owner:
+  owner: two
 
 two:
   title: Component Two
@@ -16,4 +19,4 @@ two:
   component_type: worker
   repository_url: MyString
   image_url:
-  owner:
+  owner: two

@@ -8,7 +8,7 @@ RSpec.describe "domains/index", type: :view do
       description: "MyText",
       status: "active",
       image_url: "https://example.com/image.png",
-      owner: nil
+      owner: create(:group)
     )
 
     assign(:domains, [
@@ -19,7 +19,7 @@ RSpec.describe "domains/index", type: :view do
         description: "MyText",
         status: "closed",
         image_url: nil,
-        owner: nil,
+        owner: create(:group),
         parent: parent_domain
       )
     ])

@@ -8,9 +8,5 @@ FactoryBot.define do
     image_url { TEST_IMAGE_URL }
     association :domain
     association :owner, factory: :group
-
-    trait :without_owner do
-      owner { nil }
-    end
   end
 end

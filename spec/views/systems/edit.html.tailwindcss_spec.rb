@@ -10,7 +10,7 @@ RSpec.describe "systems/edit", type: :view do
       status: "active",
       image_url: "https://example.com/image.png",
       domain: junction_domains(:one),
-      owner: nil
+      owner: create(:group)
     )
   }
 

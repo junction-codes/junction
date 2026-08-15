@@ -11,6 +11,7 @@ RSpec.describe "/systems", type: :request do
       domain_id: junction_domains(:one).id,
       title: "Test System",
       image_url: "https://example.com/image.png",
+      owner_id: junction_groups(:one).id,
       status: "active"
     }
   }

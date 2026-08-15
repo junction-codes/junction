@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_25_000000) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_15_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -25,7 +25,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_25_000000) do
     t.string "name", null: false
     t.string "namespace", default: "default", null: false
     t.bigint "owner_id", null: false
-    t.bigint "system_id", null: false
+    t.bigint "system_id"
     t.string "title", null: false
     t.datetime "updated_at", null: false
     t.index ["namespace", "name"], name: "index_junction_apis_on_namespace_and_name", unique: true
@@ -42,7 +42,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_25_000000) do
     t.string "lifecycle"
     t.string "name", null: false
     t.string "namespace", default: "default", null: false
-    t.bigint "owner_id"
+    t.bigint "owner_id", null: false
     t.string "repository_url"
     t.bigint "system_id"
     t.string "title", null: false
@@ -70,7 +70,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_25_000000) do
     t.string "image_url"
     t.string "name", null: false
     t.string "namespace", default: "default", null: false
-    t.bigint "owner_id"
+    t.bigint "owner_id", null: false
     t.bigint "parent_id"
     t.string "status"
     t.string "title", null: false
@@ -125,7 +125,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_25_000000) do
     t.string "namespace", default: "default", null: false
     t.bigint "owner_id", null: false
     t.string "resource_type"
-    t.bigint "system_id", null: false
+    t.bigint "system_id"
     t.string "title", null: false
     t.datetime "updated_at", null: false
     t.index ["namespace", "name"], name: "index_junction_resources_on_namespace_and_name", unique: true
@@ -169,7 +169,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_25_000000) do
     t.string "image_url"
     t.string "name", null: false
     t.string "namespace", default: "default", null: false
-    t.bigint "owner_id"
+    t.bigint "owner_id", null: false
     t.string "status"
     t.string "title", null: false
     t.datetime "updated_at", null: false
