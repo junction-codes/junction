@@ -31,14 +31,21 @@ domains:
     description: A grouping of related systems within a product area.
 
 group_types:
-  business_unit:
-    name: Business Unit
-    icon: building
-    description: A division within the organization responsible for specific business functions.
-  product_area:
-    name: Product Area
-    icon: box
-    description: A specific area of focus within the product portfolio.
+  organization:
+    name: Organization
+    icon: building-2
+    description: >-
+      The top-level entity representing the entire company or organization.
+  department:
+    name: Department
+    icon: circle-pile
+    description: >-
+      A division within the organization responsible for specific functions.
+  sub-department:
+    name: Sub-Department
+    icon: group
+    description: >-
+      A subdivision within a department responsible for specific functions.
   team:
     name: Team
     icon: users-round
