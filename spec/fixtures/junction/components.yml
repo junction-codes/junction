@@ -1,5 +1,6 @@
-# Components must have an owner. Group two has no members, so these components
-# are not owned by any signed in user, which the dashboard empty states rely on.
+# Components must have an owner. Specs sign in as user one, who is not a member
+# of group two, so these components are never owned by the signed in user, which
+# the dashboard empty states rely on.
 one:
   title: Component One
   name: component-one
