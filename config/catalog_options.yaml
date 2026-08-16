@@ -19,6 +19,14 @@ apis:
     name: WSDL
     icon: bubbles
     description: Specification for building SOAP APIs.
+  trpc:
+    name: tRPC
+    icon: braces
+    description: Typed RPC between TypeScript clients and servers.
+  mcp-server:
+    name: MCP Server
+    icon: bot
+    description: Server exposing tools and context to AI agents.
 
 domains:
   product-area:
@@ -75,9 +83,15 @@ kinds:
   library:
     name: 'Library'
     icon: 'library'
+  service:
+    name: 'Service'
+    icon: 'server'
   web:
     name: 'Web Service'
     icon: 'globe'
+  website:
+    name: 'Website'
+    icon: 'app-window'
   worker:
     name: 'Worker'
     icon: 'cog'
