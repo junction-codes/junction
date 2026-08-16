@@ -74,25 +74,38 @@ def add_default_admin_to_junction_admins
   Junction::GroupMembership.find_or_create_by!(user: admin_user, group: junction_admins)
 end
 
+# Finds an entity referenced by another.
+#
+# References may be namespace qualified (e.g. `development/guest`). Unqualified
+# references are looked up in the namespace of the entity holding the reference,
+# falling back to the default namespace.
+#
+# @param model [Class] Model the reference points at.
+# @param reference [String] Referenced entity name, optionally namespace
+#   qualified.
+# @param namespace [String] Namespace of the entity holding the reference.
+# @return [ActiveRecord::Base, nil] The referenced entity, if found.
+def find_reference(model, reference, namespace)
+  qualifier, name = reference.to_s.split('/', 2)
+  return model.find_by(namespace: qualifier, name: name) if name.present?
+
+  model.find_by(namespace: namespace, name: reference) ||
+    model.find_by(namespace: Junction::Sluggable::DEFAULT_NAMESPACE, name: reference)
+end
+
 # TODO: Create an importer server to handle this logic in a more robust way.
 def import_apis(path)
   return unless File.exist?(Rails.root.join(path, 'apis.yaml'))
 
   YAML.load_file(Rails.root.join(path, 'apis.yaml'), symbolize_names: true).each do |api|
-    next if Junction::Api.find_by(name: api[:name], namespace: api.fetch(:namespace, "default"))
+    namespace = api.fetch(:namespace, "default")
+    next if Junction::Api.find_by(name: api[:name], namespace: namespace)
 
     Rails.logger.info "Creating API #{api[:title]}"
-    api[:system] = Junction::System.find_by(name: api[:system]) if api[:system].present?
-    api[:owner] = Junction::Group.find_by(name: api[:owner]) if api[:owner].present?
-    api[:dependent_components] = []
-    api[:dependent_resources] = []
+    api[:system] = find_reference(Junction::System, api[:system], namespace) if api[:system].present?
+    api[:owner] = find_reference(Junction::Group, api[:owner], namespace) if api[:owner].present?
 
-    (api.delete(:dependencies) || []).each do |dependency|
-      type, name = dependency.split(':', 2)
-      api["dependent_#{type}s".to_sym] << Junction.const_get(type.capitalize).find_by(name: name.strip)
-    end
-
-    Junction::Api.create(api)
+    Junction::Api.create(api.except(:dependencies))
   end
 end
 
@@ -100,21 +113,14 @@ def import_components(path)
   return unless File.exist?(Rails.root.join(path, 'components.yaml'))
 
   YAML.load_file(Rails.root.join(path, 'components.yaml'), symbolize_names: true).each do |component|
-    next if Junction::Component.find_by(name: component[:name], namespace: component.fetch(:namespace, "default"))
+    namespace = component.fetch(:namespace, "default")
+    next if Junction::Component.find_by(name: component[:name], namespace: namespace)
 
     Rails.logger.info "Creating component #{component[:title]}"
-    component[:system] = Junction::System.find_by(name: component[:system]) if component[:system].present?
-    component[:owner] = Junction::Group.find_by(name: component[:owner]) if component[:owner].present?
-    component[:dependent_components] = []
-    component[:dependent_resources] = []
+    component[:system] = find_reference(Junction::System, component[:system], namespace) if component[:system].present?
+    component[:owner] = find_reference(Junction::Group, component[:owner], namespace) if component[:owner].present?
 
-    (component.delete(:dependencies) || []).each do |dependency|
-      type, name = dependency.split(':', 2)
-      entity = Junction.const_get(type.capitalize).find_by(name: name.strip)
-      component["dependent_#{type}s".to_sym] << entity if entity
-    end
-
-    Junction::Component.create(component)
+    Junction::Component.create(component.except(:dependencies))
   end
 end
 
@@ -124,26 +130,21 @@ def import_domains(path)
   domains = YAML.load_file(Rails.root.join(path, 'domains.yaml'), symbolize_names: true)
 
   domains.each do |domain|
-    next if Junction::Domain.find_by(
-      name: domain[:name],
-      namespace: domain.fetch(:namespace, "default")
-    )
+    namespace = domain.fetch(:namespace, "default")
+    next if Junction::Domain.find_by(name: domain[:name], namespace: namespace)
 
     Rails.logger.info "Creating domain #{domain[:title]}"
+    domain[:owner] = find_reference(Junction::Group, domain[:owner], namespace) if domain[:owner].present?
+
     Junction::Domain.create(domain.except(:parent))
   end
 
   domains.each do |domain|
     next if domain[:parent].blank?
 
-    record = Junction::Domain.find_by(
-      name: domain[:name],
-      namespace: domain.fetch(:namespace, "default")
-    )
-    parent = Junction::Domain.find_by(
-      name: domain[:parent],
-      namespace: domain.fetch(:namespace, "default")
-    )
+    namespace = domain.fetch(:namespace, "default")
+    record = Junction::Domain.find_by(name: domain[:name], namespace: namespace)
+    parent = find_reference(Junction::Domain, domain[:parent], namespace)
 
     next unless record && parent
 
@@ -154,15 +155,30 @@ end
 def import_groups(path)
   return unless File.exist?(Rails.root.join(path, 'groups.yaml'))
 
-  YAML.load_file(Rails.root.join(path, 'groups.yaml'), symbolize_names: true).each do |group|
-    next if Junction::Group.find_by(name: group[:name], namespace: group.fetch(:namespace, "default"))
+  groups = YAML.load_file(Rails.root.join(path, 'groups.yaml'), symbolize_names: true)
+
+  groups.each do |group|
+    namespace = group.fetch(:namespace, "default")
+    next if Junction::Group.find_by(name: group[:name], namespace: namespace)
 
     Rails.logger.info "Creating group #{group[:title]}"
-    group.fetch(:members, []).map! do |member|
-      Junction::User.find_by(name: member)
+    group[:members] = group.fetch(:members, []).filter_map do |member|
+      find_reference(Junction::User, member, namespace)
     end
 
-    Junction::Group.create(group)
+    Junction::Group.create(group.except(:parent))
+  end
+
+  groups.each do |group|
+    next if group[:parent].blank?
+
+    namespace = group.fetch(:namespace, "default")
+    record = Junction::Group.find_by(name: group[:name], namespace: namespace)
+    parent = find_reference(Junction::Group, group[:parent], namespace)
+
+    next unless record && parent
+
+    record.update!(parent_id: parent.id)
   end
 end
 
@@ -170,13 +186,14 @@ def import_resources(path)
   return unless File.exist?(Rails.root.join(path, 'resources.yaml'))
 
   YAML.load_file(Rails.root.join(path, 'resources.yaml'), symbolize_names: true).each do |resource|
-    next if Junction::Resource.find_by(name: resource[:name], namespace: resource.fetch(:namespace, "default"))
+    namespace = resource.fetch(:namespace, "default")
+    next if Junction::Resource.find_by(name: resource[:name], namespace: namespace)
 
     Rails.logger.info "Creating resource #{resource[:title]}"
-    resource[:system] = Junction::System.find_by(name: resource[:system]) if resource[:system].present?
-    resource[:owner] = Junction::Group.find_by(name: resource[:owner]) if resource[:owner].present?
+    resource[:system] = find_reference(Junction::System, resource[:system], namespace) if resource[:system].present?
+    resource[:owner] = find_reference(Junction::Group, resource[:owner], namespace) if resource[:owner].present?
 
-    Junction::Resource.create(resource)
+    Junction::Resource.create(resource.except(:dependencies))
   end
 end
 
@@ -184,11 +201,12 @@ def import_systems(path)
   return unless File.exist?(Rails.root.join(path, 'systems.yaml'))
 
   YAML.load_file(Rails.root.join(path, 'systems.yaml'), symbolize_names: true).each do |system|
-    next if Junction::System.find_by(name: system[:name], namespace: system.fetch(:namespace, "default"))
+    namespace = system.fetch(:namespace, "default")
+    next if Junction::System.find_by(name: system[:name], namespace: namespace)
 
     Rails.logger.info "Creating system #{system[:title]}"
-    system[:domain] = Junction::Domain.find_by(name: system[:domain]) if system[:domain].present?
-    system[:owner] = Junction::Group.find_by(name: system[:owner]) if system[:owner].present?
+    system[:domain] = find_reference(Junction::Domain, system[:domain], namespace) if system[:domain].present?
+    system[:owner] = find_reference(Junction::Group, system[:owner], namespace) if system[:owner].present?
     Junction::System.create(system)
   end
 end
@@ -199,12 +217,51 @@ def import_users(path)
   YAML.load_file(Rails.root.join(path, 'users.yaml'), symbolize_names: true).each do |user|
     next if Junction::User.find_by(name: user[:name], namespace: user.fetch(:namespace, "default"))
 
+    user[:title] = user[:name] if user[:title].blank?
+
     Rails.logger.info "Creating user #{user[:title]}"
     user[:password] = random_password
     entity = Junction::User.create(user)
 
     unless entity.persisted?
       puts "Failed to create user #{user[:title]}"
+    end
+  end
+end
+
+# Links dependencies between entities that have already been imported.
+#
+# Dependencies are declared as `type:name` (e.g. `component:junction`), where
+# the name may be namespace qualified. Linking them in a pass of their own
+# allows an entity to depend on any other, regardless of the order the entity
+# types are imported in.
+#
+# @param path [String] Path to the seed data for the organization.
+def link_dependencies(path)
+  {
+    'apis.yaml' => Junction::Api,
+    'components.yaml' => Junction::Component,
+    'resources.yaml' => Junction::Resource
+  }.each do |file, model|
+    next unless File.exist?(Rails.root.join(path, file))
+
+    YAML.load_file(Rails.root.join(path, file), symbolize_names: true).each do |entity|
+      next if entity[:dependencies].blank?
+
+      namespace = entity.fetch(:namespace, "default")
+      record = model.find_by(name: entity[:name], namespace: namespace)
+      next unless record
+
+      Rails.logger.info "Linking dependencies for #{entity[:title]}"
+      targets = Hash.new { |dependencies, type| dependencies[type] = [] }
+
+      entity[:dependencies].each do |dependency|
+        type, name = dependency.split(':', 2)
+        target = find_reference(Junction.const_get(type.capitalize), name.strip, namespace)
+        targets["dependent_#{type}s"] << target if target
+      end
+
+      targets.each { |association, entities| record.public_send("#{association}=", entities) }
     end
   end
 end
@@ -231,4 +288,5 @@ if Rails.env.development?
   import_resources(path)
   import_components(path)
   import_apis(path)
+  link_dependencies(path)
 end

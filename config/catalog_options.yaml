@@ -19,6 +19,14 @@ apis:
     name: WSDL
     icon: bubbles
     description: Specification for building SOAP APIs.
+  trpc:
+    name: tRPC
+    icon: braces
+    description: Typed RPC between TypeScript clients and servers.
+  mcp-server:
+    name: MCP Server
+    icon: bot
+    description: Server exposing tools and context to AI agents.
 
 domains:
   product-area:
@@ -35,10 +43,25 @@ group_types:
     name: Business Unit
     icon: building
     description: A division within the organization responsible for specific business functions.
+  department:
+    name: Department
+    icon: circle-pile
+    description: >-
+      A division within the organization responsible for specific functions.
+  organization:
+    name: Organization
+    icon: building-2
+    description: >-
+      The top-level entity representing the entire company or organization.
   product_area:
     name: Product Area
     icon: box
     description: A specific area of focus within the product portfolio.
+  sub-department:
+    name: Sub-Department
+    icon: group
+    description: >-
+      A subdivision within a department responsible for specific functions.
   team:
     name: Team
     icon: users-round
@@ -68,9 +91,15 @@ kinds:
   library:
     name: 'Library'
     icon: 'library'
+  service:
+    name: 'Service'
+    icon: 'server'
   web:
     name: 'Web Service'
     icon: 'globe'
+  website:
+    name: 'Website'
+    icon: 'app-window'
   worker:
     name: 'Worker'
     icon: 'cog'

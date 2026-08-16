@@ -1,0 +1,2405 @@
+- title: Junction MCP Server
+  name: junction-mcp-server
+  lifecycle: experimental
+  type: mcp-server
+  owner: team-a
+  description: |
+    An MCP server that exposes tools related to the Junction ecosystem.
+  definition: |
+    # The junction-mcp-server API is served over MCP and has no definition
+    # document in the Backstage example catalog it was converted from. Its
+    # remotes, which Junction cannot store, are:
+    # streamable-http: http://localhost:7007/api/mcp/v1
+- title: Hello World
+  name: hello-world
+  lifecycle: deprecated
+  type: grpc
+  owner: team-c
+  description: |
+    Hello World example for gRPC.
+  definition: |
+    // Copyright 2015 gRPC authors.
+    //
+    // Licensed under the Apache License, Version 2.0 (the "License");
+    // you may not use this file except in compliance with the License.
+    // You may obtain a copy of the License at
+    //
+    //     http://www.apache.org/licenses/LICENSE-2.0
+    //
+    // Unless required by applicable law or agreed to in writing, software
+    // distributed under the License is distributed on an "AS IS" BASIS,
+    // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    // See the License for the specific language governing permissions and
+    // limitations under the License.
+
+    syntax = "proto3";
+
+    option java_multiple_files = true;
+    option java_package = "io.grpc.examples.helloworld";
+    option java_outer_classname = "HelloWorldProto";
+    option objc_class_prefix = "HLW";
+
+    package helloworld;
+
+    // The greeting service definition.
+    service Greeter {
+      // Sends a greeting
+      rpc SayHello (HelloRequest) returns (HelloReply) {}
+    }
+
+    // The request message containing the user's name.
+    message HelloRequest {
+      string name = 1;
+    }
+
+    // The response message containing the greetings
+    message HelloReply {
+      string message = 1;
+    }
+- title: Hello World tRPC
+  name: hello-world-trpc
+  lifecycle: experimental
+  type: trpc
+  owner: team-c
+  description: |
+    Hello World example for tRPC.
+  definition: |
+    import { z } from 'zod/v3';
+    import { publicProcedure, router } from '../trpc';
+
+    export const apiRouter = router({
+      version: publicProcedure.query(() => {
+        return { version: '0.42.0' };
+      }),
+      hello: publicProcedure
+        .input(z.object({ username: z.string().nullish() }).nullish())
+        .query(({ input, ctx }) => {
+          return {
+            text: `hello ${input?.username ?? ctx.user?.name ?? 'world'}`,
+          };
+        }),
+    });
+- title: Petstore
+  name: petstore
+  lifecycle: experimental
+  type: openapi
+  owner: team-c
+  description: |
+    The petstore API.
+  definition: |
+    openapi: 3.1.0
+    info:
+      title: Swagger Petstore - OpenAPI 3.1
+      description: |-
+        This is a sample Pet Store Server based on the OpenAPI 3.1 specification.  You can find out more about
+        Swagger at [https://swagger.io](https://swagger.io). In the third iteration of the pet store, we've switched to the design first approach!
+        You can now help us improve the API whether it's by making changes to the definition itself or to the code.
+        That way, with time, we can improve the API in general, and expose some of the new features in OAS3.
+
+        Some useful links:
+        - [The Pet Store repository](https://github.com/swagger-api/swagger-petstore)
+        - [The source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
+
+      termsOfService: http://swagger.io/terms/
+      contact:
+        email: apiteam@swagger.io
+      license:
+        name: Apache 2.0
+        url: http://www.apache.org/licenses/LICENSE-2.0.html
+      version: 1.0.11
+    externalDocs:
+      description: Find out more about Swagger
+      url: http://swagger.io
+    servers:
+      - url: https://petstore3.swagger.io/api/v3
+    tags:
+      - name: pet
+        description: Everything about your Pets
+        externalDocs:
+          description: Find out more
+          url: http://swagger.io
+      - name: store
+        description: Access to Petstore orders
+        externalDocs:
+          description: Find out more about our store
+          url: http://swagger.io
+      - name: user
+        description: Operations about user
+    paths:
+      /pet:
+        put:
+          tags:
+            - pet
+          summary: Update an existing pet
+          description: Update an existing pet by Id
+          operationId: updatePet
+          requestBody:
+            description: Update an existent pet in the store
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Pet'
+              application/xml:
+                schema:
+                  $ref: '#/components/schemas/Pet'
+              application/x-www-form-urlencoded:
+                schema:
+                  $ref: '#/components/schemas/Pet'
+            required: true
+          responses:
+            '200':
+              description: Successful operation
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/Pet'
+                application/xml:
+                  schema:
+                    $ref: '#/components/schemas/Pet'
+            '400':
+              description: Invalid ID supplied
+            '404':
+              description: Pet not found
+            '405':
+              description: Validation exception
+          security:
+            - petstore_auth:
+                - write:pets
+                - read:pets
+        post:
+          tags:
+            - pet
+          summary: Add a new pet to the store
+          description: Add a new pet to the store
+          operationId: addPet
+          requestBody:
+            description: Create a new pet in the store
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Pet'
+              application/xml:
+                schema:
+                  $ref: '#/components/schemas/Pet'
+              application/x-www-form-urlencoded:
+                schema:
+                  $ref: '#/components/schemas/Pet'
+            required: true
+          responses:
+            '200':
+              description: Successful operation
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/Pet'
+                application/xml:
+                  schema:
+                    $ref: '#/components/schemas/Pet'
+            '405':
+              description: Invalid input
+          security:
+            - petstore_auth:
+                - write:pets
+                - read:pets
+      /pet/findByStatus:
+        get:
+          tags:
+            - pet
+          summary: Finds Pets by status
+          description: Multiple status values can be provided with comma separated strings
+          operationId: findPetsByStatus
+          parameters:
+            - name: status
+              in: query
+              description: Status values that need to be considered for filter
+              required: false
+              explode: true
+              schema:
+                type: string
+                default: available
+                enum:
+                  - available
+                  - pending
+                  - sold
+          responses:
+            '200':
+              description: successful operation
+              content:
+                application/json:
+                  schema:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Pet'
+                application/xml:
+                  schema:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Pet'
+            '400':
+              description: Invalid status value
+          security:
+            - petstore_auth:
+                - write:pets
+                - read:pets
+      /pet/findByTags:
+        get:
+          tags:
+            - pet
+          summary: Finds Pets by tags
+          description: Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
+          operationId: findPetsByTags
+          parameters:
+            - name: tags
+              in: query
+              description: Tags to filter by
+              required: false
+              explode: true
+              schema:
+                type: array
+                items:
+                  type: string
+          responses:
+            '200':
+              description: successful operation
+              content:
+                application/json:
+                  schema:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Pet'
+                application/xml:
+                  schema:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Pet'
+            '400':
+              description: Invalid tag value
+          security:
+            - petstore_auth:
+                - write:pets
+                - read:pets
+      /pet/{petId}:
+        get:
+          tags:
+            - pet
+          summary: Find pet by ID
+          description: Returns a single pet
+          operationId: getPetById
+          parameters:
+            - name: petId
+              in: path
+              description: ID of pet to return
+              required: true
+              schema:
+                type: integer
+                format: int64
+          responses:
+            '200':
+              description: successful operation
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/Pet'
+                application/xml:
+                  schema:
+                    $ref: '#/components/schemas/Pet'
+            '400':
+              description: Invalid ID supplied
+            '404':
+              description: Pet not found
+          security:
+            - api_key: []
+            - petstore_auth:
+                - write:pets
+                - read:pets
+        post:
+          tags:
+            - pet
+          summary: Updates a pet in the store with form data
+          description: ''
+          operationId: updatePetWithForm
+          parameters:
+            - name: petId
+              in: path
+              description: ID of pet that needs to be updated
+              required: true
+              schema:
+                type: integer
+                format: int64
+            - name: name
+              in: query
+              description: Name of pet that needs to be updated
+              schema:
+                type: string
+            - name: status
+              in: query
+              description: Status of pet that needs to be updated
+              schema:
+                type: string
+          responses:
+            '405':
+              description: Invalid input
+          security:
+            - petstore_auth:
+                - write:pets
+                - read:pets
+        delete:
+          tags:
+            - pet
+          summary: Deletes a pet
+          description: delete a pet
+          operationId: deletePet
+          parameters:
+            - name: api_key
+              in: header
+              description: ''
+              required: false
+              schema:
+                type: string
+            - name: petId
+              in: path
+              description: Pet id to delete
+              required: true
+              schema:
+                type: integer
+                format: int64
+          responses:
+            '400':
+              description: Invalid pet value
+          security:
+            - petstore_auth:
+                - write:pets
+                - read:pets
+      /pet/{petId}/uploadImage:
+        post:
+          tags:
+            - pet
+          summary: uploads an image
+          description: ''
+          operationId: uploadFile
+          parameters:
+            - name: petId
+              in: path
+              description: ID of pet to update
+              required: true
+              schema:
+                type: integer
+                format: int64
+            - name: additionalMetadata
+              in: query
+              description: Additional Metadata
+              required: false
+              schema:
+                type: string
+          requestBody:
+            content:
+              application/octet-stream:
+                schema:
+                  type: string
+                  format: binary
+          responses:
+            '200':
+              description: successful operation
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/ApiResponse'
+          security:
+            - petstore_auth:
+                - write:pets
+                - read:pets
+      /store/inventory:
+        get:
+          tags:
+            - store
+          summary: Returns pet inventories by status
+          description: Returns a map of status codes to quantities
+          operationId: getInventory
+          responses:
+            '200':
+              description: successful operation
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    additionalProperties:
+                      type: integer
+                      format: int32
+          security:
+            - api_key: []
+      /store/order:
+        post:
+          tags:
+            - store
+          summary: Place an order for a pet
+          description: Place a new order in the store
+          operationId: placeOrder
+          requestBody:
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Order'
+              application/xml:
+                schema:
+                  $ref: '#/components/schemas/Order'
+              application/x-www-form-urlencoded:
+                schema:
+                  $ref: '#/components/schemas/Order'
+          responses:
+            '200':
+              description: successful operation
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/Order'
+            '405':
+              description: Invalid input
+      /store/order/{orderId}:
+        get:
+          tags:
+            - store
+          summary: Find purchase order by ID
+          description: For valid response try integer IDs with value <= 5 or > 10. Other values will generate exceptions.
+          operationId: getOrderById
+          parameters:
+            - name: orderId
+              in: path
+              description: ID of order that needs to be fetched
+              required: true
+              schema:
+                type: integer
+                format: int64
+          responses:
+            '200':
+              description: successful operation
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/Order'
+                application/xml:
+                  schema:
+                    $ref: '#/components/schemas/Order'
+            '400':
+              description: Invalid ID supplied
+            '404':
+              description: Order not found
+        delete:
+          tags:
+            - store
+          summary: Delete purchase order by ID
+          description: For valid response try integer IDs with value < 1000. Anything above 1000 or nonintegers will generate API errors
+          operationId: deleteOrder
+          parameters:
+            - name: orderId
+              in: path
+              description: ID of the order that needs to be deleted
+              required: true
+              schema:
+                type: integer
+                format: int64
+          responses:
+            '400':
+              description: Invalid ID supplied
+            '404':
+              description: Order not found
+      /user:
+        post:
+          tags:
+            - user
+          summary: Create user
+          description: This can only be done by the logged in user.
+          operationId: createUser
+          requestBody:
+            description: Created user object
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/User'
+              application/xml:
+                schema:
+                  $ref: '#/components/schemas/User'
+              application/x-www-form-urlencoded:
+                schema:
+                  $ref: '#/components/schemas/User'
+          responses:
+            default:
+              description: successful operation
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/User'
+                application/xml:
+                  schema:
+                    $ref: '#/components/schemas/User'
+      /user/createWithList:
+        post:
+          tags:
+            - user
+          summary: Creates list of users with given input array
+          description: Creates list of users with given input array
+          operationId: createUsersWithListInput
+          requestBody:
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/User'
+          responses:
+            '200':
+              description: Successful operation
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/User'
+                application/xml:
+                  schema:
+                    $ref: '#/components/schemas/User'
+            default:
+              description: successful operation
+      /user/login:
+        get:
+          tags:
+            - user
+          summary: Logs user into the system
+          description: ''
+          operationId: loginUser
+          parameters:
+            - name: username
+              in: query
+              description: The user name for login
+              required: false
+              schema:
+                type: string
+            - name: password
+              in: query
+              description: The password for login in clear text
+              required: false
+              schema:
+                type: string
+          responses:
+            '200':
+              description: successful operation
+              headers:
+                X-Rate-Limit:
+                  description: calls per hour allowed by the user
+                  schema:
+                    type: integer
+                    format: int32
+                X-Expires-After:
+                  description: date in UTC when token expires
+                  schema:
+                    type: string
+                    format: date-time
+              content:
+                application/xml:
+                  schema:
+                    type: string
+                application/json:
+                  schema:
+                    type: string
+            '400':
+              description: Invalid username/password supplied
+      /user/logout:
+        get:
+          tags:
+            - user
+          summary: Logs out current logged in user session
+          description: ''
+          operationId: logoutUser
+          parameters: []
+          responses:
+            default:
+              description: successful operation
+      /user/{username}:
+        get:
+          tags:
+            - user
+          summary: Get user by user name
+          description: ''
+          operationId: getUserByName
+          parameters:
+            - name: username
+              in: path
+              description: 'The name that needs to be fetched. Use user1 for testing. '
+              required: true
+              schema:
+                type: string
+          responses:
+            '200':
+              description: successful operation
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/User'
+                application/xml:
+                  schema:
+                    $ref: '#/components/schemas/User'
+            '400':
+              description: Invalid username supplied
+            '404':
+              description: User not found
+        put:
+          tags:
+            - user
+          summary: Update user
+          description: This can only be done by the logged in user.
+          operationId: updateUser
+          parameters:
+            - name: username
+              in: path
+              description: name that need to be deleted
+              required: true
+              schema:
+                type: string
+          requestBody:
+            description: Update an existent user in the store
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/User'
+              application/xml:
+                schema:
+                  $ref: '#/components/schemas/User'
+              application/x-www-form-urlencoded:
+                schema:
+                  $ref: '#/components/schemas/User'
+          responses:
+            default:
+              description: successful operation
+        delete:
+          tags:
+            - user
+          summary: Delete user
+          description: This can only be done by the logged in user.
+          operationId: deleteUser
+          parameters:
+            - name: username
+              in: path
+              description: The name that needs to be deleted
+              required: true
+              schema:
+                type: string
+          responses:
+            '400':
+              description: Invalid username supplied
+            '404':
+              description: User not found
+    components:
+      schemas:
+        Order:
+          type: object
+          properties:
+            id:
+              type: integer
+              format: int64
+              example: 10
+            petId:
+              type: integer
+              format: int64
+              example: 198772
+            quantity:
+              type: integer
+              format: int32
+              example: 7
+            shipDate:
+              type: string
+              format: date-time
+            status:
+              type: string
+              description: Order Status
+              example: approved
+              enum:
+                - placed
+                - approved
+                - delivered
+            complete:
+              type: boolean
+          xml:
+            name: order
+        Customer:
+          type: object
+          properties:
+            id:
+              type: integer
+              format: int64
+              example: 100000
+            username:
+              type: string
+              example: fehguy
+            address:
+              type: array
+              xml:
+                name: addresses
+                wrapped: true
+              items:
+                $ref: '#/components/schemas/Address'
+          xml:
+            name: customer
+        Address:
+          type: object
+          properties:
+            street:
+              type: string
+              example: 437 Lytton
+            city:
+              type: string
+              example: Palo Alto
+            state:
+              type: string
+              example: CA
+            zip:
+              type: string
+              example: '94301'
+          xml:
+            name: address
+        Category:
+          type: object
+          properties:
+            id:
+              type: integer
+              format: int64
+              example: 1
+            name:
+              type: string
+              example: Dogs
+          xml:
+            name: category
+        User:
+          type: object
+          properties:
+            id:
+              type: integer
+              format: int64
+              example: 10
+            username:
+              type: string
+              example: theUser
+            firstName:
+              type: string
+              example: John
+            lastName:
+              type: string
+              example: James
+            email:
+              type: string
+              example: john@email.com
+            password:
+              type: string
+              example: '12345'
+            phone:
+              type: string
+              example: '12345'
+            userStatus:
+              type: integer
+              description: User Status
+              format: int32
+              example: 1
+          xml:
+            name: user
+        Tag:
+          type: object
+          properties:
+            id:
+              type: integer
+              format: int64
+            name:
+              type: string
+          xml:
+            name: tag
+        Pet:
+          required:
+            - name
+            - photoUrls
+          type: object
+          properties:
+            id:
+              type: integer
+              format: int64
+              example: 10
+            name:
+              type: string
+              example: doggie
+            category:
+              $ref: '#/components/schemas/Category'
+            photoUrls:
+              type: array
+              xml:
+                wrapped: true
+              items:
+                type: string
+                xml:
+                  name: photoUrl
+            tags:
+              type: array
+              xml:
+                wrapped: true
+              items:
+                $ref: '#/components/schemas/Tag'
+            status:
+              type: string
+              description: pet status in the store
+              enum:
+                - available
+                - pending
+                - sold
+          xml:
+            name: pet
+        ApiResponse:
+          type: object
+          properties:
+            code:
+              type: integer
+              format: int32
+            type:
+              type: string
+            message:
+              type: string
+          xml:
+            name: '##default'
+      requestBodies:
+        Pet:
+          description: Pet object that needs to be added to the store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Pet'
+        UserArray:
+          description: List of user object
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+      securitySchemes:
+        petstore_auth:
+          type: oauth2
+          flows:
+            implicit:
+              authorizationUrl: https://petstore3.swagger.io/oauth/authorize
+              scopes:
+                write:pets: modify pets in your account
+                read:pets: read your pets
+        api_key:
+          type: apiKey
+          name: api_key
+          in: header
+- title: Petstore Webhook
+  name: petstore-webhook
+  lifecycle: experimental
+  type: openapi
+  owner: team-c
+  description: |
+    The petstore webhook API.
+  definition: |
+    openapi: 3.1.0
+    info:
+      title: Webhook Example
+      version: 1.0.0
+    # Since OAS 3.1.0 the paths element isn't necessary. Now a valid OpenAPI Document can describe only paths, webhooks, or even only reusable components
+    webhooks:
+      # Each webhook needs a name
+      newPet:
+        # This is a Path Item Object, the only difference is that the request is initiated by the API provider
+        post:
+          requestBody:
+            description: Information about a new pet in the system
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Pet'
+          responses:
+            '200':
+              description: Return a 200 status to indicate that the data was received successfully
+
+    components:
+      schemas:
+        Pet:
+          required:
+            - id
+            - name
+          properties:
+            id:
+              type: integer
+              format: int64
+            name:
+              type: string
+            tag:
+              type: string
+- title: Spotify
+  name: spotify
+  lifecycle: production
+  type: openapi
+  owner: team-a
+  description: |
+    The Spotify web API.
+  annotations:
+    junction.codes/definition-at-location: url:https://raw.githubusercontent.com/APIs-guru/openapi-directory/master/APIs/spotify.com/v1/swagger.yaml
+  definition: |
+    # The Backstage catalog resolves the spotify definition at load time from:
+    # https://github.com/APIs-guru/openapi-directory/blob/dab6854d4d599aafb0eb36e6c7ae1fe0c37509b7/APIs/spotify.com/2021.4.2/openapi.yaml
+    # Junction has no equivalent placeholder, and the specification is not
+    # part of the example catalog, so it is not inlined here.
+- title: Streetlights
+  name: streetlights
+  lifecycle: production
+  type: asyncapi
+  owner: team-c
+  description: |
+    The Smartylighting Streetlights API allows you to remotely manage the city lights.
+  definition: |
+    asyncapi: 3.0.0
+    info:
+      title: Streetlights MQTT API
+      version: 1.0.0
+      description: "The Smartylighting Streetlights API allows you to remotely manage the city lights.\n\n### Check out its awesome features:\n\n* Turn a specific streetlight on/off \U0001F303\n* Dim a specific streetlight \U0001F60E\n* Receive real-time information about environmental lighting conditions \U0001F4C8\n"
+      license:
+        name: Apache 2.0
+        url: 'https://www.apache.org/licenses/LICENSE-2.0'
+    defaultContentType: application/json
+    servers:
+      production:
+        host: 'test.mosquitto.org:{port}'
+        protocol: mqtt
+        description: Test broker
+        variables:
+          port:
+            description: Secure connection (TLS) is available through port 8883.
+            default: '1883'
+            enum:
+              - '1883'
+              - '8883'
+        security:
+          - $ref: '#/components/securitySchemes/apiKey'
+          - type: oauth2
+            description: Flows to support OAuth 2.0
+            flows:
+              implicit:
+                authorizationUrl: 'https://authserver.example/auth'
+                availableScopes:
+                  'streetlights:on': Ability to switch lights on
+                  'streetlights:off': Ability to switch lights off
+                  'streetlights:dim': Ability to dim the lights
+              password:
+                tokenUrl: 'https://authserver.example/token'
+                availableScopes:
+                  'streetlights:on': Ability to switch lights on
+                  'streetlights:off': Ability to switch lights off
+                  'streetlights:dim': Ability to dim the lights
+              clientCredentials:
+                tokenUrl: 'https://authserver.example/token'
+                availableScopes:
+                  'streetlights:on': Ability to switch lights on
+                  'streetlights:off': Ability to switch lights off
+                  'streetlights:dim': Ability to dim the lights
+              authorizationCode:
+                authorizationUrl: 'https://authserver.example/auth'
+                tokenUrl: 'https://authserver.example/token'
+                refreshUrl: 'https://authserver.example/refresh'
+                availableScopes:
+                  'streetlights:on': Ability to switch lights on
+                  'streetlights:off': Ability to switch lights off
+                  'streetlights:dim': Ability to dim the lights
+            scopes:
+              - 'streetlights:on'
+              - 'streetlights:off'
+              - 'streetlights:dim'
+          - $ref: '#/components/securitySchemes/openIdConnectWellKnown'
+        tags:
+          - name: 'env:production'
+            description: This environment is meant for production use case
+          - name: 'kind:remote'
+            description: This server is a remote server. Not exposed by the application
+          - name: 'visibility:public'
+            description: This resource is public and available to everyone
+    channels:
+      lightingMeasured:
+        address: 'smartylighting/streetlights/1/0/event/{streetlightId}/lighting/measured'
+        messages:
+          lightMeasured:
+            $ref: '#/components/messages/lightMeasured'
+        description: The topic on which measured values may be produced and consumed.
+        parameters:
+          streetlightId:
+            $ref: '#/components/parameters/streetlightId'
+      lightTurnOn:
+        address: 'smartylighting/streetlights/1/0/action/{streetlightId}/turn/on'
+        messages:
+          turnOn:
+            $ref: '#/components/messages/turnOnOff'
+        parameters:
+          streetlightId:
+            $ref: '#/components/parameters/streetlightId'
+      lightTurnOff:
+        address: 'smartylighting/streetlights/1/0/action/{streetlightId}/turn/off'
+        messages:
+          turnOff:
+            $ref: '#/components/messages/turnOnOff'
+        parameters:
+          streetlightId:
+            $ref: '#/components/parameters/streetlightId'
+      lightsDim:
+        address: 'smartylighting/streetlights/1/0/action/{streetlightId}/dim'
+        messages:
+          dimLight:
+            $ref: '#/components/messages/dimLight'
+        parameters:
+          streetlightId:
+            $ref: '#/components/parameters/streetlightId'
+    operations:
+      receiveLightMeasurement:
+        action: receive
+        channel:
+          $ref: '#/channels/lightingMeasured'
+        summary: >-
+          Inform about environmental lighting conditions of a particular
+          streetlight.
+        traits:
+          - $ref: '#/components/operationTraits/mqtt'
+        messages:
+          - $ref: '#/channels/lightingMeasured/messages/lightMeasured'
+      turnOn:
+        action: send
+        channel:
+          $ref: '#/channels/lightTurnOn'
+        traits:
+          - $ref: '#/components/operationTraits/mqtt'
+        messages:
+          - $ref: '#/channels/lightTurnOn/messages/turnOn'
+      turnOff:
+        action: send
+        channel:
+          $ref: '#/channels/lightTurnOff'
+        traits:
+          - $ref: '#/components/operationTraits/mqtt'
+        messages:
+          - $ref: '#/channels/lightTurnOff/messages/turnOff'
+      dimLight:
+        action: send
+        channel:
+          $ref: '#/channels/lightsDim'
+        traits:
+          - $ref: '#/components/operationTraits/mqtt'
+        messages:
+          - $ref: '#/channels/lightsDim/messages/dimLight'
+    components:
+      messages:
+        lightMeasured:
+          name: lightMeasured
+          title: Light measured
+          summary: >-
+            Inform about environmental lighting conditions of a particular
+            streetlight.
+          contentType: application/json
+          traits:
+            - $ref: '#/components/messageTraits/commonHeaders'
+          payload:
+            $ref: '#/components/schemas/lightMeasuredPayload'
+        turnOnOff:
+          name: turnOnOff
+          title: Turn on/off
+          summary: Command a particular streetlight to turn the lights on or off.
+          traits:
+            - $ref: '#/components/messageTraits/commonHeaders'
+          payload:
+            $ref: '#/components/schemas/turnOnOffPayload'
+        dimLight:
+          name: dimLight
+          title: Dim light
+          summary: Command a particular streetlight to dim the lights.
+          traits:
+            - $ref: '#/components/messageTraits/commonHeaders'
+          payload:
+            $ref: '#/components/schemas/dimLightPayload'
+      schemas:
+        lightMeasuredPayload:
+          type: object
+          properties:
+            lumens:
+              type: integer
+              minimum: 0
+              description: Light intensity measured in lumens.
+            sentAt:
+              $ref: '#/components/schemas/sentAt'
+        turnOnOffPayload:
+          type: object
+          properties:
+            command:
+              type: string
+              enum:
+                - 'on'
+                - 'off'
+              description: Whether to turn on or off the light.
+            sentAt:
+              $ref: '#/components/schemas/sentAt'
+        dimLightPayload:
+          type: object
+          properties:
+            percentage:
+              type: integer
+              description: Percentage to which the light should be dimmed to.
+              minimum: 0
+              maximum: 100
+            sentAt:
+              $ref: '#/components/schemas/sentAt'
+        sentAt:
+          type: string
+          format: date-time
+          description: Date and time when the message was sent.
+      securitySchemes:
+        apiKey:
+          type: apiKey
+          in: user
+          description: Provide your API key as the user and leave the password empty.
+        supportedOauthFlows:
+          type: oauth2
+          description: Flows to support OAuth 2.0
+          flows:
+            implicit:
+              authorizationUrl: 'https://authserver.example/auth'
+              availableScopes:
+                'streetlights:on': Ability to switch lights on
+                'streetlights:off': Ability to switch lights off
+                'streetlights:dim': Ability to dim the lights
+            password:
+              tokenUrl: 'https://authserver.example/token'
+              availableScopes:
+                'streetlights:on': Ability to switch lights on
+                'streetlights:off': Ability to switch lights off
+                'streetlights:dim': Ability to dim the lights
+            clientCredentials:
+              tokenUrl: 'https://authserver.example/token'
+              availableScopes:
+                'streetlights:on': Ability to switch lights on
+                'streetlights:off': Ability to switch lights off
+                'streetlights:dim': Ability to dim the lights
+            authorizationCode:
+              authorizationUrl: 'https://authserver.example/auth'
+              tokenUrl: 'https://authserver.example/token'
+              refreshUrl: 'https://authserver.example/refresh'
+              availableScopes:
+                'streetlights:on': Ability to switch lights on
+                'streetlights:off': Ability to switch lights off
+                'streetlights:dim': Ability to dim the lights
+        openIdConnectWellKnown:
+          type: openIdConnect
+          openIdConnectUrl: 'https://authserver.example/.well-known'
+      parameters:
+        streetlightId:
+          description: The ID of the streetlight.
+      messageTraits:
+        commonHeaders:
+          headers:
+            type: object
+            properties:
+              my-app-header:
+                type: integer
+                minimum: 0
+                maximum: 100
+      operationTraits:
+        mqtt:
+          bindings:
+            mqtt:
+              qos: 1
+- title: Star Wars GraphQL
+  name: starwars-graphql
+  lifecycle: production
+  type: graphql
+  owner: team-b
+  description: |
+    SWAPI GraphQL Schema.
+  definition: |
+    schema {
+      query: Root
+    }
+
+    """A single film."""
+    type Film implements Node {
+      """The title of this film."""
+      title: String
+
+      """The episode number of this film."""
+      episodeID: Int
+
+      """The opening paragraphs at the beginning of this film."""
+      openingCrawl: String
+
+      """The name of the director of this film."""
+      director: String
+
+      """The name(s) of the producer(s) of this film."""
+      producers: [String]
+
+      """The ISO 8601 date format of film release at original creator country."""
+      releaseDate: String
+      speciesConnection(after: String, first: Int, before: String, last: Int): FilmSpeciesConnection
+      starshipConnection(after: String, first: Int, before: String, last: Int): FilmStarshipsConnection
+      vehicleConnection(after: String, first: Int, before: String, last: Int): FilmVehiclesConnection
+      characterConnection(after: String, first: Int, before: String, last: Int): FilmCharactersConnection
+      planetConnection(after: String, first: Int, before: String, last: Int): FilmPlanetsConnection
+
+      """The ISO 8601 date format of the time that this resource was created."""
+      created: String
+
+      """The ISO 8601 date format of the time that this resource was edited."""
+      edited: String
+
+      """The ID of an object"""
+      id: ID!
+    }
+
+    """A connection to a list of items."""
+    type FilmCharactersConnection {
+      """Information to aid in pagination."""
+      pageInfo: PageInfo!
+
+      """A list of edges."""
+      edges: [FilmCharactersEdge]
+
+      """
+      A count of the total number of objects in this connection, ignoring pagination.
+      This allows a client to fetch the first five objects by passing "5" as the
+      argument to "first", then fetch the total count so it could display "5 of 83",
+      for example.
+      """
+      totalCount: Int
+
+      """
+      A list of all of the objects returned in the connection. This is a convenience
+      field provided for quickly exploring the API; rather than querying for
+      "{ edges { node } }" when no edge data is needed, this field can be be used
+      instead. Note that when clients like Relay need to fetch the "cursor" field on
+      the edge to enable efficient pagination, this shortcut cannot be used, and the
+      full "{ edges { node } }" version should be used instead.
+      """
+      characters: [Person]
+    }
+
+    """An edge in a connection."""
+    type FilmCharactersEdge {
+      """The item at the end of the edge"""
+      node: Person
+
+      """A cursor for use in pagination"""
+      cursor: String!
+    }
+
+    """A connection to a list of items."""
+    type FilmPlanetsConnection {
+      """Information to aid in pagination."""
+      pageInfo: PageInfo!
+
+      """A list of edges."""
+      edges: [FilmPlanetsEdge]
+
+      """
+      A count of the total number of objects in this connection, ignoring pagination.
+      This allows a client to fetch the first five objects by passing "5" as the
+      argument to "first", then fetch the total count so it could display "5 of 83",
+      for example.
+      """
+      totalCount: Int
+
+      """
+      A list of all of the objects returned in the connection. This is a convenience
+      field provided for quickly exploring the API; rather than querying for
+      "{ edges { node } }" when no edge data is needed, this field can be be used
+      instead. Note that when clients like Relay need to fetch the "cursor" field on
+      the edge to enable efficient pagination, this shortcut cannot be used, and the
+      full "{ edges { node } }" version should be used instead.
+      """
+      planets: [Planet]
+    }
+
+    """An edge in a connection."""
+    type FilmPlanetsEdge {
+      """The item at the end of the edge"""
+      node: Planet
+
+      """A cursor for use in pagination"""
+      cursor: String!
+    }
+
+    """A connection to a list of items."""
+    type FilmsConnection {
+      """Information to aid in pagination."""
+      pageInfo: PageInfo!
+
+      """A list of edges."""
+      edges: [FilmsEdge]
+
+      """
+      A count of the total number of objects in this connection, ignoring pagination.
+      This allows a client to fetch the first five objects by passing "5" as the
+      argument to "first", then fetch the total count so it could display "5 of 83",
+      for example.
+      """
+      totalCount: Int
+
+      """
+      A list of all of the objects returned in the connection. This is a convenience
+      field provided for quickly exploring the API; rather than querying for
+      "{ edges { node } }" when no edge data is needed, this field can be be used
+      instead. Note that when clients like Relay need to fetch the "cursor" field on
+      the edge to enable efficient pagination, this shortcut cannot be used, and the
+      full "{ edges { node } }" version should be used instead.
+      """
+      films: [Film]
+    }
+
+    """An edge in a connection."""
+    type FilmsEdge {
+      """The item at the end of the edge"""
+      node: Film
+
+      """A cursor for use in pagination"""
+      cursor: String!
+    }
+
+    """A connection to a list of items."""
+    type FilmSpeciesConnection {
+      """Information to aid in pagination."""
+      pageInfo: PageInfo!
+
+      """A list of edges."""
+      edges: [FilmSpeciesEdge]
+
+      """
+      A count of the total number of objects in this connection, ignoring pagination.
+      This allows a client to fetch the first five objects by passing "5" as the
+      argument to "first", then fetch the total count so it could display "5 of 83",
+      for example.
+      """
+      totalCount: Int
+
+      """
+      A list of all of the objects returned in the connection. This is a convenience
+      field provided for quickly exploring the API; rather than querying for
+      "{ edges { node } }" when no edge data is needed, this field can be be used
+      instead. Note that when clients like Relay need to fetch the "cursor" field on
+      the edge to enable efficient pagination, this shortcut cannot be used, and the
+      full "{ edges { node } }" version should be used instead.
+      """
+      species: [Species]
+    }
+
+    """An edge in a connection."""
+    type FilmSpeciesEdge {
+      """The item at the end of the edge"""
+      node: Species
+
+      """A cursor for use in pagination"""
+      cursor: String!
+    }
+
+    """A connection to a list of items."""
+    type FilmStarshipsConnection {
+      """Information to aid in pagination."""
+      pageInfo: PageInfo!
+
+      """A list of edges."""
+      edges: [FilmStarshipsEdge]
+
+      """
+      A count of the total number of objects in this connection, ignoring pagination.
+      This allows a client to fetch the first five objects by passing "5" as the
+      argument to "first", then fetch the total count so it could display "5 of 83",
+      for example.
+      """
+      totalCount: Int
+
+      """
+      A list of all of the objects returned in the connection. This is a convenience
+      field provided for quickly exploring the API; rather than querying for
+      "{ edges { node } }" when no edge data is needed, this field can be be used
+      instead. Note that when clients like Relay need to fetch the "cursor" field on
+      the edge to enable efficient pagination, this shortcut cannot be used, and the
+      full "{ edges { node } }" version should be used instead.
+      """
+      starships: [Starship]
+    }
+
+    """An edge in a connection."""
+    type FilmStarshipsEdge {
+      """The item at the end of the edge"""
+      node: Starship
+
+      """A cursor for use in pagination"""
+      cursor: String!
+    }
+
+    """A connection to a list of items."""
+    type FilmVehiclesConnection {
+      """Information to aid in pagination."""
+      pageInfo: PageInfo!
+
+      """A list of edges."""
+      edges: [FilmVehiclesEdge]
+
+      """
+      A count of the total number of objects in this connection, ignoring pagination.
+      This allows a client to fetch the first five objects by passing "5" as the
+      argument to "first", then fetch the total count so it could display "5 of 83",
+      for example.
+      """
+      totalCount: Int
+
+      """
+      A list of all of the objects returned in the connection. This is a convenience
+      field provided for quickly exploring the API; rather than querying for
+      "{ edges { node } }" when no edge data is needed, this field can be be used
+      instead. Note that when clients like Relay need to fetch the "cursor" field on
+      the edge to enable efficient pagination, this shortcut cannot be used, and the
+      full "{ edges { node } }" version should be used instead.
+      """
+      vehicles: [Vehicle]
+    }
+
+    """An edge in a connection."""
+    type FilmVehiclesEdge {
+      """The item at the end of the edge"""
+      node: Vehicle
+
+      """A cursor for use in pagination"""
+      cursor: String!
+    }
+
+    """An object with an ID"""
+    interface Node {
+      """The id of the object."""
+      id: ID!
+    }
+
+    """Information about pagination in a connection."""
+    type PageInfo {
+      """When paginating forwards, are there more items?"""
+      hasNextPage: Boolean!
+
+      """When paginating backwards, are there more items?"""
+      hasPreviousPage: Boolean!
+
+      """When paginating backwards, the cursor to continue."""
+      startCursor: String
+
+      """When paginating forwards, the cursor to continue."""
+      endCursor: String
+    }
+
+    """A connection to a list of items."""
+    type PeopleConnection {
+      """Information to aid in pagination."""
+      pageInfo: PageInfo!
+
+      """A list of edges."""
+      edges: [PeopleEdge]
+
+      """
+      A count of the total number of objects in this connection, ignoring pagination.
+      This allows a client to fetch the first five objects by passing "5" as the
+      argument to "first", then fetch the total count so it could display "5 of 83",
+      for example.
+      """
+      totalCount: Int
+
+      """
+      A list of all of the objects returned in the connection. This is a convenience
+      field provided for quickly exploring the API; rather than querying for
+      "{ edges { node } }" when no edge data is needed, this field can be be used
+      instead. Note that when clients like Relay need to fetch the "cursor" field on
+      the edge to enable efficient pagination, this shortcut cannot be used, and the
+      full "{ edges { node } }" version should be used instead.
+      """
+      people: [Person]
+    }
+
+    """An edge in a connection."""
+    type PeopleEdge {
+      """The item at the end of the edge"""
+      node: Person
+
+      """A cursor for use in pagination"""
+      cursor: String!
+    }
+
+    """An individual person or character within the Star Wars universe."""
+    type Person implements Node {
+      """The name of this person."""
+      name: String
+
+      """
+      The birth year of the person, using the in-universe standard of BBY or ABY -
+      Before the Battle of Yavin or After the Battle of Yavin. The Battle of Yavin is
+      a battle that occurs at the end of Star Wars episode IV: A New Hope.
+      """
+      birthYear: String
+
+      """
+      The eye color of this person. Will be "unknown" if not known or "n/a" if the
+      person does not have an eye.
+      """
+      eyeColor: String
+
+      """
+      The gender of this person. Either "Male", "Female" or "unknown",
+      "n/a" if the person does not have a gender.
+      """
+      gender: String
+
+      """
+      The hair color of this person. Will be "unknown" if not known or "n/a" if the
+      person does not have hair.
+      """
+      hairColor: String
+
+      """The height of the person in centimeters."""
+      height: Int
+
+      """The mass of the person in kilograms."""
+      mass: Float
+
+      """The skin color of this person."""
+      skinColor: String
+
+      """A planet that this person was born on or inhabits."""
+      homeworld: Planet
+      filmConnection(after: String, first: Int, before: String, last: Int): PersonFilmsConnection
+
+      """The species that this person belongs to, or null if unknown."""
+      species: Species
+      starshipConnection(after: String, first: Int, before: String, last: Int): PersonStarshipsConnection
+      vehicleConnection(after: String, first: Int, before: String, last: Int): PersonVehiclesConnection
+
+      """The ISO 8601 date format of the time that this resource was created."""
+      created: String
+
+      """The ISO 8601 date format of the time that this resource was edited."""
+      edited: String
+
+      """The ID of an object"""
+      id: ID!
+    }
+
+    """A connection to a list of items."""
+    type PersonFilmsConnection {
+      """Information to aid in pagination."""
+      pageInfo: PageInfo!
+
+      """A list of edges."""
+      edges: [PersonFilmsEdge]
+
+      """
+      A count of the total number of objects in this connection, ignoring pagination.
+      This allows a client to fetch the first five objects by passing "5" as the
+      argument to "first", then fetch the total count so it could display "5 of 83",
+      for example.
+      """
+      totalCount: Int
+
+      """
+      A list of all of the objects returned in the connection. This is a convenience
+      field provided for quickly exploring the API; rather than querying for
+      "{ edges { node } }" when no edge data is needed, this field can be be used
+      instead. Note that when clients like Relay need to fetch the "cursor" field on
+      the edge to enable efficient pagination, this shortcut cannot be used, and the
+      full "{ edges { node } }" version should be used instead.
+      """
+      films: [Film]
+    }
+
+    """An edge in a connection."""
+    type PersonFilmsEdge {
+      """The item at the end of the edge"""
+      node: Film
+
+      """A cursor for use in pagination"""
+      cursor: String!
+    }
+
+    """A connection to a list of items."""
+    type PersonStarshipsConnection {
+      """Information to aid in pagination."""
+      pageInfo: PageInfo!
+
+      """A list of edges."""
+      edges: [PersonStarshipsEdge]
+
+      """
+      A count of the total number of objects in this connection, ignoring pagination.
+      This allows a client to fetch the first five objects by passing "5" as the
+      argument to "first", then fetch the total count so it could display "5 of 83",
+      for example.
+      """
+      totalCount: Int
+
+      """
+      A list of all of the objects returned in the connection. This is a convenience
+      field provided for quickly exploring the API; rather than querying for
+      "{ edges { node } }" when no edge data is needed, this field can be be used
+      instead. Note that when clients like Relay need to fetch the "cursor" field on
+      the edge to enable efficient pagination, this shortcut cannot be used, and the
+      full "{ edges { node } }" version should be used instead.
+      """
+      starships: [Starship]
+    }
+
+    """An edge in a connection."""
+    type PersonStarshipsEdge {
+      """The item at the end of the edge"""
+      node: Starship
+
+      """A cursor for use in pagination"""
+      cursor: String!
+    }
+
+    """A connection to a list of items."""
+    type PersonVehiclesConnection {
+      """Information to aid in pagination."""
+      pageInfo: PageInfo!
+
+      """A list of edges."""
+      edges: [PersonVehiclesEdge]
+
+      """
+      A count of the total number of objects in this connection, ignoring pagination.
+      This allows a client to fetch the first five objects by passing "5" as the
+      argument to "first", then fetch the total count so it could display "5 of 83",
+      for example.
+      """
+      totalCount: Int
+
+      """
+      A list of all of the objects returned in the connection. This is a convenience
+      field provided for quickly exploring the API; rather than querying for
+      "{ edges { node } }" when no edge data is needed, this field can be be used
+      instead. Note that when clients like Relay need to fetch the "cursor" field on
+      the edge to enable efficient pagination, this shortcut cannot be used, and the
+      full "{ edges { node } }" version should be used instead.
+      """
+      vehicles: [Vehicle]
+    }
+
+    """An edge in a connection."""
+    type PersonVehiclesEdge {
+      """The item at the end of the edge"""
+      node: Vehicle
+
+      """A cursor for use in pagination"""
+      cursor: String!
+    }
+
+    """
+    A large mass, planet or planetoid in the Star Wars Universe, at the time of
+    0 ABY.
+    """
+    type Planet implements Node {
+      """The name of this planet."""
+      name: String
+
+      """The diameter of this planet in kilometers."""
+      diameter: Int
+
+      """
+      The number of standard hours it takes for this planet to complete a single
+      rotation on its axis.
+      """
+      rotationPeriod: Int
+
+      """
+      The number of standard days it takes for this planet to complete a single orbit
+      of its local star.
+      """
+      orbitalPeriod: Int
+
+      """
+      A number denoting the gravity of this planet, where "1" is normal or 1 standard
+      G. "2" is twice or 2 standard Gs. "0.5" is half or 0.5 standard Gs.
+      """
+      gravity: String
+
+      """The average population of sentient beings inhabiting this planet."""
+      population: Float
+
+      """The climates of this planet."""
+      climates: [String]
+
+      """The terrains of this planet."""
+      terrains: [String]
+
+      """
+      The percentage of the planet surface that is naturally occurring water or bodies
+      of water.
+      """
+      surfaceWater: Float
+      residentConnection(after: String, first: Int, before: String, last: Int): PlanetResidentsConnection
+      filmConnection(after: String, first: Int, before: String, last: Int): PlanetFilmsConnection
+
+      """The ISO 8601 date format of the time that this resource was created."""
+      created: String
+
+      """The ISO 8601 date format of the time that this resource was edited."""
+      edited: String
+
+      """The ID of an object"""
+      id: ID!
+    }
+
+    """A connection to a list of items."""
+    type PlanetFilmsConnection {
+      """Information to aid in pagination."""
+      pageInfo: PageInfo!
+
+      """A list of edges."""
+      edges: [PlanetFilmsEdge]
+
+      """
+      A count of the total number of objects in this connection, ignoring pagination.
+      This allows a client to fetch the first five objects by passing "5" as the
+      argument to "first", then fetch the total count so it could display "5 of 83",
+      for example.
+      """
+      totalCount: Int
+
+      """
+      A list of all of the objects returned in the connection. This is a convenience
+      field provided for quickly exploring the API; rather than querying for
+      "{ edges { node } }" when no edge data is needed, this field can be be used
+      instead. Note that when clients like Relay need to fetch the "cursor" field on
+      the edge to enable efficient pagination, this shortcut cannot be used, and the
+      full "{ edges { node } }" version should be used instead.
+      """
+      films: [Film]
+    }
+
+    """An edge in a connection."""
+    type PlanetFilmsEdge {
+      """The item at the end of the edge"""
+      node: Film
+
+      """A cursor for use in pagination"""
+      cursor: String!
+    }
+
+    """A connection to a list of items."""
+    type PlanetResidentsConnection {
+      """Information to aid in pagination."""
+      pageInfo: PageInfo!
+
+      """A list of edges."""
+      edges: [PlanetResidentsEdge]
+
+      """
+      A count of the total number of objects in this connection, ignoring pagination.
+      This allows a client to fetch the first five objects by passing "5" as the
+      argument to "first", then fetch the total count so it could display "5 of 83",
+      for example.
+      """
+      totalCount: Int
+
+      """
+      A list of all of the objects returned in the connection. This is a convenience
+      field provided for quickly exploring the API; rather than querying for
+      "{ edges { node } }" when no edge data is needed, this field can be be used
+      instead. Note that when clients like Relay need to fetch the "cursor" field on
+      the edge to enable efficient pagination, this shortcut cannot be used, and the
+      full "{ edges { node } }" version should be used instead.
+      """
+      residents: [Person]
+    }
+
+    """An edge in a connection."""
+    type PlanetResidentsEdge {
+      """The item at the end of the edge"""
+      node: Person
+
+      """A cursor for use in pagination"""
+      cursor: String!
+    }
+
+    """A connection to a list of items."""
+    type PlanetsConnection {
+      """Information to aid in pagination."""
+      pageInfo: PageInfo!
+
+      """A list of edges."""
+      edges: [PlanetsEdge]
+
+      """
+      A count of the total number of objects in this connection, ignoring pagination.
+      This allows a client to fetch the first five objects by passing "5" as the
+      argument to "first", then fetch the total count so it could display "5 of 83",
+      for example.
+      """
+      totalCount: Int
+
+      """
+      A list of all of the objects returned in the connection. This is a convenience
+      field provided for quickly exploring the API; rather than querying for
+      "{ edges { node } }" when no edge data is needed, this field can be be used
+      instead. Note that when clients like Relay need to fetch the "cursor" field on
+      the edge to enable efficient pagination, this shortcut cannot be used, and the
+      full "{ edges { node } }" version should be used instead.
+      """
+      planets: [Planet]
+    }
+
+    """An edge in a connection."""
+    type PlanetsEdge {
+      """The item at the end of the edge"""
+      node: Planet
+
+      """A cursor for use in pagination"""
+      cursor: String!
+    }
+
+    type Root {
+      allFilms(after: String, first: Int, before: String, last: Int): FilmsConnection
+      film(id: ID, filmID: ID): Film
+      allPeople(after: String, first: Int, before: String, last: Int): PeopleConnection
+      person(id: ID, personID: ID): Person
+      allPlanets(after: String, first: Int, before: String, last: Int): PlanetsConnection
+      planet(id: ID, planetID: ID): Planet
+      allSpecies(after: String, first: Int, before: String, last: Int): SpeciesConnection
+      species(id: ID, speciesID: ID): Species
+      allStarships(after: String, first: Int, before: String, last: Int): StarshipsConnection
+      starship(id: ID, starshipID: ID): Starship
+      allVehicles(after: String, first: Int, before: String, last: Int): VehiclesConnection
+      vehicle(id: ID, vehicleID: ID): Vehicle
+
+      """Fetches an object given its ID"""
+      node(
+        """The ID of an object"""
+        id: ID!
+      ): Node
+    }
+
+    """A type of person or character within the Star Wars Universe."""
+    type Species implements Node {
+      """The name of this species."""
+      name: String
+
+      """The classification of this species, such as "mammal" or "reptile"."""
+      classification: String
+
+      """The designation of this species, such as "sentient"."""
+      designation: String
+
+      """The average height of this species in centimeters."""
+      averageHeight: Float
+
+      """The average lifespan of this species in years, null if unknown."""
+      averageLifespan: Int
+
+      """
+      Common eye colors for this species, null if this species does not typically
+      have eyes.
+      """
+      eyeColors: [String]
+
+      """
+      Common hair colors for this species, null if this species does not typically
+      have hair.
+      """
+      hairColors: [String]
+
+      """
+      Common skin colors for this species, null if this species does not typically
+      have skin.
+      """
+      skinColors: [String]
+
+      """The language commonly spoken by this species."""
+      language: String
+
+      """A planet that this species originates from."""
+      homeworld: Planet
+      personConnection(after: String, first: Int, before: String, last: Int): SpeciesPeopleConnection
+      filmConnection(after: String, first: Int, before: String, last: Int): SpeciesFilmsConnection
+
+      """The ISO 8601 date format of the time that this resource was created."""
+      created: String
+
+      """The ISO 8601 date format of the time that this resource was edited."""
+      edited: String
+
+      """The ID of an object"""
+      id: ID!
+    }
+
+    """A connection to a list of items."""
+    type SpeciesConnection {
+      """Information to aid in pagination."""
+      pageInfo: PageInfo!
+
+      """A list of edges."""
+      edges: [SpeciesEdge]
+
+      """
+      A count of the total number of objects in this connection, ignoring pagination.
+      This allows a client to fetch the first five objects by passing "5" as the
+      argument to "first", then fetch the total count so it could display "5 of 83",
+      for example.
+      """
+      totalCount: Int
+
+      """
+      A list of all of the objects returned in the connection. This is a convenience
+      field provided for quickly exploring the API; rather than querying for
+      "{ edges { node } }" when no edge data is needed, this field can be be used
+      instead. Note that when clients like Relay need to fetch the "cursor" field on
+      the edge to enable efficient pagination, this shortcut cannot be used, and the
+      full "{ edges { node } }" version should be used instead.
+      """
+      species: [Species]
+    }
+
+    """An edge in a connection."""
+    type SpeciesEdge {
+      """The item at the end of the edge"""
+      node: Species
+
+      """A cursor for use in pagination"""
+      cursor: String!
+    }
+
+    """A connection to a list of items."""
+    type SpeciesFilmsConnection {
+      """Information to aid in pagination."""
+      pageInfo: PageInfo!
+
+      """A list of edges."""
+      edges: [SpeciesFilmsEdge]
+
+      """
+      A count of the total number of objects in this connection, ignoring pagination.
+      This allows a client to fetch the first five objects by passing "5" as the
+      argument to "first", then fetch the total count so it could display "5 of 83",
+      for example.
+      """
+      totalCount: Int
+
+      """
+      A list of all of the objects returned in the connection. This is a convenience
+      field provided for quickly exploring the API; rather than querying for
+      "{ edges { node } }" when no edge data is needed, this field can be be used
+      instead. Note that when clients like Relay need to fetch the "cursor" field on
+      the edge to enable efficient pagination, this shortcut cannot be used, and the
+      full "{ edges { node } }" version should be used instead.
+      """
+      films: [Film]
+    }
+
+    """An edge in a connection."""
+    type SpeciesFilmsEdge {
+      """The item at the end of the edge"""
+      node: Film
+
+      """A cursor for use in pagination"""
+      cursor: String!
+    }
+
+    """A connection to a list of items."""
+    type SpeciesPeopleConnection {
+      """Information to aid in pagination."""
+      pageInfo: PageInfo!
+
+      """A list of edges."""
+      edges: [SpeciesPeopleEdge]
+
+      """
+      A count of the total number of objects in this connection, ignoring pagination.
+      This allows a client to fetch the first five objects by passing "5" as the
+      argument to "first", then fetch the total count so it could display "5 of 83",
+      for example.
+      """
+      totalCount: Int
+
+      """
+      A list of all of the objects returned in the connection. This is a convenience
+      field provided for quickly exploring the API; rather than querying for
+      "{ edges { node } }" when no edge data is needed, this field can be be used
+      instead. Note that when clients like Relay need to fetch the "cursor" field on
+      the edge to enable efficient pagination, this shortcut cannot be used, and the
+      full "{ edges { node } }" version should be used instead.
+      """
+      people: [Person]
+    }
+
+    """An edge in a connection."""
+    type SpeciesPeopleEdge {
+      """The item at the end of the edge"""
+      node: Person
+
+      """A cursor for use in pagination"""
+      cursor: String!
+    }
+
+    """A single transport craft that has hyperdrive capability."""
+    type Starship implements Node {
+      """The name of this starship. The common name, such as "Death Star"."""
+      name: String
+
+      """
+      The model or official name of this starship. Such as "T-65 X-wing" or "DS-1
+      Orbital Battle Station".
+      """
+      model: String
+
+      """
+      The class of this starship, such as "Starfighter" or "Deep Space Mobile
+      Battlestation"
+      """
+      starshipClass: String
+
+      """The manufacturers of this starship."""
+      manufacturers: [String]
+
+      """The cost of this starship new, in galactic credits."""
+      costInCredits: Float
+
+      """The length of this starship in meters."""
+      length: Float
+
+      """The number of personnel needed to run or pilot this starship."""
+      crew: String
+
+      """The number of non-essential people this starship can transport."""
+      passengers: String
+
+      """
+      The maximum speed of this starship in atmosphere. null if this starship is
+      incapable of atmosphering flight.
+      """
+      maxAtmospheringSpeed: Int
+
+      """The class of this starships hyperdrive."""
+      hyperdriveRating: Float
+
+      """
+      The Maximum number of Megalights this starship can travel in a standard hour.
+      A "Megalight" is a standard unit of distance and has never been defined before
+      within the Star Wars universe. This figure is only really useful for measuring
+      the difference in speed of starships. We can assume it is similar to AU, the
+      distance between our Sun (Sol) and Earth.
+      """
+      MGLT: Int
+
+      """The maximum number of kilograms that this starship can transport."""
+      cargoCapacity: Float
+
+      """
+      The maximum length of time that this starship can provide consumables for its
+      entire crew without having to resupply.
+      """
+      consumables: String
+      pilotConnection(after: String, first: Int, before: String, last: Int): StarshipPilotsConnection
+      filmConnection(after: String, first: Int, before: String, last: Int): StarshipFilmsConnection
+
+      """The ISO 8601 date format of the time that this resource was created."""
+      created: String
+
+      """The ISO 8601 date format of the time that this resource was edited."""
+      edited: String
+
+      """The ID of an object"""
+      id: ID!
+    }
+
+    """A connection to a list of items."""
+    type StarshipFilmsConnection {
+      """Information to aid in pagination."""
+      pageInfo: PageInfo!
+
+      """A list of edges."""
+      edges: [StarshipFilmsEdge]
+
+      """
+      A count of the total number of objects in this connection, ignoring pagination.
+      This allows a client to fetch the first five objects by passing "5" as the
+      argument to "first", then fetch the total count so it could display "5 of 83",
+      for example.
+      """
+      totalCount: Int
+
+      """
+      A list of all of the objects returned in the connection. This is a convenience
+      field provided for quickly exploring the API; rather than querying for
+      "{ edges { node } }" when no edge data is needed, this field can be be used
+      instead. Note that when clients like Relay need to fetch the "cursor" field on
+      the edge to enable efficient pagination, this shortcut cannot be used, and the
+      full "{ edges { node } }" version should be used instead.
+      """
+      films: [Film]
+    }
+
+    """An edge in a connection."""
+    type StarshipFilmsEdge {
+      """The item at the end of the edge"""
+      node: Film
+
+      """A cursor for use in pagination"""
+      cursor: String!
+    }
+
+    """A connection to a list of items."""
+    type StarshipPilotsConnection {
+      """Information to aid in pagination."""
+      pageInfo: PageInfo!
+
+      """A list of edges."""
+      edges: [StarshipPilotsEdge]
+
+      """
+      A count of the total number of objects in this connection, ignoring pagination.
+      This allows a client to fetch the first five objects by passing "5" as the
+      argument to "first", then fetch the total count so it could display "5 of 83",
+      for example.
+      """
+      totalCount: Int
+
+      """
+      A list of all of the objects returned in the connection. This is a convenience
+      field provided for quickly exploring the API; rather than querying for
+      "{ edges { node } }" when no edge data is needed, this field can be be used
+      instead. Note that when clients like Relay need to fetch the "cursor" field on
+      the edge to enable efficient pagination, this shortcut cannot be used, and the
+      full "{ edges { node } }" version should be used instead.
+      """
+      pilots: [Person]
+    }
+
+    """An edge in a connection."""
+    type StarshipPilotsEdge {
+      """The item at the end of the edge"""
+      node: Person
+
+      """A cursor for use in pagination"""
+      cursor: String!
+    }
+
+    """A connection to a list of items."""
+    type StarshipsConnection {
+      """Information to aid in pagination."""
+      pageInfo: PageInfo!
+
+      """A list of edges."""
+      edges: [StarshipsEdge]
+
+      """
+      A count of the total number of objects in this connection, ignoring pagination.
+      This allows a client to fetch the first five objects by passing "5" as the
+      argument to "first", then fetch the total count so it could display "5 of 83",
+      for example.
+      """
+      totalCount: Int
+
+      """
+      A list of all of the objects returned in the connection. This is a convenience
+      field provided for quickly exploring the API; rather than querying for
+      "{ edges { node } }" when no edge data is needed, this field can be be used
+      instead. Note that when clients like Relay need to fetch the "cursor" field on
+      the edge to enable efficient pagination, this shortcut cannot be used, and the
+      full "{ edges { node } }" version should be used instead.
+      """
+      starships: [Starship]
+    }
+
+    """An edge in a connection."""
+    type StarshipsEdge {
+      """The item at the end of the edge"""
+      node: Starship
+
+      """A cursor for use in pagination"""
+      cursor: String!
+    }
+
+    """A single transport craft that does not have hyperdrive capability"""
+    type Vehicle implements Node {
+      """
+      The name of this vehicle. The common name, such as "Sand Crawler" or "Speeder
+      bike".
+      """
+      name: String
+
+      """
+      The model or official name of this vehicle. Such as "All-Terrain Attack
+      Transport".
+      """
+      model: String
+
+      """The class of this vehicle, such as "Wheeled" or "Repulsorcraft"."""
+      vehicleClass: String
+
+      """The manufacturers of this vehicle."""
+      manufacturers: [String]
+
+      """The cost of this vehicle new, in Galactic Credits."""
+      costInCredits: Float
+
+      """The length of this vehicle in meters."""
+      length: Float
+
+      """The number of personnel needed to run or pilot this vehicle."""
+      crew: String
+
+      """The number of non-essential people this vehicle can transport."""
+      passengers: String
+
+      """The maximum speed of this vehicle in atmosphere."""
+      maxAtmospheringSpeed: Int
+
+      """The maximum number of kilograms that this vehicle can transport."""
+      cargoCapacity: Float
+
+      """
+      The maximum length of time that this vehicle can provide consumables for its
+      entire crew without having to resupply.
+      """
+      consumables: String
+      pilotConnection(after: String, first: Int, before: String, last: Int): VehiclePilotsConnection
+      filmConnection(after: String, first: Int, before: String, last: Int): VehicleFilmsConnection
+
+      """The ISO 8601 date format of the time that this resource was created."""
+      created: String
+
+      """The ISO 8601 date format of the time that this resource was edited."""
+      edited: String
+
+      """The ID of an object"""
+      id: ID!
+    }
+
+    """A connection to a list of items."""
+    type VehicleFilmsConnection {
+      """Information to aid in pagination."""
+      pageInfo: PageInfo!
+
+      """A list of edges."""
+      edges: [VehicleFilmsEdge]
+
+      """
+      A count of the total number of objects in this connection, ignoring pagination.
+      This allows a client to fetch the first five objects by passing "5" as the
+      argument to "first", then fetch the total count so it could display "5 of 83",
+      for example.
+      """
+      totalCount: Int
+
+      """
+      A list of all of the objects returned in the connection. This is a convenience
+      field provided for quickly exploring the API; rather than querying for
+      "{ edges { node } }" when no edge data is needed, this field can be be used
+      instead. Note that when clients like Relay need to fetch the "cursor" field on
+      the edge to enable efficient pagination, this shortcut cannot be used, and the
+      full "{ edges { node } }" version should be used instead.
+      """
+      films: [Film]
+    }
+
+    """An edge in a connection."""
+    type VehicleFilmsEdge {
+      """The item at the end of the edge"""
+      node: Film
+
+      """A cursor for use in pagination"""
+      cursor: String!
+    }
+
+    """A connection to a list of items."""
+    type VehiclePilotsConnection {
+      """Information to aid in pagination."""
+      pageInfo: PageInfo!
+
+      """A list of edges."""
+      edges: [VehiclePilotsEdge]
+
+      """
+      A count of the total number of objects in this connection, ignoring pagination.
+      This allows a client to fetch the first five objects by passing "5" as the
+      argument to "first", then fetch the total count so it could display "5 of 83",
+      for example.
+      """
+      totalCount: Int
+
+      """
+      A list of all of the objects returned in the connection. This is a convenience
+      field provided for quickly exploring the API; rather than querying for
+      "{ edges { node } }" when no edge data is needed, this field can be be used
+      instead. Note that when clients like Relay need to fetch the "cursor" field on
+      the edge to enable efficient pagination, this shortcut cannot be used, and the
+      full "{ edges { node } }" version should be used instead.
+      """
+      pilots: [Person]
+    }
+
+    """An edge in a connection."""
+    type VehiclePilotsEdge {
+      """The item at the end of the edge"""
+      node: Person
+
+      """A cursor for use in pagination"""
+      cursor: String!
+    }
+
+    """A connection to a list of items."""
+    type VehiclesConnection {
+      """Information to aid in pagination."""
+      pageInfo: PageInfo!
+
+      """A list of edges."""
+      edges: [VehiclesEdge]
+
+      """
+      A count of the total number of objects in this connection, ignoring pagination.
+      This allows a client to fetch the first five objects by passing "5" as the
+      argument to "first", then fetch the total count so it could display "5 of 83",
+      for example.
+      """
+      totalCount: Int
+
+      """
+      A list of all of the objects returned in the connection. This is a convenience
+      field provided for quickly exploring the API; rather than querying for
+      "{ edges { node } }" when no edge data is needed, this field can be be used
+      instead. Note that when clients like Relay need to fetch the "cursor" field on
+      the edge to enable efficient pagination, this shortcut cannot be used, and the
+      full "{ edges { node } }" version should be used instead.
+      """
+      vehicles: [Vehicle]
+    }
+
+    """An edge in a connection."""
+    type VehiclesEdge {
+      """The item at the end of the edge"""
+      node: Vehicle
+
+      """A cursor for use in pagination"""
+      cursor: String!
+    }
+- title: Wayback Archive
+  name: wayback-archive
+  lifecycle: production
+  type: openapi
+  owner: team-a
+  description: |
+    Archive API for the wayback machine.
+  definition: |
+    # The Backstage catalog resolves the wayback-archive definition at load time from:
+    # https://github.com/APIs-guru/openapi-directory/blob/main/APIs/archive.org/wayback/1.0.0/openapi.yaml
+    # Junction has no equivalent placeholder, and the specification is not
+    # part of the example catalog, so it is not inlined here.
+- title: Wayback Search
+  name: wayback-search
+  lifecycle: production
+  type: openapi
+  owner: team-a
+  description: |
+    Search API for the wayback machine.
+  definition: |
+    # The Backstage catalog resolves the wayback-search definition at load time from:
+    # https://github.com/APIs-guru/openapi-directory/blob/main/APIs/archive.org/search/1.0.0/openapi.yaml
+    # Junction has no equivalent placeholder, and the specification is not
+    # part of the example catalog, so it is not inlined here.

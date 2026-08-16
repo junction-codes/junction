@@ -1,0 +1,23 @@
+- title: Audio
+  name: audio
+  type: product-area
+  status: active
+  owner: acme-corp
+  description: |
+    Everything related to audio.
+- title: Artists
+  name: artists
+  type: product-group
+  status: active
+  owner: team-a
+  parent: audio
+  description: |
+    Everything related to artists.
+- title: Playback
+  name: playback
+  type: product-group
+  status: active
+  owner: user-owner
+  parent: audio
+  description: |
+    Everything related to audio playback.

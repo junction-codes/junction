@@ -1,0 +1,91 @@
+- title: ACME Corp
+  name: acme-corp
+  type: business_unit
+  email: info@example.com
+  image_url: https://api.dicebear.com/7.x/identicon/svg?seed=Maggie&flip=true&backgroundColor=ffdfbf
+  description: |
+    The ACME Corp organization.
+- title: Infrastructure
+  name: infrastructure
+  type: business_unit
+  parent: acme-corp
+  description: |
+    The infra department.
+- title: Junction
+  name: junction
+  type: product_area
+  email: junction@example.com
+  image_url: https://api.dicebear.com/7.x/identicon/svg?seed=Fluffy&backgroundColor=ffdfbf
+  parent: infrastructure
+  description: |
+    The junction sub-department.
+- title: Box Office
+  name: boxoffice
+  type: product_area
+  email: boxoffice@example.com
+  parent: infrastructure
+  description: |
+    The boxoffice sub-department.
+- title: Team A
+  name: team-a
+  type: team
+  email: team-a@example.com
+  image_url: https://api.dicebear.com/7.x/identicon/svg?seed=Fluffy&backgroundType=solid,gradientLinear&backgroundColor=ffd5dc,b6e3f4
+  parent: junction
+  description: |
+    Team A.
+  members:
+    - breanna.davison
+    - janelle.dawe
+    - nigel.manning
+    - guest
+    - development/guest
+- title: Team B
+  name: team-b
+  type: team
+  email: team-b@example.com
+  image_url: https://api.dicebear.com/7.x/identicon/svg?seed=Abby&backgroundType=solid,gradientLinear&backgroundColor=ffd5dc,b6e3f4
+  parent: junction
+  description: |
+    Team B.
+  members:
+    - amelia.park
+    - colette.brock
+    - jenny.doe
+    - jonathon.page
+    - justine.barrow
+- title: Team C
+  name: team-c
+  type: team
+  email: team-c@example.com
+  image_url: https://api.dicebear.com/7.x/identicon/svg?seed=Loki&backgroundType=gradientLinear&backgroundColor=b6e3f4,ffd5dc,ffdfbf,c0aede
+  parent: boxoffice
+  description: |
+    Team C.
+  members:
+    - calum.leavy
+    - frank.tiernan
+    - peadar.macmahon
+    - sarah.gilroy
+    - tara.macgovern
+- title: Team D
+  name: team-d
+  type: team
+  email: team-d@example.com
+  image_url: https://api.dicebear.com/7.x/identicon/svg?seed=Bailey&backgroundType=gradientLinear&backgroundColor=b6e3f4,ffd5dc,ffdfbf,c0aede
+  parent: boxoffice
+  description: |
+    Team D.
+  members:
+    - eva.macdowell
+    - lucy.sheehan
+- title: User Owner
+  name: user-owner
+  type: team
+  parent: acme-corp
+  description: |
+    Stands in for the individual users that own entities directly in the
+    Backstage catalog. Junction entities can only be owned by a group.
+  members:
+    - guest
+    - frank.tiernan

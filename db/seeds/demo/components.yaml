@@ -1,0 +1,118 @@
+- title: Artist Lookup
+  name: artist-lookup
+  lifecycle: experimental
+  type: service
+  system: artist-engagement-portal
+  owner: team-a
+  dependencies:
+    - resource:artists-db
+  description: |
+    Artist Lookup.
+  annotations:
+    junction.codes/source-template: template:default/springboot-template
+    junction.codes/linguist: https://github.com/backstage/backstage/tree/master/plugins/playlist
+- title: Petstore
+  name: petstore
+  lifecycle: experimental
+  type: service
+  owner: team-c
+  dependencies:
+    - api:petstore
+    - api:streetlights
+    - api:hello-world
+  description: |
+    [The Petstore](http://petstore.example.com) is an example API used to show features of the OpenAPI spec.
+    - First item
+    - Second item
+- title: Playback Order
+  name: playback-order
+  lifecycle: production
+  type: service
+  system: audio-playback
+  owner: user-owner
+  description: |
+    Playback Order.
+- title: Podcast API
+  name: podcast-api
+  lifecycle: experimental
+  type: service
+  system: podcast
+  owner: team-b
+  description: |
+    Podcast API.
+- title: Queue Proxy
+  name: queue-proxy
+  lifecycle: production
+  type: website
+  system: podcast
+  owner: team-b
+  description: |
+    Queue Proxy.
+- title: Searcher
+  name: searcher
+  lifecycle: production
+  type: service
+  owner: user-owner
+  description: |
+    Searcher.
+- title: Playback SDK
+  name: playback-sdk
+  lifecycle: experimental
+  type: library
+  system: audio-playback
+  owner: team-c
+  description: |
+    Audio and video playback SDK.
+- title: WWW Artist
+  name: www-artist
+  lifecycle: production
+  type: website
+  system: artist-engagement-portal
+  owner: team-a
+  dependencies:
+    - component:artist-lookup
+  description: |
+    Artist main website.
+  annotations:
+    junction.codes/source-template: template:default/react-ssr-template
+- title: Shuffle API
+  name: shuffle-api
+  lifecycle: production
+  type: service
+  system: audio-playback
+  owner: user-owner
+  description: |
+    Shuffle API.
+- title: Wayback Archive
+  name: wayback-archive
+  lifecycle: production
+  type: service
+  owner: team-a
+  dependencies:
+    - api:wayback-archive
+  description: |
+    Archive of the wayback machine.
+- title: Wayback Archive Ingestion
+  name: wayback-archive-ingestion
+  lifecycle: production
+  type: service
+  owner: team-d
+  description: |
+    Ingestion subsystem of the Wayback Archive.
+- title: Wayback Archive Storage
+  name: wayback-archive-storage
+  lifecycle: production
+  type: service
+  owner: team-a
+  description: |
+    Storage subsystem of the Wayback Archive.
+- title: Wayback Search
+  name: wayback-search
+  lifecycle: production
+  type: service
+  owner: team-a
+  dependencies:
+    - api:wayback-search
+    - api:wayback-archive
+  description: |
+    Search of the wayback machine.
