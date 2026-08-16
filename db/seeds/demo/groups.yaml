@@ -11,14 +11,14 @@
   parent: acme-corp
   description: |
     The infra department.
-- title: Backstage
-  name: backstage
+- title: Junction
+  name: junction
   type: product_area
-  email: backstage@example.com
+  email: junction@example.com
   image_url: https://api.dicebear.com/7.x/identicon/svg?seed=Fluffy&backgroundColor=ffdfbf
   parent: infrastructure
   description: |
-    The backstage sub-department.
+    The junction sub-department.
 - title: Box Office
   name: boxoffice
   type: product_area
@@ -31,7 +31,7 @@
   type: team
   email: team-a@example.com
   image_url: https://api.dicebear.com/7.x/identicon/svg?seed=Fluffy&backgroundType=solid,gradientLinear&backgroundColor=ffd5dc,b6e3f4
-  parent: backstage
+  parent: junction
   description: |
     Team A.
   members:
@@ -45,7 +45,7 @@
   type: team
   email: team-b@example.com
   image_url: https://api.dicebear.com/7.x/identicon/svg?seed=Abby&backgroundType=solid,gradientLinear&backgroundColor=ffd5dc,b6e3f4
-  parent: backstage
+  parent: junction
   description: |
     Team B.
   members:

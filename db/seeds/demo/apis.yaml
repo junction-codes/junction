@@ -1,13 +1,14 @@
-- title: Backstage MCP Server
-  name: backstage-mcp-server
+- title: Junction MCP Server
+  name: junction-mcp-server
   lifecycle: experimental
   type: mcp-server
   owner: team-a
   description: |
-    An MCP server that exposes tools related to the Backstage ecosystem.
+    An MCP server that exposes tools related to the Junction ecosystem.
   definition: |
-    # The backstage-mcp-server API is served over MCP and has no definition document in the
-    # Backstage example catalog. Its remotes, which Junction cannot store, are:
+    # The junction-mcp-server API is served over MCP and has no definition
+    # document in the Backstage example catalog it was converted from. Its
+    # remotes, which Junction cannot store, are:
     # streamable-http: http://localhost:7007/api/mcp/v1
 - title: Hello World
   name: hello-world
