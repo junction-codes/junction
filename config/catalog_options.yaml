@@ -39,16 +39,24 @@ domains:
     description: A grouping of related systems within a product area.
 
 group_types:
-  organization:
-    name: Organization
-    icon: building-2
-    description: >-
-      The top-level entity representing the entire company or organization.
+  business_unit:
+    name: Business Unit
+    icon: building
+    description: A division within the organization responsible for specific business functions.
   department:
     name: Department
     icon: circle-pile
     description: >-
       A division within the organization responsible for specific functions.
+  organization:
+    name: Organization
+    icon: building-2
+    description: >-
+      The top-level entity representing the entire company or organization.
+  product_area:
+    name: Product Area
+    icon: box
+    description: A specific area of focus within the product portfolio.
   sub-department:
     name: Sub-Department
     icon: group
