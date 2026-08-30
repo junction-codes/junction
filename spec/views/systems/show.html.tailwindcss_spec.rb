@@ -1,13 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe "systems/show", type: :view do
-  fixtures "junction/domains"
+  fixtures "junction/groups", "junction/domains"
 
   before do
     assign(:system, Junction::System.create!(
       title: "Name",
       description: "MyText",
-      status: "active",
       image_url: "https://example.com/image.png",
       domain: junction_domains(:one),
       owner: create(:group)

@@ -35,7 +35,7 @@ module Junction
             Table(class: "rounded-lg shadow overflow-hidden") do |table|
               table.header do |header|
                 header.row do |row|
-                  %w[title status].each do |field|
+                  %w[title].each do |field|
                     row.sortable_head(field:, sort_url:, **sort_attrs(query, field)) do
                       System.human_attribute_name(field)
                     end
@@ -47,9 +47,6 @@ module Junction
                 @systems.each do |system|
                   body.row do |row|
                     row.cell { render_view_link(system) }
-                    row.cell do
-                      Badge(variant: system.status.to_sym) { system.status.titleize }
-                    end
                   end
                 end
               end

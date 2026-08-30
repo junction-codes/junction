@@ -25,7 +25,6 @@ module Junction
         query_params: params[:q]&.to_unsafe_h || {},
         breadcrumbs:,
         can_create: allowed_to?(:create?, System),
-        available_statuses:,
         available_owners:,
         available_domains:
       )
@@ -205,23 +204,13 @@ module Junction
       Domain.select(:description, :id, :image_url, :title).order(:title)
     end
 
-    # Returns an array of available statuses for systems.
-    #
-    # @return [Array<Array(String, String)>] Array of [label, value] pairs for
-    #   statuses.
-    def available_statuses
-      System.validators_on(:status).find do |v|
-        v.is_a?(ActiveModel::Validations::InclusionValidator)
-      end&.options[:in]&.map { |s| [ s.capitalize, s ] } || []
-    end
-
     def set_entity
       @entity = System.find_by!(namespace: params.expect(:namespace), name: params.expect(:name))
     end
 
     def system_params
       sanitize_owner_id(params.expect(system: [
-        :description, :domain_id, :name, :namespace, :owner_id, :status, :title
+        :description, :domain_id, :name, :namespace, :owner_id, :title
       ]))
     end
   end

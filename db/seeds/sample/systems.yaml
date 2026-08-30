@@ -1,19 +1,16 @@
 - title: Junction Codes
   name: junction-codes
-  status: active
   domain: junction
   image_url: https://github.com/junction-codes.png
   owner: junction-developers
   description: The core Junction devportal framework.
 - title: Plugin Marketplace
   name: plugin-marketplace
-  status: active
   domain: plugins
   owner: plugin-maintainers
   description: Marketplace for official and community Junction plugins.
 - title: Junction Demo Application
   name: junction-demo-application
-  status: active
   domain: demo
   owner: demo-developers
   description: A demonstration application showcasing Junction features.

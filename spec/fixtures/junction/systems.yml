@@ -5,7 +5,6 @@ one:
   title: System One
   name: system-one
   description: MyText
-  status: active
   image_url: https://example.com/image.png
   domain:
   owner: two
@@ -14,7 +13,6 @@ two:
   title: System Two
   name: system-two
   description: MyText
-  status: active
   image_url:
   domain:
   owner: two

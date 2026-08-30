@@ -7,7 +7,6 @@ FactoryBot.define do
     domain_type { Junction::CatalogOptions.domains.keys.sample }
     image_url { TEST_IMAGE_URL }
     parent { nil }
-    status { [ "active", "closed" ].sample }
     association :owner, factory: :group
 
     trait :with_parent do

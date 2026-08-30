@@ -11,16 +11,14 @@ RSpec.describe "/systems", type: :request do
       domain_id: junction_domains(:one).id,
       title: "Test System",
       image_url: "https://example.com/image.png",
-      owner_id: junction_groups(:one).id,
-      status: "active"
+      owner_id: junction_groups(:one).id
     }
   }
 
   let(:invalid_attributes) {
     {
       domain_id: nil,
-      image_url: "invalid_url",
-      status: "invalid_status"
+      image_url: "invalid_url"
     }
   }
 
@@ -185,19 +183,19 @@ RSpec.describe "/systems", type: :request do
       it_behaves_like "an action that requires permission",
         :patch, -> { system_path(system) },
         %w[junction.codes/systems.all.write junction.codes/systems.owned.write],
-        { system: { status: "closed" } }
+        { system: { title: "Updated System" } }
 
       context "with valid parameters" do
         let(:new_attributes) {
           {
-            status: "closed"
+            title: "Updated System"
           }
         }
 
         it "updates the requested system" do
           patch system_path(system), params: { system: new_attributes }
           system.reload
-          expect(system.status).to eq("closed")
+          expect(system.title).to eq("Updated System")
         end
 
         it "redirects to the system" do

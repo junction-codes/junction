@@ -5,11 +5,8 @@ module Junction
     include Ownable
     include Sluggable
 
-    attribute :status, :string, default: "active"
-
     validates :description, presence: true
     validates :image_url, allow_blank: true, format: URI::DEFAULT_PARSER.make_regexp(%w[http https])
-    validates :status, presence: true, inclusion: { in: %w[active closed] }
 
     belongs_to :domain, class_name: "Junction::Domain"
     has_many :apis, class_name: "Junction::Api"
@@ -21,7 +18,7 @@ module Junction
     end
 
     def self.ransackable_attributes(auth_object = nil)
-      %w[created_at description domain_id name owner_id status title updated_at]
+      %w[created_at description domain_id name owner_id title updated_at]
     end
 
     def icon

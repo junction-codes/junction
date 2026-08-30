@@ -10,16 +10,13 @@ module Junction
         # @param query [Ransack::Search] Ransack query object for filtering.
         # @param available_owners [ActiveRecord::Relation] Owner options with
         #   name and id attributes for filtering.
-        # @param available_statuses [Array<Array>] Status options as [label,
-        #   value] pairs for filtering.
         # @param available_types [Array<Array>] Type options as [label, value]
         #   pairs for filtering.
         # @param user_attrs [Hash] Additional HTML attributes for the component.
-        def initialize(query:, available_owners: [], available_statuses: [],
-                       available_types: [], **user_attrs)
+        def initialize(query:, available_owners: [], available_types: [],
+                       **user_attrs)
           @query = query
           @available_owners = available_owners
-          @available_statuses = available_statuses
           @available_types = available_types
 
           super(**user_attrs)
@@ -50,18 +47,6 @@ module Junction
                   label: Junction::Domain.human_attribute_name(:type).pluralize
                 )
               ) if @available_types.any?
-
-              bar.select_filter(
-                name: "q[status_eq]",
-                label: Junction::Domain.human_attribute_name(:status),
-                options: @available_statuses,
-                selected: @query.status_eq,
-                include_blank: true,
-                blank_label: t(
-                  ".all",
-                  label: Junction::Domain.human_attribute_name(:status).pluralize
-                )
-              ) if @available_statuses.any?
 
               bar.entity_filter(
                 name: "q[owner_id_eq]",

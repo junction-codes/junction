@@ -6,7 +6,6 @@ RSpec.describe "domains/show", type: :view do
       title: "Name",
       domain_type: "product-group",
       description: "MyText",
-      status: "active",
       image_url: "https://example.com/image.png",
       owner: create(:group)
     ))
