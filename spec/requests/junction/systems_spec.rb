@@ -193,6 +193,14 @@ RSpec.describe "/systems", type: :request do
         get edit_system_path(system)
         expect(response).to be_successful
       end
+
+      it "renders the marker input for the other annotations section" do
+        get edit_system_path(system)
+
+        expect(response.body).to include(
+          %(<input type="hidden" name="system[other_annotations][][key]" value="">)
+        )
+      end
     end
 
     describe "POST /create" do
@@ -269,6 +277,26 @@ RSpec.describe "/systems", type: :request do
           patch system_path(system), params: { system: new_attributes }
           system.reload
           expect(response).to redirect_to(system_path(system))
+        end
+      end
+
+      context "with custom annotations" do
+        it "persists arbitrary annotation keys" do
+          patch system_path(system), params: {
+            system: { other_annotations: [ { key: "custom/key", value: "saved" } ] }
+          }
+
+          expect(system.reload[:annotations]["custom/key"]).to eq("saved")
+        end
+
+        it "removes arbitrary annotations when only the blank marker row is sent" do
+          system.update!(annotations: { "custom/key" => "saved" })
+
+          patch system_path(system), params: {
+            system: { other_annotations: [ { key: "" } ] }
+          }
+
+          expect(system.reload[:annotations]).not_to have_key("custom/key")
         end
       end
 

@@ -14,8 +14,10 @@ module Junction
       ENTITY_TYPES = [
         EntityType.new(id: "apis", model: Junction::Api),
         EntityType.new(id: "components", model: Junction::Component),
+        EntityType.new(id: "domains", model: Junction::Domain),
         EntityType.new(id: "groups", model: Junction::Group),
         EntityType.new(id: "resources", model: Junction::Resource),
+        EntityType.new(id: "systems", model: Junction::System),
         EntityType.new(id: "users", model: Junction::User)
       ].freeze
 

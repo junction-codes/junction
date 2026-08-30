@@ -57,6 +57,12 @@ RSpec.describe "Junction::AnnotationsController", type: :request do
     it_behaves_like "an annotations overview action",
       :get, -> { annotation_entity_type_path("groups") }, "junction.codes/annotations.all.read"
 
+    it_behaves_like "an annotations overview action",
+      :get, -> { annotation_entity_type_path("domains") }, "junction.codes/annotations.all.read"
+
+    it_behaves_like "an annotations overview action",
+      :get, -> { annotation_entity_type_path("systems") }, "junction.codes/annotations.all.read"
+
     it "renders chart elements with panel-specific ids" do
       sign_in_user_with_permissions(%w[junction.codes/annotations.all.read])
       get annotation_entity_type_path("groups")

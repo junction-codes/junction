@@ -2,6 +2,7 @@
 
 module Junction
   class Domain < ApplicationRecord
+    include Annotated
     include Ownable
     include Sluggable
     include TreeChild

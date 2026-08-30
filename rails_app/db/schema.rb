@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_31_000000) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_31_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -64,6 +64,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_31_000000) do
   end
 
   create_table "junction_domains", force: :cascade do |t|
+    t.jsonb "annotations"
     t.datetime "created_at", null: false
     t.text "description"
     t.string "domain_type", null: false
@@ -162,6 +163,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_31_000000) do
   end
 
   create_table "junction_systems", force: :cascade do |t|
+    t.jsonb "annotations"
     t.datetime "created_at", null: false
     t.text "description"
     t.bigint "domain_id", null: false

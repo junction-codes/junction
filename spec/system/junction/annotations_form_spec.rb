@@ -16,6 +16,16 @@ RSpec.describe "Junction::Annotations forms", type: :system do
       :component,
       ->(component) { edit_component_path(component) },
       %w[junction.codes/components.all.read junction.codes/components.all.write]
+
+    it_behaves_like "an annotations form",
+      :domain,
+      ->(domain) { edit_domain_path(domain) },
+      %w[junction.codes/domains.all.read junction.codes/domains.all.write]
+
+    it_behaves_like "an annotations form",
+      :system,
+      ->(system) { edit_system_path(system) },
+      %w[junction.codes/systems.all.read junction.codes/systems.all.write]
   end
 
   describe "add row" do

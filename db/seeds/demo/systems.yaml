@@ -1,17 +1,20 @@
 - title: Artist Engagement Portal
   name: artist-engagement-portal
+  type: service
   domain: artists
   owner: team-a
   description: |
     Everything related to artists.
 - title: Audio Playback
   name: audio-playback
+  type: feature-set
   domain: playback
   owner: team-c
   description: |
     Audio playback system.
 - title: Podcast
   name: podcast
+  type: feature-set
   domain: playback
   owner: team-b
   description: |

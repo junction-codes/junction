@@ -157,6 +157,14 @@ RSpec.describe "/domains", type: :request do
         get edit_domain_path(domain)
         expect(response).to be_successful
       end
+
+      it "renders the marker input for the other annotations section" do
+        get edit_domain_path(domain)
+
+        expect(response.body).to include(
+          %(<input type="hidden" name="domain[other_annotations][][key]" value="">)
+        )
+      end
     end
 
     describe "POST /create" do
@@ -248,6 +256,26 @@ RSpec.describe "/domains", type: :request do
           patch domain_path(domain), params: { domain: new_attributes }
           domain.reload
           expect(response).to redirect_to(domain_path(domain))
+        end
+      end
+
+      context "with custom annotations" do
+        it "persists arbitrary annotation keys" do
+          patch domain_path(domain), params: {
+            domain: { other_annotations: [ { key: "custom/key", value: "saved" } ] }
+          }
+
+          expect(domain.reload[:annotations]["custom/key"]).to eq("saved")
+        end
+
+        it "removes arbitrary annotations when only the blank marker row is sent" do
+          domain.update!(annotations: { "custom/key" => "saved" })
+
+          patch domain_path(domain), params: {
+            domain: { other_annotations: [ { key: "" } ] }
+          }
+
+          expect(domain.reload[:annotations]).not_to have_key("custom/key")
         end
       end
 

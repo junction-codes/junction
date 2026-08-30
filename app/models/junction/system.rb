@@ -2,6 +2,7 @@
 
 module Junction
   class System < ApplicationRecord
+    include Annotated
     include Ownable
     include Sluggable
 

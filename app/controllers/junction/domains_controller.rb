@@ -8,6 +8,7 @@ module Junction
 
     include Breadcrumbs
     include CatalogOptionSets
+    include HasAnnotations
     include HasOwner
     include HasTreeParent
     include Paginatable
@@ -187,10 +188,10 @@ module Junction
 
 
     def domain_params
-      attrs = params.expect(domain: [
+      attrs = sanitize_annotations(params.expect(domain: [
         :description, :domain_type, :image_url, :name, :namespace, :owner_id,
-        :parent_id, :title, :type
-      ])
+        :parent_id, :title, :type, *annotation_param_entries
+      ]))
 
       sanitize_owner_id(
         sanitize_tree_parent_id(attrs, parent_candidates: available_parents)
