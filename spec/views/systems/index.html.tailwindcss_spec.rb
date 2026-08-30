@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe "systems/index", type: :view do
-  fixtures "junction/domains"
+  fixtures "junction/groups", "junction/domains"
 
   before do
     assign(:systems, [

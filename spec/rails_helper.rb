@@ -106,6 +106,13 @@ RSpec.configure do |config|
       }
   end
 
+  # Start from an empty database. Fixture rows are committed before the
+  # per-example transaction opens, so without this they outlive the run and can
+  # satisfy references a spec never declared.
+  config.before(:suite) do
+    ActiveRecord::Tasks::DatabaseTasks.truncate_all
+  end
+
   # Configure fixtures.
   config.use_transactional_fixtures = true
   config.fixture_paths = [

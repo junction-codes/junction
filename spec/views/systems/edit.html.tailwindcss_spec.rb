@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe "systems/edit", type: :view do
-  fixtures "junction/domains"
+  fixtures "junction/groups", "junction/domains"
 
   let(:system) {
     Junction::System.create!(
