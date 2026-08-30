@@ -34,11 +34,10 @@ RSpec.describe "Junction::Domains", type: :system do
   end
 
   def fill_required_domain_fields(title:, description: "A domain description",
-                                 status: "active", domain_type: "product-area",
+                                 domain_type: "product-area",
                                  owner: owner_group)
     fill_in "domain_title", with: title
     fill_in "domain_description", with: description
-    fill_in "domain_status", with: status
     find(:xpath, "//input[@name='domain[type]']", visible: :all).set(domain_type)
     find(:xpath, "//input[@name='domain[owner_id]']", visible: :all).set(owner.id)
   end

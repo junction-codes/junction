@@ -41,8 +41,6 @@ module Junction
       }
 
       COLOR_ALIASES = {
-        active: :green,
-        closed: :neutral,
         danger: :destructive,
         experimental: :outline,
         production: :success,

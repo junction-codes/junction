@@ -5,9 +5,8 @@ module Junction
     module Domains
       # Index view for domains.
       class Index < Views::Base
-        attr_reader :available_owners, :available_statuses, :available_types,
-                     :breadcrumbs, :can_create, :domains, :pagy, :query,
-                     :query_params
+        attr_reader :available_owners, :available_types, :breadcrumbs,
+                     :can_create, :domains, :pagy, :query, :query_params
 
         # Initializes the view.
         #
@@ -18,23 +17,20 @@ module Junction
         # @param pagy [Pagy] Pagy pagination metadata.
         # @param available_owners [Array<Array>] Owner entity options with name
         #   and id attributes.
-        # @param available_statuses [Array<Array>] Status options as [label,
-        #   value] pairs for filtering.
         # @param available_types [Array<Array>] Type options as [label, value]
         #   pairs for filtering.
         # @param can_create [Boolean] Whether the user can create domains.
         # @param breadcrumbs [Array<Hash>] Breadcrumb items from the controller.
         # @param query_params [Hash] Query parameters from the controller.
         def initialize(domains:, query:, pagy:, available_owners:,
-                       available_statuses:, available_types:, can_create: true,
-                       breadcrumbs: [], query_params: {})
+                       available_types:, can_create: true, breadcrumbs: [],
+                       query_params: {})
           @domains = domains
           @query = query
           @query_params = query_params
           @pagy = pagy
           @can_create = can_create
           @available_owners = available_owners
-          @available_statuses = available_statuses
           @available_types = available_types
           @breadcrumbs = breadcrumbs
         end
@@ -56,7 +52,6 @@ module Junction
               DomainFilters(
                 query:,
                 available_owners:,
-                available_statuses:,
                 available_types:
               )
 
@@ -89,7 +84,7 @@ module Junction
                 )
               }
 
-              %w[title type status owner_id parent_id].each do |field|
+              %w[title type owner_id parent_id].each do |field|
                 row.sortable_head(field:, sort_url:, **sort_attrs(query, field)) do
                   Domain.human_attribute_name(field)
                 end
@@ -112,10 +107,6 @@ module Junction
                   else
                     domain.type.humanize
                   end
-                end
-
-                row.cell do
-                  Badge(variant: domain.status&.to_sym) { domain.status&.titleize }
                 end
 
                 row.cell { render_view_link(domain.owner, class: "ps-0") }

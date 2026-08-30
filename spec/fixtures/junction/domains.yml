@@ -6,7 +6,6 @@ one:
   name: domain-one
   domain_type: product-area
   description: MyText
-  status: active
   image_url: https://example.com/image.png
   owner: two
 
@@ -15,7 +14,6 @@ two:
   name: domain-two
   domain_type: product-group
   description: MyText
-  status: closed
   image_url:
   owner: two
   parent: one

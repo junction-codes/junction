@@ -6,7 +6,6 @@ RSpec.describe "domains/index", type: :view do
       title: "Name",
       domain_type: "product-area",
       description: "MyText",
-      status: "active",
       image_url: "https://example.com/image.png",
       owner: create(:group)
     )
@@ -17,7 +16,6 @@ RSpec.describe "domains/index", type: :view do
         title: "Second Name",
         domain_type: "product-group",
         description: "MyText",
-        status: "closed",
         image_url: nil,
         owner: create(:group),
         parent: parent_domain

@@ -9,15 +9,13 @@ RSpec.describe "/domains", type: :request do
       domain_type: "product-area",
       title: "Test Domain",
       image_url: "https://example.com/image.png",
-      owner_id: junction_groups(:one).id,
-      status: "active"
+      owner_id: junction_groups(:one).id
     }
   }
 
   let(:invalid_attributes) {
     {
-      image_url: "invalid_url",
-      status: "invalid_status"
+      image_url: "invalid_url"
     }
   }
 
@@ -225,19 +223,19 @@ RSpec.describe "/domains", type: :request do
       it_behaves_like "an action that requires permission",
         :patch, -> { domain_path(domain) },
         %w[junction.codes/domains.all.write junction.codes/domains.owned.write],
-        { domain: { status: "closed" } }
+        { domain: { title: "Updated Domain" } }
 
       context "with valid parameters" do
         let(:new_attributes) {
           {
-            status: "closed"
+            title: "Updated Domain"
           }
         }
 
         it "updates the requested domain" do
           patch domain_path(domain), params: { domain: new_attributes }
           domain.reload
-          expect(domain.status).to eq("closed")
+          expect(domain.title).to eq("Updated Domain")
         end
 
         it "updates domain type from the type param" do

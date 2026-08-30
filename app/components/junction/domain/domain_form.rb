@@ -31,7 +31,6 @@ module Junction
                 Immutable(f, :namespace, placeholder: "default", required: true,
                               help_text: t(".namespace_help"))
                 RichSelectField(f, :type, required: true, options: @type_options)
-                Text(f, :status, required: true)
                 Text(f, :image_url, placeholder: t(".image_url_placeholder"))
 
                 Reference(f, :owner_id, icon: "users-round",

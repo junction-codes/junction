@@ -6,8 +6,7 @@ RSpec.describe "domains/edit", type: :view do
       title: "Parent Domain",
       name: "parent-domain",
       domain_type: "product-area",
-      description: "Parent text",
-      status: "active"
+      description: "Parent text"
     )
   }
 
@@ -16,7 +15,6 @@ RSpec.describe "domains/edit", type: :view do
       name: "MyString",
       domain_type: "product-area",
       description: "MyText",
-      status: "active",
       image_url: "https://example.com/image.png",
       owner: create(:group),
       parent: parent

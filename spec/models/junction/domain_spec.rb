@@ -12,7 +12,6 @@ RSpec.describe Junction::Domain, type: :model do
     it_behaves_like "validates presence of", :domain_type
     it_behaves_like "validates presence of", :title
     it_behaves_like "validates uniqueness of", :name, "duplicate-slug", scope: :namespace
-    it_behaves_like "validates status inclusion"
     it_behaves_like "validates image_url format"
 
     it "is valid with valid attributes" do
@@ -75,10 +74,6 @@ RSpec.describe Junction::Domain, type: :model do
 
       expect(parent.descendant_ids).to contain_exactly(child.id, grandchild.id)
     end
-  end
-
-  describe "defaults" do
-    it_behaves_like "has default status active"
   end
 
   describe "#icon" do

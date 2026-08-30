@@ -6,7 +6,6 @@ RSpec.describe "domains/new", type: :view do
       name: "MyString",
       domain_type: "product-area",
       description: "MyText",
-      status: "active",
       image_url: "https://example.com/image.png",
       owner: nil
     ))

@@ -22,10 +22,6 @@ module Junction
             if @entity.respond_to?(:lifecycle) && @entity.lifecycle.present?
               Badge(variant: @entity.lifecycle) { @entity.lifecycle.titleize }
             end
-
-            if @entity.respond_to?(:status) && @entity.status.present?
-              Badge(variant: @entity.status) { @entity.status.titleize }
-            end
           end
 
           association_link(

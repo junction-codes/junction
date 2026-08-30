@@ -7,7 +7,6 @@ RSpec.describe "systems/edit", type: :view do
     Junction::System.create!(
       title: "MyEditString",
       description: "MyText",
-      status: "active",
       image_url: "https://example.com/image.png",
       domain: junction_domains(:one),
       owner: create(:group)

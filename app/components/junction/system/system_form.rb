@@ -29,7 +29,6 @@ module Junction
                 Immutable(f, :namespace, placeholder: "default",
                               required: true,
                               help_text: t(".namespace_help"))
-                Text(f, :status, required: true)
 
                 Reference(f, :domain_id, required: true,
                               options: @available_domains, value: @system.domain, icon: "briefcase",

@@ -30,7 +30,6 @@ module Junction
         breadcrumbs:,
         can_create: allowed_to?(:create?, Domain),
         available_owners:,
-        available_statuses:,
         available_types:
       )
     end
@@ -171,16 +170,6 @@ module Junction
       )
     end
 
-    # Returns an array of available statuses for domains.
-    #
-    # @return [Array<Array(String, String)>] Array of [label, value] pairs for
-    #   statuses.
-    def available_statuses
-      Domain.validators_on(:status).find do |v|
-        v.is_a?(ActiveModel::Validations::InclusionValidator)
-      end&.options[:in]&.map { |s| [ s.capitalize, s ] } || []
-    end
-
     def set_entity
       @entity = Domain.find_by!(namespace: params.expect(:namespace), name: params.expect(:name))
     end
@@ -200,7 +189,7 @@ module Junction
     def domain_params
       attrs = params.expect(domain: [
         :description, :domain_type, :image_url, :name, :namespace, :owner_id,
-        :parent_id, :status, :title, :type
+        :parent_id, :title, :type
       ])
 
       sanitize_owner_id(
