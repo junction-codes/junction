@@ -127,7 +127,7 @@ systems:
   product:
     name: Product
     icon: package
-    description: A customer facing product made up of multiple entities.
+    description: A customer-facing product made up of multiple entities.
   service:
     name: Service
     icon: server
