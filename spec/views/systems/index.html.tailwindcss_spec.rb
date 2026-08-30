@@ -7,6 +7,7 @@ RSpec.describe "systems/index", type: :view do
     assign(:systems, [
       Junction::System.create!(
         title: "Name",
+        system_type: "service",
         description: "MyText",
         image_url: "https://example.com/image.png",
         domain: junction_domains(:one),
@@ -14,6 +15,7 @@ RSpec.describe "systems/index", type: :view do
       ),
       Junction::System.create!(
         title: "Second Name",
+        system_type: "service",
         description: "MyText",
         image_url: nil,
         domain: junction_domains(:two),

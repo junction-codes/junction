@@ -5,7 +5,8 @@ module Junction
     module Systems
       # Creation view for Systems.
       class New < Views::Base
-        attr_reader :available_domains, :available_owners, :breadcrumbs, :system
+        attr_reader :available_domains, :available_owners, :breadcrumbs,
+                    :system, :type_options
 
         # Initializes the view.
         #
@@ -14,12 +15,14 @@ module Junction
         #   name and id attributes.
         # @param available_owners [Array<Array>] Owner entity options with name
         #   and id attributes.
+        # @param type_options [Hash] Options for the system type field.
         # @param breadcrumbs [Array<Hash>] Breadcrumb items from the controller.
         def initialize(system:, available_domains:, available_owners:,
-                       breadcrumbs: [])
+                       type_options:, breadcrumbs: [])
           @system = system
           @available_domains = available_domains
           @available_owners = available_owners
+          @type_options = type_options
           @breadcrumbs = breadcrumbs
         end
 
@@ -37,7 +40,8 @@ module Junction
             end
 
             main(class: "mt-6 max-w-2xl mx-auto") do
-              SystemForm(system:, available_domains:, available_owners:)
+              SystemForm(system:, available_domains:, available_owners:,
+                         type_options:)
             end
           end
         end

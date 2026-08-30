@@ -3,10 +3,6 @@ apis:
     name: AsyncAPI
     icon: webhook
     description: Specification for building asynchronous APIs.
-  openapi:
-    name: OpenAPI
-    icon: webhook
-    description: Specification for building APIs.
   graphql:
     name: GraphQL
     icon: webhook
@@ -15,18 +11,45 @@ apis:
     name: gRPC
     icon: webhook
     description: Specification for building gRPC APIs.
-  wsdl:
-    name: WSDL
-    icon: bubbles
-    description: Specification for building SOAP APIs.
-  trpc:
-    name: tRPC
-    icon: braces
-    description: Typed RPC between TypeScript clients and servers.
   mcp-server:
     name: MCP Server
     icon: bot
     description: Server exposing tools and context to AI agents.
+  openapi:
+    name: OpenAPI
+    icon: webhook
+    description: Specification for building APIs.
+  trpc:
+    name: tRPC
+    icon: braces
+    description: Typed RPC between TypeScript clients and servers.
+  wsdl:
+    name: WSDL
+    icon: bubbles
+    description: Specification for building SOAP APIs.
+
+components:
+  api:
+    name: 'API'
+    icon: 'waypoints'
+  database:
+    name: 'Database'
+    icon: 'database'
+  library:
+    name: 'Library'
+    icon: 'library'
+  service:
+    name: 'Service'
+    icon: 'server'
+  web:
+    name: 'Web Service'
+    icon: 'globe'
+  website:
+    name: 'Website'
+    icon: 'app-window'
+  worker:
+    name: 'Worker'
+    icon: 'cog'
 
 domains:
   product-area:
@@ -38,7 +61,7 @@ domains:
     icon: layers
     description: A grouping of related systems within a product area.
 
-group_types:
+groups:
   business_unit:
     name: Business Unit
     icon: building
@@ -68,6 +91,10 @@ group_types:
     description: A group of people working together on a project.
 
 lifecycles:
+  deprecated:
+    name: 'Deprecated'
+    icon: 'archive'
+    description: 'This component is deprecated and will be removed in the future.'
   experimental:
     name: 'Experimental'
     icon: 'flask-conical'
@@ -76,33 +103,6 @@ lifecycles:
     name: 'Production'
     icon: 'badge-check'
     description: 'This component is stable and used in production.'
-  deprecated:
-    name: 'Deprecated'
-    icon: 'archive'
-    description: 'This component is deprecated and will be removed in the future.'
-
-kinds:
-  api:
-    name: 'API'
-    icon: 'waypoints'
-  database:
-    name: 'Database'
-    icon: 'database'
-  library:
-    name: 'Library'
-    icon: 'library'
-  service:
-    name: 'Service'
-    icon: 'server'
-  web:
-    name: 'Web Service'
-    icon: 'globe'
-  website:
-    name: 'Website'
-    icon: 'app-window'
-  worker:
-    name: 'Worker'
-    icon: 'cog'
 
 resources:
   bucket:
@@ -114,3 +114,21 @@ resources:
   queue:
     name: 'Queue'
     icon: 'rows-4'
+
+systems:
+  feature-set:
+    name: Feature Set
+    icon: layers
+    description: A set of related features delivered together.
+  platform:
+    name: Platform
+    icon: layout-grid
+    description: Shared capabilities other systems are built on top of.
+  product:
+    name: Product
+    icon: package
+    description: A customer-facing product made up of multiple entities.
+  service:
+    name: Service
+    icon: server
+    description: A system providing a service to other systems.

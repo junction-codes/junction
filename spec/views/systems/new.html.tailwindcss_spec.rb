@@ -6,6 +6,7 @@ RSpec.describe "systems/new", type: :view do
   before do
     assign(:system, Junction::System.new(
       name: "MyString",
+      system_type: "service",
       description: "MyText",
       image_url: "https://example.com/image.png",
       domain: junction_domains(:one),

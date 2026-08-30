@@ -143,7 +143,7 @@ module Junction
     # @return [Array<Array(String, String)>] Array of [name, key] pairs for
     #   types.
     def available_types
-      CatalogOptions.group_types.map { |key, opts| [ opts[:name], key ] }
+      CatalogOptions.groups.map { |key, opts| [ opts[:name], key ] }
     end
 
     # Options for the group type field.
@@ -151,7 +151,7 @@ module Junction
     # @return [Hash] Hash of options.
     def group_type_options
       catalog_options_for(
-        Junction::CatalogOptions.group_types,
+        Junction::CatalogOptions.groups,
         [ Junction::Group, :group_type ]
       )
     end

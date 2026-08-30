@@ -143,7 +143,7 @@ module Junction
     # @return [Array<Array(String, String)>] Array of [name, key] pairs for
     #   types.
     def available_types
-      Junction::CatalogOptions.kinds.map { |key, opts| [ opts[:name], key ] }
+      Junction::CatalogOptions.components.map { |key, opts| [ opts[:name], key ] }
     end
 
     # Options for the component type field.
@@ -151,7 +151,7 @@ module Junction
     # @return [Hash] Hash of options.
     def component_type_options
       catalog_options_for(
-        Junction::CatalogOptions.kinds,
+        Junction::CatalogOptions.components,
         [ Junction::Component, :component_type ]
       )
     end

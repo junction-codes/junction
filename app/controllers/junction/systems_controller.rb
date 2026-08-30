@@ -8,6 +8,7 @@ module Junction
                                          components resources ]
 
     include Breadcrumbs
+    include CatalogOptionSets
     include HasOwner
     include Paginatable
 
@@ -26,7 +27,8 @@ module Junction
         breadcrumbs:,
         can_create: allowed_to?(:create?, System),
         available_owners:,
-        available_domains:
+        available_domains:,
+        available_types:
       )
     end
 
@@ -44,7 +46,13 @@ module Junction
     # GET /systems/new
     def new
       authorize! System
-      render Views::Systems::New.new(system: System.new, breadcrumbs:, available_domains:, available_owners:)
+      render Views::Systems::New.new(
+        system: System.new,
+        breadcrumbs:,
+        available_domains:,
+        available_owners:,
+        type_options: system_type_options
+      )
     end
 
     # GET /systems/:id/edit
@@ -55,7 +63,8 @@ module Junction
         breadcrumbs:,
         can_destroy: allowed_to?(:destroy?, @entity),
         available_domains:,
-        available_owners:
+        available_owners:,
+        type_options: system_type_options
       )
     end
 
@@ -68,8 +77,13 @@ module Junction
         redirect_to junction_catalog_path(@entity), success: "System was successfully created."
       else
         flash.now[:alert] = "There were errors creating the system."
-        render Views::Systems::New.new(system: @entity, breadcrumbs:, available_domains:, available_owners:),
-               status: :unprocessable_content
+        render Views::Systems::New.new(
+          system: @entity,
+          breadcrumbs:,
+          available_domains:,
+          available_owners:,
+          type_options: system_type_options
+        ), status: :unprocessable_content
       end
     end
 
@@ -85,7 +99,8 @@ module Junction
           breadcrumbs:,
           can_destroy: allowed_to?(:destroy?, @entity),
           available_domains:,
-          available_owners:
+          available_owners:,
+          type_options: system_type_options
         ), status: :unprocessable_content
       end
     end
@@ -204,13 +219,32 @@ module Junction
       Domain.select(:description, :id, :image_url, :title).order(:title)
     end
 
+    # Returns an array of available types for systems.
+    #
+    # @return [Array<Array(String, String)>] Array of [name, key] pairs for
+    #   types.
+    def available_types
+      CatalogOptions.systems.map { |key, opts| [ opts[:name], key ] }
+    end
+
+    # Options for the system type field.
+    #
+    # @return [Hash] Hash of options.
+    def system_type_options
+      catalog_options_for(
+        Junction::CatalogOptions.systems,
+        [ Junction::System, :system_type ]
+      )
+    end
+
     def set_entity
       @entity = System.find_by!(namespace: params.expect(:namespace), name: params.expect(:name))
     end
 
     def system_params
       sanitize_owner_id(params.expect(system: [
-        :description, :domain_id, :name, :namespace, :owner_id, :title
+        :description, :domain_id, :name, :namespace, :owner_id, :system_type,
+        :title, :type
       ]))
     end
   end

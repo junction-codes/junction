@@ -14,6 +14,7 @@ en:
             group_type: Group Type
             lifecycle: Lifecycle
             resource_type: Resource Type
+            system_type: System Type
           known: Known options
           known_vs_other: Known vs Other Usage
           option_description: Description

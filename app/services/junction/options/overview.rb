@@ -15,7 +15,7 @@ module Junction
         ),
         FieldConfig.new(
           id: :component_type,
-          section: :kinds,
+          section: :components,
           sources: [ Source.new(model: Junction::Component, column: :component_type) ]
         ),
         FieldConfig.new(
@@ -30,8 +30,13 @@ module Junction
         ),
         FieldConfig.new(
           id: :group_type,
-          section: :group_types,
+          section: :groups,
           sources: [ Source.new(model: Junction::Group, column: :group_type) ]
+        ),
+        FieldConfig.new(
+          id: :system_type,
+          section: :systems,
+          sources: [ Source.new(model: Junction::System, column: :system_type) ]
         ),
         FieldConfig.new(
           id: :lifecycle,

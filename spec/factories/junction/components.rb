@@ -4,7 +4,7 @@ FactoryBot.define do
   factory "junction/component", aliases: [ :component ], class: "Junction::Component" do
     sequence(:title) { |n| "Component Name #{n}" }
     description { Faker::Lorem.paragraph }
-    component_type { Junction::CatalogOptions.kinds.keys.sample }
+    component_type { Junction::CatalogOptions.components.keys.sample }
     lifecycle { Junction::CatalogOptions.lifecycles.keys.sample }
     image_url { TEST_IMAGE_URL }
 
