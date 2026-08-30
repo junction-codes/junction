@@ -28,7 +28,7 @@ RSpec.describe Junction::Annotations::Overview do
     it "includes all annotated entity types" do
       ids = overview.entity_type_tabs.map { |tab| tab[:id] }
 
-      expect(ids).to eq(%w[apis components groups resources users])
+      expect(ids).to eq(%w[apis components domains groups resources systems users])
     end
   end
 

@@ -45,6 +45,8 @@ module Junction
               end
             end
 
+            AnnotationsForm(form: f, context: @system)
+
             # Form actions.
             div(class: "flex items-center justify-end gap-x-4 pt-4") do
               Link(href: cancel_path, class: "text-sm font-semibold leading-6") { t(".cancel") }

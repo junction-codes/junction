@@ -9,6 +9,7 @@ module Junction
 
     include Breadcrumbs
     include CatalogOptionSets
+    include HasAnnotations
     include HasOwner
     include Paginatable
 
@@ -242,10 +243,10 @@ module Junction
     end
 
     def system_params
-      sanitize_owner_id(params.expect(system: [
+      sanitize_owner_id(sanitize_annotations(params.expect(system: [
         :description, :domain_id, :name, :namespace, :owner_id, :system_type,
-        :title, :type
-      ]))
+        :title, :type, *annotation_param_entries
+      ])))
     end
   end
 end
