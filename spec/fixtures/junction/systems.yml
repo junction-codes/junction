@@ -4,6 +4,7 @@
 one:
   title: System One
   name: system-one
+  system_type: service
   description: MyText
   image_url: https://example.com/image.png
   domain:
@@ -12,6 +13,7 @@ one:
 two:
   title: System Two
   name: system-two
+  system_type: feature-set
   description: MyText
   image_url:
   domain:

@@ -6,7 +6,7 @@ module Junction
       # Edit view for Systems.
       class Edit < Views::Base
         attr_reader :available_domains, :available_owners, :breadcrumbs,
-                    :can_destroy, :system
+                    :can_destroy, :system, :type_options
 
         # Initializes the view.
         #
@@ -15,13 +15,15 @@ module Junction
         #   name and id attributes.
         # @param available_owners [Array<Array>] Owner entity options with name
         #   and id attributes.
+        # @param type_options [Hash] Options for the system type field.
         # @param can_destroy [Boolean] Whether the system can be destroyed.
         # @param breadcrumbs [Array<Hash>] Breadcrumb items from the controller.
         def initialize(system:, available_domains:, available_owners:,
-                       can_destroy:, breadcrumbs: [])
+                       type_options:, can_destroy:, breadcrumbs: [])
           @system = system
           @available_domains = available_domains
           @available_owners = available_owners
+          @type_options = type_options
           @can_destroy = can_destroy
           @breadcrumbs = breadcrumbs
         end
@@ -43,7 +45,8 @@ module Junction
 
             div(class: "grid grid-cols-1 lg:grid-cols-3 gap-8") do
               main(class: "lg:col-span-2") do
-                SystemForm(system:, available_domains:, available_owners:)
+                SystemForm(system:, available_domains:, available_owners:,
+                           type_options:)
               end
 
               aside(class: "space-y-6") do

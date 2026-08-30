@@ -5,8 +5,9 @@ module Junction
     module Systems
       # Index view for Systems.
       class Index < Views::Base
-        attr_reader :available_domains, :available_owners, :breadcrumbs,
-                    :can_create, :pagy, :query, :query_params, :systems
+        attr_reader :available_domains, :available_owners, :available_types,
+                    :breadcrumbs, :can_create, :pagy, :query, :query_params,
+                    :systems
 
         # Initializes the view.
         #
@@ -19,12 +20,14 @@ module Junction
         #   name and id attributes.
         # @param available_owners [Array<Array>] Owner entity options with name
         #   and id attributes.
+        # @param available_types [Array<Array>] Type options as [label, value]
+        #   pairs for filtering.
         # @param can_create [Boolean] Whether the user can create systems.
         # @param breadcrumbs [Array<Hash>] Breadcrumb items from the controller.
         # @param query_params [Hash] Query parameters from the controller.
         def initialize(systems:, query:, pagy:, available_domains:,
-                       available_owners:, can_create: true, breadcrumbs: [],
-                       query_params: {})
+                       available_owners:, available_types:, can_create: true,
+                       breadcrumbs: [], query_params: {})
           @systems = systems
           @query = query
           @query_params = query_params
@@ -32,6 +35,7 @@ module Junction
           @can_create = can_create
           @available_domains = available_domains
           @available_owners = available_owners
+          @available_types = available_types
           @breadcrumbs = breadcrumbs
         end
 
@@ -48,7 +52,8 @@ module Junction
                 end
               end
 
-              SystemFilters(query:, available_domains:, available_owners:)
+              SystemFilters(query:, available_domains:, available_owners:,
+                            available_types:)
 
               div(class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
                 Table do |table|
@@ -78,7 +83,7 @@ module Junction
                 )
               }
 
-              %w[title owner_id domain_id].each do |field|
+              %w[title type owner_id domain_id].each do |field|
                 row.sortable_head(field:, sort_url:, **sort_attrs(query, field)) do
                   System.human_attribute_name(field)
                 end
@@ -92,6 +97,17 @@ module Junction
             @systems.each do |system|
               body.row do |row|
                 row.cell { EntityPreview(entity: system) }
+
+                row.cell do
+                  break unless system.type.present?
+
+                  if Junction::CatalogOptions.systems.key?(system.type)
+                    Junction::CatalogOptions.systems[system.type][:name]
+                  else
+                    system.type.humanize
+                  end
+                end
+
                 row.cell { render_view_link(system.owner, class: "ps-0") }
                 row.cell { render_view_link(system.domain, class: "ps-0") }
               end

@@ -13,7 +13,7 @@ RSpec.describe Junction::Options::Overview do
             "openapi" => { name: "OpenAPI", icon: "webhook" },
             "graphql" => { name: "GraphQL", icon: "webhook" }
           },
-          kinds: {
+          components: {
             "web" => { name: "Web Service", icon: "globe" }
           },
           resources: {
@@ -22,8 +22,11 @@ RSpec.describe Junction::Options::Overview do
           domains: {
             "product-area" => { name: "Product Area", icon: "box" }
           },
-          group_types: {
+          groups: {
             "team" => { name: "Team", icon: "users-round" }
+          },
+          systems: {
+            "service" => { name: "Service", icon: "server" }
           },
           lifecycles: {
             "stable" => { name: "Stable", icon: "badge-check" },
@@ -44,6 +47,7 @@ RSpec.describe Junction::Options::Overview do
           resource_type
           domain_type
           group_type
+          system_type
           lifecycle
         ])
     end
@@ -76,6 +80,12 @@ RSpec.describe Junction::Options::Overview do
       labels = fields.to_h { |field| [ field[:id], field[:label] ] }
 
       expect(labels["group_type"]).to eq("Group Type")
+    end
+
+    it "uses explicit i18n field label for system_type" do
+      labels = fields.to_h { |field| [ field[:id], field[:label] ] }
+
+      expect(labels["system_type"]).to eq("System Type")
     end
 
     it "uses explicit i18n field label for lifecycle" do

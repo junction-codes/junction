@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_30_000000) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_31_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -169,6 +169,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_30_000000) do
     t.string "name", null: false
     t.string "namespace", default: "default", null: false
     t.bigint "owner_id", null: false
+    t.string "system_type", null: false
     t.string "title", null: false
     t.datetime "updated_at", null: false
     t.index ["domain_id"], name: "index_junction_systems_on_domain_id"

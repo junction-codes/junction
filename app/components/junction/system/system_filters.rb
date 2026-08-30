@@ -12,12 +12,15 @@ module Junction
         #   name and id attributes for filtering.
         # @param available_owners [ActiveRecord::Relation] Owner options with
         #   name and id attributes for filtering.
+        # @param available_types [Array<Array>] Type options as [label, value]
+        #   for filtering.
         # @param user_attrs [Hash] Additional HTML attributes for the component.
         def initialize(query:, available_domains: [], available_owners: [],
-                       **user_attrs)
+                       available_types: [], **user_attrs)
           @query = query
           @available_domains = available_domains
           @available_owners = available_owners
+          @available_types = available_types
 
           super(**user_attrs)
         end
@@ -35,6 +38,17 @@ module Junction
                 placeholder: t(".placeholder"),
                 value: @query.title_or_description_cont
               )
+
+              bar.select_filter(
+                name: "q[type_eq]",
+                label: Junction::System.human_attribute_name(:type),
+                options: @available_types,
+                selected: @query.type_eq,
+                include_blank: true,
+                blank_label: t(".all",
+                  label: Junction::System.human_attribute_name(:type).pluralize
+                )
+              ) if @available_types.any?
 
               bar.entity_filter(
                 name: "q[owner_id_eq]",

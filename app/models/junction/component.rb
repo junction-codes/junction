@@ -28,7 +28,7 @@ module Junction
     end
 
     def icon
-      Junction::CatalogOptions.kinds[type]&.[](:icon) || "server"
+      Junction::CatalogOptions.components[type]&.[](:icon) || "server"
     end
   end
 end

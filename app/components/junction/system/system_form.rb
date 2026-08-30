@@ -7,10 +7,12 @@ module Junction
         include Phlex::Rails::Helpers::FormWith
         include Phlex::Rails::Helpers::OptionsForSelect
 
-        def initialize(system:, available_domains:, available_owners:)
+        def initialize(system:, available_domains:, available_owners:,
+                       type_options:)
           @system = system
           @available_domains = available_domains
           @available_owners = available_owners
+          @type_options = type_options
         end
 
         def view_template
@@ -29,6 +31,7 @@ module Junction
                 Immutable(f, :namespace, placeholder: "default",
                               required: true,
                               help_text: t(".namespace_help"))
+                RichSelectField(f, :type, required: true, options: @type_options)
 
                 Reference(f, :domain_id, required: true,
                               options: @available_domains, value: @system.domain, icon: "briefcase",

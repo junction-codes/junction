@@ -25,11 +25,12 @@ RSpec.describe Junction::CatalogOptions do
       allow(described_class).to receive(:options).and_return(
         {
           apis: { "" => { name: "Blank" } },
-          kinds: {},
+          components: {},
           domains: {},
+          groups: {},
+          lifecycles: {},
           resources: {},
-          group_types: {},
-          lifecycles: {}
+          systems: {}
         }.with_indifferent_access
       )
 

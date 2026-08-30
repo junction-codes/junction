@@ -13,11 +13,12 @@ module Junction
     DEFAULT_PATH = File.join(__dir__, "..", "..", "config", "catalog_options.yaml").freeze
     SECTION_BY_FIELD = {
       api_type: :apis,
-      component_type: :kinds,
+      component_type: :components,
       domain_type: :domains,
-      group_type: :group_types,
+      group_type: :groups,
       lifecycle: :lifecycles,
-      resource_type: :resources
+      resource_type: :resources,
+      system_type: :systems
     }.freeze
 
     # Returns the cached, normalized catalog options.
@@ -45,16 +46,16 @@ module Junction
       options.fetch(:apis, {}.with_indifferent_access)
     end
 
+    def self.components
+      options.fetch(:components, {}.with_indifferent_access)
+    end
+
     def self.domains
       options.fetch(:domains, {}.with_indifferent_access)
     end
 
-    def self.group_types
-      options.fetch(:group_types, {}.with_indifferent_access)
-    end
-
-    def self.kinds
-      options.fetch(:kinds, {}.with_indifferent_access)
+    def self.groups
+      options.fetch(:groups, {}.with_indifferent_access)
     end
 
     def self.lifecycles
@@ -63,6 +64,10 @@ module Junction
 
     def self.resources
       options.fetch(:resources, {}.with_indifferent_access)
+    end
+
+    def self.systems
+      options.fetch(:systems, {}.with_indifferent_access)
     end
 
     # Returns the section map used by field-based lookup helpers.

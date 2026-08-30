@@ -47,7 +47,7 @@ RSpec.describe Junction::Component, type: :model do
 
   describe "#icon" do
     before do
-      allow(Junction::CatalogOptions).to receive(:kinds).and_return(
+      allow(Junction::CatalogOptions).to receive(:components).and_return(
         {
           "service" => { icon: "cloud" },
           "library" => {}
