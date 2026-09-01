@@ -15,6 +15,7 @@ group :development, :test do
   gem "brakeman", "~> 8.0"
   gem "factory_bot_rails", "~> 6.5"
   gem "faker", "~> 3.8"
+  gem "license_finder", "~> 7.2"
   gem "rspec-rails", "~> 8.0"
   gem "rubocop-capybara", "~> 3.0"
   gem "rubocop-rails-omakase", "~> 1.1"

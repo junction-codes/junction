@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+require "rubygems"
+require "bundler/setup"
+
+# Decisions live alongside the workflow rather than in license_finder's default
+# doc/ directory, which would sit confusingly next to the project's docs/.
+ARGV.push("--decisions-file=.github/dependency_decisions.yaml")
+
+load Gem.bin_path("license_finder", "license_finder")

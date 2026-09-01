@@ -5,7 +5,7 @@ require_relative "lib/junction/version"
 Gem::Specification.new do |s|
   s.name        = "junction-codes"
   s.version     = Junction::VERSION
-  s.licenses    = [ "MIT" ]
+  s.licenses    = [ "MPL-2.0" ]
   s.summary     = "An internal developer portal framework inspired by Backstage and built on Rails."
   s.description = s.summary
   s.authors     = [ "James I. Armes" ]
@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
     "vendor/javascript/**/*",
     "vendor/stylesheets/**/*",
     "Gemfile",
-    "LICENSE.md",
+    "LICENSE",
     "NOTICE.md",
     "README.md"
   ].reject do |path|
