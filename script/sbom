@@ -1,0 +1,172 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Generates a CycloneDX SBOM for Junction.
+#
+# syft catalogues the locked gems by reading Gemfile.lock. Two things it cannot
+# know are filled in afterwards:
+#
+# - Gem licenses. Gemfile.lock does not record them, so they are read from the
+#   installed gemspecs.
+# - Vendored third-party files. They belong to no package manager, so syft never
+#   sees them. They are read from NOTICE.md, which spec/vendor/notice_spec.rb
+#   keeps in step with the files themselves.
+#
+# Usage:
+#   script/sbom [output-path]     # defaults to tmp/sbom.cdx.json
+
+require "cgi"
+require "json"
+require "open3"
+require "rubygems"
+
+ROOT = File.expand_path("..", __dir__)
+OUTPUT = ARGV[0] || File.join(ROOT, "tmp", "sbom.cdx.json")
+
+# A bare SPDX identifier has no spaces. Anything else is a license name that
+# SPDX does not define, and CycloneDX wants those in `name` rather than `id`.
+SPDX_ID = /\A[A-Za-z0-9.+-]+\z/
+
+# Rows of the vendored files table in NOTICE.md:
+#   | `cytoscape` | 3.34.1 | MIT | `vendor/javascript/cytoscape.js` |
+NOTICE_ROW = /^\|\s*`([^`]+)`\s*\|\s*(\S+)\s*\|\s*([^|]+?)\s*\|\s*`([^`]+)`\s*\|/
+
+def abort_with(message)
+  warn("script/sbom: #{message}")
+  exit(1)
+end
+
+def syft_document
+  unless system("syft", "version", out: File::NULL, err: File::NULL)
+    abort_with("syft is not on PATH. See docs/sbom.md for installation.")
+  end
+
+  stdout, stderr, status = Open3.capture3(
+    "syft", "scan", "file:Gemfile.lock", "-o", "cyclonedx-json", "-q",
+    chdir: ROOT
+  )
+  abort_with("syft failed: #{stderr}") unless status.success?
+
+  JSON.parse(stdout)
+end
+
+def license_entry(value)
+  value.match?(SPDX_ID) ? { "license" => { "id" => value } } : { "license" => { "name" => value } }
+end
+
+# Indexed by exact version and again by name alone, because Gemfile.lock
+# records platform-suffixed versions (nokogiri 1.19.4-x86_64-linux-gnu) that do
+# not match the gemspec's own version string.
+def installed_specs
+  @installed_specs ||= Gem::Specification.each_with_object({}) do |spec, index|
+    index[[ spec.name, spec.version.to_s ]] ||= spec
+    index[[ spec.name, nil ]] ||= spec
+  end
+end
+
+def gem_licenses(name, version)
+  spec = installed_specs[[ name, version ]] || installed_specs[[ name, nil ]]
+  return [] unless spec
+
+  (spec.licenses || []).compact.reject(&:empty?)
+end
+
+# Gemfile.lock carries no license data, so syft emits components without it.
+def enrich_gem_licenses(components)
+  enriched = 0
+
+  components.each do |component|
+    next unless component["purl"].to_s.start_with?("pkg:gem/")
+    next if component["licenses"].to_a.any?
+
+    licenses = gem_licenses(component["name"], component["version"])
+    next if licenses.empty?
+
+    component["licenses"] = licenses.map { |license| license_entry(license) }
+    enriched += 1
+  end
+
+  enriched
+end
+
+def npm_purl(name, version)
+  if name.start_with?("@")
+    scope, package = name.split("/", 2)
+    "pkg:npm/#{CGI.escape(scope)}/#{package}@#{version}"
+  else
+    "pkg:npm/#{name}@#{version}"
+  end
+end
+
+# Vendored files are recorded in NOTICE.md rather than a package manifest.
+def vendored_components
+  notice = File.join(ROOT, "NOTICE.md")
+  abort_with("NOTICE.md is missing; vendored files cannot be described.") unless File.exist?(notice)
+
+  rows = File.readlines(notice).filter_map do |line|
+    match = NOTICE_ROW.match(line)
+    next unless match
+
+    name, version, license, path = match.captures
+    next unless File.exist?(File.join(ROOT, path))
+
+    [ name, version, license, path ]
+  end
+
+  abort_with("No vendored files parsed from NOTICE.md.") if rows.empty?
+
+  # One package can be vendored as several files, as @floating-ui/utils is for
+  # its root and /dom subpath exports. They are a single component with a
+  # single bom-ref, which CycloneDX requires to be unique.
+  rows.group_by { |name, version, _, _| npm_purl(name, version) }.map do |purl, group|
+    name, version, license, = group.first
+
+    {
+      "bom-ref" => purl,
+      "type" => "library",
+      "name" => name,
+      "version" => version,
+      "purl" => purl,
+      "licenses" => [ license_entry(license) ],
+      "properties" => group.map { |_, _, _, path| { "name" => "junction:vendored-path", "value" => path } }
+    }
+  end
+end
+
+def junction_version
+  require File.join(ROOT, "lib", "junction", "version")
+  Junction::VERSION
+end
+
+document = syft_document
+components = document["components"] ||= []
+
+# syft emits a component for the file it scanned, and Gemfile.lock lists
+# junction-codes itself because of the `gemspec` directive. Neither is a
+# dependency; the gem is described by metadata.component below.
+components.reject! { |c| c["type"] == "file" || c["name"] == "junction-codes" }
+
+enriched = enrich_gem_licenses(components)
+vendored = vendored_components
+components.concat(vendored)
+
+# syft describes the file it scanned. Describe the gem instead.
+document["metadata"] ||= {}
+document["metadata"]["component"] = {
+  "bom-ref" => "pkg:gem/junction-codes@#{junction_version}",
+  "type" => "library",
+  "name" => "junction-codes",
+  "version" => junction_version,
+  "purl" => "pkg:gem/junction-codes@#{junction_version}",
+  "licenses" => [ license_entry("MPL-2.0") ]
+}
+
+require "fileutils"
+FileUtils.mkdir_p(File.dirname(OUTPUT))
+File.write(OUTPUT, "#{JSON.pretty_generate(document)}\n")
+
+gems = components.count { |c| c["purl"].to_s.start_with?("pkg:gem/") }
+puts "Wrote #{OUTPUT}"
+puts "  CycloneDX #{document["specVersion"]}"
+puts "  #{components.size} components (#{gems} gems, #{vendored.size} vendored files)"
+puts "  #{enriched} gem licenses added from installed gemspecs"
