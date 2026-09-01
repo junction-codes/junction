@@ -34,6 +34,10 @@
 # Ignore dependencies.
 /vendor/*
 !/vendor/javascript
+!/vendor/stylesheets
+
+# Ignore locally built gem packages.
+/*.gem
 
 
 # Optional per-developer dev container extensions (see .devcontainer/extensions.local.example).

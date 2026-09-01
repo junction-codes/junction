@@ -10,8 +10,24 @@ Gem::Specification.new do |s|
   s.description = s.summary
   s.authors     = [ "James I. Armes" ]
   s.email       = "jamesiarmes@gmail.com"
-  s.files       = Dir["lib/**/*"] + Dir["Gemfile"]
-  s.extra_rdoc_files = %w[README.md CHANGELOG.md]
+  s.extra_rdoc_files = %w[README.md]
+  s.files = Dir[
+    "app/**/*",
+    "config/**/*",
+    "db/**/*",
+    "lib/**/*",
+    "public/**/*",
+    "vendor/javascript/**/*",
+    "vendor/stylesheets/**/*",
+    "Gemfile",
+    "LICENSE.md",
+    "NOTICE.md",
+    "README.md"
+  ].reject do |path|
+    # Development-only files that happen to live under config/.
+    path.start_with?("config/brakeman.ignore", "config/ci.rb")
+  end
+
   s.homepage    = "https://github.com/junction-codes/junction"
   s.metadata    = {
     "bug_tracker_uri" => "https://github.com/junction-codes/junction/issues",
