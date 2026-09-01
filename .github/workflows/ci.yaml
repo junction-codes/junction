@@ -41,6 +41,20 @@ jobs:
       - name: Scan for security vulnerabilities in JavaScript dependencies
         run: bin/importmap audit
 
+  scan_licenses:
+    name: Scan dependency licenses
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+          bundler-cache: true
+      - name: Check dependency licenses against approved list
+        run: bin/license_finder
+
   lint:
     runs-on: ubuntu-latest
     steps:

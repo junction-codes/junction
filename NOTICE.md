@@ -3,8 +3,11 @@
 Junction vendors a small number of third-party files. Each file listed below is
 redistributed unmodified under its original license.
 
+Junction itself is licensed under the Mozilla Public License 2.0; see
+[LICENSE]. The licenses below apply only to the vendored files listed.
+
 Gem dependencies are not listed here. Their licenses ship inside their own gems
-and are resolved by Bundler.
+and are checked in CI by `license_finder`.
 
 ## Vendored files
 
@@ -80,4 +83,5 @@ confirm the copyright notice and license still matches the upstream `LICENSE`.
 
 [cytoscape]: https://github.com/cytoscape/cytoscape.js
 [floating-ui]: https://github.com/floating-ui/floating-ui
+[license]: LICENSE
 [tw-animate-css]: https://github.com/Wombosvideo/tw-animate-css

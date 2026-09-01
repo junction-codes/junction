@@ -1,0 +1,31 @@
+---
+- - :permit
+  - MIT
+  - &1
+    :who:
+    :why: Permissive or weak-copyleft licenses compatible with distributing
+      Junction under MPL-2.0.
+    :versions: []
+    :when: 2026-09-01 17:24:37.028723387 Z
+- - :permit
+  - Apache 2.0
+  - *1
+- - :permit
+  - Simplified BSD
+  - *1
+- - :permit
+  - New BSD
+  - *1
+- - :permit
+  - ruby
+  - *1
+- - :permit
+  - Mozilla Public License 2.0
+  - *1
+- - :approve
+  - brakeman
+  - :who:
+    :why: Non-OSI Brakeman Public Use License. Development and test group only,
+      so it's never distributed with the gem.
+    :versions: []
+    :when: 2026-09-01 17:24:37.504249608 Z
