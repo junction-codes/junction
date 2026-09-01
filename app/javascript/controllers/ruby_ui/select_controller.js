@@ -1,13 +1,6 @@
 import {Controller} from "@hotwired/stimulus";
 
-// TODO: Figure out why the regular import fails.
-import {
-  computePosition,
-  autoUpdate,
-  offset,
-  flip
-} from "https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.7.2/+esm";
-// import { computePosition, autoUpdate, offset, flip } from "@floating-ui/dom";
+import {computePosition, autoUpdate, offset, flip} from "@floating-ui/dom";
 
 export default class extends Controller {
   static targets = [
