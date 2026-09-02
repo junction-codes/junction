@@ -4,6 +4,12 @@
   owner: acme-corp
   description: |
     Everything related to audio.
+  links:
+    - url: http://example.com/domain/audio/
+      title: Domain Readme
+    - url: http://example.com/domains/audio/dashboard
+      title: Domain Metrics Dashboard
+      icon: dashboard
 - title: Artists
   name: artists
   type: product-group
@@ -11,6 +17,12 @@
   parent: audio
   description: |
     Everything related to artists.
+  links:
+    - url: http://example.com/domain/artists/
+      title: Domain Readme
+    - url: http://example.com/domains/artists/dashboard
+      title: Domain Metrics Dashboard
+      icon: dashboard
 - title: Playback
   name: playback
   type: product-group

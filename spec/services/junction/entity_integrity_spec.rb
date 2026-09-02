@@ -1,0 +1,123 @@
+# frozen_string_literal: true
+
+require "rails_helper"
+
+RSpec.describe Junction::EntityIntegrity do
+  # These checks read the whole table, so the examples start from an empty one
+  # and build exactly what they need. The per-example transaction rolls it back.
+  before do
+    Junction::Credential.delete_all
+    Junction::Session.delete_all
+    Junction::Identity.delete_all
+    Junction::GroupMembership.delete_all
+    Junction::RolePermission.delete_all
+    Junction::Relation.delete_all
+    Junction::Entity.update_all(
+      owner_id: nil, system_id: nil, domain_id: nil,
+      parent_id: nil, role_id: nil, location_id: nil
+    )
+    Junction::Entity.delete_all
+  end
+
+  let(:descriptions) { described_class.call.map(&:description) }
+
+  describe "sound data" do
+    before do
+      component = create(:component)
+      create(:relation, source: component, target: create(:api))
+      create(:group_membership, user: create(:user), group: create(:group))
+    end
+
+    it "reports no problems" do
+      expect(described_class.call).to be_empty
+    end
+  end
+
+  describe "references of the wrong kind" do
+    it "detects an owner that is neither a group nor a user" do
+      component = create(:component)
+      component.update_column(:owner_id, create(:api).id)
+
+      expect(problem_ids(/owned by something other/)).to include(component.id)
+    end
+
+    it "accepts a user as an owner" do
+      create(:component, owner: create(:user))
+
+      expect(descriptions).not_to include(include('owned by something other'))
+    end
+
+    it "detects a system reference pointing at another kind" do
+      component = create(:component)
+      component.update_column(:system_id, create(:api).id)
+
+      expect(problem_ids(/system is not a System/)).to include(component.id)
+    end
+
+    it "detects a parent of a different kind" do
+      domain = create(:domain)
+      domain.update_column(:parent_id, create(:group).id)
+
+      expect(problem_ids(/parent is a different kind/)).to include(domain.id)
+    end
+
+    it "detects a role held by something that is not a group" do
+      system = create(:system)
+      system.update_column(:role_id, create(:role).id)
+
+      expect(problem_ids(/holding a role that are not groups/)).to include(system.id)
+    end
+  end
+
+  describe "unregistered kinds" do
+    it "detects a kind the registry no longer knows" do
+      component = create(:component)
+      component.update_column(:kind, "Widget")
+
+      expect(problem_ids(/kind no longer registered/)).to include(component.id)
+    end
+  end
+
+  describe "auth principals" do
+    it "detects a session attached to something other than a user" do
+      session = create(:user).sessions.create!
+      session.update_column(:user_id, create(:group).id)
+
+      expect(problem_ids(/sessions belonging to something other/)).to include(session.id)
+    end
+
+    it "detects a user with no credential" do
+      user = create(:user)
+      user.credential.delete
+
+      expect(problem_ids(/users without a credential/)).to include(user.id)
+    end
+  end
+
+  describe "relations" do
+    it "detects a target that cannot be depended on" do
+      relation = create(:relation)
+      relation.update_column(:target_id, create(:system).id)
+
+      expect(problem_ids(/cannot be depended on/)).to include(relation.id)
+    end
+  end
+
+  describe Junction::EntityIntegrity::Problem do
+    subject(:problem) do
+      described_class.new(description: "broken things", count: 3, sample_ids: [ 1, 2 ])
+    end
+
+    it "names the problem and some offending rows" do
+      expect(problem.to_s).to eq("broken things: 3 row(s), e.g. 1, 2")
+    end
+  end
+
+  # IDs reported for the first problem whose description matches.
+  #
+  # @param pattern [Regexp] Pattern identifying the check.
+  # @return [Array<Integer>] The reported IDs.
+  def problem_ids(pattern)
+    described_class.call.find { |p| p.description.match?(pattern) }&.sample_ids || []
+  end
+end

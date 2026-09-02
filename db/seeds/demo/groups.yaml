@@ -5,6 +5,11 @@
   image_url: https://api.dicebear.com/7.x/identicon/svg?seed=Maggie&flip=true&backgroundColor=ffdfbf
   description: |
     The ACME Corp organization.
+  links:
+    - url: http://www.acme.com/
+      title: Website
+    - url: https://meta.wikimedia.org/wiki/
+      title: Intranet
 - title: Infrastructure
   name: infrastructure
   type: business_unit
