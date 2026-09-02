@@ -1,0 +1,129 @@
+# frozen_string_literal: true
+
+require "rails_helper"
+
+RSpec.describe Junction::Kinds do
+  # Contexts are persisted in junction_role_permissions as part of the
+  # permission string (e.g. "junction.codes/apis.all.read"). Renaming one
+  # silently invalidates every stored role permission that uses it.
+  let(:persisted_contexts) do
+    %w[apis components domains groups resources roles systems users]
+  end
+
+  describe "the core registrations" do
+    it "registers every core kind" do
+      expect(described_class.names).to include(
+        "Api", "Component", "Domain", "System", "Resource",
+        "Group", "User", "Role", "Template", "Location"
+      )
+    end
+
+    it "derives contexts matching those persisted before the refactor" do
+      expect(described_class.contexts).to include(*persisted_contexts)
+    end
+
+    it "excludes auth principals and RBAC config from the catalog" do
+      expect(described_class.catalog_names).not_to include("User", "Group", "Role")
+    end
+
+    it "includes catalog kinds in the catalog" do
+      expect(described_class.catalog_names).to include(
+        "Api", "Component", "Domain", "System", "Resource"
+      )
+    end
+
+    it "marks only relation-capable kinds as dependable" do
+      expect(described_class.dependable_names).to contain_exactly(
+        "Api", "Component", "Resource"
+      )
+    end
+  end
+
+  describe ".for" do
+    it "looks a kind up by its STI name" do
+      expect(described_class.for("Api").scope).to eq(:api)
+    end
+
+    it "returns nil for an unregistered name" do
+      expect(described_class.for("Nope")).to be_nil
+    end
+  end
+
+  describe ".by_context" do
+    it "looks a kind up by its permission context" do
+      expect(described_class.by_context("components").name).to eq("Component")
+    end
+
+    it "returns nil for an unregistered context" do
+      expect(described_class.by_context("nope")).to be_nil
+    end
+  end
+
+  describe ".by_scope" do
+    it "looks a kind up by its singular scope" do
+      expect(described_class.by_scope(:domain).name).to eq("Domain")
+    end
+
+    it "accepts a string scope" do
+      expect(described_class.by_scope("domain").name).to eq("Domain")
+    end
+  end
+
+  describe ".model_for" do
+    it "resolves a registered kind to its model class" do
+      expect(described_class.model_for("Api")).to eq(Junction::Api)
+    end
+
+    it "returns nil for an unregistered name so STI can fall back" do
+      expect(described_class.model_for("Nope")).to be_nil
+    end
+  end
+
+  describe ".ownable?" do
+    it "is true for a context whose kind has an owner" do
+      expect(described_class).to be_ownable("apis")
+    end
+
+    it "is false for a context whose kind has no owner" do
+      expect(described_class).not_to be_ownable("groups")
+    end
+
+    it "is false for an unregistered context" do
+      expect(described_class).not_to be_ownable("nope")
+    end
+  end
+
+  describe ".register" do
+    after { described_class.reset! }
+
+    it "adds a new kind" do
+      described_class.register(:widget, model_name: "MyPlugin::Widget")
+      expect(described_class.for("Widget").model_name).to eq("MyPlugin::Widget")
+    end
+
+    it "replaces a kind registered under the same scope" do
+      described_class.register(:widget, model_name: "MyPlugin::Widget")
+      described_class.register(:widget, model_name: "Other::Widget")
+      expect(described_class.for("Widget").model_name).to eq("Other::Widget")
+    end
+
+    it "does not duplicate the entry when re-registering" do
+      described_class.register(:widget, model_name: "MyPlugin::Widget")
+      described_class.register(:widget, model_name: "Other::Widget")
+      expect(described_class.names.count { |n| n == "Widget" }).to eq(1)
+    end
+  end
+
+  describe ".reset!" do
+    it "restores the core registrations" do
+      described_class.register(:widget, model_name: "MyPlugin::Widget")
+      described_class.reset!
+      expect(described_class.for("Widget")).to be_nil
+    end
+
+    it "keeps core kinds registered" do
+      described_class.reset!
+      expect(described_class.for("Api")).not_to be_nil
+    end
+  end
+end
