@@ -1,0 +1,8 @@
+# Attributes shared by every kind. Under single table inheritance Rails falls
+# back through the base class, so a key here answers for any kind that does not
+# override it.
+en:
+  activerecord:
+    attributes:
+      junction/entity:
+        parent_id: "Parent"
