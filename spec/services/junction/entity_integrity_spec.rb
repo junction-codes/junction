@@ -19,7 +19,7 @@ RSpec.describe Junction::EntityIntegrity do
     Junction::Entity.delete_all
   end
 
-  let(:descriptions) { described_class.call.map(&:description) }
+  let(:check_ids) { described_class.call.map { |problem| problem.check.id } }
 
   describe "sound data" do
     before do
@@ -38,34 +38,34 @@ RSpec.describe Junction::EntityIntegrity do
       component = create(:component)
       component.update_column(:owner_id, create(:api).id)
 
-      expect(problem_ids(/owned by something other/)).to include(component.id)
+      expect(problem_ids(:owner_kind)).to include(component.id)
     end
 
     it "accepts a user as an owner" do
       create(:component, owner: create(:user))
 
-      expect(descriptions).not_to include(include('owned by something other'))
+      expect(check_ids).not_to include(:owner_kind)
     end
 
     it "detects a system reference pointing at another kind" do
       component = create(:component)
       component.update_column(:system_id, create(:api).id)
 
-      expect(problem_ids(/system is not a System/)).to include(component.id)
+      expect(problem_ids(:system_kind)).to include(component.id)
     end
 
     it "detects a parent of a different kind" do
       domain = create(:domain)
       domain.update_column(:parent_id, create(:group).id)
 
-      expect(problem_ids(/parent is a different kind/)).to include(domain.id)
+      expect(problem_ids(:parent_kind)).to include(domain.id)
     end
 
     it "detects a role held by something that is not a group" do
       system = create(:system)
       system.update_column(:role_id, create(:role).id)
 
-      expect(problem_ids(/holding a role that are not groups/)).to include(system.id)
+      expect(problem_ids(:role_holder_kind)).to include(system.id)
     end
   end
 
@@ -74,7 +74,7 @@ RSpec.describe Junction::EntityIntegrity do
       component = create(:component)
       component.update_column(:kind, "Widget")
 
-      expect(problem_ids(/kind no longer registered/)).to include(component.id)
+      expect(problem_ids(:unregistered_kind)).to include(component.id)
     end
   end
 
@@ -83,14 +83,14 @@ RSpec.describe Junction::EntityIntegrity do
       session = create(:user).sessions.create!
       session.update_column(:user_id, create(:group).id)
 
-      expect(problem_ids(/sessions belonging to something other/)).to include(session.id)
+      expect(problem_ids(:session_owner)).to include(session.id)
     end
 
     it "detects a user with no credential" do
       user = create(:user)
       user.credential.delete
 
-      expect(problem_ids(/users without a credential/)).to include(user.id)
+      expect(problem_ids(:missing_credential)).to include(user.id)
     end
   end
 
@@ -99,13 +99,17 @@ RSpec.describe Junction::EntityIntegrity do
       relation = create(:relation)
       relation.update_column(:target_id, create(:system).id)
 
-      expect(problem_ids(/cannot be depended on/)).to include(relation.id)
+      expect(problem_ids(:relation_target_kind)).to include(relation.id)
     end
   end
 
   describe Junction::EntityIntegrity::Problem do
     subject(:problem) do
-      described_class.new(description: "broken things", count: 3, sample_ids: [ 1, 2 ])
+      described_class.new(check:, count: 3, sample_ids: [ 1, 2 ])
+    end
+
+    let(:check) do
+      Junction::EntityIntegrity::Check.new(id: :example, description: "broken things")
     end
 
     it "names the problem and some offending rows" do
@@ -113,11 +117,11 @@ RSpec.describe Junction::EntityIntegrity do
     end
   end
 
-  # IDs reported for the first problem whose description matches.
+  # Rows reported by a named check.
   #
-  # @param pattern [Regexp] Pattern identifying the check.
+  # @param id [Symbol] The check's id.
   # @return [Array<Integer>] The reported IDs.
-  def problem_ids(pattern)
-    described_class.call.find { |p| p.description.match?(pattern) }&.sample_ids || []
+  def problem_ids(id)
+    described_class.call.find { |problem| problem.check.id == id }&.sample_ids || []
   end
 end

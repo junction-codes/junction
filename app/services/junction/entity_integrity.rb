@@ -13,16 +13,133 @@ module Junction
   # and this catches anything written around it -- a migration, a seed
   # importer, a plugin, or hand-edited SQL.
   class EntityIntegrity
-    # A failed check and the rows that failed it.
-    Problem = Struct.new(:description, :count, :sample_ids, keyword_init: true) do
+    Check = Struct.new(:id, :description, :relation, keyword_init: true)
+    Problem = Struct.new(:check, :count, :sample_ids, keyword_init: true) do
       # @return [String] One line naming the problem and some offending rows.
       def to_s
-        "#{description}: #{count} row(s), e.g. #{sample_ids.join(', ')}"
+        "#{check.description}: #{count} row(s), e.g. #{sample_ids.join(', ')}"
       end
     end
 
     # Number of offending IDs reported per problem.
     SAMPLE_SIZE = 5
+
+    class << self
+      # Entities whose reference points at an entity of an unexpected kind.
+      #
+      # @param column [Symbol] The reference column.
+      # @param kinds [Array<String>] Kinds the reference may point at.
+      # @return [ActiveRecord::Relation] The offending entities.
+      def references(column, kinds)
+        Entity.where.not(column => nil)
+              .where.not(column => Entity.where(kind: kinds).select(:id))
+      end
+
+      # Entities whose parent is a different kind from themselves.
+      #
+      # Domains and groups share one `parent_id`, so a cross-kind parent is
+      # representable. The association is kind-scoped and would quietly resolve
+      # to nil, hiding it.
+      #
+      # @return [ActiveRecord::Relation] The offending entities.
+      def mismatched_parents
+        Entity.joins(
+          "JOIN junction_entities parents ON parents.id = junction_entities.parent_id"
+        ).where("parents.kind <> junction_entities.kind")
+      end
+
+      # Relations whose source or target is a kind that cannot participate.
+      #
+      # @return [ActiveRecord::Relation] The offending relations.
+      def undependable_relations
+        dependable = Entity.where(kind: Junction::Kinds.dependable_names).select(:id)
+
+        Relation.where.not(source_id: dependable)
+                .or(Relation.where.not(target_id: dependable))
+      end
+    end
+
+    # Every check, with the relation selecting the rows that fail it.
+    #
+    # Relations are built when a check runs rather than when this is defined,
+    # so the constant does not force models to load at boot.
+    CHECKS = [
+      Check.new(
+        id: :unregistered_kind,
+        description: "entities with a kind no longer registered",
+        relation: -> { Entity.where.not(kind: Junction::Kinds.names) }
+      ),
+      Check.new(
+        id: :owner_kind,
+        description: "entities owned by something other than a group or user",
+        relation: -> { references(:owner_id, Ownable::OWNER_KINDS) }
+      ),
+      Check.new(
+        id: :system_kind,
+        description: "entities whose system is not a System",
+        relation: -> { references(:system_id, %w[System]) }
+      ),
+      Check.new(
+        id: :domain_kind,
+        description: "entities whose domain is not a Domain",
+        relation: -> { references(:domain_id, %w[Domain]) }
+      ),
+      Check.new(
+        id: :role_kind,
+        description: "entities whose role is not a Role",
+        relation: -> { references(:role_id, %w[Role]) }
+      ),
+      Check.new(
+        id: :role_holder_kind,
+        description: "entities holding a role that are not groups",
+        relation: -> { Entity.where.not(role_id: nil).where.not(kind: "Group") }
+      ),
+      Check.new(
+        id: :parent_kind,
+        description: "entities whose parent is a different kind",
+        relation: -> { mismatched_parents }
+      ),
+      Check.new(
+        id: :relation_target_kind,
+        description: "relations pointing at a kind that cannot be depended on",
+        relation: -> { undependable_relations }
+      ),
+      Check.new(
+        id: :session_owner,
+        description: "sessions belonging to something other than a user",
+        relation: -> { Session.where.not(user_id: User.select(:id)) }
+      ),
+      Check.new(
+        id: :identity_owner,
+        description: "identities belonging to something other than a user",
+        relation: -> { Identity.where.not(user_id: User.select(:id)) }
+      ),
+      Check.new(
+        id: :membership_user,
+        description: "group memberships whose user is not a user",
+        relation: -> { GroupMembership.where.not(user_id: User.select(:id)) }
+      ),
+      Check.new(
+        id: :membership_group,
+        description: "group memberships whose group is not a group",
+        relation: -> { GroupMembership.where.not(group_id: Group.select(:id)) }
+      ),
+      Check.new(
+        id: :role_permission_role,
+        description: "role permissions whose role is not a Role",
+        relation: -> { RolePermission.where.not(role_id: Role.select(:id)) }
+      ),
+      Check.new(
+        id: :credential_owner,
+        description: "credentials belonging to something other than a user",
+        relation: -> { Credential.where.not(entity_id: User.select(:id)) }
+      ),
+      Check.new(
+        id: :missing_credential,
+        description: "users without a credential",
+        relation: -> { User.where.missing(:credential) }
+      )
+    ].freeze
 
     # Runs every check.
     #
@@ -36,86 +153,21 @@ module Junction
     #
     # @return [Array<Problem>] The problems found.
     def call
-      checks.filter_map do |description, relation|
-        ids = relation.limit(SAMPLE_SIZE).pluck(:id)
-        next if ids.empty?
-
-        Problem.new(description:, count: relation.count, sample_ids: ids)
-      end
+      CHECKS.filter_map { |check| problem_for(check) }
     end
 
     private
 
-    # Each check, as a description and a relation selecting offending rows.
+    # Runs a single check.
     #
-    # @return [Hash{String => ActiveRecord::Relation}] The checks.
-    def checks
-      {
-        "entities with a kind no longer registered" =>
-          Entity.where.not(kind: Junction::Kinds.names),
-        "entities owned by something other than a group or user" =>
-          references(:owner_id, Ownable::OWNER_KINDS),
-        "entities whose system is not a System" =>
-          references(:system_id, %w[System]),
-        "entities whose domain is not a Domain" =>
-          references(:domain_id, %w[Domain]),
-        "entities whose role is not a Role" =>
-          references(:role_id, %w[Role]),
-        "entities holding a role that are not groups" =>
-          Entity.where.not(role_id: nil).where.not(kind: "Group"),
-        "entities whose parent is a different kind" =>
-          mismatched_parents,
-        "relations pointing at a kind that cannot be depended on" =>
-          undependable_relations,
-        "sessions belonging to something other than a user" =>
-          Session.where.not(user_id: User.select(:id)),
-        "identities belonging to something other than a user" =>
-          Identity.where.not(user_id: User.select(:id)),
-        "group memberships whose user is not a user" =>
-          GroupMembership.where.not(user_id: User.select(:id)),
-        "group memberships whose group is not a group" =>
-          GroupMembership.where.not(group_id: Group.select(:id)),
-        "role permissions whose role is not a Role" =>
-          RolePermission.where.not(role_id: Role.select(:id)),
-        "credentials belonging to something other than a user" =>
-          Credential.where.not(entity_id: User.select(:id)),
-        "users without a credential" =>
-          User.where.missing(:credential)
-      }
-    end
+    # @param check [Check] The check to run.
+    # @return [Problem, nil] The problem, or nil when the check passes.
+    def problem_for(check)
+      relation = self.class.instance_exec(&check.relation)
+      ids = relation.limit(SAMPLE_SIZE).pluck(:id)
+      return if ids.empty?
 
-    # Entities whose reference points at an entity of an unexpected kind.
-    #
-    # @param column [Symbol] The reference column.
-    # @param kinds [Array<String>] Kinds the reference may point at.
-    # @return [ActiveRecord::Relation] The offending entities.
-    def references(column, kinds)
-      Entity.where.not(column => nil)
-            .where.not(column => Entity.where(kind: kinds).select(:id))
-    end
-
-    # Entities whose parent is a different kind from themselves.
-    #
-    # Domains and groups share one `parent_id`, so a cross-kind parent is
-    # representable. The association is kind-scoped and would quietly resolve
-    # to nil, hiding it.
-    #
-    # @return [ActiveRecord::Relation] The offending entities.
-    def mismatched_parents
-      Entity.joins(
-        "JOIN junction_entities parents ON parents.id = junction_entities.parent_id"
-      ).where("parents.kind <> junction_entities.kind")
-    end
-
-    # Relations whose source or target is a kind that cannot participate.
-    #
-    # @return [ActiveRecord::Relation] The offending relations.
-    def undependable_relations
-      dependable = Entity.where(kind: Junction::Kinds.dependable_names).select(:id)
-
-      Relation.where.not(source_id: dependable).or(
-        Relation.where.not(target_id: dependable)
-      )
+      Problem.new(check:, count: relation.count, sample_ids: ids)
     end
   end
 end
