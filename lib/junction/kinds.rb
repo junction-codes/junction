@@ -30,11 +30,12 @@ module Junction
       { scope: :domain, catalog: true, ownable: true, tree: true,
         default_icon: "briefcase" },
       { scope: :system, catalog: true, ownable: true, default_icon: "network" },
-      # Not sluggable yet: these kinds gain namespace/name routes when their
-      # controllers and views land.
-      { scope: :template, catalog: true, ownable: true, sluggable: false,
+      # Registered so rows resolve, but not exposed: no permissions, no
+      # routes, and absent from every listing until their controllers and
+      # views land. The other flags describe what they will be then.
+      { scope: :template, catalog: true, ownable: true, exposed: false,
         default_icon: "file-code" },
-      { scope: :location, catalog: true, sluggable: false,
+      { scope: :location, catalog: true, exposed: false,
         default_icon: "map-pin" },
       { scope: :group, tree: true, default_icon: "users-round" },
       { scope: :user, default_icon: "user-round" },
@@ -117,11 +118,21 @@ module Junction
         all.map(&:context)
       end
 
+      # Kinds surfaced to end users.
+      #
+      # Every user-facing list derives from this rather than from {all}, so a
+      # kind registered before its controllers exist stays invisible.
+      #
+      # @return [Array<Junction::Kind>] The exposed kinds.
+      def exposed
+        all.select(&:exposed?)
+      end
+
       # Kinds appearing in catalog listings, search, and the dashboard.
       #
       # @return [Array<Junction::Kind>] The catalog kinds.
       def catalog
-        all.select(&:catalog?)
+        exposed.select(&:catalog?)
       end
 
       # Names of the kinds appearing in catalog listings.
@@ -135,14 +146,14 @@ module Junction
       #
       # @return [Array<Junction::Kind>] The sluggable kinds.
       def sluggable
-        all.select(&:sluggable?)
+        exposed.select(&:sluggable?)
       end
 
       # Names of the kinds that may be a relation source or target.
       #
       # @return [Array<String>] The dependable kind names.
       def dependable_names
-        all.select(&:dependable?).map(&:name)
+        exposed.select(&:dependable?).map(&:name)
       end
 
       # Whether the kind owning the given permission context has an owner.

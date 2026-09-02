@@ -33,11 +33,15 @@ module Junction
     # @param dependable [Boolean] Whether the kind may be a relation source or
     #   target.
     # @param tree [Boolean] Whether the kind uses `parent_id` for a hierarchy.
+    # @param exposed [Boolean] Whether the kind is surfaced to end users at
+    #   all. A kind that is registered but not exposed still resolves from the
+    #   database, so existing rows load, but it has no permissions, no routes,
+    #   and appears in no listing.
     # @param default_icon [String] Icon used when the entity's type declares
     #   none.
     def initialize(scope, model_name: nil, catalog: false, ownable: false,
                    sluggable: true, dependable: false, tree: false,
-                   default_icon: DEFAULT_ICON)
+                   exposed: true, default_icon: DEFAULT_ICON)
       @scope = scope.to_sym
       @model_name = model_name
       @catalog = catalog
@@ -45,6 +49,7 @@ module Junction
       @sluggable = sluggable
       @dependable = dependable
       @tree = tree
+      @exposed = exposed
       @default_icon = default_icon
     end
 
@@ -127,6 +132,18 @@ module Junction
     # @return [Boolean]
     def tree?
       @tree
+    end
+
+    # Whether the kind is surfaced to end users.
+    #
+    # A kind may be registered before it has controllers and views. Until it
+    # is exposed it declares no permissions, draws no routes, and appears in no
+    # listing -- but it still resolves from `kind`, so rows created by seeds or
+    # a plugin load as the right class rather than failing.
+    #
+    # @return [Boolean]
+    def exposed?
+      @exposed
     end
   end
 end

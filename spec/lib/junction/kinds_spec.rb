@@ -32,6 +32,22 @@ RSpec.describe Junction::Kinds do
       )
     end
 
+    it "does not expose kinds that have no controllers yet" do
+      expect(described_class.exposed.map(&:name)).not_to include("Template", "Location")
+    end
+
+    it "still registers unexposed kinds so their rows resolve" do
+      expect(described_class.model_for("Location")).to eq(Junction::Location)
+    end
+
+    it "keeps unexposed kinds out of the catalog" do
+      expect(described_class.catalog_names).not_to include("Template", "Location")
+    end
+
+    it "keeps unexposed kinds unrouted" do
+      expect(described_class.sluggable.map(&:name)).not_to include("Template", "Location")
+    end
+
     it "marks only relation-capable kinds as dependable" do
       expect(described_class.dependable_names).to contain_exactly(
         "Api", "Component", "Resource"

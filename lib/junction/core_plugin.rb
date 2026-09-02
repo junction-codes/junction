@@ -13,10 +13,13 @@ module Junction
     plugin_name "junction"
 
     # Entity permissions come from the kind registry, so registering a kind is
-    # all it takes to declare its permissions. Contexts are persisted in
-    # junction_role_permissions, and the registry derives them from each kind's
-    # scope, which is why a scope may not be renamed casually.
-    Junction::Kinds.all.each do |kind|
+    # all it takes to declare its permissions. Kinds that are not yet exposed
+    # declare none, so they cannot be granted or listed in the roles editor.
+    #
+    # Contexts are persisted in junction_role_permissions, and the registry
+    # derives them from each kind's scope, which is why a scope may not be
+    # renamed casually.
+    Junction::Kinds.exposed.each do |kind|
       Permission::Access::VALUES.each do |access|
         permission(
           context: kind.context,
