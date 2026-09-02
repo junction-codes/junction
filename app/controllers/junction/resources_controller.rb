@@ -3,9 +3,10 @@
 module Junction
   # Controller for managing Resource catalog entities.
   class ResourcesController < ApplicationController
-    # Make sure the entity is set before any other helper methods are called.
-    before_action :set_entity, only: %i[ show edit update destroy ]
-    before_action :eager_load_dependencies, only: %i[ dependency_graph ]
+    # Declared before Breadcrumbs so the entity is set before any breadcrumb
+    # helper runs.
+    include CatalogEntityActions
+    before_action :eager_load_dependencies, only: %i[dependency_graph]
 
     include Breadcrumbs
     include CatalogOptionSets
@@ -14,109 +15,26 @@ module Junction
     include HasOwner
     include Paginatable
 
-    # GET /resources
-    def index
-      authorize! Resource
-      @q = index_scope_for(Resource).ransack(params[:q])
-      @q.sorts = "title asc" if @q.sorts.empty?
-      @pagy, resources = paginate(@q.result)
-
-      render Views::Resources::Index.new(
-        resources:,
-        pagy: @pagy,
-        query: @q,
-        query_params: params[:q]&.to_unsafe_h || {},
-        breadcrumbs:,
-        can_create: allowed_to?(:create?, Resource),
-        available_owners:,
-        available_systems:,
-        available_types:,
-      )
-    end
-
-    # GET /resources/:id
-    def show
-      authorize! @entity
-      render Views::Resources::Show.new(
-        resource: @entity,
-        breadcrumbs:,
-        can_edit: allowed_to?(:update?, @entity),
-        can_destroy: allowed_to?(:destroy?, @entity)
-      )
-    end
-
-    # GET /resources/new
-    def new
-      authorize! Resource
-      render Views::Resources::New.new(
-        resource: Resource.new,
-        breadcrumbs:,
-        available_owners:,
-        available_systems:,
-        type_options: resource_type_options
-      )
-    end
-
-    # GET /resources/:id/edit
-    def edit
-      authorize! @entity
-      render Views::Resources::Edit.new(
-        resource: @entity,
-        breadcrumbs:,
-        can_destroy: allowed_to?(:destroy?, @entity),
-        available_owners:,
-        available_systems:,
-        type_options: resource_type_options
-      )
-    end
-
-    # POST /resources
-    def create
-      authorize! Resource
-      @entity = Resource.new(resource_params)
-
-      if @entity.save
-        redirect_to junction_catalog_path(@entity), success: "Resource was successfully created."
-      else
-        flash.now[:alert] = "There were errors creating the resource."
-        render Views::Resources::New.new(
-          resource: @entity,
-          breadcrumbs:,
-          available_owners:,
-          available_systems:,
-          type_options: resource_type_options
-        ),
-               status: :unprocessable_content
-      end
-    end
-
-    # PATCH/PUT /resources/:id
-    def update
-      authorize! @entity
-      if @entity.update(resource_params)
-        redirect_to junction_catalog_path(@entity), success: "Resource was successfully updated."
-      else
-        flash.now[:alert] = "There were errors updating the resource."
-        render Views::Resources::Edit.new(
-          resource: @entity,
-          breadcrumbs:,
-          can_destroy: allowed_to?(:destroy?, @entity),
-          available_owners:,
-          available_systems:,
-          type_options: resource_type_options
-        ), status: :unprocessable_content
-      end
-    end
-
-    # DELETE /resources/:id
-    def destroy
-      authorize! @entity
-      @entity.destroy!
-
-      redirect_to resources_path, status: :see_other, success: "Resource was successfully destroyed."
-    end
-
     private
+
+    def entity_class
+      Resource
+    end
+
+    def index_options
+      { available_owners:, available_systems:, available_types: }
+    end
+
+    def form_options(_entity)
+      { available_owners:, available_systems:, type_options: }
+    end
+
+    def create_params
+      sanitize_owner_id(sanitize_annotations(params.expect(resource: [
+        :description, :image_url, :name, :namespace, :owner_id,
+        :system_id, :title, :type, *annotation_param_entries
+      ])))
+    end
 
     # Returns a collection of available systems for resources.
     #
@@ -125,38 +43,10 @@ module Junction
       System.select(:description, :id, :image_url, :title).order(:title)
     end
 
-    # Returns an array of available types for resources.
-    #
-    # @return [Array<Array(String, String)>] Array of [name, key] pairs for types.
-    def available_types
-      CatalogOptions.resources.map { |key, opts| [ opts[:name], key ] }
-    end
-
-    # Options for the resource type field.
-    #
-    # @return [Hash] Hash of options.
-    def resource_type_options
-      catalog_options_for(
-        Junction::CatalogOptions.resources,
-        [ Junction::Resource, :type ]
-      )
-    end
-
-    def set_entity
-      @entity = Resource.find_by!(namespace: params.expect(:namespace), name: params.expect(:name))
-    end
-
     def eager_load_dependencies
       @entity = Resource.includes(:dependencies, :dependents).find_by!(
         namespace: params.expect(:namespace), name: params.expect(:name)
       )
-    end
-
-    def resource_params
-      sanitize_owner_id(sanitize_annotations(params.expect(resource: [
-        :description, :image_url, :name, :namespace, :owner_id,
-        :system_id, :title, :type, *annotation_param_entries
-      ])))
     end
   end
 end

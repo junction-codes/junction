@@ -3,9 +3,10 @@
 module Junction
   # Controller for managing API catalog entities.
   class ApisController < ApplicationController
-    # Make sure the entity is set before any other helper methods are called.
-    before_action :set_entity, only: %i[ show edit update destroy ]
-    before_action :eager_load_dependencies, only: %i[ dependency_graph ]
+    # Declared before Breadcrumbs so the entity is set before any breadcrumb
+    # helper runs.
+    include CatalogEntityActions
+    before_action :eager_load_dependencies, only: %i[dependency_graph]
 
     include Breadcrumbs
     include CatalogOptionSets
@@ -14,114 +15,37 @@ module Junction
     include HasOwner
     include Paginatable
 
-    # GET /api
-    def index
-      authorize! Api
-      @q = index_scope_for(Api).ransack(params[:q])
-      @q.sorts = "title asc" if @q.sorts.empty?
-      @pagy, apis = paginate(@q.result)
+    private
 
-      render Views::Apis::Index.new(
-        apis:,
-        pagy: @pagy,
-        query: @q,
-        query_params: params[:q]&.to_unsafe_h || {},
-        breadcrumbs:,
-        can_create: allowed_to?(:create?, Api),
+    def entity_class
+      Api
+    end
+
+    def index_options
+      {
         available_lifecycles:,
         available_owners:,
         available_systems:,
-        available_types:,
-      )
+        available_types:
+      }
     end
 
-    # GET /api/:id
-    def show
-      authorize! @entity
-      render Views::Apis::Show.new(
-        api: @entity,
-        breadcrumbs:,
-        can_edit: allowed_to?(:update?, @entity),
-        can_destroy: allowed_to?(:destroy?, @entity)
-      )
-    end
-
-    # GET /api/new
-    def new
-      authorize! Api
-      render Views::Apis::New.new(
-        api: Api.new,
-        breadcrumbs:,
+    def form_options(_entity)
+      {
         available_owners:,
         available_systems:,
-        type_options: api_type_options,
-        lifecycle_options: api_lifecycle_options
-      )
+        type_options:,
+        lifecycle_options:
+      }
     end
 
-    # GET /api/:id/edit
-    def edit
-      authorize! @entity
-      render Views::Apis::Edit.new(
-        api: @entity,
-        breadcrumbs:,
-        can_destroy: allowed_to?(:destroy?, @entity),
-        available_owners:,
-        available_systems:,
-        type_options: api_type_options,
-        lifecycle_options: api_lifecycle_options
-      )
+    def create_params
+      sanitize_owner_id(sanitize_annotations(params.expect(api: [
+        :definition, :description, :image_url, :lifecycle, :name,
+        :namespace, :owner_id, :system_id, :title, :type,
+        *annotation_param_entries
+      ])))
     end
-
-    # POST /api
-    def create
-      authorize! Api
-      @entity = Api.new(api_params)
-
-      if @entity.save
-        redirect_to junction_catalog_path(@entity), success: "API was successfully created.", status: :see_other
-      else
-        flash.now[:alert] = "There were errors creating the API."
-        render Views::Apis::New.new(
-          api: @entity,
-          breadcrumbs:,
-          available_owners:,
-          available_systems:,
-          type_options: api_type_options,
-          lifecycle_options: api_lifecycle_options
-        ),
-               status: :unprocessable_content
-      end
-    end
-
-    # PATH/PUT /api/:id
-    def update
-      authorize! @entity
-      if @entity.update(api_params)
-        redirect_to junction_catalog_path(@entity), success: "API was successfully updated.", status: :see_other
-      else
-        flash.now[:alert] = "There were errors updating the API."
-        render Views::Apis::Edit.new(
-          api: @entity,
-          breadcrumbs:,
-          can_destroy: allowed_to?(:destroy?, @entity),
-          available_owners:,
-          available_systems:,
-          type_options: api_type_options,
-          lifecycle_options: api_lifecycle_options
-        ), status: :unprocessable_content
-      end
-    end
-
-    # DELETE /api/:id
-    def destroy
-      authorize! @entity
-      @entity.destroy!
-
-      redirect_to apis_path, status: :see_other, success: "API was successfully destroyed."
-    end
-
-    private
 
     # Returns an array of available lifecycles for apis.
     #
@@ -138,28 +62,10 @@ module Junction
       System.select(:description, :id, :image_url, :title).order(:title)
     end
 
-    # Returns an array of available types for apis.
-    #
-    # @return [Array<Array(String, String)>] Array of [name, key] pairs for
-    #   types.
-    def available_types
-      Junction::CatalogOptions.apis.map { |key, opts| [ opts[:name], key ] }
-    end
-
-    # Options for the API type field.
-    #
-    # @return [Hash] Hash of options.
-    def api_type_options
-      catalog_options_for(
-        Junction::CatalogOptions.apis,
-        [ Junction::Api, :type ]
-      )
-    end
-
     # Options for the lifecycle field.
     #
     # @return [Hash] Hash of options.
-    def api_lifecycle_options
+    def lifecycle_options
       catalog_options_for(
         Junction::CatalogOptions.lifecycles,
         [ Junction::Api, :lifecycle ],
@@ -167,22 +73,10 @@ module Junction
       )
     end
 
-    def set_entity
-      @entity = Api.find_by!(namespace: params.expect(:namespace), name: params.expect(:name))
-    end
-
     def eager_load_dependencies
       @entity = Api.includes(:dependencies, :dependents).find_by!(
         namespace: params.expect(:namespace), name: params.expect(:name)
       )
-    end
-
-    def api_params
-      sanitize_owner_id(sanitize_annotations(params.expect(api: [
-        :definition, :description, :image_url, :lifecycle, :name,
-        :namespace, :owner_id, :system_id, :title, :type,
-        *annotation_param_entries
-      ])))
     end
   end
 end

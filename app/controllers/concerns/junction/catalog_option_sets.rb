@@ -5,6 +5,25 @@ module Junction
   module CatalogOptionSets
     private
 
+    # Type vocabulary for the controller's kind, as name/key pairs for filters.
+    #
+    # @return [Array<Array(String, String)>] Array of [name, key] pairs.
+    def available_types
+      Junction::CatalogOptions.section(entity_class.catalog_section)
+                              .map { |key, opts| [ opts[:name], key ] }
+    end
+
+    # Options for the controller's kind's type field, merging the declared
+    # vocabulary with the values actually in use.
+    #
+    # @return [Hash] Hash of options.
+    def type_options
+      catalog_options_for(
+        Junction::CatalogOptions.section(entity_class.catalog_section),
+        [ entity_class, :type ]
+      )
+    end
+
     # Returns a hash of catalog options for the given known options and sources.
     #
     # @param known_options [Hash] Known options to include in the catalog.

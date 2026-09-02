@@ -3,7 +3,7 @@
 module Junction
   # Controller for managing dependency associations.
   class DependenciesController < ApplicationController
-    include HasOwner
+    include ReadScoped
     include Paginatable
 
     before_action :set_source, only: %i[index create search]

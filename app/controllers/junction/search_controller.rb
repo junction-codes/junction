@@ -6,7 +6,7 @@ module Junction
   # No additional authorization checks are performed, as `entity_scope_for`
   # restricts the relation to kinds the user may read.
   class SearchController < ApplicationController
-    include HasOwner
+    include ReadScoped
     include Paginatable
 
     skip_verify_authorized

@@ -3,7 +3,7 @@
 module Junction
   # Controller for user dashboards.
   class DashboardsController < ApplicationController
-    include HasOwner
+    include ReadScoped
 
     before_action :set_user
 

@@ -3,9 +3,10 @@
 module Junction
   # Controller for managing Component catalog entities.
   class ComponentsController < ApplicationController
-    # Make sure the entity is set before any other helper methods are called.
-    before_action :set_entity, only: %i[ show edit update destroy ]
-    before_action :eager_load_dependencies, only: %i[ dependency_graph ]
+    # Declared before Breadcrumbs so the entity is set before any breadcrumb
+    # helper runs.
+    include CatalogEntityActions
+    before_action :eager_load_dependencies, only: %i[dependency_graph]
 
     include Breadcrumbs
     include CatalogOptionSets
@@ -14,114 +15,37 @@ module Junction
     include HasOwner
     include Paginatable
 
-    # GET /components
-    def index
-      authorize! Component
-      @q = index_scope_for(Component).ransack(params[:q])
-      @q.sorts = "title asc" if @q.sorts.empty?
-      @pagy, components = paginate(@q.result)
+    private
 
-      render Views::Components::Index.new(
-        components:,
-        pagy: @pagy,
-        query: @q,
-        query_params: params[:q]&.to_unsafe_h || {},
-        breadcrumbs:,
-        can_create: allowed_to?(:create?, Component),
+    def entity_class
+      Component
+    end
+
+    def index_options
+      {
         available_lifecycles:,
         available_owners:,
         available_systems:,
-        available_types:,
-      )
+        available_types:
+      }
     end
 
-    # GET /components/:id
-    def show
-      authorize! @entity
-      render Views::Components::Show.new(
-        component: @entity,
-        breadcrumbs:,
-        can_edit: allowed_to?(:update?, @entity),
-        can_destroy: allowed_to?(:destroy?, @entity)
-      )
-    end
-
-    # GET /components/new
-    def new
-      authorize! Component
-      render Views::Components::New.new(
-        component: Component.new,
-        breadcrumbs:,
+    def form_options(_entity)
+      {
         available_owners:,
         available_systems:,
-        type_options: component_type_options,
-        lifecycle_options: component_lifecycle_options
-      )
+        type_options:,
+        lifecycle_options:
+      }
     end
 
-    # GET /components/:id/edit
-    def edit
-      authorize! @entity
-      render Views::Components::Edit.new(
-        component: @entity,
-        breadcrumbs:,
-        can_destroy: allowed_to?(:destroy?, @entity),
-        available_owners:,
-        available_systems:,
-        type_options: component_type_options,
-        lifecycle_options: component_lifecycle_options
-      )
+    def create_params
+      sanitize_owner_id(sanitize_annotations(params.expect(component: [
+        :description, :image_url, :lifecycle, :name,
+        :namespace, :owner_id, :repository_url, :system_id, :title, :type,
+        *annotation_param_entries
+      ])))
     end
-
-    # POST /components
-    def create
-      authorize! Component
-      @entity = Component.new(component_params)
-
-      if @entity.save
-        redirect_to junction_catalog_path(@entity), success: "Component was successfully created."
-      else
-        flash.now[:alert] = "There were errors creating the component."
-        render Views::Components::New.new(
-          component: @entity,
-          breadcrumbs:,
-          available_owners:,
-          available_systems:,
-          type_options: component_type_options,
-          lifecycle_options: component_lifecycle_options
-        ),
-               status: :unprocessable_content
-      end
-    end
-
-    # PATCH/PUT /components/:id
-    def update
-      authorize! @entity
-      if @entity.update(component_params)
-        redirect_to junction_catalog_path(@entity), success: "Component was successfully updated."
-      else
-        flash.now[:alert] = "There were errors updating the component."
-        render Views::Components::Edit.new(
-          component: @entity,
-          breadcrumbs:,
-          can_destroy: allowed_to?(:destroy?, @entity),
-          available_owners:,
-          available_systems:,
-          type_options: component_type_options,
-          lifecycle_options: component_lifecycle_options
-        ), status: :unprocessable_content
-      end
-    end
-
-    # DELETE /components/:id
-    def destroy
-      authorize! @entity
-      @entity.destroy!
-
-      redirect_to components_path, status: :see_other, success: "Component was successfully destroyed."
-    end
-
-    private
 
     # Returns an array of available lifecycles for components.
     #
@@ -138,28 +62,10 @@ module Junction
       System.select(:description, :id, :image_url, :title).order(:title)
     end
 
-    # Returns an array of available types for components.
-    #
-    # @return [Array<Array(String, String)>] Array of [name, key] pairs for
-    #   types.
-    def available_types
-      Junction::CatalogOptions.components.map { |key, opts| [ opts[:name], key ] }
-    end
-
-    # Options for the component type field.
-    #
-    # @return [Hash] Hash of options.
-    def component_type_options
-      catalog_options_for(
-        Junction::CatalogOptions.components,
-        [ Junction::Component, :type ]
-      )
-    end
-
     # Options for the lifecycle field.
     #
     # @return [Hash] Hash of options.
-    def component_lifecycle_options
+    def lifecycle_options
       catalog_options_for(
         Junction::CatalogOptions.lifecycles,
         [ Junction::Api, :lifecycle ],
@@ -167,22 +73,10 @@ module Junction
       )
     end
 
-    def set_entity
-      @entity = Component.find_by!(namespace: params.expect(:namespace), name: params.expect(:name))
-    end
-
     def eager_load_dependencies
       @entity = Component.includes(:dependencies, :dependents).find_by!(
         namespace: params.expect(:namespace), name: params.expect(:name)
       )
-    end
-
-    def component_params
-      sanitize_owner_id(sanitize_annotations(params.expect(component: [
-        :description, :image_url, :lifecycle, :name,
-        :namespace, :owner_id, :repository_url, :system_id, :title, :type,
-        *annotation_param_entries
-      ])))
     end
   end
 end

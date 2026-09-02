@@ -1,0 +1,8 @@
+en:
+  junction:
+    catalog:
+      created: "%{name} was successfully created."
+      create_failed: "There were errors creating the %{name}."
+      destroyed: "%{name} was successfully destroyed."
+      updated: "%{name} was successfully updated."
+      update_failed: "There were errors updating the %{name}."
