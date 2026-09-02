@@ -198,7 +198,7 @@ module Junction
       helpers = []
       helpers << "edit" if action == :edit
       helpers << model_name
-      helpers << mode == :path ? "path" : "url"
+      helpers << (mode == :path ? "path" : "url")
       helpers.join("_").to_sym
     end
   end

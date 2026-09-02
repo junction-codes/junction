@@ -1,16 +1,16 @@
 - title: Timmy Tester
   name: ttester
-  email_address: ttester@example.com
+  email: ttester@example.com
   pronouns: he/him
 - title: Alice Admin
   name: aadmin
-  email_address: aadmin@example.com
+  email: aadmin@example.com
   pronouns: she/her
 - title: Sam Supervisor
   name: ssupervisor
-  email_address: ssupervisor@example.com
+  email: ssupervisor@example.com
   pronouns: they/them
 - title: Danni Developer
   name: ddeveloper
-  email_address: ddeveloper@example.com
+  email: ddeveloper@example.com
   pronouns: ze/hir

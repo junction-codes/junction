@@ -4,7 +4,7 @@ FactoryBot.define do
   factory "junction/resource", aliases: [ :resource ], class: "Junction::Resource" do
     sequence(:title) { |n| "Resource Name #{n}" }
     description { Faker::Lorem.paragraph }
-    resource_type { Junction::CatalogOptions.resources.keys.sample }
+    type { Junction::CatalogOptions.resources.keys.sample }
     image_url { TEST_IMAGE_URL }
 
     association :owner, factory: :group

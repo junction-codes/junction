@@ -234,7 +234,7 @@ module Junction
     def system_type_options
       catalog_options_for(
         Junction::CatalogOptions.systems,
-        [ Junction::System, :system_type ]
+        [ Junction::System, :type ]
       )
     end
 
@@ -244,7 +244,7 @@ module Junction
 
     def system_params
       sanitize_owner_id(sanitize_annotations(params.expect(system: [
-        :description, :domain_id, :name, :namespace, :owner_id, :system_type,
+        :description, :domain_id, :name, :namespace, :owner_id,
         :title, :type, *annotation_param_entries
       ])))
     end

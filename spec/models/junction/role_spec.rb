@@ -3,9 +3,9 @@
 require "rails_helper"
 
 RSpec.describe Junction::Role, type: :model do
-  subject(:role) { build(:role, system:) }
+  subject(:role) { build(:role, system_role:) }
 
-  let(:system) { false }
+  let(:system_role) { false }
 
   it_behaves_like "a sluggable entity"
 
@@ -42,7 +42,7 @@ RSpec.describe Junction::Role, type: :model do
 
   describe "#system?" do
     context "when the role is a system role" do
-      let(:system) { true }
+      let(:system_role) { true }
 
       it "returns true" do
         expect(role).to be_system
@@ -66,7 +66,7 @@ RSpec.describe Junction::Role, type: :model do
     end
 
     context "when the role is a system role" do
-      let(:system) { true }
+      let(:system_role) { true }
 
       it "refuses to destroy the role" do
         expect { role.destroy }.not_to change(described_class, :count)

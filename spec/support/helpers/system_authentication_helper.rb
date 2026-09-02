@@ -21,7 +21,7 @@ module SystemAuthenticationHelper
     )
 
     visit new_session_path
-    fill_in "Your email", with: user.email_address
+    fill_in "Your email", with: user.email
     fill_in "Password", with: password
     click_button "Submit"
 

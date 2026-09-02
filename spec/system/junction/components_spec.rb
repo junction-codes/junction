@@ -51,7 +51,7 @@ RSpec.describe "Junction::Components", :js, type: :system do
     end
 
     it "shows known group for type options" do
-      create(:component, component_type: "custom_widget")
+      create(:component, type: "custom_widget")
 
       visit new_component_path
       select = open_rich_select("Type")
@@ -60,7 +60,7 @@ RSpec.describe "Junction::Components", :js, type: :system do
     end
 
     it "shows other group for type options" do
-      create(:component, component_type: "custom_widget")
+      create(:component, type: "custom_widget")
 
       visit new_component_path
       select = open_rich_select("Type")

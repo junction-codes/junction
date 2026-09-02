@@ -1,17 +1,17 @@
 - title: Junction
   name: junction
-  domain_type: product-area
+  type: product-area
   image_url: https://github.com/junction-codes.png
   owner: junction-developers
   description: Core Junction application
 - title: Plugins
   name: plugins
-  domain_type: product-area
+  type: product-area
   owner: plugin-maintainers
   description: Official Junction plugins
 - title: Demo
   name: demo
-  domain_type: product-group
+  type: product-group
   owner: demo-developers
   description: Official demo of Junction
   parent: junction

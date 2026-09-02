@@ -34,7 +34,7 @@ module Junction
                   end
 
                   form_with(url: session_url, class: "space-y-4 md:space-y-6", action: "#") do |form|
-                    Text(form, :email_address, label: t(".email"), type: "email", placeholder: t(".email_placeholder"), autofocus: true, autocomplete: "username")
+                    Text(form, :email, label: t(".email"), type: "email", placeholder: t(".email_placeholder"), autofocus: true, autocomplete: "username")
                     Password(form, :password, label: t(".password"), placeholder: "••••••••", autocomplete: "current-password")
 
                     div(class: "flex items-center justify-between") do

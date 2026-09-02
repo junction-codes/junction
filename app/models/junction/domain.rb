@@ -1,32 +1,25 @@
 # frozen_string_literal: true
 
 module Junction
-  class Domain < ApplicationRecord
-    include Annotated
+  class Domain < Entity
     include Ownable
-    include Sluggable
     include TreeChild
     include TreeParent
 
-    alias_attribute :type, :domain_type
-
-    validates :description, presence: true
-    validates :domain_type, presence: true
-    validates :image_url, allow_blank: true, format: URI::DEFAULT_PARSER.make_regexp(%w[http https])
+    self.catalog_section = :domains
+    self.default_icon = "briefcase"
 
     has_many :systems, class_name: "Junction::System"
+
+    validates :description, presence: true
+    validates :type, presence: true
 
     def self.ransackable_associations(auth_object = nil)
       %w[owner parent children]
     end
 
     def self.ransackable_attributes(auth_object = nil)
-      %w[created_at description domain_type name owner_id parent_id title type
-         updated_at]
-    end
-
-    def icon
-      Junction::CatalogOptions.domains[type]&.[](:icon) || "briefcase"
+      %w[created_at description name owner_id parent_id title type updated_at]
     end
   end
 end

@@ -26,7 +26,7 @@ module Junction
                   end
 
                   form_with(url: passwords_path, class: "space-y-4 md:space-y-6") do |form|
-                    Text(form, :email_address, label: t(".email"), type: "email", placeholder: t(".email_placeholder"), autofocus: true, autocomplete: "username")
+                    Text(form, :email, label: t(".email"), type: "email", placeholder: t(".email_placeholder"), autofocus: true, autocomplete: "username")
 
                     div(class: "flex items-center justify-between") do
                       a(href: new_session_path, class: "text-sm font-medium text-primary-600 hover:underline dark:text-primary-500") { plain t(".back") }

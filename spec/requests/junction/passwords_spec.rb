@@ -16,17 +16,17 @@ RSpec.describe "/passwords", type: :request do
     context "with an existing user's email" do
       it "sends a password reset email" do
         expect {
-          post passwords_url, params: { email_address: user.email_address }
+          post passwords_url, params: { email: user.email }
         }.to have_enqueued_mail(Junction::PasswordsMailer, :reset).with(user)
       end
 
       it "redirects to the new session path" do
-        post passwords_url, params: { email_address: user.email_address }
+        post passwords_url, params: { email: user.email }
         expect(response).to redirect_to(new_session_url)
       end
 
       it "sets a success notice" do
-        post passwords_url, params: { email_address: user.email_address }
+        post passwords_url, params: { email: user.email }
         expect(flash[:success]).to eq("Password reset instructions sent (if user with that email address exists).")
       end
     end
@@ -34,17 +34,17 @@ RSpec.describe "/passwords", type: :request do
     context "with a non-existent user's email" do
       it "does not send a password reset email" do
         expect {
-          post passwords_url, params: { email_address: "nonexistent@example.com" }
+          post passwords_url, params: { email: "nonexistent@example.com" }
         }.not_to have_enqueued_mail(Junction::PasswordsMailer, :reset)
       end
 
       it "redirects to the new session path" do
-        post passwords_url, params: { email_address: "nonexistent@example.com" }
+        post passwords_url, params: { email: "nonexistent@example.com" }
         expect(response).to redirect_to(new_session_url)
       end
 
       it "sets the same success notice to prevent email enumeration" do
-        post passwords_url, params: { email_address: "nonexistent@example.com" }
+        post passwords_url, params: { email: "nonexistent@example.com" }
         expect(flash[:success]).to eq("Password reset instructions sent (if user with that email address exists).")
       end
     end
@@ -104,7 +104,7 @@ RSpec.describe "/passwords", type: :request do
       it "does not update the user's password" do
         expect {
           patch password_url(token), params: invalid_attributes
-        }.not_to change { user.reload.password_digest }
+        }.not_to change { user.credential.reload.password_digest }
       end
 
       it "redirects to the edit password path" do
@@ -124,7 +124,7 @@ RSpec.describe "/passwords", type: :request do
       it "does not update the user's password" do
         expect {
           patch password_url(token), params: invalid_attributes
-        }.not_to change { user.reload.password_digest }
+        }.not_to change { user.credential.reload.password_digest }
       end
 
       it "redirects to the edit password path" do

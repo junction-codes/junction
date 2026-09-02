@@ -31,7 +31,7 @@ RSpec.describe "/dashboard", type: :request do
 
       context "with owned entities" do
         before do
-          create(:group_membership, user: junction_users(:one), group: group)
+          create(:group_membership, user: junction_users(:user_one), group: group)
           [ :api, :component, :domain, :resource, :system ].each do |factory|
             create(factory, owner: group)
           end
@@ -87,7 +87,7 @@ RSpec.describe "/dashboard", type: :request do
         let(:child_group) { create(:group, parent: parent_group) }
 
         before do
-          create(:group_membership, user: junction_users(:one), group: child_group)
+          create(:group_membership, user: junction_users(:user_one), group: child_group)
           create(:api, owner: parent_group)
         end
 

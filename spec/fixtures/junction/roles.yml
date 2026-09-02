@@ -1,13 +1,17 @@
 admin:
+  kind: Role
   title: Admin
   name: admin
   namespace: default
   description: Super user role with all permissions.
-  system: true
+  spec:
+    system_role: true
 
 read_all:
+  kind: Role
   title: Read All
   name: read-all
   namespace: default
   description: Read-only role with all read permissions.
-  system: true
+  spec:
+    system_role: true

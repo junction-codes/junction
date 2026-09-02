@@ -2,13 +2,21 @@
 
 module Junction
   # Represents a role used for authorization.
-  class Role < ApplicationRecord
-    include Sluggable
+  #
+  # Roles are catalog entities so they can be declared in YAML and imported
+  # alongside everything else. The `system` flag lives in `spec` rather than in
+  # a column: every entity row now has a `system` association, which a `system`
+  # attribute would be ambiguous with.
+  class Role < Entity
+    self.default_icon = "shield-check"
+
+    store_accessor :spec, :system_role
 
     validates :description, presence: true
 
-    has_many :groups, class_name: "Junction::Group"
-    has_many :role_permissions, dependent: :destroy, class_name: "Junction::RolePermission"
+    has_many :groups, foreign_key: "role_id", class_name: "Junction::Group"
+    has_many :role_permissions, dependent: :destroy,
+             class_name: "Junction::RolePermission"
 
     before_destroy :prevent_system_role_deletion
 
@@ -33,7 +41,7 @@ module Junction
     #
     # @return [Boolean] True if the role is a system role, false otherwise.
     def system?
-      system == true
+      ActiveModel::Type::Boolean.new.cast(system_role) == true
     end
 
     private

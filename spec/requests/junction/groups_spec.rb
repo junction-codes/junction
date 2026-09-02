@@ -86,7 +86,7 @@ RSpec.describe "/groups", type: :request do
         search_placeholder: "Search Type",
         create_hint: "Start typing to create a new Type.",
         observed_value: "working_group",
-        setup_observed_value: -> { create(:group, group_type: "working_group") }
+        setup_observed_value: -> { create(:group, type: "working_group") }
 
       it "renders a successful response" do
         get new_group_url

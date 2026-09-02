@@ -13,7 +13,7 @@ RSpec.describe "Junction::OptionsController", type: :request do
     requires_authentication
 
     describe "GET /options" do
-      before { create(:api, api_type: "custom_api") }
+      before { create(:api, type: "custom_api") }
 
       it_behaves_like "an action that requires permission",
         :get, -> { options_path }, %w[junction.codes/options.all.read]

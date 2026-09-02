@@ -138,7 +138,7 @@ module Junction
     def resource_type_options
       catalog_options_for(
         Junction::CatalogOptions.resources,
-        [ Junction::Resource, :resource_type ]
+        [ Junction::Resource, :type ]
       )
     end
 
@@ -154,7 +154,7 @@ module Junction
 
     def resource_params
       sanitize_owner_id(sanitize_annotations(params.expect(resource: [
-        :description, :image_url, :name, :namespace, :owner_id, :resource_type,
+        :description, :image_url, :name, :namespace, :owner_id,
         :system_id, :title, :type, *annotation_param_entries
       ])))
     end

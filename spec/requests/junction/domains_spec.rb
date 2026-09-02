@@ -6,10 +6,10 @@ RSpec.describe "/domains", type: :request do
   let(:valid_attributes) {
     {
       description: "A domain for testing purposes",
-      domain_type: "product-area",
+      type: "product-area",
       title: "Test Domain",
       image_url: "https://example.com/image.png",
-      owner_id: junction_groups(:one).id
+      owner_id: junction_groups(:group_one).id
     }
   }
 
@@ -67,8 +67,8 @@ RSpec.describe "/domains", type: :request do
 
       context "when listing domains with types" do
         before do
-          create(:domain, title: "Known Type Domain", domain_type: "product-group")
-          create(:domain, title: "Unknown Type Domain", domain_type: "custom_domain_type")
+          create(:domain, title: "Known Type Domain", type: "product-group")
+          create(:domain, title: "Unknown Type Domain", type: "custom_domain_type")
         end
 
         it "displays the catalog name for a known domain type" do
@@ -95,7 +95,7 @@ RSpec.describe "/domains", type: :request do
       end
 
       context "when the domain has a known type" do
-        let!(:typed_domain) { create(:domain, domain_type: "product-group") }
+        let!(:typed_domain) { create(:domain, type: "product-group") }
 
         it "displays the catalog name for the domain type" do
           get domain_path(typed_domain)
@@ -105,7 +105,7 @@ RSpec.describe "/domains", type: :request do
       end
 
       context "when the domain has an unknown type" do
-        let!(:typed_domain) { create(:domain, domain_type: "custom_domain_type") }
+        let!(:typed_domain) { create(:domain, type: "custom_domain_type") }
 
         it "displays a humanized label for the domain type" do
           get domain_path(typed_domain)
@@ -141,7 +141,7 @@ RSpec.describe "/domains", type: :request do
         search_placeholder: "Search Type",
         create_hint: "Start typing to create a new Type.",
         observed_value: "custom_domain_type",
-        setup_observed_value: -> { create(:domain, domain_type: "custom_domain_type") }
+        setup_observed_value: -> { create(:domain, type: "custom_domain_type") }
 
       it "renders a successful response" do
         get new_domain_url
@@ -188,7 +188,7 @@ RSpec.describe "/domains", type: :request do
         it "assigns domain type from the type param" do
           post domains_url, params: { domain: valid_attributes.merge(type: "product-group") }
 
-          expect(Junction::Domain.last.domain_type).to eq("product-group")
+          expect(Junction::Domain.last.type).to eq("product-group")
         end
       end
 
@@ -220,7 +220,7 @@ RSpec.describe "/domains", type: :request do
         end
 
         it "displays the type validation error under the type field" do
-          post domains_url, params: { domain: valid_attributes.except(:domain_type) }
+          post domains_url, params: { domain: valid_attributes.except(:type) }
 
           expect(response.body).to include('id="type_errors"')
         end
@@ -249,7 +249,7 @@ RSpec.describe "/domains", type: :request do
         it "updates domain type from the type param" do
           patch domain_path(domain), params: { domain: { type: "product-group" } }
 
-          expect(domain.reload.domain_type).to eq("product-group")
+          expect(domain.reload.type).to eq("product-group")
         end
 
         it "redirects to the domain" do

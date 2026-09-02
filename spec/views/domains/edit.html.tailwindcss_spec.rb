@@ -5,7 +5,7 @@ RSpec.describe "domains/edit", type: :view do
     Junction::Domain.create!(
       title: "Parent Domain",
       name: "parent-domain",
-      domain_type: "product-area",
+      type: "product-area",
       description: "Parent text"
     )
   }
@@ -13,7 +13,7 @@ RSpec.describe "domains/edit", type: :view do
   let(:domain) {
     Junction::Domain.create!(
       name: "MyString",
-      domain_type: "product-area",
+      type: "product-area",
       description: "MyText",
       image_url: "https://example.com/image.png",
       owner: create(:group),

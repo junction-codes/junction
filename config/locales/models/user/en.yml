@@ -2,8 +2,8 @@ en:
   activerecord:
     attributes:
       junction/user:
-        email_address: "Email Address"
-        email_address_confirmation: "Confirm Email"
+        email: "Email Address"
+        email_confirmation: "Confirm Email"
         password: "New Password"
         password_challenge: "Current Password"
         password_confirmation: "Confirm Password"

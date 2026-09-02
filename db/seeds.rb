@@ -26,19 +26,19 @@ def create_system_roles
     r = Junction::Role.find_or_initialize_by(name: role[:name])
     r.title = role[:title]
     r.description = role[:description]
-    r.system = true
+    r.system_role = true
     r.save!
   end
 end
 
 # Ensure default admin user exists (for standalone Junction installation)
 def create_default_admin_user
-  return if Junction::User.exists?(email_address: "admin@example.com")
+  return if Junction::User.exists?(email: "admin@example.com")
 
   Junction::User.create!(
     title: "Administrator",
     name: "admin",
-    email_address: "admin@example.com",
+    email: "admin@example.com",
     password: "passWord1!",
     password_confirmation: "passWord1!"
   )

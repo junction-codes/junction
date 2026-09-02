@@ -53,7 +53,7 @@ RSpec.describe Junction::ApplicationPolicy, type: :policy do
       end
 
       context "when the entity has no owner_id" do
-        subject(:policy) { Junction::ComponentPolicy.new(entity, user:) }
+        subject(:policy) { Junction::EntityPolicy.new(entity, user:) }
 
         let(:permission_strings) { [ "junction.codes/components.all.read" ] }
         let(:entity) { build_stubbed(:component, owner_id: nil) }
@@ -64,7 +64,7 @@ RSpec.describe Junction::ApplicationPolicy, type: :policy do
       end
 
       context "when the entity has an owner_id in the user's group hierarchy" do
-        subject(:policy) { Junction::ComponentPolicy.new(entity, user:) }
+        subject(:policy) { Junction::EntityPolicy.new(entity, user:) }
 
         let(:permission_strings) { [ "junction.codes/components.owned.read" ] }
         let(:entity) { build_stubbed(:component, owner_id: 99) }
@@ -75,7 +75,7 @@ RSpec.describe Junction::ApplicationPolicy, type: :policy do
       end
 
       context "when the entity has an owner_id not in the user's group hierarchy" do
-        subject(:policy) { Junction::ComponentPolicy.new(entity, user:) }
+        subject(:policy) { Junction::EntityPolicy.new(entity, user:) }
 
         let(:permission_strings) { [ "junction.codes/components.owned.read" ] }
         let(:entity) { build_stubbed(:component, owner_id: 999) }
@@ -97,7 +97,7 @@ RSpec.describe Junction::ApplicationPolicy, type: :policy do
     end
 
     context "when the user has the owned permission" do
-      subject(:policy) { Junction::ComponentPolicy.new(entity, user:) }
+      subject(:policy) { Junction::EntityPolicy.new(entity, user:) }
 
       let(:permission_strings) { [ "junction.codes/components.owned.read" ] }
       let(:entity) { build_stubbed(:component, owner_id: 99) }
@@ -138,7 +138,7 @@ RSpec.describe Junction::ApplicationPolicy, type: :policy do
     end
 
     context "when the user has the owned permission" do
-      subject(:policy) { Junction::ComponentPolicy.new(Junction::Component, user:) }
+      subject(:policy) { Junction::EntityPolicy.new(Junction::Component, user:) }
 
       let(:permission_strings) { [ "junction.codes/components.owned.read" ] }
 
@@ -155,7 +155,7 @@ RSpec.describe Junction::ApplicationPolicy, type: :policy do
   end
 
   describe "#index_all?" do
-    subject(:policy) { Junction::ComponentPolicy.new(Junction::Component, user:) }
+    subject(:policy) { Junction::EntityPolicy.new(Junction::Component, user:) }
 
     context "when the user has the all permission" do
       let(:permission_strings) { [ "junction.codes/components.all.read" ] }
@@ -181,7 +181,7 @@ RSpec.describe Junction::ApplicationPolicy, type: :policy do
   end
 
   describe "#index_owned?" do
-    subject(:policy) { Junction::ComponentPolicy.new(Junction::Component, user:) }
+    subject(:policy) { Junction::EntityPolicy.new(Junction::Component, user:) }
 
     context "when the user has the all permission" do
       let(:permission_strings) { [ "junction.codes/components.all.read" ] }
@@ -216,7 +216,7 @@ RSpec.describe Junction::ApplicationPolicy, type: :policy do
     end
 
     context "when the user has the owned permission" do
-      subject(:policy) { Junction::ComponentPolicy.new(entity, user:) }
+      subject(:policy) { Junction::EntityPolicy.new(entity, user:) }
 
       let(:permission_strings) { [ "junction.codes/components.owned.read" ] }
       let(:entity) { build_stubbed(:component, owner_id: 99) }
@@ -270,7 +270,7 @@ RSpec.describe Junction::ApplicationPolicy, type: :policy do
   end
 
   describe "#create_all?" do
-    subject(:policy) { Junction::ComponentPolicy.new(Junction::Component, user:) }
+    subject(:policy) { Junction::EntityPolicy.new(Junction::Component, user:) }
 
     context "when the user has the all permission" do
       let(:permission_strings) { [ "junction.codes/components.all.write" ] }
@@ -296,7 +296,7 @@ RSpec.describe Junction::ApplicationPolicy, type: :policy do
   end
 
   describe "#create_owned?" do
-    subject(:policy) { Junction::ComponentPolicy.new(Junction::Component, user:) }
+    subject(:policy) { Junction::EntityPolicy.new(Junction::Component, user:) }
 
     context "when the user has the all permission" do
       let(:permission_strings) { [ "junction.codes/components.all.write" ] }
@@ -331,7 +331,7 @@ RSpec.describe Junction::ApplicationPolicy, type: :policy do
     end
 
     context "when the user has the owned permission" do
-      subject(:policy) { Junction::ComponentPolicy.new(entity, user:) }
+      subject(:policy) { Junction::EntityPolicy.new(entity, user:) }
 
       let(:permission_strings) { [ "junction.codes/components.owned.write" ] }
       let(:entity) { build_stubbed(:component, owner_id: 99) }
@@ -370,7 +370,7 @@ RSpec.describe Junction::ApplicationPolicy, type: :policy do
     end
 
     context "when the user has the owned permission" do
-      subject(:policy) { Junction::ComponentPolicy.new(entity, user:) }
+      subject(:policy) { Junction::EntityPolicy.new(entity, user:) }
 
       let(:permission_strings) { [ "junction.codes/components.owned.destroy" ] }
       let(:entity) { build_stubbed(:component, owner_id: 99) }

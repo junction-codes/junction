@@ -9,8 +9,8 @@ RSpec.describe "/users", type: :request do
     password = random_password
     {
       title: "New User",
-      email_address: "new@example.com",
-      email_address_confirmation: "new@example.com",
+      email: "new@example.com",
+      email_confirmation: "new@example.com",
       password: password,
       password_confirmation: password
     }
@@ -19,7 +19,7 @@ RSpec.describe "/users", type: :request do
   let(:invalid_attributes) do
     {
       title: "",
-      email_address: "invalid-email",
+      email: "invalid-email",
       password: "short",
       password_confirmation: "does-not-match"
     }

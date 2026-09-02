@@ -98,10 +98,15 @@ module Junction
     end
 
     # Only allow a list of trusted parameters through.
+    #
+    # `owner_id` is deliberately absent. A user is not an owned entity, and
+    # every entity row now has the column, so permitting it would let anyone
+    # who can edit a user point that user at one of their own groups and
+    # thereby grant themselves owned access to the account.
     def user_params
       sanitize_annotations(params.expect(user: [
-        :email_address, :email_address_confirmation, :image_url, :name,
-        :namespace, :owner_id, :password, :password_challenge,
+        :email, :email_confirmation, :image_url, :name,
+        :namespace, :password, :password_challenge,
         :password_confirmation, :pronouns, :title, *annotation_param_entries
       ]))
     end

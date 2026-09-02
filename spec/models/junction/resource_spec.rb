@@ -9,15 +9,15 @@ RSpec.describe Junction::Resource, type: :model do
 
   describe "validations" do
     it_behaves_like "validates presence of", :title
-    it_behaves_like "validates presence of", :resource_type
+    it_behaves_like "validates presence of", :type
     it_behaves_like "validates uniqueness of", :name, "duplicate-slug", scope: :namespace
 
     it "is valid with valid attributes" do
       expect(resource).to be_valid
     end
 
-    it "accepts arbitrary resource_type values" do
-      resource.resource_type = "cache"
+    it "accepts arbitrary type values" do
+      resource.type = "cache"
 
       expect(resource).to be_valid
     end

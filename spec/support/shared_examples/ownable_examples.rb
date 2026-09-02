@@ -2,7 +2,7 @@
 
 RSpec.shared_examples 'a model that can be owned' do
   describe 'ownable associations' do
-    it { is_expected.to belong_to(:owner).class_name("Group").required }
+    it { is_expected.to belong_to(:owner).class_name("Entity").required }
   end
 
   describe 'ownable behavior' do

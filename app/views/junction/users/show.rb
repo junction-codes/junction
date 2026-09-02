@@ -42,7 +42,7 @@ module Junction
                 p(class: "mt-1 text-md text-gray-600 dark:text-gray-400 max-w-2xl") { @user.pronouns }
 
                 p(class: "mt-1 text-md text-gray-600 dark:text-gray-400 max-w-2xl") do
-                  Link(href: "mailto:#{@user.email_address}", class: "p-0 inline") { @user.email_address }
+                  Link(href: "mailto:#{@user.email}", class: "p-0 inline") { @user.email }
                 end
               end
             end

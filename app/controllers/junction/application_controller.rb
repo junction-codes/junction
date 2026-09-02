@@ -5,17 +5,22 @@ module Junction
   #
   # @abstract
   class ApplicationController < PluginController
-    CATALOG_SCOPES = %w[api component domain group resource role system user].freeze
-
     private
 
+    # Scopes that have namespace/name routes.
+    #
+    # @return [Array<String>] The sluggable scopes.
+    def sluggable_scopes
+      Junction::Kinds.sluggable.map { |kind| kind.scope.to_s }
+    end
+
     def catalog_entity_class(scope)
-      Junction.const_get(scope.to_s.classify)
+      Junction::Kinds.by_scope(scope)&.model
     end
 
     def sanitize_catalog_scope(attrs)
       return attrs unless attrs.include?(:catalog_scope)
-      return attrs if CATALOG_SCOPES.include?(attrs.expect(:catalog_scope))
+      return attrs if sluggable_scopes.include?(attrs.expect(:catalog_scope))
 
       out = attrs.dup
       out.delete(:catalog_scope)

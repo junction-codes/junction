@@ -1,32 +1,25 @@
 # frozen_string_literal: true
 
 module Junction
-  class Resource < ApplicationRecord
-    include Annotated
+  class Resource < Entity
     include Dependable
     include Dependentable
     include Ownable
-    include Sluggable
 
-    alias_attribute :type, :resource_type
+    self.catalog_section = :resources
+    self.default_icon = "rows-4"
+
+    belongs_to :system, class_name: "Junction::System", optional: true
 
     validates :description, presence: true
-    validates :image_url, allow_blank: true, format: URI::DEFAULT_PARSER.make_regexp(%w[http https])
-    validates :resource_type, presence: true
-
-    belongs_to :system, optional: true, class_name: "Junction::System"
+    validates :type, presence: true
 
     def self.ransackable_associations(auth_object = nil)
       %w[owner system]
     end
 
     def self.ransackable_attributes(auth_object = nil)
-      %w[created_at description name owner_id resource_type system_id title type
-         updated_at]
-    end
-
-    def icon
-      Junction::CatalogOptions.resources[type]&.[](:icon) || "rows-4"
+      %w[created_at description name owner_id system_id title type updated_at]
     end
   end
 end

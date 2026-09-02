@@ -30,9 +30,12 @@ module Junction
       { scope: :domain, catalog: true, ownable: true, tree: true,
         default_icon: "briefcase" },
       { scope: :system, catalog: true, ownable: true, default_icon: "network" },
-      { scope: :template, catalog: true, ownable: true,
+      # Not sluggable yet: these kinds gain namespace/name routes when their
+      # controllers and views land.
+      { scope: :template, catalog: true, ownable: true, sluggable: false,
         default_icon: "file-code" },
-      { scope: :location, catalog: true, default_icon: "map-pin" },
+      { scope: :location, catalog: true, sluggable: false,
+        default_icon: "map-pin" },
       { scope: :group, tree: true, default_icon: "users-round" },
       { scope: :user, default_icon: "user-round" },
       { scope: :role, default_icon: "shield-check" }

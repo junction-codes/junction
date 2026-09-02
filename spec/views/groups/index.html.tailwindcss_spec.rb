@@ -6,7 +6,7 @@ RSpec.describe "groups/index", type: :view do
       Junction::Group.create!(
         title: "Name",
         description: "MyText",
-        group_type: "team",
+        type: "team",
         email: "team@example.com",
         image_url: "https://example.com/image.png",
         parent: nil
@@ -14,7 +14,7 @@ RSpec.describe "groups/index", type: :view do
       Junction::Group.create!(
         title: "Second Name",
         description: "MyText",
-        group_type: "business_unit",
+        type: "business_unit",
         email: "bu@example.com",
         image_url: nil,
         parent: nil

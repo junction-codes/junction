@@ -12,41 +12,42 @@ module Junction
     title "Junction Core"
     plugin_name "junction"
 
-    {
-      apis:        { role: false, ownership: true },
-      components:  { role: false, ownership: true },
-      dashboards:  { role: false, ownership: false, class: "Dashboard" },
-      domains:     { role: false, ownership: true },
-      groups:      { role: true,  ownership: false },
-      resources:   { role: false, ownership: true },
-      roles:       { role: false, ownership: false },
-      systems:     { role: false, ownership: true },
-      users:       { role: false, ownership: false }
-    }.each do |context_sym, options|
-      if options[:role]
-        entity = options[:class] || "Junction::#{context_sym.to_s.singularize.classify}"
-        for_entity(entity) do |s|
-          s.annotation(key: ANNOTATION_GROUP_ROLE, title: "Role", placeholder: "Role name")
-        end
-      end
-
+    # Entity permissions come from the kind registry, so registering a kind is
+    # all it takes to declare its permissions. Contexts are persisted in
+    # junction_role_permissions, and the registry derives them from each kind's
+    # scope, which is why a scope may not be renamed casually.
+    Junction::Kinds.all.each do |kind|
       Permission::Access::VALUES.each do |access|
         permission(
-          context: context_sym.to_s,
+          context: kind.context,
           ownership: "all",
           access:,
-          description: "#{access.titleize} access to all #{context_sym.to_s.pluralize}"
+          description: "#{access.titleize} access to all #{kind.context}"
         )
 
-        next unless options[:ownership]
+        next unless kind.ownable?
 
         permission(
-          context: context_sym.to_s,
+          context: kind.context,
           ownership: "owned",
           access:,
-          description: "#{access.titleize} access to owned #{context_sym.to_s.pluralize}"
+          description: "#{access.titleize} access to owned #{kind.context}"
         )
       end
+    end
+
+    # The dashboard is not a kind, but it is permissioned like one.
+    Permission::Access::VALUES.each do |access|
+      permission(
+        context: "dashboards",
+        ownership: "all",
+        access:,
+        description: "#{access.titleize} access to all dashboards"
+      )
+    end
+
+    for_entity("Junction::Group") do |s|
+      s.annotation(key: ANNOTATION_GROUP_ROLE, title: "Role", placeholder: "Role name")
     end
 
     permission(

@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe "/components", type: :request do
   subject!(:component) { create(:component) }
 
-  fixtures "junction/components"
+  fixtures(*ENTITY_FIXTURE_SETS)
 
   let(:valid_attributes) {
     {
@@ -14,7 +14,7 @@ RSpec.describe "/components", type: :request do
       lifecycle: "experimental",
       type: "api",
       image_url: "https://example.com/image.png",
-      owner_id: junction_groups(:one).id,
+      owner_id: junction_groups(:group_one).id,
       repository_url: "https://example.com/example/component.git"
     }
   }
@@ -96,7 +96,7 @@ RSpec.describe "/components", type: :request do
         search_placeholder: "Search Type",
         create_hint: "Start typing to create a new Type.",
         observed_value: "custom_widget",
-        setup_observed_value: -> { create(:component, component_type: "custom_widget") }
+        setup_observed_value: -> { create(:component, type: "custom_widget") }
       it_behaves_like "a request with a rich select field",
         request_proc: -> { new_component_url },
         known_label: "Known Lifecycles",

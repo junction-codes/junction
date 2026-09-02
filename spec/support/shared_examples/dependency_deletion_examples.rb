@@ -6,7 +6,7 @@
 # @param write_permission [String] Permission string required to delete the
 #   dependency.
 RSpec.shared_examples "a dependency deletion action" do |source_factory, write_permission|
-  subject!(:dependency) { create(:dependency, source: create(source_factory)) }
+  subject!(:dependency) { create(:relation, source: create(source_factory)) }
 
   context "when the user is not authenticated" do
     it_behaves_like "an action that requires authentication", :delete,
@@ -21,7 +21,7 @@ RSpec.shared_examples "a dependency deletion action" do |source_factory, write_p
 
     it "destroys the dependency record" do
       expect { delete dependency_path(dependency) }
-        .to change(Junction::Dependency, :count).by(-1)
+        .to change(Junction::Relation, :count).by(-1)
     end
 
     it "does not destroy the source entity" do

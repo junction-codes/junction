@@ -6,7 +6,7 @@ RSpec.describe "Junction::DependencyGraph", :js, type: :system do
   let(:component) { create(:component, title: "Checkout Service") }
 
   before do
-    create(:dependency, source: component, target: create(:api, title: "Billing API"))
+    create(:relation, source: component, target: create(:api, title: "Billing API"))
     sign_in_with_permissions(
       %w[junction.codes/components.all.read junction.codes/apis.all.read]
     )

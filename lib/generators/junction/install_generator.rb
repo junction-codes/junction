@@ -56,14 +56,15 @@ module Junction
       def create_default_user
         say "\n🧑‍🔧 Creating default admin user...", :green
 
-        if Junction::User.exists?(email_address: "admin@example.com")
+        if Junction::User.exists?(email: "admin@example.com")
           say "   ✓ Admin user already exists"
           return
         end
 
         Junction::User.create!(
-          display_name: "Administrator",
-          email_address: "admin@example.com",
+          title: "Administrator",
+          name: "admin",
+          email: "admin@example.com",
           password: "passWord1!",
           password_confirmation: "passWord1!"
         )

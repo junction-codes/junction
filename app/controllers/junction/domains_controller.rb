@@ -167,7 +167,7 @@ module Junction
     def domain_type_options
       catalog_options_for(
         Junction::CatalogOptions.domains,
-        [ Junction::Domain, :domain_type ]
+        [ Junction::Domain, :type ]
       )
     end
 
@@ -189,7 +189,7 @@ module Junction
 
     def domain_params
       attrs = sanitize_annotations(params.expect(domain: [
-        :description, :domain_type, :image_url, :name, :namespace, :owner_id,
+        :description, :image_url, :name, :namespace, :owner_id,
         :parent_id, :title, :type, *annotation_param_entries
       ]))
 

@@ -5,8 +5,6 @@ module Junction
   class DashboardsController < ApplicationController
     include HasOwner
 
-    CATALOG_ENTITIES = [ Api, Component, Domain, Resource, System ].freeze
-
     before_action :set_user
 
     # GET /dashboard
@@ -25,38 +23,30 @@ module Junction
       @user = Current.user
     end
 
-    # Fetch catalog entities owned by groups the user is a member of.
+    # Fetch catalog entities owned by the user or by groups they belong to.
     #
-    # Results includes eager loaded associations for owner, domain, and system
-    # where applicable.
-    #
-    # @return [Array<ApplicationRecord>] List of owned entities.
+    # @return [Array<Junction::Entity>] List of owned entities.
     def owned_entities
-      group_ids = @user.deep_group_ids
-      CATALOG_ENTITIES.map do |model|
-        q = model.includes(:owner)
-        q = q.includes(:domain) if model.reflect_on_association(:domain)
-        q = q.includes(:system) if model.reflect_on_association(:system)
-        q.where(owner_id: group_ids).to_a
-      end.flatten.sort_by(&:name)
+      Entity.catalog
+            .where(owner_id: @user.owner_ids)
+            .includes(:owner, :domain, :system)
+            .order(:name)
+            .to_a
     end
 
     # Fetch recent updates to catalog entities.
     #
-    # When fetching entities, access is checked to ensure we only include
-    # entities that the user has permission to read.
+    # Access is checked per kind, so only entities the user has permission to
+    # read are included.
     #
     # @param limit [Integer] Number of recent items to fetch.
-    # @return [Array<ApplicationRecord>] List of recent catalog items.
+    # @return [Array<Junction::Entity>] List of recent catalog items.
     def recent_catalog_items(limit: 5)
-      CATALOG_ENTITIES.flat_map do |model|
-        q = index_scope_for(model)
-        next [] if q.blank?
-
-        q = q.includes(:domain) if model.reflect_on_association(:domain)
-        q = q.includes(:system) if model.reflect_on_association(:system)
-        q.includes(:owner).order(updated_at: :desc).limit(limit).to_a
-      end.sort_by(&:updated_at).reverse.first(limit)
+      entity_scope_for(Junction::Kinds.catalog)
+        .includes(:owner, :domain, :system)
+        .order(updated_at: :desc)
+        .limit(limit)
+        .to_a
     end
   end
 end

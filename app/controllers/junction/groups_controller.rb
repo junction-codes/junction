@@ -152,7 +152,7 @@ module Junction
     def group_type_options
       catalog_options_for(
         Junction::CatalogOptions.groups,
-        [ Junction::Group, :group_type ]
+        [ Junction::Group, :type ]
       )
     end
 
@@ -167,7 +167,7 @@ module Junction
     #
     def group_params
       attrs = sanitize_annotations(params.expect(group: [
-        :description, :email, :group_type, :image_url, :name, :namespace,
+        :description, :email, :image_url, :name, :namespace,
         :parent_id, :title, :type, *annotation_param_entries
       ]))
 

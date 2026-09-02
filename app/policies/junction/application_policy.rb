@@ -123,9 +123,12 @@ module Junction
       perm = permission.is_a?(Permission) ? permission : Permission.parse(permission)
       return true if perm.nil? || perm.all?
 
-      return false if !entity.respond_to?(:owner_id) || entity.owner_id.blank?
+      # Every entity row has an owner_id column now, so `respond_to?` can no
+      # longer tell an ownable kind from one that simply leaves it null.
+      return false unless entity.class.try(:ownable?)
+      return false if entity.owner_id.blank?
 
-      user.deep_group_ids.include?(entity.owner_id)
+      user.owner_ids.include?(entity.owner_id)
     end
 
     # Service object for resolving the user's effective permissions.

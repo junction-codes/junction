@@ -3,7 +3,7 @@
 require "rails_helper"
 
 RSpec.describe Junction::Permissions::UserPermissions do
-  fixtures "junction/roles"
+  fixtures(*ENTITY_FIXTURE_SETS)
 
   subject(:user_permissions) { described_class.new(user) }
 

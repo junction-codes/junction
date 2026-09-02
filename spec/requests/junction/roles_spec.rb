@@ -3,9 +3,9 @@
 require "rails_helper"
 
 RSpec.describe "Junction::RolesController", type: :request do
-  subject!(:role) { create(:role, system:) }
+  subject!(:role) { create(:role, system_role:) }
 
-  let(:system) { false }
+  let(:system_role) { false }
   let(:valid_attributes) do
     {
       name: "test-role",
@@ -198,7 +198,7 @@ RSpec.describe "Junction::RolesController", type: :request do
       end
 
       context "when the role is a system role" do
-        let(:system) { true }
+        let(:system_role) { true }
 
         it "does not destroy the role" do
           expect {

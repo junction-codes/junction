@@ -152,7 +152,7 @@ module Junction
     def api_type_options
       catalog_options_for(
         Junction::CatalogOptions.apis,
-        [ Junction::Api, :api_type ]
+        [ Junction::Api, :type ]
       )
     end
 
@@ -179,7 +179,7 @@ module Junction
 
     def api_params
       sanitize_owner_id(sanitize_annotations(params.expect(api: [
-        :api_type, :definition, :description, :image_url, :lifecycle, :name,
+        :definition, :description, :image_url, :lifecycle, :name,
         :namespace, :owner_id, :system_id, :title, :type,
         *annotation_param_entries
       ])))

@@ -21,7 +21,7 @@ module Junction
         #   and returns a URL string.
         # @param can_destroy [Boolean] Whether the current user is authorized to
         #   remove dependencies.
-        # @param dependency_map [Hash] Map of [target_type, target_id] to
+        # @param dependency_map [Hash] Map of target entity id to
         #   dependency record ID, used to build delete routes.
         # @param can_create [Boolean] Whether the current user is authorized to
         #   create dependencies.
@@ -66,8 +66,7 @@ module Junction
                     row.cell { render_view_link(dependency) }
                     row.cell { dependency.type }
 
-                    key = [ dependency.class.name, dependency.id ]
-                    dep_id = @dependency_map[key]
+                    dep_id = @dependency_map[dependency.id]
                     row.cell(class: "text-right") do
                       next unless dep_id && @can_destroy
 

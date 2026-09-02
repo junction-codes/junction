@@ -1,18 +1,18 @@
 require 'rails_helper'
 
 RSpec.describe "/systems", type: :request do
-  fixtures "junction/domains"
+  fixtures(*ENTITY_FIXTURE_SETS)
 
   subject!(:system) { create(:system) }
 
   let(:valid_attributes) {
     {
       description: "A description for the test system",
-      domain_id: junction_domains(:one).id,
+      domain_id: junction_domains(:domain_one).id,
       title: "Test System",
       type: "service",
       image_url: "https://example.com/image.png",
-      owner_id: junction_groups(:one).id
+      owner_id: junction_groups(:group_one).id
     }
   }
 
@@ -70,8 +70,8 @@ RSpec.describe "/systems", type: :request do
 
       context "when listing systems with types" do
         before do
-          create(:system, title: "Known Type System", system_type: "feature-set")
-          create(:system, title: "Unknown Type System", system_type: "custom_system_type")
+          create(:system, title: "Known Type System", type: "feature-set")
+          create(:system, title: "Unknown Type System", type: "custom_system_type")
         end
 
         it "displays the catalog name for a known system type" do
@@ -98,7 +98,7 @@ RSpec.describe "/systems", type: :request do
       end
 
       context "when the system has a known type" do
-        let!(:typed_system) { create(:system, system_type: "feature-set") }
+        let!(:typed_system) { create(:system, type: "feature-set") }
 
         it "displays the catalog name for the system type" do
           get system_path(typed_system)
@@ -108,7 +108,7 @@ RSpec.describe "/systems", type: :request do
       end
 
       context "when the system has an unknown type" do
-        let!(:typed_system) { create(:system, system_type: "custom_system_type") }
+        let!(:typed_system) { create(:system, type: "custom_system_type") }
 
         it "displays a humanized label for the system type" do
           get system_path(typed_system)
@@ -177,7 +177,7 @@ RSpec.describe "/systems", type: :request do
         search_placeholder: "Search Type",
         create_hint: "Start typing to create a new Type.",
         observed_value: "custom_system_type",
-        setup_observed_value: -> { create(:system, system_type: "custom_system_type") }
+        setup_observed_value: -> { create(:system, type: "custom_system_type") }
 
       it "renders a successful response" do
         get new_system_url
@@ -224,7 +224,7 @@ RSpec.describe "/systems", type: :request do
         it "assigns system type from the type param" do
           post systems_url, params: { system: valid_attributes.merge(type: "feature-set") }
 
-          expect(Junction::System.last.system_type).to eq("feature-set")
+          expect(Junction::System.last.type).to eq("feature-set")
         end
       end
 
@@ -270,7 +270,7 @@ RSpec.describe "/systems", type: :request do
         it "updates system type from the type param" do
           patch system_path(system), params: { system: { type: "feature-set" } }
 
-          expect(system.reload.system_type).to eq("feature-set")
+          expect(system.reload.type).to eq("feature-set")
         end
 
         it "redirects to the system" do

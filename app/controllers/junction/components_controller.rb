@@ -152,7 +152,7 @@ module Junction
     def component_type_options
       catalog_options_for(
         Junction::CatalogOptions.components,
-        [ Junction::Component, :component_type ]
+        [ Junction::Component, :type ]
       )
     end
 
@@ -179,7 +179,7 @@ module Junction
 
     def component_params
       sanitize_owner_id(sanitize_annotations(params.expect(component: [
-        :component_type, :description, :image_url, :lifecycle, :name,
+        :description, :image_url, :lifecycle, :name,
         :namespace, :owner_id, :repository_url, :system_id, :title, :type,
         *annotation_param_entries
       ])))

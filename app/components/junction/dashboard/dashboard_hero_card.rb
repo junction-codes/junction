@@ -46,8 +46,8 @@ module Junction
             div do
               h3(class: "text-lg font-semibold text-gray-900 dark:text-white") { @user.title }
               p(class: "text-sm text-gray-600 dark:text-gray-400") { @user.pronouns } if @user.pronouns.present?
-              Link(href: "mailto:#{@user.email_address}", class: "p-0 ") do
-                @user.email_address
+              Link(href: "mailto:#{@user.email}", class: "p-0 ") do
+                @user.email
               end
             end
           end

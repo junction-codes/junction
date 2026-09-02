@@ -11,15 +11,19 @@ module Junction
       # high-cardinality annotations can't produce an unbounded chart.
       VALUE_CHART_LIMIT = 10
 
-      ENTITY_TYPES = [
-        EntityType.new(id: "apis", model: Junction::Api),
-        EntityType.new(id: "components", model: Junction::Component),
-        EntityType.new(id: "domains", model: Junction::Domain),
-        EntityType.new(id: "groups", model: Junction::Group),
-        EntityType.new(id: "resources", model: Junction::Resource),
-        EntityType.new(id: "systems", model: Junction::System),
-        EntityType.new(id: "users", model: Junction::User)
-      ].freeze
+      # Kinds that carry annotations, from the registry. Locations and
+      # templates are excluded until they are annotated in practice.
+      ANNOTATED_SCOPES = %i[api component domain group resource system user].freeze
+
+      # Entity types included in the overview.
+      #
+      # @return [Array<EntityType>]
+      def self.entity_types
+        ANNOTATED_SCOPES.filter_map do |scope|
+          kind = Junction::Kinds.by_scope(scope)
+          EntityType.new(id: kind.context, model: kind.model) if kind
+        end
+      end
 
       # Lightweight rows for annotation-key vertical tabs.
       #
@@ -43,7 +47,7 @@ module Junction
         key = key_for_slug(slug)
         return nil if key.blank?
 
-        entity_rows = ENTITY_TYPES.filter_map do |entity_type|
+        entity_rows = self.class.entity_types.filter_map do |entity_type|
           rows = value_rows_for(entity_type.model, key)
           next if rows.empty?
 
@@ -74,7 +78,7 @@ module Junction
       # @return [Array<Hash>] List of entity types and their annotation
       #   metadata.
       def entity_type_tabs
-        ENTITY_TYPES.map do |entity_type|
+        self.class.entity_types.map do |entity_type|
           count = annotated_record_count(entity_type.model)
           {
             id: entity_type.id,
@@ -90,7 +94,7 @@ module Junction
       # @return [Hash, nil] Entity type panel data, or null if the id doesn't
       #   exist.
       def entity_type_detail(id)
-        entity_type = ENTITY_TYPES.find { |type| type.id == id }
+        entity_type = self.class.entity_types.find { |type| type.id == id }
         return nil unless entity_type
 
         known_annotations = PluginRegistry.annotations_for(entity_type.model)
@@ -210,9 +214,20 @@ module Junction
       #
       # @return [Array<String>] List of known annotation keys.
       def registered_keys
-        ENTITY_TYPES.flat_map do |entity_type|
+        self.class.entity_types.flat_map do |entity_type|
           PluginRegistry.annotations_for(entity_type.model).keys
         end.uniq
+      end
+
+      # Table holding every entity.
+      #
+      # Every kind shares it, so these queries must constrain by kind. The name
+      # is taken from the model rather than interpolated from a caller-supplied
+      # value.
+      #
+      # @return [String] The quoted table name.
+      def entities_table
+        Junction::Entity.quoted_table_name
       end
 
       # Counts the annotated records of an entity type, per annotation key.
@@ -223,9 +238,10 @@ module Junction
       # @param model [Class] The model class for the entity type.
       # @return [Hash<String, Integer>] Map of annotation key to record count.
       def key_counts(model)
-        sql = <<~SQL.squish
+        sql = model.sanitize_sql_array([ <<~SQL.squish, { kind: model.sti_name } ])
           SELECT key, COUNT(*) AS count
-          FROM #{model.table_name}, jsonb_each_text(COALESCE(annotations, '{}'::jsonb))
+          FROM #{entities_table} entities, jsonb_each_text(entities.annotations)
+          WHERE entities.kind = :kind
           GROUP BY key
         SQL
 
@@ -240,11 +256,18 @@ module Junction
       # @param key [String] Restricts the query to a single annotation key.
       # @return [Array<Hash>] List of key/value counts for the entity type.
       def key_value_counts(model, key: nil)
-        conditions = key.nil? ? "" : model.sanitize_sql_array([ "WHERE key = ?", key ])
-        sql = <<~SQL.squish
+        binds = { kind: model.sti_name }
+        conditions = [ "entities.kind = :kind" ]
+
+        if key
+          conditions << "key = :key"
+          binds[:key] = key
+        end
+
+        sql = model.sanitize_sql_array([ <<~SQL.squish, binds ])
           SELECT key, value, COUNT(*) AS count
-          FROM #{model.table_name}, jsonb_each_text(COALESCE(annotations, '{}'::jsonb))
-          #{conditions}
+          FROM #{entities_table} entities, jsonb_each_text(entities.annotations)
+          WHERE #{conditions.join(' AND ')}
           GROUP BY key, value
         SQL
 
@@ -289,7 +312,7 @@ module Junction
       def value_rows_for_key(key)
         @value_rows_for_key ||= {}
         @value_rows_for_key[key] ||= merge_value_rows(
-          ENTITY_TYPES.flat_map { |entity_type| value_rows_for(entity_type.model, key) }
+          self.class.entity_types.flat_map { |entity_type| value_rows_for(entity_type.model, key) }
         )
       end
 
@@ -347,7 +370,7 @@ module Junction
       # @return [Hash<String, Hash>] Map of entity type id to a map of
       #   annotation key and total count.
       def key_counts_by_type
-        @key_counts_by_type ||= ENTITY_TYPES.to_h do |entity_type|
+        @key_counts_by_type ||= self.class.entity_types.to_h do |entity_type|
           [ entity_type.id, key_counts(entity_type.model) ]
         end
       end
@@ -375,7 +398,7 @@ module Junction
       # @return [Boolean] Whether the key is registered as known for any
       #   entity type.
       def known_for_any_type?(key)
-        ENTITY_TYPES.any? { |entity_type| known_for_model?(entity_type.model, key) }
+        self.class.entity_types.any? { |entity_type| known_for_model?(entity_type.model, key) }
       end
 
       # Finds the display title registered for a known annotation key.
@@ -384,7 +407,7 @@ module Junction
       # @return [String, nil] Registered title for the key, or nil if the key
       #   isn't known for any entity type.
       def known_title_for(key)
-        ENTITY_TYPES.lazy.filter_map do |entity_type|
+        self.class.entity_types.lazy.filter_map do |entity_type|
           PluginRegistry.annotations_for(entity_type.model).dig(key, :title)
         end.first
       end
@@ -394,7 +417,7 @@ module Junction
       # @param id [String] Entity type tab id.
       # @return [String] Human-readable, pluralized model name.
       def entity_label(id)
-        entity_type = ENTITY_TYPES.find { |type| type.id == id }
+        entity_type = self.class.entity_types.find { |type| type.id == id }
         entity_type.model.model_name.human(count: 2)
       end
 

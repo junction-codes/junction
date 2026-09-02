@@ -5,7 +5,7 @@ FactoryBot.define do
     sequence(:name) { |n| "role-name-#{n}" }
     sequence(:title) { |n| "Role Name #{n}" }
     description { Faker::Lorem.sentence }
-    system { false }
+    system_role { false }
 
     transient do
       permissions { [] }
@@ -18,7 +18,7 @@ FactoryBot.define do
     end
 
     trait :system do
-      system { true }
+      system_role { true }
     end
 
     trait :with_permissions do

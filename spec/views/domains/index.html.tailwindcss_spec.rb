@@ -4,7 +4,7 @@ RSpec.describe "domains/index", type: :view do
   before do
     parent_domain = Junction::Domain.create!(
       title: "Name",
-      domain_type: "product-area",
+      type: "product-area",
       description: "MyText",
       image_url: "https://example.com/image.png",
       owner: create(:group)
@@ -14,7 +14,7 @@ RSpec.describe "domains/index", type: :view do
       parent_domain,
       Junction::Domain.create!(
         title: "Second Name",
-        domain_type: "product-group",
+        type: "product-group",
         description: "MyText",
         image_url: nil,
         owner: create(:group),

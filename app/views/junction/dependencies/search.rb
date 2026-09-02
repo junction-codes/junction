@@ -22,7 +22,7 @@ module Junction
             ResultList do |list|
               @results.each do |entity|
                 list.item(
-                  value: "#{entity.class.name}:#{entity.id}",
+                  value: entity.id,
                   name: entity.title
                 ) do
                   "#{entity.class.name.demodulize.downcase} · #{entity.type}"

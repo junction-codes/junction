@@ -25,7 +25,7 @@ RSpec.shared_examples "a dependency index action" do |source_factory, path_metho
     it_behaves_like "a paginated index",
       -> { entity_dependencies_path },
       -> { source.dependent_apis.count },
-      :dependency,
+      :relation,
       -> { { source: } }
 
     it "renders a successful response" do

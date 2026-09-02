@@ -15,7 +15,7 @@ RSpec.describe "Junction::Domains scoped parent access", type: :system do
 
   def sign_in_existing_user(user)
     visit new_session_path
-    fill_in "Your email", with: user.email_address
+    fill_in "Your email", with: user.email
     fill_in "Password", with: "Password1!"
     click_button "Submit"
   end
