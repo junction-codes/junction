@@ -182,6 +182,32 @@ def import_groups(path)
   end
 end
 
+def import_locations(path)
+  return unless File.exist?(Rails.root.join(path, 'locations.yaml'))
+
+  YAML.load_file(Rails.root.join(path, 'locations.yaml'), symbolize_names: true).each do |location|
+    namespace = location.fetch(:namespace, "default")
+    next if Junction::Location.find_by(name: location[:name], namespace: namespace)
+
+    Rails.logger.info "Creating location #{location[:title]}"
+    Junction::Location.create(location)
+  end
+end
+
+def import_templates(path)
+  return unless File.exist?(Rails.root.join(path, 'templates.yaml'))
+
+  YAML.load_file(Rails.root.join(path, 'templates.yaml'), symbolize_names: true).each do |template|
+    namespace = template.fetch(:namespace, "default")
+    next if Junction::Template.find_by(name: template[:name], namespace: namespace)
+
+    Rails.logger.info "Creating template #{template[:title]}"
+    template[:owner] = find_reference(Junction::Group, template[:owner], namespace) if template[:owner].present?
+
+    Junction::Template.create(template)
+  end
+end
+
 def import_resources(path)
   return unless File.exist?(Rails.root.join(path, 'resources.yaml'))
 
@@ -281,6 +307,7 @@ if Rails.env.development?
   add_default_admin_to_junction_admins
 
   path = Junction::Engine.seed_data_path(ENV.fetch("JUNCTION_SEED_ORG", "sample"))
+  import_locations(path)
   import_users(path)
   import_groups(path)
   import_domains(path)
@@ -288,5 +315,6 @@ if Rails.env.development?
   import_resources(path)
   import_components(path)
   import_apis(path)
+  import_templates(path)
   link_dependencies(path)
 end

@@ -1,0 +1,54 @@
+- title: ACME Corp
+  name: acme-corp
+  type: url
+  target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/acme-corp.yaml
+  description: |
+    A collection of all Backstage example Groups
+- title: Example Groups
+  name: example-groups
+  type: url
+  target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/acme/org.yaml
+  description: |
+    A collection of all Backstage example Groups
+- title: Example AI Resources
+  name: example-ai-resources
+  type: url
+  target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/all-ai-resources.yaml
+  description: |
+    A collection of all Backstage example AI resources
+- title: Example APIs
+  name: example-apis
+  type: url
+  target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/all-apis.yaml
+  description: |
+    A collection of all Backstage example APIs
+- title: Example Components
+  name: example-components
+  type: url
+  target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/all-components.yaml
+  description: |
+    A collection of all Backstage example components
+- title: Example Domains
+  name: example-domains
+  type: url
+  target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/all-domains.yaml
+  description: |
+    A collection of all Backstage example domains
+- title: Example Resources
+  name: example-resources
+  type: url
+  target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/all-resources.yaml
+  description: |
+    A collection of all Backstage example resources
+- title: Example Systems
+  name: example-systems
+  type: url
+  target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/all-systems.yaml
+  description: |
+    A collection of all Backstage example systems
+- title: Example Catalog
+  name: example-all
+  type: url
+  target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/all.yaml
+  description: |
+    A collection of all Backstage example entities, except users, groups, and templates
