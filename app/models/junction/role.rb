@@ -14,7 +14,8 @@ module Junction
 
     validates :description, presence: true
 
-    has_many :groups, foreign_key: "role_id", class_name: "Junction::Group"
+    has_many :group_roles, dependent: :destroy, class_name: "Junction::GroupRole"
+    has_many :groups, through: :group_roles, class_name: "Junction::Group"
     has_many :role_permissions, dependent: :destroy,
              class_name: "Junction::RolePermission"
 

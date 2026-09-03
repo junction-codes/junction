@@ -11,8 +11,6 @@ group_one:
   image_url: https://example.com/image.png
   parent:
   namespace: default
-  annotations:
-    "junction.codes/role": "admin"
 
 group_two:
   kind: Group

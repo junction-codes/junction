@@ -50,17 +50,17 @@ def create_default_role_groups
   admin_name = Junction::Permissions::UserPermissions::ADMIN_ROLE_NAME
   read_all_name = Junction::Permissions::UserPermissions::READ_ALL_ROLE_NAME
 
-  Junction::Group.find_or_create_by!(name: "junction-admins", namespace: "default") do |g|
+  admins = Junction::Group.find_or_create_by!(name: "junction-admins", namespace: "default") do |g|
     g.title = "Junction Admins"
     g.description = "Default group for administrators. Members receive the Admin role."
-    g.annotations = { "junction.codes/role" => admin_name }
   end
+  admins.roles = [ Junction::Role.find_by(name: admin_name) ].compact
 
-  Junction::Group.find_or_create_by!(name: "junction-readers", namespace: "default") do |g|
+  readers = Junction::Group.find_or_create_by!(name: "junction-readers", namespace: "default") do |g|
     g.title = "Junction Readers"
     g.description = "Default group for read-only access. Members receive the Read all role."
-    g.annotations = { "junction.codes/role" => read_all_name }
   end
+  readers.roles = [ Junction::Role.find_by(name: read_all_name) ].compact
 end
 
 def add_default_admin_to_junction_admins
@@ -166,7 +166,7 @@ def import_groups(path)
       find_reference(Junction::User, member, namespace)
     end
 
-    Junction::Group.create(group.except(:parent))
+    Junction::Group.create(group.except(:parent, :roles))
   end
 
   groups.each do |group|
@@ -179,6 +179,42 @@ def import_groups(path)
     next unless record && parent
 
     record.update!(parent_id: parent.id)
+  end
+end
+
+def import_roles(path)
+  return unless File.exist?(Rails.root.join(path, 'roles.yaml'))
+
+  YAML.load_file(Rails.root.join(path, 'roles.yaml'), symbolize_names: true).each do |role|
+    namespace = role.fetch(:namespace, "default")
+    next if Junction::Role.find_by(name: role[:name], namespace: namespace)
+
+    Rails.logger.info "Creating role #{role[:title]}"
+    permissions = role.fetch(:permissions, [])
+    entity = Junction::Role.create(role.except(:permissions))
+    next unless entity.persisted?
+
+    permissions.each do |permission|
+      entity.role_permissions.create(permission: permission)
+    end
+  end
+end
+
+# Grants roles to groups. Runs after both exist, and after every other import,
+# so a grant is never resolved against a partially loaded catalog.
+def link_group_roles(path)
+  return unless File.exist?(Rails.root.join(path, 'groups.yaml'))
+
+  YAML.load_file(Rails.root.join(path, 'groups.yaml'), symbolize_names: true).each do |group|
+    next if group[:roles].blank?
+
+    namespace = group.fetch(:namespace, "default")
+    record = Junction::Group.find_by(name: group[:name], namespace: namespace)
+    next unless record
+
+    roles = group[:roles].filter_map { |name| find_reference(Junction::Role, name, namespace) }
+    Rails.logger.info "Granting #{roles.size} role(s) to #{group[:title]}"
+    record.roles = roles
   end
 end
 
@@ -308,6 +344,7 @@ if Rails.env.development?
 
   path = Junction::Engine.seed_data_path(ENV.fetch("JUNCTION_SEED_ORG", "sample"))
   import_locations(path)
+  import_roles(path)
   import_users(path)
   import_groups(path)
   import_domains(path)
@@ -317,4 +354,5 @@ if Rails.env.development?
   import_apis(path)
   import_templates(path)
   link_dependencies(path)
+  link_group_roles(path)
 end

@@ -42,15 +42,15 @@ RSpec.describe "Junction::Domains scoped parent access", type: :system do
       user:,
       group: create(
         :group,
-        annotations: {
-          Junction::CorePlugin::ANNOTATION_GROUP_ROLE => create(
+        roles: [
+          create(
             :role,
             permissions: %w[
               junction.codes/domains.owned.read
               junction.codes/domains.owned.write
             ]
-          ).name
-        }
+          )
+        ]
       )
     )
     create(:group_membership, user:, group: user_group)

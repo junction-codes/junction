@@ -10,11 +10,12 @@ RSpec.describe Junction::EntityIntegrity do
     Junction::Session.delete_all
     Junction::Identity.delete_all
     Junction::GroupMembership.delete_all
+    Junction::GroupRole.delete_all
     Junction::RolePermission.delete_all
     Junction::Relation.delete_all
     Junction::Entity.update_all(
       owner_id: nil, system_id: nil, domain_id: nil,
-      parent_id: nil, role_id: nil, location_id: nil
+      parent_id: nil, location_id: nil
     )
     Junction::Entity.delete_all
   end
@@ -61,11 +62,18 @@ RSpec.describe Junction::EntityIntegrity do
       expect(problem_ids(:parent_kind)).to include(domain.id)
     end
 
-    it "detects a role held by something that is not a group" do
-      system = create(:system)
-      system.update_column(:role_id, create(:role).id)
+    it "detects a role grant held by something that is not a group" do
+      grant = Junction::GroupRole.create!(group: create(:group), role: create(:role))
+      grant.update_column(:group_id, create(:system).id)
 
-      expect(problem_ids(:role_holder_kind)).to include(system.id)
+      expect(problem_ids(:group_role_group)).to include(grant.id)
+    end
+
+    it "detects a role grant naming something that is not a role" do
+      grant = Junction::GroupRole.create!(group: create(:group), role: create(:role))
+      grant.update_column(:role_id, create(:system).id)
+
+      expect(problem_ids(:group_role_role)).to include(grant.id)
     end
   end
 

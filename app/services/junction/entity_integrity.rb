@@ -85,14 +85,14 @@ module Junction
         relation: -> { references(:domain_id, %w[Domain]) }
       ),
       Check.new(
-        id: :role_kind,
-        description: "entities whose role is not a Role",
-        relation: -> { references(:role_id, %w[Role]) }
+        id: :group_role_group,
+        description: "role grants held by something other than a group",
+        relation: -> { GroupRole.where.not(group_id: Group.select(:id)) }
       ),
       Check.new(
-        id: :role_holder_kind,
-        description: "entities holding a role that are not groups",
-        relation: -> { Entity.where.not(role_id: nil).where.not(kind: "Group") }
+        id: :group_role_role,
+        description: "role grants naming something that is not a Role",
+        relation: -> { GroupRole.where.not(role_id: Role.select(:id)) }
       ),
       Check.new(
         id: :parent_kind,

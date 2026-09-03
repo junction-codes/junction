@@ -17,6 +17,7 @@ ENTITY_FIXTURE_SETS = %w[
   junction/roles
   junction/groups
   junction/group_memberships
+  junction/group_roles
   junction/domains
   junction/systems
   junction/components

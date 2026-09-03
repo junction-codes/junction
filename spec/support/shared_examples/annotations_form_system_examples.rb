@@ -11,6 +11,15 @@ RSpec.shared_examples "an annotations form" do |factory, edit_path, permissions,
   let(:entity) { create(factory) }
 
   before do
+    # Known keys come from plugin registrations; the engine ships none of its
+    # own, so the example registers the one it asserts on.
+    if known_key
+      allow(Junction::PluginRegistry).to receive(:annotations_for).and_call_original
+      allow(Junction::PluginRegistry).to receive(:annotations_for)
+        .with(entity.class)
+        .and_return({ known_key => { key: known_key, title: known_key, placeholder: nil } })
+    end
+
     sign_in_with_permissions(permissions)
     visit instance_exec(entity, &edit_path)
   end

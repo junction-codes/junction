@@ -12,12 +12,7 @@ module SystemAuthenticationHelper
     create(
       :group_membership,
       user:,
-      group: create(
-        :group,
-        annotations: {
-          Junction::CorePlugin::ANNOTATION_GROUP_ROLE => create(:role, permissions:).name
-        }
-      )
+      group: create(:group, roles: [ create(:role, permissions:) ])
     )
 
     visit new_session_path

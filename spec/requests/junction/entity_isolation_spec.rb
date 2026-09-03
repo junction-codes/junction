@@ -92,15 +92,23 @@ RSpec.describe "entity isolation", type: :request do
     end
   end
 
-  describe "role assignment" do
-    it "rejects a role reference that points at another kind" do
-      group = build(:group, role_id: create(:component).id)
-      expect(group).not_to be_valid
+  describe "role grants" do
+    it "cannot be set through the group form without role write access" do
+      sign_in_user_with_permissions(%w[
+        junction.codes/groups.all.read junction.codes/groups.all.write
+      ])
+      group = create(:group)
+      role = create(:role)
+
+      patch group_path(namespace: group.namespace, name: group.name),
+            params: { group: { title: group.title, role_ids: [ role.id ] } }
+
+      expect(group.reload.roles).to be_empty
     end
 
-    it "accepts a role reference that points at a role" do
-      group = build(:group, role_id: create(:role).id)
-      expect(group).to be_valid
+    it "is not reachable through a group annotation" do
+      group = create(:group, annotations: { "junction.codes/role" => "admin" })
+      expect(group.reload.roles).to be_empty
     end
   end
 end

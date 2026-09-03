@@ -34,8 +34,19 @@ module Junction
       {
         available_parents:,
         parent_editable: parent_editable_for?(entity),
-        type_options:
+        type_options:,
+        available_roles: (Role.order(:title) if can_manage_roles?)
       }
+    end
+
+    # Whether the current user may grant roles.
+    #
+    # Granting a role is a privilege change, so it is gated on role write
+    # access rather than on the ability to edit the group.
+    #
+    # @return [Boolean]
+    def can_manage_roles?
+      allowed_to?(:update?, Role)
     end
 
     def create_params
@@ -44,7 +55,16 @@ module Junction
         :parent_id, :title, :type, *annotation_param_entries
       ]))
 
-      sanitize_tree_parent_id(attrs, parent_candidates: available_parents)
+      attrs = sanitize_tree_parent_id(attrs, parent_candidates: available_parents)
+      attrs[:role_ids] = permitted_role_ids if can_manage_roles?
+      attrs
+    end
+
+    # Role IDs the request asked to grant, ignoring blanks.
+    #
+    # @return [Array<Integer>] The role IDs.
+    def permitted_role_ids
+      params.fetch(:group, {}).fetch(:role_ids, []).reject(&:blank?).map(&:to_i)
     end
 
     # Returns the available parents for the current Group and user.

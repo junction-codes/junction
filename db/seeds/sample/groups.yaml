@@ -6,6 +6,8 @@
     - admin
     - aadmin
 - title: Junction Developers
+  roles:
+    - catalog-editor
   name: junction-developers
   email: developers@example.com
   description: |

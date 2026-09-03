@@ -3,7 +3,6 @@
 module Junction
   # Represents the Junction engine's core plugin.
   class CorePlugin < ApplicationPlugin
-    ANNOTATION_GROUP_ROLE = "junction.codes/role"
     DOMAIN = "junction.codes"
 
     domain DOMAIN
@@ -47,10 +46,6 @@ module Junction
         access:,
         description: "#{access.titleize} access to all dashboards"
       )
-    end
-
-    for_entity("Junction::Group") do |s|
-      s.annotation(key: ANNOTATION_GROUP_ROLE, title: "Role", placeholder: "Role name")
     end
 
     permission(

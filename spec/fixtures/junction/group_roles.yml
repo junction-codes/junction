@@ -1,0 +1,6 @@
+# Group One holds the admin role, which is what signs the fixture user in with
+# full permissions. The grant is a row rather than a group annotation so that
+# editing a group cannot change anyone's privileges.
+group_one_admin:
+  group: group_one
+  role: admin

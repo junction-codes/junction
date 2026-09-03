@@ -2,10 +2,12 @@
 
 require "rails_helper"
 
+SAMPLE_ANNOTATION = "junction.codes/team"
+
 RSpec.describe "Junction::AnnotationsController", type: :request do
   before do
     create(:component, annotations: { "github.com/project-slug" => "org/repo" })
-    create(:group, annotations: { Junction::CorePlugin::ANNOTATION_GROUP_ROLE => "admin" })
+    create(:group, annotations: { SAMPLE_ANNOTATION => "admin" })
   end
 
   describe "GET /annotations" do
@@ -39,7 +41,7 @@ RSpec.describe "Junction::AnnotationsController", type: :request do
   describe "GET /annotations/keys/:annotation_key" do
     let(:slug) do
       Junction::Annotations::Overview.new
-        .slug_for(Junction::CorePlugin::ANNOTATION_GROUP_ROLE)
+        .slug_for(SAMPLE_ANNOTATION)
     end
 
     it_behaves_like "an annotations overview action",

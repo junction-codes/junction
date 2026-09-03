@@ -6,11 +6,12 @@ module Junction
       # Form for creating and editing groups.
       class GroupForm < Base
         def initialize(group:, available_parents:, type_options:,
-                       parent_editable: true)
+                       parent_editable: true, available_roles: nil)
           @group = group
           @available_parents = available_parents
           @parent_editable = parent_editable
           @type_options = type_options
+          @available_roles = available_roles
         end
 
         def view_template
@@ -44,6 +45,8 @@ module Junction
               end
             end
 
+            roles_section(f)
+
             AnnotationsForm(form: f, context: @group)
 
             # Form actions.
@@ -58,6 +61,24 @@ module Junction
         end
 
         private
+
+        # Role grants, shown only to users who may manage them.
+        #
+        # @param form [ActionView::Helpers::FormBuilder] The form builder.
+        def roles_section(form)
+          return if @available_roles.nil?
+
+          Card do |card|
+            card.header do |header|
+              header.title { t(".roles_title") }
+              header.description { t(".roles_description") }
+            end
+
+            card.content do
+              Roles(form, :role_ids, available_roles: @available_roles, label: "")
+            end
+          end
+        end
 
         def cancel_path
           @group.id.nil? ? groups_path : junction_catalog_path(@group)

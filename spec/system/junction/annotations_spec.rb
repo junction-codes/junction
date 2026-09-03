@@ -2,10 +2,12 @@
 
 require "rails_helper"
 
+SAMPLE_ANNOTATION = "junction.codes/team"
+
 RSpec.describe "Junction::Annotations overview", :js, type: :system do
   before do
     create(:component, annotations: { "github.com/project-slug" => "org/repo" })
-    create(:group, annotations: { Junction::CorePlugin::ANNOTATION_GROUP_ROLE => "admin" })
+    create(:group, annotations: { SAMPLE_ANNOTATION => "admin" })
     sign_in_with_permissions(%w[junction.codes/annotations.all.read])
   end
 
@@ -31,7 +33,7 @@ RSpec.describe "Junction::Annotations overview", :js, type: :system do
     visit annotations_path
 
     expect(page).to have_css("turbo-frame#annotations_keys", wait: 10)
-      .and have_text(Junction::CorePlugin::ANNOTATION_GROUP_ROLE, wait: 10)
+      .and have_text(SAMPLE_ANNOTATION, wait: 10)
   end
 
   it "loads entity types content when the tab is selected" do
@@ -45,8 +47,8 @@ RSpec.describe "Junction::Annotations overview", :js, type: :system do
   it "loads a key panel when a vertical tab is selected" do
     visit annotations_path
     slug = Junction::Annotations::Overview.new
-      .slug_for(Junction::CorePlugin::ANNOTATION_GROUP_ROLE)
-    click_button Junction::CorePlugin::ANNOTATION_GROUP_ROLE
+      .slug_for(SAMPLE_ANNOTATION)
+    click_button SAMPLE_ANNOTATION
 
     expect(page).to have_css("turbo-frame#annotation_key_#{slug}[complete]", wait: 10)
   end
@@ -54,8 +56,8 @@ RSpec.describe "Junction::Annotations overview", :js, type: :system do
   it "renders charts when a non-default vertical tab is selected" do
     visit annotations_path
     slug = Junction::Annotations::Overview.new
-      .slug_for(Junction::CorePlugin::ANNOTATION_GROUP_ROLE)
-    click_button Junction::CorePlugin::ANNOTATION_GROUP_ROLE
+      .slug_for(SAMPLE_ANNOTATION)
+    click_button SAMPLE_ANNOTATION
 
     expect(page).to have_css("turbo-frame#annotation_key_#{slug} canvas", wait: 10)
   end

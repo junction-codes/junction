@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_02_000000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_03_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -39,7 +39,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_02_000000) do
     t.string "namespace", default: "default", null: false
     t.bigint "owner_id"
     t.bigint "parent_id"
-    t.bigint "role_id"
     t.string "source_ref"
     t.jsonb "spec", default: {}, null: false
     t.datetime "synced_at"
@@ -59,10 +58,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_02_000000) do
     t.index ["location_id"], name: "index_junction_entities_on_location_id"
     t.index ["owner_id"], name: "index_junction_entities_on_owner_id"
     t.index ["parent_id"], name: "index_junction_entities_on_parent_id"
-    t.index ["role_id"], name: "index_junction_entities_on_role_id"
     t.index ["system_id"], name: "index_junction_entities_on_system_id"
     t.index ["tags"], name: "index_junction_entities_on_tags", using: :gin
-    t.check_constraint "managed_by::text = ANY (ARRAY['user'::character varying, 'location'::character varying, 'plugin'::character varying]::text[])", name: "junction_entities_managed_by_values"
+    t.check_constraint "managed_by::text = ANY (ARRAY['user'::character varying::text, 'location'::character varying::text, 'plugin'::character varying::text])", name: "junction_entities_managed_by_values"
   end
 
   create_table "junction_group_memberships", force: :cascade do |t|
@@ -72,6 +70,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_02_000000) do
     t.bigint "user_id", null: false
     t.index ["group_id"], name: "index_junction_group_memberships_on_group_id"
     t.index ["user_id"], name: "index_junction_group_memberships_on_user_id"
+  end
+
+  create_table "junction_group_roles", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "group_id", null: false
+    t.bigint "role_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["group_id", "role_id"], name: "index_junction_group_roles_on_group_id_and_role_id", unique: true
+    t.index ["role_id"], name: "index_junction_group_roles_on_role_id"
   end
 
   create_table "junction_identities", force: :cascade do |t|
@@ -121,10 +128,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_02_000000) do
   add_foreign_key "junction_entities", "junction_entities", column: "location_id"
   add_foreign_key "junction_entities", "junction_entities", column: "owner_id"
   add_foreign_key "junction_entities", "junction_entities", column: "parent_id"
-  add_foreign_key "junction_entities", "junction_entities", column: "role_id"
   add_foreign_key "junction_entities", "junction_entities", column: "system_id"
   add_foreign_key "junction_group_memberships", "junction_entities", column: "group_id"
   add_foreign_key "junction_group_memberships", "junction_entities", column: "user_id"
+  add_foreign_key "junction_group_roles", "junction_entities", column: "group_id", on_delete: :cascade
+  add_foreign_key "junction_group_roles", "junction_entities", column: "role_id", on_delete: :cascade
   add_foreign_key "junction_identities", "junction_entities", column: "user_id"
   add_foreign_key "junction_relations", "junction_entities", column: "location_id", on_delete: :nullify
   add_foreign_key "junction_relations", "junction_entities", column: "source_id", on_delete: :cascade

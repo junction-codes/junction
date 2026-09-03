@@ -2,6 +2,8 @@
 
 require "rails_helper"
 
+SAMPLE_ANNOTATION = "junction.codes/team"
+
 RSpec.describe "Junction::Annotations forms", type: :system do
   describe "known and other annotation fields" do
     before { driven_by(:rack_test) }
@@ -10,7 +12,7 @@ RSpec.describe "Junction::Annotations forms", type: :system do
       :group,
       ->(group) { edit_group_path(group) },
       %w[junction.codes/groups.all.read junction.codes/groups.all.write],
-      known_key: Junction::CorePlugin::ANNOTATION_GROUP_ROLE
+      known_key: SAMPLE_ANNOTATION
 
     it_behaves_like "an annotations form",
       :component,
