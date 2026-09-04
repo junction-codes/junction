@@ -3,9 +3,9 @@
 module Junction
   # Tracks where an entity came from.
   #
-  # An entity created through the UI is managed by its user. One imported from
-  # a file is managed by the location that declared it, and should not be
-  # edited in place -- the next import would overwrite the change.
+  # An entity created through the UI is managed through the UI. One imported
+  # from a file is managed by the location that declared it, and should not be
+  # edited in place since the next import would overwrite the change.
   #
   # This is schema and bookkeeping only. Nothing imports from a location yet.
   module Sourced

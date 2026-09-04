@@ -60,7 +60,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_03_000000) do
     t.index ["parent_id"], name: "index_junction_entities_on_parent_id"
     t.index ["system_id"], name: "index_junction_entities_on_system_id"
     t.index ["tags"], name: "index_junction_entities_on_tags", using: :gin
-    t.check_constraint "managed_by::text = ANY (ARRAY['user'::character varying::text, 'location'::character varying::text, 'plugin'::character varying::text])", name: "junction_entities_managed_by_values"
+    t.check_constraint "managed_by::text = ANY (ARRAY['user'::character varying, 'location'::character varying, 'plugin'::character varying]::text[])", name: "junction_entities_managed_by_values"
   end
 
   create_table "junction_group_memberships", force: :cascade do |t|

@@ -5,12 +5,11 @@ module Junction
   #
   # The password digest lives here rather than on `junction_entities` so that
   # the one genuinely secret column is not returned by queries against the
-  # catalog. Every kind now shares a table, so a digest stored there would be
+  # catalog. Every kind shares a table, so a digest stored there would be
   # reachable by any `SELECT *`, serializer, or diagnostic dump that touches
   # an entity.
   #
-  # The address stays on the entity as `email`: it is public, rendered as a
-  # mailto link throughout the UI, and read directly by search and filters.
+  # The address stays on the entity as `email`.
   class Credential < ApplicationRecord
     has_secure_password
 

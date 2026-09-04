@@ -3,9 +3,6 @@
 require "rails_helper"
 
 RSpec.describe Junction::Kinds do
-  # Contexts are persisted in junction_role_permissions as part of the
-  # permission string (e.g. "junction.codes/apis.all.read"). Renaming one
-  # silently invalidates every stored role permission that uses it.
   let(:persisted_contexts) do
     %w[apis components domains groups resources roles systems users]
   end

@@ -45,8 +45,6 @@ RSpec.shared_examples "an annotated model" do |factory|
   end
 
   describe "known annotation precedence" do
-    # Known keys come from plugin registrations. The engine registers none of
-    # its own, so the example supplies one.
     let(:known_key) { "example.com/known" }
     let(:model_class) { Junction.const_get(factory.to_s.camelize) }
 

@@ -5,12 +5,12 @@ module Junction
   #
   # Every catalog entity must have an owner, so the association is required.
   #
-  # An owner may be a group or a user. Both now live in `junction_entities`,
-  # so the association needs no polymorphism to span them -- which is what
-  # closes Backstage's `spec.owner: user:...` case.
+  # An owner may be a group or a user. Both live in the same table, so the
+  # association needs no polymorphism to span them.
   module Ownable
     extend ActiveSupport::Concern
 
+    # Kinds that can be owners.
     OWNER_KINDS = %w[Group User].freeze
 
     included do

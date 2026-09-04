@@ -13,6 +13,7 @@ module Junction
     # Permission context for the record under authorization.
     #
     # @return [String] The context.
+    #
     # @raise [ArgumentError] If the record's kind is not registered.
     def context
       klass = record.is_a?(Class) ? record : record.class

@@ -3,12 +3,7 @@
 module Junction
   # A typed, directed edge between two entities.
   #
-  # Replaces the polymorphic `Junction::Dependency`. Now that every kind shares
-  # one table, both endpoints are ordinary foreign keys with real referential
-  # integrity -- which the polymorphic table never had.
-  #
-  # Only the forward direction is stored. Backstage materializes both and lets
-  # them drift; the inverse is derived here instead. See {TYPES}.
+  # Only the forward direction is stored.
   class Relation < ApplicationRecord
     DEPENDS_ON = "depends_on"
     PROVIDES_API = "provides_api"

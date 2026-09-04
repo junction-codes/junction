@@ -2,11 +2,6 @@
 
 module Junction
   # Represents a role used for authorization.
-  #
-  # Roles are catalog entities so they can be declared in YAML and imported
-  # alongside everything else. The `system` flag lives in `spec` rather than in
-  # a column: every entity row now has a `system` association, which a `system`
-  # attribute would be ambiguous with.
   class Role < Entity
     self.default_icon = "shield-check"
 

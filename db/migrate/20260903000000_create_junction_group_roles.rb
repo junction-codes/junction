@@ -2,7 +2,7 @@
 
 # Moves the group-to-role link out of a group annotation and into a join table.
 #
-# The annotation was the authoritative link: `UserPermissions` resolved roles by
+# The annotation was the authoritative link. `UserPermissions` resolved roles by
 # plucking `annotations` and looking roles up by name, while the `role_id`
 # column it synced was never read. That made a privilege grant a free-text key
 # in the generic annotations form, reachable by anyone who could edit a group.

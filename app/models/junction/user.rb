@@ -17,9 +17,6 @@ module Junction
 
     normalizes :email, with: ->(e) { e.strip.downcase }
 
-    # A user has one address: the one they are contacted at and the one they
-    # sign in with. It lives on the entity, matching Backstage's
-    # `spec.profile.email`, which groups use for the same purpose.
     validates :email, presence: true, format: URI::MailTo::EMAIL_REGEXP,
               uniqueness: { scope: :kind },
               confirmation: { if: :will_save_change_to_email? }
@@ -89,7 +86,6 @@ module Junction
       nil
     end
 
-    # @return [String, nil] The password being assigned, if any.
     def password
       credential&.password
     end

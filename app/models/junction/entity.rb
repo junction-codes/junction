@@ -3,11 +3,9 @@
 module Junction
   # Base class for every catalog entity.
   #
-  # All kinds share the `junction_entities` table using single table
-  # inheritance. The discriminator is `kind` rather than `type`, which leaves
-  # `type` free to keep its existing meaning: the entity's catalog type
-  # vocabulary (`openapi`, `service`, `team`, ...) as used by forms, filters,
-  # and Ransack queries.
+  # All kinds share the same table using single table inheritance. The
+  # discriminator is `kind` rather than `type`, which leaves `type` free to be
+  # the entity's catalog type (`openapi`, `service`, `team`, ...).
   #
   # Fields default to living in the `spec` jsonb. A field earns a real column
   # only by being written on nearly every form submit *and* filtered or sorted
@@ -50,8 +48,8 @@ module Junction
 
     # Kinds that appear in catalog listings, global search, and the dashboard.
     #
-    # Auth principals and RBAC configuration are excluded. Now that every kind
-    # shares a table, this scope is what keeps them out of user-facing queries.
+    # Auth principals and RBAC configuration are excluded to keep them out of
+    # user-facing queries.
     scope :catalog, -> { where(kind: Junction::Kinds.catalog_names) }
 
     class << self
@@ -80,8 +78,8 @@ module Junction
 
       # Whether this kind has an owner.
       #
-      # Every row now has an `owner_id` column, so `respond_to?` can no longer
-      # distinguish an ownable kind from one that simply leaves it null.
+      # Defaults to `false`. Kinds that require an owner should include the
+      # `Ownable` concern which overrides this to return `true`.
       #
       # @return [Boolean]
       def ownable?
@@ -90,11 +88,11 @@ module Junction
 
       # Ransack allowlist for cross-kind queries.
       #
-      # Deliberately narrow. Every kind shares a table now, so anything listed
-      # here becomes a URL-driven query surface on every kind, inherited by any
-      # kind that does not override it. Contact addresses, the spec payload,
-      # annotations, tags, labels, and every foreign key are excluded; kinds
-      # that need one add it to their own allowlist.
+      # Deliberately narrow. Every kind shares a table, so anything listed here
+      # becomes a URL-driven query surface on every kind, inherited by any kind
+      # that doesn't override it. Include only common, non-sensitive attributes.
+      # Kinds that need additional attributes should add it to their own
+      # allowlist.
       def ransackable_attributes(_auth_object = nil)
         %w[created_at description lifecycle name title type updated_at]
       end
@@ -110,8 +108,9 @@ module Junction
     # instantiating, so this only rejects assignment from user input.
     #
     # @param value [String] The kind to assign.
-    # @raise [ActiveRecord::ReadonlyAttributeError] Always, unless the value
-    #   already matches the model class.
+    #
+    # @raise [ActiveRecord::ReadonlyAttributeError] If the value doesn't match
+    #   the model class.
     def kind=(value)
       return super if value.to_s == self.class.sti_name
 

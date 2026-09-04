@@ -2,9 +2,6 @@
 
 module Junction
   # Provides helpers for controllers of entities that have an owner.
-  #
-  # Read scoping lives in {Junction::ReadScoped}, which this includes, because
-  # it applies to kinds without an owner too.
   module HasOwner
     extend ActiveSupport::Concern
 

@@ -13,8 +13,9 @@ module Junction
                               .map { |key, opts| [ opts[:name], key ] }
     end
 
-    # Options for the controller's kind's type field, merging the declared
-    # vocabulary with the values actually in use.
+    # Options for the controller's kind's type field.
+    #
+    # Declared types are merged with observed values from the database.
     #
     # @return [Hash] Hash of options.
     def type_options

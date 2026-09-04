@@ -7,8 +7,7 @@
 # with real foreign keys, now that every entity shares one table. Password
 # digests move to `junction_credentials` so the one genuinely secret column no
 # longer sits beside public catalog data. Addresses stay on the entity as
-# `email`, which is what Backstage's `spec.profile.email` means for both users
-# and groups, and which several queries and filters read directly.
+# `email`.
 #
 # Rows are copied with their source table and primary key recorded in temporary
 # `legacy_*` columns, which is how intra-entity references are remapped without
@@ -90,8 +89,6 @@ class CreateJunctionEntities < ActiveRecord::Migration[8.1]
 
   private
 
-  # --- Table creation -------------------------------------------------------
-
   def create_entities_table
     create_table :junction_entities do |t|
       t.string :kind, null: false
@@ -106,9 +103,8 @@ class CreateJunctionEntities < ActiveRecord::Migration[8.1]
       t.jsonb :links, null: false, default: []
       t.string :tags, null: false, default: [], array: true
 
-      # Catalog type vocabulary. Not the STI discriminator -- the model sets
-      # `inheritance_column` to "kind", which leaves `type` free to keep its
-      # existing meaning in forms, filters, and Ransack queries.
+      # Catalog type vocabulary. Not the STI discriminator, the model sets
+      # `inheritance_column` to "kind", which leaves `type` free.
       t.string :type
       t.string :lifecycle
 
@@ -166,8 +162,6 @@ class CreateJunctionEntities < ActiveRecord::Migration[8.1]
     add_foreign_key :junction_credentials, :junction_entities,
                     column: :entity_id, on_delete: :cascade
   end
-
-  # --- Row copying ----------------------------------------------------------
 
   def copy_apis
     execute(<<~SQL.squish)
@@ -258,10 +252,6 @@ class CreateJunctionEntities < ActiveRecord::Migration[8.1]
     SQL
   end
 
-  # A user's address is copied to `email` as the public contact address, which
-  # is what Backstage's `spec.profile.email` means for both users and groups.
-  # The login identifier is a separate concern and moves to
-  # junction_credentials.
   def copy_users
     execute(<<~SQL.squish)
       INSERT INTO junction_entities
@@ -276,9 +266,9 @@ class CreateJunctionEntities < ActiveRecord::Migration[8.1]
     SQL
   end
 
-  # The `system` boolean becomes `spec.system_role`. It cannot stay a column:
-  # every entity row now has a `system` association, so a `system` attribute
-  # would be ambiguous between the two.
+  # The `system` boolean becomes `spec.system_role`. It cannot stay a column
+  # since every entity row now has a `system` association, so a `system`
+  # attribute would be ambiguous between the two.
   def copy_roles
     execute(<<~SQL.squish)
       INSERT INTO junction_entities
@@ -290,8 +280,6 @@ class CreateJunctionEntities < ActiveRecord::Migration[8.1]
       FROM junction_roles r
     SQL
   end
-
-  # --- Reference remapping --------------------------------------------------
 
   def remap_entity_references
     REMAPPED_REFERENCES.each do |column, table|
@@ -327,7 +315,7 @@ class CreateJunctionEntities < ActiveRecord::Migration[8.1]
     SQL
   end
 
-  # Duplicate edges are collapsed: junction_dependencies has no uniqueness
+  # Duplicate edges are collapsed. `junction_dependencies` has no uniqueness
   # constraint, and two identical edges mean the same thing. Self-edges are
   # skipped and reported rather than raised on, so a pre-existing data problem
   # does not block the migration.
@@ -368,8 +356,6 @@ class CreateJunctionEntities < ActiveRecord::Migration[8.1]
       WHERE e.legacy_table = '#{legacy_table}' AND e.legacy_id = t.#{column}
     SQL
   end
-
-  # --- Verification ---------------------------------------------------------
 
   def verify_counts!(before)
     after = select_all("SELECT kind, COUNT(*) AS total FROM junction_entities GROUP BY kind")
@@ -418,8 +404,6 @@ class CreateJunctionEntities < ActiveRecord::Migration[8.1]
     say "Skipping #{count} self-referential dependency row(s); they cannot be " \
         "represented in junction_relations."
   end
-
-  # --- Constraints ----------------------------------------------------------
 
   def finalize_entities_table
     %w[
@@ -480,8 +464,6 @@ class CreateJunctionEntities < ActiveRecord::Migration[8.1]
     add_foreign_key :junction_identities, :junction_entities, column: :user_id
     add_foreign_key :junction_role_permissions, :junction_entities, column: :role_id
   end
-
-  # --- Helpers --------------------------------------------------------------
 
   def dependency_table_case(column)
     whens = DEPENDENCY_TABLES.map { |type, table| "WHEN '#{type}' THEN '#{table}'" }

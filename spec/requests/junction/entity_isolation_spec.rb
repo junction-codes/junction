@@ -2,9 +2,6 @@
 
 require "rails_helper"
 
-# Auth principals and RBAC configuration used to be unreachable from catalog
-# queries because they lived in their own tables. Now that every kind shares
-# junction_entities, that isolation is enforced in code, so it needs guarding.
 RSpec.describe "entity isolation", type: :request do
   include AuthenticationHelper
 

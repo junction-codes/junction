@@ -3,9 +3,9 @@
 module Junction
   # Provides access to the `links` jsonb field.
   #
-  # Links are Backstage's `metadata.links`: a list of external references such
-  # as dashboards, runbooks, and admin tools. Each link has a `url`, an
-  # optional `title`, and an optional `icon`.
+  # This field is a list of external references such as dashboards, runbooks,
+  # and admin tools. Each link has a `url`, an optional `title`, and an optional
+  # `icon`.
   module Linkable
     extend ActiveSupport::Concern
 

@@ -123,8 +123,6 @@ module Junction
       perm = permission.is_a?(Permission) ? permission : Permission.parse(permission)
       return true if perm.nil? || perm.all?
 
-      # Every entity row has an owner_id column now, so `respond_to?` can no
-      # longer tell an ownable kind from one that simply leaves it null.
       return false unless entity.class.try(:ownable?)
       return false if entity.owner_id.blank?
 

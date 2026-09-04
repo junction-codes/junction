@@ -4,9 +4,8 @@ module Junction
   # Value object describing a single entity kind.
   #
   # A kind is the STI discriminator value for {Junction::Entity} together with
-  # the metadata that used to be spread across a dozen hard-coded lists: the
-  # route scope, the RBAC permission context, the catalog options section, and
-  # the capability flags deciding which behaviours apply.
+  # the metadata: the route scope, the RBAC permission context, the catalog
+  # options section, and the capability flags deciding which behaviors apply.
   #
   # Everything derives from the singular `scope`, so a kind cannot drift out of
   # sync with itself. That matters most for {#context}: permission strings such
@@ -20,13 +19,12 @@ module Junction
 
     # Initializes a new kind.
     #
-    # @param scope [String, Symbol] Singular scope everything else derives
-    #   from (e.g. `:api`).
-    # @param model_name [String, nil] Model class name, when it is not the
-    #   kind's name in the Junction namespace. Plugin kinds need this.
+    # @param scope [Symbol] Singular scope everything else derives from.
+    # @param model_name [String] Model class name when it's not the kind's name
+    #   in the Junction namespace. Used for kinds defined by plugins.
     # @param catalog [Boolean] Whether the kind appears in catalog listings,
     #   global search, and the dashboard.
-    # @param ownable [Boolean] Whether the kind has an owner, and so receives
+    # @param ownable [Boolean] Whether the kind has an owner and receives
     #   `owned` permissions.
     # @param sluggable [Boolean] Whether the kind is routed at
     #   `/:plural/:namespace/:name`.
@@ -136,10 +134,10 @@ module Junction
 
     # Whether the kind is surfaced to end users.
     #
-    # A kind may be registered before it has controllers and views. Until it
-    # is exposed it declares no permissions, draws no routes, and appears in no
-    # listing -- but it still resolves from `kind`, so rows created by seeds or
-    # a plugin load as the right class rather than failing.
+    # A kind may be registered before it has controllers and views. Until it's
+    # exposed it declares no permissions, draws no routes, and appears in no
+    # listings, but it still resolves from `kind` so that rows created by seeds
+    # or a plugin load as the right class rather than failing.
     #
     # @return [Boolean]
     def exposed?

@@ -3,10 +3,6 @@
 module Junction
   # Builds the relations a controller may list, from the current user's
   # permissions.
-  #
-  # Separate from {Junction::HasOwner} because read scoping applies to every
-  # kind, including the ones that have no owner: a user or a group is listed
-  # under `.all.read` alone, since `.owned.*` is never granted for them.
   module ReadScoped
     extend ActiveSupport::Concern
 
@@ -32,7 +28,7 @@ module Junction
     # Every kind shares a table now, so a cross-kind listing can be one query
     # instead of one per model merged in Ruby. Permissions still differ per
     # kind, so the relation is composed from a per-kind check rather than
-    # querying Entity directly -- which would also leak users and groups into
+    # querying Entity directly, which would also leak users and groups into
     # catalog listings.
     #
     # @param kinds [Array<Junction::Kind>] The kinds to include.

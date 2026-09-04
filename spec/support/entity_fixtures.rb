@@ -6,7 +6,7 @@
 # Rails deletes each table a fixture set covers before inserting, and it caches
 # loaded fixtures per example group. A group declaring only some of these files
 # would therefore wipe the rows belonging to the others, while rows in tables it
-# does not cover -- junction_group_memberships in particular -- survive and are
+# does not cover, junction_group_memberships in particular, survive and are left
 # left pointing at entities that no longer exist.
 #
 # Declaring the whole set everywhere keeps the loaded data identical between

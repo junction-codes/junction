@@ -75,7 +75,7 @@ module Junction
     # Every kind now shares one `type` column, so the section a value belongs
     # to depends on the entity's kind rather than on the field name.
     #
-    # @param name [String, Symbol] Section name (for example, :apis).
+    # @param name [Symbol] Section name.
     # @return [ActiveSupport::HashWithIndifferentAccess]
     def self.section(name)
       options.fetch(name, {}.with_indifferent_access)

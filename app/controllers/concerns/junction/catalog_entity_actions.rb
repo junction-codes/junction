@@ -1,22 +1,16 @@
 # frozen_string_literal: true
 
 module Junction
-  # The seven CRUD actions every catalog entity controller shares.
+  # Standard CRUD actions for catalog entities.
   #
-  # The controllers stay one-per-kind: routes, breadcrumbs, and the view
-  # classes are all keyed on the controller name, and each kind's views take a
-  # differently named argument. What they no longer carry is the action bodies,
-  # which were identical apart from the model, the view namespace, and which
-  # options the views want.
-  #
-  # A controller including this must define {#entity_class} and
-  # {#create_params}. Everything else has a default.
+  # @abstract +#create_params+ and +#entity_class+ must be defined by the
+  #   including controller.
   module CatalogEntityActions
     extend ActiveSupport::Concern
 
     include ReadScoped
 
-    # Actions that operate on a single entity, and so need it loaded.
+    # Actions that operate on a single entity.
     MEMBER_ACTIONS = %i[show edit update destroy].freeze
 
     included do
@@ -31,7 +25,6 @@ module Junction
       # actions without an entity, so the full list is declared here in one go.
       #
       # @param actions [Array<Symbol>] Extra actions needing the entity.
-      # @return [void]
       def load_entity_for(*actions)
         before_action :set_entity, only: MEMBER_ACTIONS + actions
       end
@@ -141,6 +134,7 @@ module Junction
     # The model this controller manages.
     #
     # @return [Class] The entity class.
+    #
     # @raise [NotImplementedError] If not overridden.
     def entity_class
       raise NotImplementedError, "#{self.class} must define #entity_class"
@@ -149,6 +143,7 @@ module Junction
     # Permitted parameters for creating an entity.
     #
     # @return [ActionController::Parameters] The permitted parameters.
+    #
     # @raise [NotImplementedError] If not overridden.
     def create_params
       raise NotImplementedError, "#{self.class} must define #create_params"

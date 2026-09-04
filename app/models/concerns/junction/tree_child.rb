@@ -44,8 +44,8 @@ module Junction
 
     # Validates that the parent is the same kind as the entity.
     #
-    # Domains and groups share one `parent_id` column now, so a cross-kind
-    # parent is representable. The association is kind-scoped and would simply
+    # Domains and groups share one `parent_id` column, so a cross-kind parent is
+    # technically representable. The association is kind-scoped and would simply
     # resolve to nil, hiding the problem, so reject it explicitly.
     def tree_child_parent_kind_matches
       return if parent_id.blank?

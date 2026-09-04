@@ -40,8 +40,7 @@ RSpec.describe "Junction::AnnotationsController", type: :request do
 
   describe "GET /annotations/keys/:annotation_key" do
     let(:slug) do
-      Junction::Annotations::Overview.new
-        .slug_for(SAMPLE_ANNOTATION)
+      Junction::Annotations::Overview.new.slug_for(SAMPLE_ANNOTATION)
     end
 
     it_behaves_like "an annotations overview action",

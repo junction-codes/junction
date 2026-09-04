@@ -5,13 +5,10 @@ require_relative "../../app/values/junction/kind"
 module Junction
   # Registry of every entity kind known to Junction.
   #
-  # This is the single source of truth that replaces the hard-coded kind lists
-  # previously duplicated across controllers, path helpers, catalog options,
-  # the annotations and options overviews, and the core plugin's permission
-  # declarations.
+  # This is the single source of truth.
   #
-  # Kinds are stored as {Junction::Kind} value objects holding **strings**, and
-  # model constants are resolved lazily. That is deliberate: routes are drawn
+  # Kinds are stored as {Junction::Kind} value objects holding strings, and
+  # model constants are resolved lazily. That is deliberate; routes are drawn
   # before models can safely autoload, so the registry must be usable without
   # referencing a single model class.
   module Kinds
@@ -30,9 +27,6 @@ module Junction
       { scope: :domain, catalog: true, ownable: true, tree: true,
         default_icon: "briefcase" },
       { scope: :system, catalog: true, ownable: true, default_icon: "network" },
-      # Registered so rows resolve, but not exposed: no permissions, no
-      # routes, and absent from every listing until their controllers and
-      # views land. The other flags describe what they will be then.
       { scope: :template, catalog: true, ownable: true, exposed: false,
         default_icon: "file-code" },
       { scope: :location, catalog: true, exposed: false,
@@ -47,7 +41,7 @@ module Junction
     class << self
       # Registers a kind, replacing any kind already using the same scope.
       #
-      # @param scope [String, Symbol] Singular scope for the kind.
+      # @param scope [Symbol] Singular scope for the kind.
       # @param options [Hash] Options forwarded to {Junction::Kind#initialize}.
       # @return [Junction::Kind] The registered kind.
       def register(scope, **options)
@@ -70,7 +64,7 @@ module Junction
 
       # Looks a kind up by its STI name.
       #
-      # @param name [String, Symbol] The kind's name (e.g. `"Api"`).
+      # @param name [String] The kind's name.
       # @return [Junction::Kind, nil] The kind, if registered.
       def for(name)
         indexes[:by_name][name.to_s]
@@ -78,7 +72,7 @@ module Junction
 
       # Looks a kind up by its RBAC permission context.
       #
-      # @param context [String, Symbol] The permission context (e.g. `"apis"`).
+      # @param context [String] The permission context.
       # @return [Junction::Kind, nil] The kind, if registered.
       def by_context(context)
         indexes[:by_context][context.to_s]
@@ -86,7 +80,7 @@ module Junction
 
       # Looks a kind up by its singular scope.
       #
-      # @param scope [String, Symbol] The scope (e.g. `:api`).
+      # @param scope [Symbol] The scope.
       # @return [Junction::Kind, nil] The kind, if registered.
       def by_scope(scope)
         registry[scope.to_sym]
@@ -158,15 +152,13 @@ module Junction
 
       # Whether the kind owning the given permission context has an owner.
       #
-      # @param context [String, Symbol] The permission context.
+      # @param context [String] The permission context.
       # @return [Boolean]
       def ownable?(context)
         by_context(context)&.ownable? || false
       end
 
       # Clears the registry and restores the core registrations.
-      #
-      # @return [void]
       def reset!
         @mutex.synchronize do
           @registry = nil

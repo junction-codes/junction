@@ -55,7 +55,7 @@ module Junction
       list.map { |tag| tag.to_s.strip.downcase }.reject(&:blank?).uniq
     end
 
-    # Validates that every tag matches Backstage's tag format.
+    # Validates that every tag matches the expected tag format.
     def tags_are_well_formed
       return if tags.blank?
 

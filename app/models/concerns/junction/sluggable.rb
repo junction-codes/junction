@@ -22,10 +22,6 @@ module Junction
 
       before_validation :generate_slug, on: :create
 
-      # Scoped by kind as well as namespace. Every kind shares one table, so
-      # without `kind` here ActiveRecord would resolve the uniqueness query
-      # against Junction::Entity -- which carries no type condition -- and a
-      # name would become unique across all kinds rather than within one.
       validates :name, presence: true, length: { maximum: 63 },
                 uniqueness: { scope: %i[kind namespace] },
                 format: { with: SLUG_FORMAT, message: :slug_format }

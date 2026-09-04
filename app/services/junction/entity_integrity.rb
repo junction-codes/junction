@@ -3,14 +3,14 @@
 module Junction
   # Checks the referential rules that the database cannot express.
   #
-  # Every kind shares `junction_entities`, so a foreign key can only assert
+  # Every kind shares the same table, so a foreign key can only assert
   # that a reference points at *an* entity, not at one of the right kind. An
   # owner column pointing at a component, or a session pointing at a group, is
   # a valid row as far as Postgres is concerned.
   #
   # These checks close that gap. They are the counterpart to the model
   # validations: the validations stop bad data being written through the app,
-  # and this catches anything written around it -- a migration, a seed
+  # and this catches anything written around it; such as a migration, a seed
   # importer, a plugin, or hand-edited SQL.
   class EntityIntegrity
     Check = Struct.new(:id, :description, :relation, keyword_init: true)

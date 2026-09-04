@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
 module Junction
-  # A software template: a parameterised recipe for creating new entities.
-  #
-  # The parameters, steps, and output declarations live in `spec`, matching
-  # Backstage's Template kind. Nothing executes them yet.
+  # Represents a software template.
   class Template < Entity
     include Ownable
 
