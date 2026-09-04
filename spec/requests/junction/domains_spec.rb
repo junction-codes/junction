@@ -192,18 +192,23 @@ RSpec.describe "/domains", type: :request do
         end
       end
 
+      # The signed in user may write every Domain, so they may hand one to a
+      # group they are not part of. The restriction to the user's own groups
+      # applies only to holders of `owned.write`, which
+      # spec/requests/junction/owner_assignment_spec.rb covers.
       context "with an owner outside the user's groups" do
-        let(:foreign_attributes) { valid_attributes.merge(owner_id: create(:group).id) }
+        let!(:foreign_group) { create(:group) }
+        let(:foreign_attributes) { valid_attributes.merge(owner_id: foreign_group.id) }
 
-        it "does not create a new Domain" do
+        it "creates a new Domain" do
           expect {
             post domains_url, params: { domain: foreign_attributes }
-          }.not_to change(Junction::Domain, :count)
+          }.to change(Junction::Domain, :count).by(1)
         end
 
-        it "renders a response with 422 status" do
+        it "assigns the owner" do
           post domains_url, params: { domain: foreign_attributes }
-          expect(response).to have_http_status(:unprocessable_content)
+          expect(Junction::Domain.last.owner).to eq(foreign_group)
         end
       end
 
