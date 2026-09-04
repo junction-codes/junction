@@ -84,13 +84,3 @@
   members:
     - eva.macdowell
     - lucy.sheehan
-- title: User Owner
-  name: user-owner
-  type: team
-  parent: acme-corp
-  description: |
-    Stands in for the individual users that own entities directly in the
-    Backstage catalog. Junction entities can only be owned by a group.
-  members:
-    - guest
-    - frank.tiernan

@@ -26,7 +26,7 @@
 - title: Playback
   name: playback
   type: product-group
-  owner: user-owner
+  owner: user:frank.tiernan
   parent: audio
   description: |
     Everything related to audio playback.

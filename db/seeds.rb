@@ -93,6 +93,22 @@ def find_reference(model, reference, namespace)
     model.find_by(namespace: Junction::Sluggable::DEFAULT_NAMESPACE, name: reference)
 end
 
+# Finds the group or user that owns an entity.
+#
+# Owners are named `group:name` or `user:name`, as Backstage names them. A bare
+# name is a group, which is the common case.
+#
+# @param reference [String] Owner reference, optionally kind qualified.
+# @param namespace [String] Namespace of the entity holding the reference.
+# @return [Junction::Entity, nil] The owner, if found.
+def find_owner(reference, namespace)
+  kind, name = reference.to_s.split(':', 2)
+  return find_reference(Junction::Group, kind, namespace) if name.blank?
+
+  model = { 'group' => Junction::Group, 'user' => Junction::User }[kind]
+  model ? find_reference(model, name, namespace) : nil
+end
+
 # TODO: Create an importer server to handle this logic in a more robust way.
 def import_apis(path)
   return unless File.exist?(Rails.root.join(path, 'apis.yaml'))
@@ -103,7 +119,7 @@ def import_apis(path)
 
     Rails.logger.info "Creating API #{api[:title]}"
     api[:system] = find_reference(Junction::System, api[:system], namespace) if api[:system].present?
-    api[:owner] = find_reference(Junction::Group, api[:owner], namespace) if api[:owner].present?
+    api[:owner] = find_owner(api[:owner], namespace) if api[:owner].present?
 
     Junction::Api.create(api.except(:dependencies))
   end
@@ -118,7 +134,7 @@ def import_components(path)
 
     Rails.logger.info "Creating component #{component[:title]}"
     component[:system] = find_reference(Junction::System, component[:system], namespace) if component[:system].present?
-    component[:owner] = find_reference(Junction::Group, component[:owner], namespace) if component[:owner].present?
+    component[:owner] = find_owner(component[:owner], namespace) if component[:owner].present?
 
     Junction::Component.create(component.except(:dependencies))
   end
@@ -134,7 +150,7 @@ def import_domains(path)
     next if Junction::Domain.find_by(name: domain[:name], namespace: namespace)
 
     Rails.logger.info "Creating domain #{domain[:title]}"
-    domain[:owner] = find_reference(Junction::Group, domain[:owner], namespace) if domain[:owner].present?
+    domain[:owner] = find_owner(domain[:owner], namespace) if domain[:owner].present?
 
     Junction::Domain.create(domain.except(:parent))
   end
@@ -238,7 +254,7 @@ def import_templates(path)
     next if Junction::Template.find_by(name: template[:name], namespace: namespace)
 
     Rails.logger.info "Creating template #{template[:title]}"
-    template[:owner] = find_reference(Junction::Group, template[:owner], namespace) if template[:owner].present?
+    template[:owner] = find_owner(template[:owner], namespace) if template[:owner].present?
 
     Junction::Template.create(template)
   end
@@ -253,7 +269,7 @@ def import_resources(path)
 
     Rails.logger.info "Creating resource #{resource[:title]}"
     resource[:system] = find_reference(Junction::System, resource[:system], namespace) if resource[:system].present?
-    resource[:owner] = find_reference(Junction::Group, resource[:owner], namespace) if resource[:owner].present?
+    resource[:owner] = find_owner(resource[:owner], namespace) if resource[:owner].present?
 
     Junction::Resource.create(resource.except(:dependencies))
   end
@@ -268,7 +284,7 @@ def import_systems(path)
 
     Rails.logger.info "Creating system #{system[:title]}"
     system[:domain] = find_reference(Junction::Domain, system[:domain], namespace) if system[:domain].present?
-    system[:owner] = find_reference(Junction::Group, system[:owner], namespace) if system[:owner].present?
+    system[:owner] = find_owner(system[:owner], namespace) if system[:owner].present?
     Junction::System.create(system)
   end
 end

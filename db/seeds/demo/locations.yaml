@@ -1,54 +1,42 @@
-- title: ACME Corp
-  name: acme-corp
-  type: url
-  target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/acme-corp.yaml
-  description: |
-    A collection of all Backstage example Groups
 - title: Example Groups
   name: example-groups
   type: url
-  target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/acme/org.yaml
+  target: https://github.com/junction-codes/junction/blob/main/db/seeds/demo/groups.yaml
   description: |
-    A collection of all Backstage example Groups
-- title: Example AI Resources
-  name: example-ai-resources
-  type: url
-  target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/all-ai-resources.yaml
-  description: |
-    A collection of all Backstage example AI resources
+    A collection of all Junction example Groups
 - title: Example APIs
   name: example-apis
   type: url
-  target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/all-apis.yaml
+  target: https://github.com/junction-codes/junction/blob/main/db/seeds/demo/apis.yaml
   description: |
-    A collection of all Backstage example APIs
+    A collection of all Junction example APIs
 - title: Example Components
   name: example-components
   type: url
-  target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/all-components.yaml
+  target: https://github.com/junction-codes/junction/blob/main/db/seeds/demo/components.yaml
   description: |
-    A collection of all Backstage example components
+    A collection of all Junction example components
 - title: Example Domains
   name: example-domains
   type: url
-  target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/all-domains.yaml
+  target: https://github.com/junction-codes/junction/blob/main/db/seeds/demo/domains.yaml
   description: |
-    A collection of all Backstage example domains
+    A collection of all Junction example domains
 - title: Example Resources
   name: example-resources
   type: url
-  target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/all-resources.yaml
+  target: https://github.com/junction-codes/junction/blob/main/db/seeds/demo/resources.yaml
   description: |
-    A collection of all Backstage example resources
+    A collection of all Junction example resources
 - title: Example Systems
   name: example-systems
   type: url
-  target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/all-systems.yaml
+  target: https://github.com/junction-codes/junction/blob/main/db/seeds/demo/systems.yaml
   description: |
-    A collection of all Backstage example systems
-- title: Example Catalog
-  name: example-all
+    A collection of all Junction example systems
+- title: Example Users
+  name: example-users
   type: url
-  target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/all.yaml
+  target: https://github.com/junction-codes/junction/blob/main/db/seeds/demo/users.yaml
   description: |
-    A collection of all Backstage example entities, except users, groups, and templates
+    A collection of all Junction example users

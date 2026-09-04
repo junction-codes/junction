@@ -58,7 +58,7 @@
   lifecycle: production
   type: service
   system: audio-playback
-  owner: user-owner
+  owner: user:guest
   description: |
     Playback Order.
   tags:
@@ -89,7 +89,7 @@
   name: searcher
   lifecycle: production
   type: service
-  owner: user-owner
+  owner: user:guest
   description: |
     Searcher.
   tags:
@@ -119,7 +119,7 @@
   lifecycle: production
   type: service
   system: audio-playback
-  owner: user-owner
+  owner: user:guest
   description: |
     Shuffle API.
   tags:
