@@ -2,7 +2,6 @@ en:
   activerecord:
     attributes:
       junction/system:
-        system_type: "Type"
         title: "System Name"
     models:
       junction/system:

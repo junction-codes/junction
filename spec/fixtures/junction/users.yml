@@ -1,20 +1,18 @@
-<%# Cheapest cost: verification cost comes from the stored digest, so a
-    production-cost digest here would slow down every sign-in. %>
-<% password_digest = BCrypt::Password.create("password", cost: BCrypt::Engine::MIN_COST) %>
-
-one:
+user_one:
+  kind: User
   title: One User
   name: one-user
   namespace: default
-  pronouns: they/them
-  email_address: one@example.com
+  email: one@example.com
   image_url: https://example.com/avatar.png
-  password_digest: <%= password_digest %>
+  spec:
+    pronouns: they/them
 
-two:
+user_two:
+  kind: User
   title: Two User
   name: two-user
   namespace: default
-  pronouns: she/they
-  email_address: two@example.com
-  password_digest: <%= password_digest %>
+  email: two@example.com
+  spec:
+    pronouns: she/they

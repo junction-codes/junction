@@ -4,7 +4,7 @@ RSpec.describe "domains/show", type: :view do
   before do
     assign(:domain, Junction::Domain.create!(
       title: "Name",
-      domain_type: "product-group",
+      type: "product-group",
       description: "MyText",
       image_url: "https://example.com/image.png",
       owner: create(:group)

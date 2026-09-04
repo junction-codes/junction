@@ -1,7 +1,7 @@
 one:
-  user: one
-  group: one
+  user: user_one
+  group: group_one
 
 two:
-  user: two
-  group: two
+  user: user_two
+  group: group_two

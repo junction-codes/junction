@@ -3,6 +3,7 @@
 module Junction
   # Controller for managing dependency associations.
   class DependenciesController < ApplicationController
+    include ReadScoped
     include Paginatable
 
     before_action :set_source, only: %i[index create search]
@@ -49,8 +50,7 @@ module Junction
     def create
       authorize! @source, to: :update?
 
-      target_type, target_id = decode_entity(dependency_params[:target])
-      @dependency = @source.dependencies.build(target_type:, target_id:)
+      @dependency = @source.dependencies.build(target_id: decode_entity(dependency_params[:target]))
 
       if @dependency.save
         redirect_back fallback_location: junction_catalog_path(@source),
@@ -69,22 +69,15 @@ module Junction
 
       q = params[:q].to_s.strip
 
-      dependency_pairs = @source.dependencies.pluck(:target_type, :target_id)
-        .group_by(&:first).transform_values { |pairs| pairs.map(&:last) }
-      dependent_pairs = @source.dependents.pluck(:source_type, :source_id)
-        .group_by(&:first).transform_values { |pairs| pairs.map(&:last) }
+      excluded = @source.dependencies.pluck(:target_id) +
+                 @source.dependents.pluck(:source_id) + [ @source.id ]
 
-      results = [ Api, Component, Resource ].flat_map do |klass|
-        excluded = (dependency_pairs[klass.name] || []) +
-                   (dependent_pairs[klass.name] || []) +
-                   (@source.is_a?(klass) ? [ @source.id ] : [])
-
-        viewable_scope(klass)
-          .where("title ILIKE ?", "%#{q}%")
-          .where.not(id: excluded)
-          .order(:title)
-          .limit(10)
-      end.sort_by(&:title)
+      results = viewable_scope
+        .where(kind: Junction::Kinds.dependable_names)
+        .where("title ILIKE ?", "%#{q}%")
+        .where.not(id: excluded)
+        .order(:title)
+        .limit(10)
 
       render Views::Dependencies::Search.new(results:)
     end
@@ -101,17 +94,12 @@ module Junction
 
     private
 
-    # Builds a scope for the given entity class based on the current user's
-    # permissions.
+    # Scope of entities the user may view and depend on.
     #
-    # @param klass [Class] Entity class.
     # @return [ActiveRecord::Relation] Scope restricted to entities the user is
     #   permitted to view.
-    def viewable_scope(klass)
-      return klass.all if allowed_to?(:index_all?, klass)
-      return klass.where(owner_id: current_user.deep_group_ids) if allowed_to?(:index_owned?, klass)
-
-      klass.none
+    def viewable_scope
+      entity_scope_for(Junction::Kinds.all.select(&:dependable?))
     end
 
     # Expected parameters for a dependency.
@@ -121,17 +109,18 @@ module Junction
       params.expect(dependency: [ :target ])
     end
 
-    # Extracts the entity type and id from a string representation.
+    # Extracts the entity id from a submitted target value.
     #
-    # @param value [String] The string representation of the entity.
-    # @return [Array<String, Integer>] The entity type and id.
+    # Targets used to be encoded as "Junction::Api:12" because the id alone
+    # was ambiguous across tables. One table means the id is enough, but the
+    # older form is still accepted.
+    #
+    # @param value [String] The submitted value.
+    # @return [Integer, nil] The entity id.
     def decode_entity(value)
-      return [ nil, nil ] if value.blank?
+      return nil if value.blank?
 
-      i = value.rindex(":")
-      return [ nil, nil ] unless i
-
-      [ value[0, i], value[i + 1..].to_i ]
+      value.to_s.split(":").last.to_i
     end
 
     # Detects the source entity from nested route params.
@@ -148,7 +137,7 @@ module Junction
     end
 
     def set_dependency
-      @dependency = Dependency.find(params.expect(:id))
+      @dependency = Relation.find(params.expect(:id))
     end
 
     # Builds and executes a paginated query for dependencies.
@@ -158,49 +147,23 @@ module Junction
     # @return [Array(Array<Object>, Ransack::Search)] Entity list and query to
     #   use for sorting.
     def dependencies_query
-      api_query = @source.dependent_apis.ransack(params[:q])
-      component_query = @source.dependent_components.ransack(params[:q])
-      resource_query  = @source.dependent_resources.ransack(params[:q])
-      api_query.sorts = "title asc" if api_query.sorts.empty?
+      query = @source.dependency_targets.ransack(params[:q])
+      query.sorts = "title asc" if query.sorts.empty?
 
-      @pagy, entities = paginate(merged_dependency_list(
-        api_query,
-        [ api_query, component_query, resource_query ]
-      ))
+      @pagy, entities = paginate(query.result)
 
-      [ entities, api_query ]
+      [ entities, query ]
     end
 
-    # Builds a map between dependency target entities and their dependency id.
+    # Builds a map between dependency target entities and their relation id.
     #
-    # @param entities [Array<ApplicationRecord>] Entities to build the map for.
-    # @return [Hash<Array<String, Integer>, Integer>] Map of [entity_type,
-    #   entity_id] to dependency id.
+    # @param entities [Array<Junction::Entity>] Entities to build the map for.
+    # @return [Hash<Integer, Integer>] Map of entity id to relation id.
     def dependency_map(entities)
       @source.dependencies
-        .where(
-          target_type: entities.map { |e| e.class.name }.uniq,
-          target_id: entities.map(&:id)
-        )
-        .each_with_object({}) do |dep, h|
-          key = [ dep.target_type, dep.target_id ]
-          h[key] = dep.id
-        end
-    end
-
-    # Merges results of the different dependency types and sorts them.
-    #
-    # @param sort_query [Ransack::Search] Query used to determine sorting.
-    # @param queries [Array<Ransack::Search>] Queries to merge.
-    # @return [Array<Object>] Merged and sorted entity list.
-    def merged_dependency_list(sort_query, queries)
-      sort = sort_query.sorts.first
-      entities = queries.map(&:result).flatten
-      sorted = entities.sort_by do |entity|
-        [ entity.public_send(sort.name).to_s.downcase, entity.title.to_s.downcase ]
-      end
-
-      sort.dir == "desc" ? sorted.reverse : sorted
+        .where(target_id: entities.map(&:id))
+        .pluck(:target_id, :id)
+        .to_h
     end
   end
 end

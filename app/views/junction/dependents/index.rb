@@ -9,7 +9,7 @@ module Junction
 
         # Initializes the view.
         #
-        # @param dependents [Array<Junction::Dependency>] The dependents to
+        # @param dependents [Array<Junction::Relation>] The dependents to
         #   display in the table.
         # @param pagy [Pagy] Pagy pagination metadata.
         # @param query [Ransack::Search] Ransack query for sorting and

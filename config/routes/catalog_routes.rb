@@ -4,6 +4,22 @@ module Junction
   # Draws the routes for catalog entities that use "friendly" routes with
   # namespace and name segments (e.g. /apis/:namespace/:name).
   module CatalogRoutes
+    # Routes belonging to a single kind, keyed by scope. Everything else is
+    # drawn the same way for every sluggable kind, so only the exceptions are
+    # listed here.
+    #
+    # Procs rather than lambdas: the router evaluates them with `instance_eval`,
+    # which passes the receiver and would trip a lambda's arity check.
+    EXTRA_ROUTES = {
+      domain: proc { get "systems", to: "domains#systems", as: :domain_systems },
+      group: proc { sluggable_group_member_routes },
+      system: proc {
+        get "apis", to: "systems#apis", as: :system_apis
+        get "components", to: "systems#components", as: :system_components
+        get "resources", to: "systems#resources", as: :system_resources
+      }
+    }.freeze
+
     # Draws the catalog routes into the provided router.
     #
     # @param router [ActionDispatch::Routing::Mapper] The router to draw routes
@@ -16,24 +32,19 @@ module Junction
     # Methods for building catalog routes, to be mixed into the route mapper.
     module RouteBuilder
       # Draws the catalog routes into the router.
+      # Every kind the registry exposes with namespace/name routes is drawn
+      # here, so registering a kind is all it takes to route it.
       def draw_catalog!
-        %i[apis components resources].each do |plural|
-          sluggable_catalog(plural, catalog_scope: plural.to_s.singularize) do
-            sluggable_member_dependencies(plural)
+        Junction::Kinds.sluggable.each do |kind|
+          plural = kind.plural.to_sym
+
+          # The scope default exists so the shared dependency controllers can
+          # recover the model from the URL, so only kinds with dependency
+          # routes carry one.
+          sluggable_catalog(plural, catalog_scope: (kind.scope.to_s if kind.dependable?)) do
+            sluggable_member_dependencies(plural) if kind.dependable?
+            instance_eval(&EXTRA_ROUTES[kind.scope]) if EXTRA_ROUTES.key?(kind.scope)
           end
-        end
-
-        %i[roles users].each { |plural| sluggable_catalog(plural) }
-        sluggable_catalog(:groups) { sluggable_group_member_routes }
-
-        sluggable_catalog(:domains) do
-          get "systems", to: "domains#systems", as: :domain_systems
-        end
-
-        sluggable_catalog(:systems) do
-          get "apis", to: "systems#apis", as: :system_apis
-          get "components", to: "systems#components", as: :system_components
-          get "resources", to: "systems#resources", as: :system_resources
         end
       end
 

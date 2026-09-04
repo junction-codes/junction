@@ -7,7 +7,7 @@ RSpec.describe "components/index", type: :view do
         title: "Name",
         description: "MyText",
         lifecycle: "production",
-        component_type: "api",
+        type: "api",
         image_url: "https://example.com/image.png",
         owner: create(:group)
       ),
@@ -15,7 +15,7 @@ RSpec.describe "components/index", type: :view do
         title: "Second Name",
         description: "MyText",
         lifecycle: "experimental",
-        component_type: "worker",
+        type: "worker",
         image_url: nil,
         owner: create(:group)
       )

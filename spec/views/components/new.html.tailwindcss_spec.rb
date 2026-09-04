@@ -6,7 +6,7 @@ RSpec.describe "components/new", type: :view do
       name: "MyString",
       description: "MyText",
       lifecycle: "production",
-      component_type: "api",
+      type: "api",
       image_url: "https://example.com/image.png",
       owner: nil
     ))

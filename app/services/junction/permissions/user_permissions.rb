@@ -58,24 +58,16 @@ module Junction
         end
       end
 
-      # Collect the user's roles, including ancestor roles.
+      # Collect the user's roles, including those granted to ancestor groups.
       #
-      # @return [Array<Role>] The user's roles.
-      #
-      # @todo Review for performance.
+      # @return [ActiveRecord::Relation<Role>] The user's roles.
       def user_roles
-        group_ids = user.group_memberships.includes(group: :parent)
-                        .map(&:group).flat_map(&:self_and_ancestors).map(&:id)
-                        .uniq
-        return [] if group_ids.empty?
+        group_ids = user.deep_group_ids
+        return Junction::Role.none if group_ids.empty?
 
-        role_names = Junction::Group.where(id: group_ids).pluck(:annotations)
-                                    .flat_map do |annotation|
-          annotation.is_a?(Hash) ? annotation[CorePlugin::ANNOTATION_GROUP_ROLE] : []
-        end.compact.uniq
-        return [] if role_names.empty?
-
-        Junction::Role.where(name: role_names)
+        Junction::Role.joins(:group_roles)
+                      .where(junction_group_roles: { group_id: group_ids })
+                      .distinct
       end
 
       # Get the permissions for a specific role.

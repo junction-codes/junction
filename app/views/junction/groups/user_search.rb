@@ -22,7 +22,7 @@ module Junction
             ResultList do |list|
               @results.each do |user|
                 list.item(value: user.id.to_s, name: user.title) do
-                  user.email_address
+                  user.email
                 end
               end
             end

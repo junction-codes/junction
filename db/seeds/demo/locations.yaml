@@ -1,0 +1,42 @@
+- title: Example Groups
+  name: example-groups
+  type: url
+  target: https://github.com/junction-codes/junction/blob/main/db/seeds/demo/groups.yaml
+  description: |
+    A collection of all Junction example Groups
+- title: Example APIs
+  name: example-apis
+  type: url
+  target: https://github.com/junction-codes/junction/blob/main/db/seeds/demo/apis.yaml
+  description: |
+    A collection of all Junction example APIs
+- title: Example Components
+  name: example-components
+  type: url
+  target: https://github.com/junction-codes/junction/blob/main/db/seeds/demo/components.yaml
+  description: |
+    A collection of all Junction example components
+- title: Example Domains
+  name: example-domains
+  type: url
+  target: https://github.com/junction-codes/junction/blob/main/db/seeds/demo/domains.yaml
+  description: |
+    A collection of all Junction example domains
+- title: Example Resources
+  name: example-resources
+  type: url
+  target: https://github.com/junction-codes/junction/blob/main/db/seeds/demo/resources.yaml
+  description: |
+    A collection of all Junction example resources
+- title: Example Systems
+  name: example-systems
+  type: url
+  target: https://github.com/junction-codes/junction/blob/main/db/seeds/demo/systems.yaml
+  description: |
+    A collection of all Junction example systems
+- title: Example Users
+  name: example-users
+  type: url
+  target: https://github.com/junction-codes/junction/blob/main/db/seeds/demo/users.yaml
+  description: |
+    A collection of all Junction example users

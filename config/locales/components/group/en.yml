@@ -16,6 +16,10 @@ en:
           placeholder: Name or description…
           search: Search
         group_form:
+          roles_title: Roles
+          roles_description: >-
+            Roles granted to this group. Members inherit them, along with the
+            roles granted to any parent group.
           title: Group Details
           description: >-
             This information will be displayed on the group's main page.

@@ -10,7 +10,7 @@ RSpec.describe Junction::Group, type: :model do
   describe "validations" do
     it_behaves_like "validates presence of", :description
     it_behaves_like "validates email format of", :email
-    it_behaves_like "validates presence of", :group_type
+    it_behaves_like "validates presence of", :type
     it_behaves_like "validates presence of", :title
     it_behaves_like "validates uniqueness of", :name, "duplicate-slug", scope: :namespace
     it_behaves_like "validates image_url format"
@@ -77,21 +77,21 @@ RSpec.describe Junction::Group, type: :model do
   end
 
   describe 'defaults' do
-    it 'defaults group_type to "team"' do
-      expect(described_class.new.group_type).to eq('team')
+    it 'defaults type to "team"' do
+      expect(described_class.new.type).to eq('team')
     end
   end
 
   describe '#icon' do
     it 'returns the icon for a known group type' do
-      allow(Junction::CatalogOptions).to receive(:groups).and_return({ 'team' => { icon: 'team-icon' } })
-      group = build(:group, group_type: 'team')
+      allow(Junction::CatalogOptions).to receive(:section).with(:groups).and_return({ 'team' => { icon: 'team-icon' } })
+      group = build(:group, type: 'team')
       expect(group.icon).to eq('team-icon')
     end
 
     it 'returns the default icon for an unknown group type' do
-      allow(Junction::CatalogOptions).to receive(:groups).and_return({})
-      group = build(:group, group_type: 'unknown-type')
+      allow(Junction::CatalogOptions).to receive(:section).with(:groups).and_return({})
+      group = build(:group, type: 'unknown-type')
       expect(group.icon).to eq('users-round')
     end
   end

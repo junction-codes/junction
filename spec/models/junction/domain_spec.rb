@@ -9,7 +9,7 @@ RSpec.describe Junction::Domain, type: :model do
 
   describe "validations" do
     it_behaves_like "validates presence of", :description
-    it_behaves_like "validates presence of", :domain_type
+    it_behaves_like "validates presence of", :type
     it_behaves_like "validates presence of", :title
     it_behaves_like "validates uniqueness of", :name, "duplicate-slug", scope: :namespace
     it_behaves_like "validates image_url format"
@@ -81,14 +81,14 @@ RSpec.describe Junction::Domain, type: :model do
       allow(Junction::CatalogOptions).to receive(:domains).and_return(
         { "product-area" => { icon: "box" } }
       )
-      domain = build(:domain, domain_type: "product-area")
+      domain = build(:domain, type: "product-area")
 
       expect(domain.icon).to eq("box")
     end
 
     it "returns the fallback icon for an unknown domain type" do
       allow(Junction::CatalogOptions).to receive(:domains).and_return({})
-      domain = build(:domain, domain_type: "unknown-type")
+      domain = build(:domain, type: "unknown-type")
 
       expect(domain.icon).to eq("briefcase")
     end

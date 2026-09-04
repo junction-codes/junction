@@ -71,7 +71,7 @@ module Junction
         # @param id [String] Machine-readable name of the entity type.
         # @return [String] Human-readable name of the entity type.
         def entity_type_label(id)
-          Junction::Annotations::Overview::ENTITY_TYPES
+          Junction::Annotations::Overview.entity_types
             .find { |type| type.id == id }
             .model
             .model_name

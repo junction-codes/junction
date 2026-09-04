@@ -4,7 +4,7 @@ FactoryBot.define do
   factory "junction/api", aliases: [ :api ], class: "Junction::Api" do
     sequence(:title) { |n| "API Name #{n}" }
     description { Faker::Lorem.paragraph }
-    api_type { Junction::CatalogOptions.apis.keys.sample }
+    type { Junction::CatalogOptions.apis.keys.sample }
     lifecycle { Junction::CatalogOptions.lifecycles.keys.sample }
     image_url { TEST_IMAGE_URL }
     definition { Faker::Json.shallow_json }

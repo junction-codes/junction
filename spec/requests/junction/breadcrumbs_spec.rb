@@ -3,7 +3,7 @@
 require "rails_helper"
 
 RSpec.describe "Junction::Breadcrumbs concern", type: :request do
-  fixtures "junction/components"
+  fixtures(*ENTITY_FIXTURE_SETS)
 
   subject(:component) { create(:component) }
 

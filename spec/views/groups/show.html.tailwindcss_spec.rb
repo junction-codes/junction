@@ -5,7 +5,7 @@ RSpec.describe "groups/show", type: :view do
     assign(:group, Junction::Group.create!(
       title: "Name",
       description: "MyText",
-      group_type: "team",
+      type: "team",
       email: "team@example.com",
       image_url: "https://example.com/image.png",
       parent: nil

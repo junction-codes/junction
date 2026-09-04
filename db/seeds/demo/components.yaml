@@ -11,6 +11,31 @@
   annotations:
     junction.codes/source-template: template:default/springboot-template
     junction.codes/linguist: https://github.com/backstage/backstage/tree/master/plugins/playlist
+  tags:
+    - java
+    - data
+  links:
+    - url: https://example.com/user
+      title: Examples Users
+      icon: user
+    - url: https://example.com/group
+      title: Example Group
+      icon: group
+    - url: https://example.com/cloud
+      title: Link with Cloud Icon
+      icon: cloud
+    - url: https://example.com/dashboard
+      title: Dashboard
+      icon: dashboard
+    - url: https://example.com/help
+      title: Support
+      icon: help
+    - url: https://example.com/web
+      title: Website
+      icon: web
+    - url: https://example.com/alert
+      title: Alerts
+      icon: alert
 - title: Petstore
   name: petstore
   lifecycle: experimental
@@ -24,14 +49,21 @@
     [The Petstore](http://petstore.example.com) is an example API used to show features of the OpenAPI spec.
     - First item
     - Second item
+  links:
+    - url: https://github.com/swagger-api/swagger-petstore
+      title: GitHub Repo
+      icon: github
 - title: Playback Order
   name: playback-order
   lifecycle: production
   type: service
   system: audio-playback
-  owner: user-owner
+  owner: user:guest
   description: |
     Playback Order.
+  tags:
+    - java
+    - playback
 - title: Podcast API
   name: podcast-api
   lifecycle: experimental
@@ -40,6 +72,8 @@
   owner: team-b
   description: |
     Podcast API.
+  tags:
+    - java
 - title: Queue Proxy
   name: queue-proxy
   lifecycle: production
@@ -48,13 +82,18 @@
   owner: team-b
   description: |
     Queue Proxy.
+  tags:
+    - go
+    - website
 - title: Searcher
   name: searcher
   lifecycle: production
   type: service
-  owner: user-owner
+  owner: user:guest
   description: |
     Searcher.
+  tags:
+    - go
 - title: Playback SDK
   name: playback-sdk
   lifecycle: experimental
@@ -80,9 +119,14 @@
   lifecycle: production
   type: service
   system: audio-playback
-  owner: user-owner
+  owner: user:guest
   description: |
     Shuffle API.
+  tags:
+    - go
+  labels:
+    goVersion: go1.15.3
+    category: music
 - title: Wayback Archive
   name: wayback-archive
   lifecycle: production

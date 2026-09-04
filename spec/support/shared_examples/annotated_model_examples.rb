@@ -44,21 +44,26 @@ RSpec.shared_examples "an annotated model" do |factory|
     end
   end
 
-  if factory == :group
-    describe "known annotation precedence" do
-      it "keeps known annotations when duplicated in other rows" do
-        record = create(:group)
-        record.assign_attributes(
-          annotations: { Junction::CorePlugin::ANNOTATION_GROUP_ROLE => "admin" },
-          other_annotations: [
-            { key: Junction::CorePlugin::ANNOTATION_GROUP_ROLE, value: "other" }
-          ]
-        )
-        record.save!
+  describe "known annotation precedence" do
+    let(:known_key) { "example.com/known" }
+    let(:model_class) { Junction.const_get(factory.to_s.camelize) }
 
-        expect(record.reload[:annotations][Junction::CorePlugin::ANNOTATION_GROUP_ROLE])
-          .to eq("admin")
-      end
+    before do
+      allow(Junction::PluginRegistry).to receive(:annotations_for).and_call_original
+      allow(Junction::PluginRegistry).to receive(:annotations_for)
+        .with(model_class)
+        .and_return({ known_key => { key: known_key, title: "Known" } })
+    end
+
+    it "keeps known annotations when duplicated in other rows" do
+      record = create(factory)
+      record.assign_attributes(
+        annotations: { known_key => "kept" },
+        other_annotations: [ { key: known_key, value: "discarded" } ]
+      )
+      record.save!
+
+      expect(record.reload[:annotations][known_key]).to eq("kept")
     end
   end
 end

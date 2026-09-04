@@ -3,8 +3,10 @@
 module Junction
   # Controller for managing Domain catalog entities.
   class DomainsController < Junction::ApplicationController
-    # Make sure the entity is set before any other helper methods are called.
-    before_action :set_entity, only: %i[show edit update destroy systems]
+    # Declared before Breadcrumbs so the entity is set before any breadcrumb
+    # helper runs.
+    include CatalogEntityActions
+    load_entity_for :systems
 
     include Breadcrumbs
     include CatalogOptionSets
@@ -15,25 +17,6 @@ module Junction
 
     PARENT_CANDIDATE_COLUMNS = %i[description id image_url name namespace title].freeze
     private_constant :PARENT_CANDIDATE_COLUMNS
-
-    # GET /domains
-    def index
-      authorize! Domain
-      @q = index_scope_for(Domain).ransack(params[:q])
-      @q.sorts = "title asc" if @q.sorts.empty?
-      @pagy, domains = paginate(@q.result.includes(:parent, :owner))
-
-      render Views::Domains::Index.new(
-        domains:,
-        pagy: @pagy,
-        query: @q,
-        query_params: params[:q]&.to_unsafe_h || {},
-        breadcrumbs:,
-        can_create: allowed_to?(:create?, Domain),
-        available_owners:,
-        available_types:
-      )
-    end
 
     # GET /domains/:id/systems
     def systems
@@ -77,102 +60,38 @@ module Junction
       )
     end
 
-    # GET /domains/new
-    def new
-      authorize! Domain
-      render Views::Domains::New.new(
-        domain: Domain.new,
-        breadcrumbs:,
-        available_owners:,
-        available_parents:,
-        parent_editable: true,
-        type_options: domain_type_options
-      )
-    end
-
-    # GET /domains/:id/edit
-    def edit
-      authorize! @entity
-      render Views::Domains::Edit.new(
-        domain: @entity,
-        breadcrumbs:,
-        can_destroy: allowed_to?(:destroy?, @entity),
-        available_owners:,
-        available_parents:,
-        parent_editable: parent_editable_for?(@entity),
-        type_options: domain_type_options
-      )
-    end
-
-    # POST /domains
-    def create
-      authorize! Domain
-      @entity = Domain.new(domain_params)
-
-      if @entity.save
-        redirect_to junction_catalog_path(@entity), success: "Domain was successfully created."
-      else
-        flash.now[:alert] = "There were errors creating the domain."
-        render Views::Domains::New.new(
-          domain: @entity,
-          breadcrumbs:,
-          available_owners:,
-          available_parents:,
-          parent_editable: parent_editable_for?(@entity),
-          type_options: domain_type_options
-        ), status: :unprocessable_content
-      end
-    end
-
-    # PATCH/PUT /domains/:id
-    def update
-      authorize! @entity
-      if @entity.update(domain_params)
-        redirect_to junction_catalog_path(@entity), success: "Domain was successfully updated."
-      else
-        flash.now[:alert] = "There were errors updating the domain."
-        render Views::Domains::Edit.new(
-          domain: @entity,
-          breadcrumbs:,
-          can_destroy: allowed_to?(:destroy?, @entity),
-          available_owners:,
-          available_parents:,
-          parent_editable: parent_editable_for?(@entity),
-          type_options: domain_type_options
-        ), status: :unprocessable_content
-      end
-    end
-
-    # DELETE /domains/:id
-    def destroy
-      authorize! @entity
-      @entity.destroy!
-
-      redirect_to domains_path, status: :see_other, success: "Domain was successfully destroyed."
-    end
-
     private
 
-    # Returns an array of available types for domains.
-    #
-    # @return [Array<Array(String, String)>] Array of [name, key] pairs for
-    #   types.
-    def available_types
-      CatalogOptions.domains.map { |key, opts| [ opts[:name], key ] }
+    def entity_class
+      Domain
     end
 
-    # Options for the domain type field.
-    #
-    # @return [Hash] Hash of options.
-    def domain_type_options
-      catalog_options_for(
-        Junction::CatalogOptions.domains,
-        [ Junction::Domain, :domain_type ]
+    def index_includes
+      %i[parent owner]
+    end
+
+    def index_options
+      { available_owners:, available_types: }
+    end
+
+    def form_options(entity)
+      {
+        available_owners:,
+        available_parents:,
+        parent_editable: parent_editable_for?(entity),
+        type_options:
+      }
+    end
+
+    def create_params
+      attrs = sanitize_annotations(params.expect(domain: [
+        :description, :image_url, :name, :namespace, :owner_id,
+        :parent_id, :title, :type, *annotation_param_entries
+      ]))
+
+      sanitize_owner_id(
+        sanitize_tree_parent_id(attrs, parent_candidates: available_parents)
       )
-    end
-
-    def set_entity
-      @entity = Domain.find_by!(namespace: params.expect(:namespace), name: params.expect(:name))
     end
 
     # Returns the available parents for the current Domain and user.
@@ -183,18 +102,6 @@ module Junction
         Domain,
         scope: index_scope_for(Domain),
         columns: PARENT_CANDIDATE_COLUMNS
-      )
-    end
-
-
-    def domain_params
-      attrs = sanitize_annotations(params.expect(domain: [
-        :description, :domain_type, :image_url, :name, :namespace, :owner_id,
-        :parent_id, :title, :type, *annotation_param_entries
-      ]))
-
-      sanitize_owner_id(
-        sanitize_tree_parent_id(attrs, parent_candidates: available_parents)
       )
     end
   end

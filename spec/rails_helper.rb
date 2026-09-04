@@ -22,6 +22,8 @@ Capybara.enable_aria_label = true
 
 # Include additional support.
 require "junction/testing"
+require_relative 'support/entity_fixtures'
+require_relative 'support/sample_annotation'
 require_relative 'support/factorybot'
 require_relative 'support/shared_examples'
 require_relative 'support/shoulda'

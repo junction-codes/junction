@@ -5,35 +5,44 @@ module Junction
   module HasOwner
     extend ActiveSupport::Concern
 
+    include ReadScoped
+
     private
 
-    # Scope for index actions of entities that have an owner.
+    # Whether the current user may name any group or user as an owner.
     #
-    # Returns the base relation if the user has access to read all entities.
-    # Otherwise, restricts to entities whose owner is in the user's group
-    # hierarchy.
+    # Write access to every entity of the kind already allows editing all of
+    # them, so restricting who may be named as their owner protects nothing.
+    # Without it the user is held to owners they are part of, which stops them
+    # handing an entity to someone else or claiming one for a group they do
+    # not belong to.
     #
-    # @param model [Class] ActiveRecord model class.
-    # @return [ActiveRecord::Relation] Scoped relation for the index action.
-    def index_scope_for(model)
-      return model.all if allowed_to?(:index_all?, model)
-
-      model.where(owner_id: current_user.deep_group_ids) if allowed_to?(:index_owned?, model)
+    # @return [Boolean]
+    def assign_any_owner?
+      allowed_to?(:create_all?, entity_class)
     end
 
-    # Group IDs the current user may assign as owner of an entity.
+    # Entity IDs the current user may assign as owner, when they are held to
+    # their own groups.
+    #
+    # An entity may be owned by a group the user belongs to, or by the user
+    # themselves.
     #
     # @return [Array<Integer>]
     def allowed_owner_ids
-      current_user&.deep_group_ids.to_a || []
+      current_user&.owner_ids || []
     end
 
-    # Relation of groups for owner dropdowns.
+    # Relation of entities for owner dropdowns.
     #
     # @return [ActiveRecord::Relation]
     def available_owners
+      scope = Entity.where(kind: Ownable::OWNER_KINDS)
+                    .select(:description, :id, :image_url, :title)
+                    .order(:title)
+      return scope if assign_any_owner?
+
       ids = allowed_owner_ids
-      scope = Group.select(:description, :id, :image_url, :title).order(:title)
       ids.present? ? scope.where(id: ids) : scope.none
     end
 
@@ -51,12 +60,24 @@ module Junction
       return out unless out.key?("owner_id") || out.key?(:owner_id)
 
       id = (out[:owner_id] || out["owner_id"])
-      out[:owner_id] = if id.present?
-        (allowed_owner_ids.include?(id.to_i) || id.to_i == @entity&.owner_id) ? id.to_i : nil
-      end
+      out[:owner_id] = (id.to_i if id.present? && permitted_owner_id?(id.to_i))
 
       out["owner_id"] = out[:owner_id] if out.key?("owner_id")
       out
+    end
+
+    # Whether the current user may assign the given owner.
+    #
+    # Only authorization is decided here. Whether the id names something that
+    # may own an entity at all is left to {Junction::Ownable}, so a bad id
+    # fails validation rather than being silently dropped.
+    #
+    # @param id [Integer] The proposed owner's ID.
+    # @return [Boolean]
+    def permitted_owner_id?(id)
+      return true if assign_any_owner?
+
+      allowed_owner_ids.include?(id) || id == @entity&.owner_id
     end
   end
 end

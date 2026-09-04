@@ -13,6 +13,7 @@ en:
             Start by providing the basic details for your new resource.
         show:
           edit: Edit Resource
+          dependencies: Dependencies
           dependents: Dependents
           graph: Graph
           logo_alt: Logo for %{name}

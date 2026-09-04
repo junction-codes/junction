@@ -5,7 +5,7 @@ module Junction
     module Groups
       # Edit view for groups.
       class Edit < Views::Base
-        attr_reader :available_parents, :breadcrumbs, :can_destroy, :group,
+        attr_reader :available_parents, :available_roles, :breadcrumbs, :can_destroy, :group,
                     :parent_editable, :type_options
 
         # Initializes the view.
@@ -18,8 +18,10 @@ module Junction
         # @param parent_editable [Boolean] Whether the parent field should be
         #   editable.
         def initialize(group:, available_parents:, type_options:, can_destroy:,
-                       breadcrumbs: [], parent_editable: true)
+                       breadcrumbs: [], parent_editable: true,
+                       available_roles: nil)
           @available_parents = available_parents
+          @available_roles = available_roles
           @breadcrumbs = breadcrumbs
           @can_destroy = can_destroy
           @group = group
@@ -50,7 +52,8 @@ module Junction
                   group:,
                   available_parents:,
                   parent_editable:,
-                  type_options:
+                  type_options:,
+                  available_roles:
                 )
               end
 

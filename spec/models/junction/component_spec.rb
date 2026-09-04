@@ -8,7 +8,7 @@ RSpec.describe Junction::Component, type: :model do
   it_behaves_like "a sluggable entity"
 
   describe "validations" do
-    it_behaves_like "validates presence of", :component_type
+    it_behaves_like "validates presence of", :type
     it_behaves_like "validates presence of", :description
     it_behaves_like "validates presence of", :lifecycle
     it_behaves_like "validates presence of", :title
@@ -19,8 +19,8 @@ RSpec.describe Junction::Component, type: :model do
       expect(component).to be_valid
     end
 
-    it "accepts arbitrary component_type values" do
-      component.component_type = "vendor_job"
+    it "accepts arbitrary type values" do
+      component.type = "vendor_job"
       expect(component).to be_valid
     end
 
@@ -47,7 +47,7 @@ RSpec.describe Junction::Component, type: :model do
 
   describe "#icon" do
     before do
-      allow(Junction::CatalogOptions).to receive(:components).and_return(
+      allow(Junction::CatalogOptions).to receive(:section).with(:components).and_return(
         {
           "service" => { icon: "cloud" },
           "library" => {}
@@ -57,21 +57,21 @@ RSpec.describe Junction::Component, type: :model do
 
     context "when component type has a defined icon" do
       it "returns the specific icon" do
-        component.component_type = "service"
+        component.type = "service"
         expect(component.icon).to eq("cloud")
       end
     end
 
     context "when component type does not have a defined icon" do
       it "returns the default icon" do
-        component.component_type = "library"
+        component.type = "library"
         expect(component.icon).to eq("server")
       end
     end
 
     context "when component type is not in the catalog" do
       it "returns the default icon" do
-        component.component_type = "unknown_type"
+        component.type = "unknown_type"
         expect(component.icon).to eq("server")
       end
     end

@@ -10,6 +10,9 @@
     # document in the Backstage example catalog it was converted from. Its
     # remotes, which Junction cannot store, are:
     # streamable-http: http://localhost:7007/api/mcp/v1
+  tags:
+    - mcp
+    - ai
 - title: Hello World
   name: hello-world
   lifecycle: deprecated
@@ -888,6 +891,16 @@
           type: apiKey
           name: api_key
           in: header
+  tags:
+    - store
+    - rest
+  links:
+    - url: https://github.com/swagger-api/swagger-petstore
+      title: GitHub Repo
+      icon: github
+    - url: https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml
+      title: API Spec
+      icon: code
 - title: Petstore Webhook
   name: petstore-webhook
   lifecycle: experimental
@@ -930,6 +943,16 @@
               type: string
             tag:
               type: string
+  tags:
+    - store
+    - rest
+  links:
+    - url: https://github.com/swagger-api/swagger-petstore
+      title: GitHub Repo
+      icon: github
+    - url: https://github.com/OAI/OpenAPI-Specification/blob/main/examples/v3.1/webhook-example.yaml
+      title: API Spec
+      icon: code
 - title: Spotify
   name: spotify
   lifecycle: production
@@ -944,6 +967,9 @@
     # https://github.com/APIs-guru/openapi-directory/blob/dab6854d4d599aafb0eb36e6c7ae1fe0c37509b7/APIs/spotify.com/2021.4.2/openapi.yaml
     # Junction has no equivalent placeholder, and the specification is not
     # part of the example catalog, so it is not inlined here.
+  tags:
+    - spotify
+    - rest
 - title: Streetlights
   name: streetlights
   lifecycle: production
@@ -1205,6 +1231,12 @@
           bindings:
             mqtt:
               qos: 1
+  tags:
+    - mqtt
+  links:
+    - url: https://github.com/asyncapi/spec/blob/master/examples/streetlights-mqtt-asyncapi.yml
+      title: Source Code
+      icon: code
 - title: Star Wars GraphQL
   name: starwars-graphql
   lifecycle: production
@@ -2379,6 +2411,10 @@
       """A cursor for use in pagination"""
       cursor: String!
     }
+  links:
+    - url: https://github.com/graphql/swapi-graphql
+      title: GitHub Repo
+      icon: github
 - title: Wayback Archive
   name: wayback-archive
   lifecycle: production

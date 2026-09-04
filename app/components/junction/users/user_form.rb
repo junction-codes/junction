@@ -86,8 +86,8 @@ module Junction
             end
 
             card.content(class: "space-y-4") do
-              Text(form, :email_address, required: new?)
-              Text(form, :email_address_confirmation, required: new?)
+              Text(form, :email, required: new?)
+              Text(form, :email_confirmation, required: new?)
             end
           end
         end

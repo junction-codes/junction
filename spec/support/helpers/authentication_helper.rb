@@ -3,8 +3,7 @@
 module AuthenticationHelper
   def self.included(base)
     base.extend(ClassMethods)
-    base.fixtures "junction/users", "junction/roles", "junction/groups",
-                  "junction/group_memberships"
+    base.fixtures(*ENTITY_FIXTURE_SETS)
   end
 
   # Returns the currently signed in user, if any.
@@ -27,8 +26,8 @@ module AuthenticationHelper
   # @param user [Junction::User] The user to sign in.
   # @param password [String] The user's password.
   # @return [Junction::User] The signed in user.
-  def sign_in(user:  junction_users(:one), password: "password")
-    post session_url, params: { email_address: user.email_address, password: password }
+  def sign_in(user:  junction_users(:user_one), password: "password")
+    post session_url, params: { email: user.email, password: password }
     @current_user = user
   end
 
@@ -61,17 +60,14 @@ module AuthenticationHelper
     create(
       :group_membership,
       user:,
-      group: create(
-        :group,
-        annotations: { Junction::CorePlugin::ANNOTATION_GROUP_ROLE => create(:role, permissions:).name }
-      )
+      group: create(:group, roles: [ create(:role, permissions:) ])
     )
 
     user
   end
 
   module ClassMethods
-    def requires_authentication(user_name: :one, password: "password")
+    def requires_authentication(user_name: :user_one, password: "password")
       before do
         sign_in(user: junction_users(user_name), password:)
       end

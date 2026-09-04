@@ -16,6 +16,7 @@ en:
           no_owner: No owner
           stat_total_systems: Total Systems
           stat_active_incidents: Active Incidents
+          dependencies: Dependencies
           dependents: Dependents
           graph: Graph
           raw: Raw

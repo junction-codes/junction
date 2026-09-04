@@ -73,7 +73,7 @@ module Junction
       excluded_ids = @entity.members.pluck(:id)
 
       results = User
-        .where("title ILIKE ? OR email_address ILIKE ?", "%#{q}%", "%#{q}%")
+        .where("title ILIKE ? OR email ILIKE ?", "%#{q}%", "%#{q}%")
         .where.not(id: excluded_ids)
         .order(:title)
         .limit(10)

@@ -1,38 +1,32 @@
 # frozen_string_literal: true
 
 module Junction
-  class Api < ApplicationRecord
-    include Annotated
+  class Api < Entity
     include Dependable
     include Dependentable
     include Ownable
-    include Sluggable
+
+    self.catalog_section = :apis
+    self.default_icon = "webhook"
+
+    store_accessor :spec, :definition
 
     attribute :lifecycle, :string, default: "experimental"
-    alias_attribute :type, :api_type
 
-    belongs_to :system, optional: true
+    belongs_to :system, class_name: "Junction::System", optional: true
 
-    validates :api_type, presence: true
     validates :definition, presence: true
     validates :description, presence: true
-    validates :image_url, allow_blank: true, format: URI::DEFAULT_PARSER.make_regexp(%w[http https])
     validates :lifecycle, presence: true
+    validates :type, presence: true
 
     def self.ransackable_associations(auth_object = nil)
       %w[owner system]
     end
 
     def self.ransackable_attributes(auth_object = nil)
-      %w[created_at api_type description lifecycle name owner_id system_id title
-         type updated_at]
-    end
-
-    # Get the icon associated with the component's type.
-    #
-    # @return [String] The icon name.
-    def icon
-      Junction::CatalogOptions.apis[type]&.[](:icon) || "webhook"
+      %w[created_at description lifecycle name owner_id system_id title type
+         updated_at]
     end
   end
 end

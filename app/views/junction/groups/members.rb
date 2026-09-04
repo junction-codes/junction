@@ -51,7 +51,7 @@ module Junction
             Table(class: "rounded-lg shadow overflow-hidden") do |table|
               table.header do |header|
                 header.row do |row|
-                  %w[title email_address].each do |field|
+                  %w[title email].each do |field|
                     row.sortable_head(field:, sort_url:, **sort_attrs(query, field)) do
                       User.human_attribute_name(field)
                     end
@@ -66,7 +66,7 @@ module Junction
                   body.row do |row|
                     row.cell { render_view_link(user) }
                     row.cell do
-                      Link(href: "mailto:#{user.email_address}") { user.email_address }
+                      Link(href: "mailto:#{user.email}") { user.email }
                     end
 
                     row.cell(class: "text-right") do

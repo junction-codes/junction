@@ -1,21 +1,24 @@
-one:
+# Labels must be unique across every fixture file that maps to
+# junction_entities: fixture IDs are derived from the label alone, with no
+# table component, so a shared label would collide on the primary key.
+group_one:
+  kind: Group
   title: Group One
   name: group-one
   description: MyText
-  group_type: team
+  type: team
   email: one@example.com
   image_url: https://example.com/image.png
   parent:
   namespace: default
-  annotations:
-    "junction.codes/role": "admin"
 
-two:
+group_two:
+  kind: Group
   title: Group Two
   name: group-two
   namespace: default
   description: MyText
-  group_type: team
+  type: team
   email: two@example.com
   image_url:
   parent:

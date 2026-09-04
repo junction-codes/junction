@@ -5,6 +5,11 @@
   image_url: https://api.dicebear.com/7.x/identicon/svg?seed=Maggie&flip=true&backgroundColor=ffdfbf
   description: |
     The ACME Corp organization.
+  links:
+    - url: http://www.acme.com/
+      title: Website
+    - url: https://meta.wikimedia.org/wiki/
+      title: Intranet
 - title: Infrastructure
   name: infrastructure
   type: business_unit
@@ -79,13 +84,3 @@
   members:
     - eva.macdowell
     - lucy.sheehan
-- title: User Owner
-  name: user-owner
-  type: team
-  parent: acme-corp
-  description: |
-    Stands in for the individual users that own entities directly in the
-    Backstage catalog. Junction entities can only be owned by a group.
-  members:
-    - guest
-    - frank.tiernan

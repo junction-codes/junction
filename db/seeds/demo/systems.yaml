@@ -5,6 +5,8 @@
   owner: team-a
   description: |
     Everything related to artists.
+  tags:
+    - portal
 - title: Audio Playback
   name: audio-playback
   type: feature-set

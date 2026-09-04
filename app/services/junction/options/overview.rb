@@ -11,32 +11,32 @@ module Junction
         FieldConfig.new(
           id: :api_type,
           section: :apis,
-          sources: [ Source.new(model: Junction::Api, column: :api_type) ]
+          sources: [ Source.new(model: Junction::Api, column: :type) ]
         ),
         FieldConfig.new(
           id: :component_type,
           section: :components,
-          sources: [ Source.new(model: Junction::Component, column: :component_type) ]
+          sources: [ Source.new(model: Junction::Component, column: :type) ]
         ),
         FieldConfig.new(
           id: :resource_type,
           section: :resources,
-          sources: [ Source.new(model: Junction::Resource, column: :resource_type) ]
+          sources: [ Source.new(model: Junction::Resource, column: :type) ]
         ),
         FieldConfig.new(
           id: :domain_type,
           section: :domains,
-          sources: [ Source.new(model: Junction::Domain, column: :domain_type) ]
+          sources: [ Source.new(model: Junction::Domain, column: :type) ]
         ),
         FieldConfig.new(
           id: :group_type,
           section: :groups,
-          sources: [ Source.new(model: Junction::Group, column: :group_type) ]
+          sources: [ Source.new(model: Junction::Group, column: :type) ]
         ),
         FieldConfig.new(
           id: :system_type,
           section: :systems,
-          sources: [ Source.new(model: Junction::System, column: :system_type) ]
+          sources: [ Source.new(model: Junction::System, column: :type) ]
         ),
         FieldConfig.new(
           id: :lifecycle,

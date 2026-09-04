@@ -15,24 +15,24 @@ RSpec.describe "/sessions", type: :request do
 
     context "with valid credentials" do
       it "redirects to the after authentication path" do
-        post session_url, params: { email_address: user.email_address, password: user.password }
+        post session_url, params: { email: user.email, password: user.password }
         expect(response).to redirect_to(root_url)
       end
     end
 
     context "with invalid credentials" do
       it "redirects to the new session path" do
-        post session_url, params: { email_address: user.email_address, password: "wrong_password" }
+        post session_url, params: { email: user.email, password: "wrong_password" }
         expect(response.location).to eq(new_session_url)
       end
 
       it "sets the forbidden status code" do
-        post session_url, params: { email_address: user.email_address, password: "wrong_password" }
+        post session_url, params: { email: user.email, password: "wrong_password" }
         expect(response.status).to eq(403)
       end
 
       it "sets an alert message" do
-        post session_url, params: { email_address: user.email_address, password: "wrong_password" }
+        post session_url, params: { email: user.email, password: "wrong_password" }
         expect(flash[:alert]).to eq("Try another email address or password.")
       end
     end

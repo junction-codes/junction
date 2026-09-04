@@ -5,7 +5,7 @@ module Junction
     module Groups
       # Creation view for groups.
       class New < Views::Base
-        attr_reader :available_parents, :breadcrumbs, :group, :parent_editable,
+        attr_reader :available_parents, :available_roles, :breadcrumbs, :group, :parent_editable,
                     :type_options
 
         # Initializes the view.
@@ -17,8 +17,10 @@ module Junction
         # @param type_options [Hash] Options for the group type field.
         # @param breadcrumbs [Array<Hash>] Breadcrumb items from the controller.
         def initialize(group:, available_parents:, type_options:,
-                       breadcrumbs: [], parent_editable: true)
+                       breadcrumbs: [], parent_editable: true,
+                       available_roles: nil)
           @available_parents = available_parents
+          @available_roles = available_roles
           @breadcrumbs = breadcrumbs
           @group = group
           @parent_editable = parent_editable
@@ -44,7 +46,8 @@ module Junction
                 group:,
                 available_parents:,
                 parent_editable:,
-                type_options:
+                type_options:,
+                available_roles:
               )
             end
           end

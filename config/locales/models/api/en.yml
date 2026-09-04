@@ -2,7 +2,6 @@ en:
   activerecord:
     attributes:
       junction/api:
-        api_type: "Type"
         definition: "Definition"
         title: "API Name"
     models:

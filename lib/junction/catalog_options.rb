@@ -70,6 +70,17 @@ module Junction
       options.fetch(:systems, {}.with_indifferent_access)
     end
 
+    # Returns the options for a named section.
+    #
+    # Every kind now shares one `type` column, so the section a value belongs
+    # to depends on the entity's kind rather than on the field name.
+    #
+    # @param name [Symbol] Section name.
+    # @return [ActiveSupport::HashWithIndifferentAccess]
+    def self.section(name)
+      options.fetch(name, {}.with_indifferent_access)
+    end
+
     # Returns the section map used by field-based lookup helpers.
     #
     # @return [Hash<Symbol, Symbol>]

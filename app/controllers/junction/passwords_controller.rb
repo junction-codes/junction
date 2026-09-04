@@ -15,7 +15,7 @@ module Junction
 
     # POST /passwords
     def create
-      user = User.find_by(email_address: params[:email_address])
+      user = User.find_by(email: params[:email])
       if user
         PasswordsMailer.reset(user).deliver_later
       end

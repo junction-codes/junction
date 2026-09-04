@@ -35,9 +35,9 @@ RSpec.describe Junction::Options::Overview do
         }.with_indifferent_access
       )
 
-      create(:api, api_type: "openapi", lifecycle: "stable")
-      create(:api, api_type: "custom_type", lifecycle: "legacy")
-      create(:component, component_type: "web", lifecycle: "stable")
+      create(:api, type: "openapi", lifecycle: "stable")
+      create(:api, type: "custom_type", lifecycle: "legacy")
+      create(:component, type: "web", lifecycle: "stable")
     end
 
     it "returns the configured option fields" do
@@ -116,7 +116,7 @@ RSpec.describe Junction::Options::Overview do
 
     it "limits value breakdown charts to top five values" do
       ("a".."f").each do |letter|
-        create(:api, api_type: letter * 3)
+        create(:api, type: letter * 3)
       end
 
       api_field = described_class.new.fields.find { |field| field[:id] == "api_type" }

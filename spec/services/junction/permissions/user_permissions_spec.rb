@@ -3,7 +3,7 @@
 require "rails_helper"
 
 RSpec.describe Junction::Permissions::UserPermissions do
-  fixtures "junction/roles"
+  fixtures(*ENTITY_FIXTURE_SETS)
 
   subject(:user_permissions) { described_class.new(user) }
 
@@ -34,7 +34,7 @@ RSpec.describe Junction::Permissions::UserPermissions do
     end
 
     context "when the user's direct group has a role with permissions" do
-      let(:group) { create(:group, annotations: { Junction::CorePlugin::ANNOTATION_GROUP_ROLE => role.name }) }
+      let(:group) { create(:group, roles: [ role ]) }
       let(:role) { create(:role, title: "Custom Role", permissions:) }
 
       before { user.update!(groups: [ group ]) }
@@ -45,7 +45,7 @@ RSpec.describe Junction::Permissions::UserPermissions do
     end
 
     context "when the user's ancestor group has a role with permissions" do
-      let(:parent) { create(:group, annotations: { Junction::CorePlugin::ANNOTATION_GROUP_ROLE => role.name }) }
+      let(:parent) { create(:group, roles: [ role ]) }
       let(:child) { create(:group, parent: parent) }
       let(:role) { create(:role, title: "Ancestor Role", permissions: [ permissions.last ]) }
 
@@ -58,7 +58,7 @@ RSpec.describe Junction::Permissions::UserPermissions do
 
     context "when the user's group has the Admin role" do
       let(:role) { Junction::Role.find_by(name: described_class::ADMIN_ROLE_NAME) }
-      let(:group) { create(:group, annotations: { Junction::CorePlugin::ANNOTATION_GROUP_ROLE => role.name }) }
+      let(:group) { create(:group, roles: [ role ]) }
 
       before do
         user.update!(groups: [ group ])
@@ -73,7 +73,7 @@ RSpec.describe Junction::Permissions::UserPermissions do
 
     context "when the user's group has the read all role" do
       let(:role) { Junction::Role.find_by(name: described_class::READ_ALL_ROLE_NAME) }
-      let(:group) { create(:group, annotations: { Junction::CorePlugin::ANNOTATION_GROUP_ROLE => role.name }) }
+      let(:group) { create(:group, roles: [ role ]) }
 
       before do
         user.update!(groups: [ group ])
@@ -98,7 +98,7 @@ RSpec.describe Junction::Permissions::UserPermissions do
 
     context "when the user has the permission" do
       let(:role) { create(:role, title: "Test Role", permissions: [ permissions.first ]) }
-      let(:group) { create(:group, annotations: { Junction::CorePlugin::ANNOTATION_GROUP_ROLE => role.name }) }
+      let(:group) { create(:group, roles: [ role ]) }
 
       before { user.update!(groups: [ group ]) }
 

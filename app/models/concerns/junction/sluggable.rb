@@ -23,7 +23,7 @@ module Junction
       before_validation :generate_slug, on: :create
 
       validates :name, presence: true, length: { maximum: 63 },
-                uniqueness: { scope: :namespace },
+                uniqueness: { scope: %i[kind namespace] },
                 format: { with: SLUG_FORMAT, message: :slug_format }
       validate :name_is_immutable, on: :update
       validates :namespace, presence: true, length: { maximum: 63 },

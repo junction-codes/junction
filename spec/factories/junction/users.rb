@@ -3,7 +3,7 @@
 FactoryBot.define do
   factory "junction/user", aliases: [ :user ], class: "Junction::User" do
     sequence(:title) { |n| "Test User #{n}" }
-    sequence(:email_address) { |n| "user-#{n}@example.com" }
+    sequence(:email) { |n| "user-#{n}@example.com" }
     password { Faker::Internet.password(max_length: 72, special_characters: true) }
     password_confirmation { password }
     image_url { TEST_IMAGE_URL }

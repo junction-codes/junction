@@ -1,0 +1,13 @@
+- title: Catalog Editor
+  name: catalog-editor
+  description: |
+    Read and write access to the catalog, without permission to delete
+    entities or manage roles.
+  permissions:
+    - junction.codes/apis.all.read
+    - junction.codes/apis.all.write
+    - junction.codes/components.all.read
+    - junction.codes/components.all.write
+    - junction.codes/domains.all.read
+    - junction.codes/resources.all.read
+    - junction.codes/systems.all.read

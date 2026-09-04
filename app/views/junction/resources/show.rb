@@ -95,7 +95,7 @@ module Junction
             tabs.list do |list|
               list.trigger(value: "dependencies") do
                 icon("blocks", class: "pe-2")
-                plain Junction::Dependency.model_name.human(count: 2)
+                plain t(".dependencies")
               end
 
               render_plugin_tab_triggers(@resource, list)
@@ -112,12 +112,12 @@ module Junction
         def dependencies_section
           div do
             h3(class: "text-xl font-semibold text-gray-800 dark:text-white mb-4") do
-              Junction::Dependency.model_name.human(count: 2)
+              t(".dependencies")
             end
 
             Tabs(default: "dependencies") do |tabs|
               tabs.list do |list|
-                list.trigger(value: "dependencies") { Junction::Dependency.model_name.human(count: 2) }
+                list.trigger(value: "dependencies") { t(".dependencies") }
                 list.trigger(value: "dependents") { t(".dependents") }
                 list.trigger(value: "graph") { t(".graph") }
               end

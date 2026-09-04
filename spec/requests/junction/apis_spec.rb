@@ -11,7 +11,7 @@ RSpec.describe "/apis", type: :request do
       description: "An API for testing purposes",
       definition: "{}",
       lifecycle: "experimental",
-      owner_id: junction_groups(:one).id,
+      owner_id: junction_groups(:group_one).id,
       system_id: create(:system).id,
       type: "openapi"
     }
@@ -92,7 +92,7 @@ RSpec.describe "/apis", type: :request do
         search_placeholder: "Search Type",
         create_hint: "Start typing to create a new Type.",
         observed_value: "custom_gateway",
-        setup_observed_value: -> { create(:api, api_type: "custom_gateway") }
+        setup_observed_value: -> { create(:api, type: "custom_gateway") }
       it_behaves_like "a request with a rich select field",
         request_proc: -> { new_api_url },
         known_label: "Known Lifecycles",

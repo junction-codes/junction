@@ -11,7 +11,7 @@ RSpec.describe "/resources", type: :request do
       description: "A resource for testing purposes",
       type: "database",
       system_id: create(:system).id,
-      owner_id: junction_groups(:one).id,
+      owner_id: junction_groups(:group_one).id,
       image_url: "https://example.com/image.png"
     }
   }
@@ -92,7 +92,7 @@ RSpec.describe "/resources", type: :request do
         search_placeholder: "Search Type",
         create_hint: "Start typing to create a new Type.",
         observed_value: "custom_queue",
-        setup_observed_value: -> { create(:resource, resource_type: "custom_queue") }
+        setup_observed_value: -> { create(:resource, type: "custom_queue") }
 
       it "returns http success" do
         get new_resource_url

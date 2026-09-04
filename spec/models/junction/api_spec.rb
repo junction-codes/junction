@@ -8,7 +8,7 @@ RSpec.describe Junction::Api, type: :model do
   it_behaves_like "a sluggable entity"
 
   describe "validations" do
-    it_behaves_like "validates presence of", :api_type
+    it_behaves_like "validates presence of", :type
     it_behaves_like "validates presence of", :definition
     it_behaves_like "validates presence of", :description
     it_behaves_like "validates presence of", :lifecycle
@@ -20,8 +20,8 @@ RSpec.describe Junction::Api, type: :model do
       expect(api).to be_valid
     end
 
-    it "accepts arbitrary api_type values" do
-      api.api_type = "vendor_event"
+    it "accepts arbitrary type values" do
+      api.type = "vendor_event"
       expect(api).to be_valid
     end
 

@@ -6,7 +6,7 @@ RSpec.describe "components/edit", type: :view do
       title: "MyEditString",
       description: "MyText",
       lifecycle: "production",
-      component_type: "api",
+      type: "api",
       image_url: "https://example.com/image.png",
       owner: create(:group)
     )

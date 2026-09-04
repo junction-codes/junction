@@ -39,20 +39,11 @@ module Junction
     # @param type [Symbol] Catalog entity type.
     # @return [Class] The model class.
     def self.catalog_model_class(type)
-      Junction.const_get(type.to_s.camelize)
+      Junction::Kinds.by_scope(type).model
     end
 
     # Entity types with the standard Rails helpers.
-    CATALOG_MEMBERS = %i[
-      api
-      component
-      domain
-      group
-      resource
-      role
-      system
-      user
-    ].freeze
+    CATALOG_MEMBERS = Junction::Kinds.sluggable.map(&:scope).freeze
 
     # Helpers for nested routes that use "friendly" URLs. We need to define
     # these explicitly because they don't follow the naming pattern of the

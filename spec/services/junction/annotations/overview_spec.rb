@@ -7,14 +7,14 @@ RSpec.describe Junction::Annotations::Overview do
 
   before do
     create(:component, annotations: { "github.com/project-slug" => "org/repo" })
-    create(:group, annotations: { Junction::CorePlugin::ANNOTATION_GROUP_ROLE => "admin" })
+    create(:group, annotations: { SAMPLE_ANNOTATION => "admin" })
   end
 
   describe "#annotation_key_tabs" do
     it "includes the registered group role key" do
       labels = overview.annotation_key_tabs.map { |tab| tab[:label] }
 
-      expect(labels).to include(Junction::CorePlugin::ANNOTATION_GROUP_ROLE)
+      expect(labels).to include(SAMPLE_ANNOTATION)
     end
 
     it "includes arbitrary annotation keys" do
@@ -34,7 +34,7 @@ RSpec.describe Junction::Annotations::Overview do
 
   describe "#annotation_key_detail" do
     subject(:panel) do
-      overview.annotation_key_detail(overview.slug_for(Junction::CorePlugin::ANNOTATION_GROUP_ROLE))
+      overview.annotation_key_detail(overview.slug_for(SAMPLE_ANNOTATION))
     end
 
     it_behaves_like "an annotations overview panel",

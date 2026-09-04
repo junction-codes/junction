@@ -10,9 +10,9 @@ RSpec.describe Junction::User, type: :model do
 
 
     it_behaves_like "validates presence of", :title
-    it_behaves_like "validates email format of", :email_address, required: true
-    it_behaves_like "validates presence of", :email_address
-    it_behaves_like "validates uniqueness of", :email_address, "duplicate@example.com"
+    it_behaves_like "validates email format of", :email, required: true
+    it_behaves_like "validates presence of", :email
+    it_behaves_like "validates uniqueness of", :email, "duplicate@example.com"
     it_behaves_like "validates presence of", :password
     it_behaves_like "validates image_url format"
 
@@ -62,9 +62,9 @@ RSpec.describe Junction::User, type: :model do
 
   describe "normalizations" do
     it "downcases and strips the email address before validation" do
-      user = build(:user, email_address: "  TEST@EXAMPLE.COM  ")
+      user = build(:user, email: "  TEST@EXAMPLE.COM  ")
       user.valid?
-      expect(user.email_address).to eq("test@example.com")
+      expect(user.email).to eq("test@example.com")
     end
   end
 
@@ -108,6 +108,49 @@ RSpec.describe Junction::User, type: :model do
       create(:system)
 
       expect(user.systems).to match_array(systems)
+    end
+  end
+
+  describe ".find_by_password_reset_token" do
+    subject(:user) { create(:user) }
+
+    it "finds the user the token identifies" do
+      expect(described_class.find_by_password_reset_token(user.password_reset_token))
+        .to eq(user)
+    end
+
+    it "returns nil for a token that does not verify" do
+      expect(described_class.find_by_password_reset_token("nonsense")).to be_nil
+    end
+  end
+
+  describe "#password_challenge" do
+    subject(:user) { create(:user, password: "passWord1!", password_confirmation: "passWord1!") }
+
+    it "accepts the attribute the password form submits" do
+      expect { user.password_challenge = "passWord1!" }.not_to raise_error
+    end
+
+    it "allows a change when the current password is given" do
+      user.assign_attributes(password: "newPassword1!", password_confirmation: "newPassword1!",
+                             password_challenge: "passWord1!")
+
+      expect(user).to be_valid
+    end
+
+    it "refuses a change when the current password is wrong" do
+      user.assign_attributes(password: "newPassword1!", password_confirmation: "newPassword1!",
+                             password_challenge: "wrong")
+
+      expect(user).not_to be_valid
+    end
+
+    it "reports the mismatch on password_challenge" do
+      user.assign_attributes(password: "newPassword1!", password_confirmation: "newPassword1!",
+                             password_challenge: "wrong")
+      user.valid?
+
+      expect(user.errors[:password_challenge]).to be_present
     end
   end
 end

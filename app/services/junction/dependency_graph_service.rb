@@ -43,8 +43,8 @@ module Junction
 
       # Find all dependencies where this entity is the source OR the target.
       # We eager-load :source and :target to prevent N+1 queries in the next step.
-      deps = Junction::Dependency.where(source: entity)
-                      .or(Junction::Dependency.where(target: entity))
+      deps = Junction::Relation.where(source: entity)
+                      .or(Junction::Relation.where(target: entity))
                       .includes(:source, :target)
       @dependencies.merge(deps)
 

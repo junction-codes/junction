@@ -5,7 +5,7 @@ RSpec.describe "groups/edit", type: :view do
     Junction::Group.create!(
       title: "MyEditString",
       description: "MyText",
-      group_type: "team",
+      type: "team",
       email: "team@example.com",
       image_url: "https://example.com/image.png",
       parent: nil

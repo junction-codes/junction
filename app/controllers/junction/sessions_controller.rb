@@ -14,7 +14,7 @@ module Junction
 
     # POST /sessions
     def create
-      user = User.authenticate_by(params.permit(:email_address, :password))
+      user = User.authenticate_by(params.permit(:email, :password))
       if user
         start_new_session_for user
         redirect_to after_authentication_url

@@ -52,37 +52,15 @@ module Junction
 
     # Builds and executes a paginated query for dependents.
     #
-    # The API query is used for Ransack sorting and filters.
-    #
-    # @return [Array(Array<Object>, Ransack::Search)] Entity list and query to
-    #   use for sorting.
+    # @return [Array(ActiveRecord::Relation, Ransack::Search)] Entity list and
+    #   query used for sorting.
     def dependents_query
-      api_query = @entity.api_dependents.ransack(params[:q])
-      component_query = @entity.component_dependents.ransack(params[:q])
-      resource_query = @entity.resource_dependents.ransack(params[:q])
-      api_query.sorts = "name asc" if api_query.sorts.empty?
+      query = @entity.dependent_sources.ransack(params[:q])
+      query.sorts = "name asc" if query.sorts.empty?
 
-      @pagy, entities = paginate(merged_dependent_list(
-        api_query,
-        [ api_query, component_query, resource_query ]
-      ))
+      @pagy, entities = paginate(query.result)
 
-      [ entities, api_query ]
-    end
-
-    # Merges results of the different dependent types and sorts them.
-    #
-    # @param sort_query [Ransack::Search] Query used to determine sorting.
-    # @param queries [Array<Ransack::Search>] Queries to merge.
-    # @return [Array<Object>] Merged and sorted entity list.
-    def merged_dependent_list(sort_query, queries)
-      sort = sort_query.sorts.first
-      entities = queries.map(&:result).flatten
-      sorted = entities.sort_by do |entity|
-        [ entity.public_send(sort.name).to_s.downcase, entity.name.to_s.downcase ]
-      end
-
-      sort.dir == "desc" ? sorted.reverse : sorted
+      [ entities, query ]
     end
   end
 end

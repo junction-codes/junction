@@ -86,7 +86,7 @@ RSpec.describe "/groups", type: :request do
         search_placeholder: "Search Type",
         create_hint: "Start typing to create a new Type.",
         observed_value: "working_group",
-        setup_observed_value: -> { create(:group, group_type: "working_group") }
+        setup_observed_value: -> { create(:group, type: "working_group") }
 
       it "renders a successful response" do
         get new_group_url
@@ -229,7 +229,7 @@ RSpec.describe "/groups", type: :request do
       end
 
       it "creates a group with a parent in a different namespace" do
-        cross_ns_parent = create(:group, namespace: "backstage", name: "backstage-parent")
+        cross_ns_parent = create(:group, namespace: "junction", name: "junction-parent")
         post groups_url, params: {
           group: valid_attributes.merge(parent_id: cross_ns_parent.id, namespace: "default")
         }

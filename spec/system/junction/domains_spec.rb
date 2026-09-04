@@ -28,17 +28,17 @@ RSpec.describe "Junction::Domains", type: :system do
 
   def sign_in_existing_user(user)
     visit new_session_path
-    fill_in "Your email", with: user.email_address
+    fill_in "Your email", with: user.email
     fill_in "Password", with: "Password1!"
     click_button "Submit"
   end
 
   def fill_required_domain_fields(title:, description: "A domain description",
-                                 domain_type: "product-area",
+                                 type: "product-area",
                                  owner: owner_group)
     fill_in "domain_title", with: title
     fill_in "domain_description", with: description
-    find(:xpath, "//input[@name='domain[type]']", visible: :all).set(domain_type)
+    find(:xpath, "//input[@name='domain[type]']", visible: :all).set(type)
     find(:xpath, "//input[@name='domain[owner_id]']", visible: :all).set(owner.id)
   end
 
@@ -199,11 +199,11 @@ RSpec.describe "Junction::Domains", type: :system do
     end
 
     it "shows the parent namespace in the picker options" do
-      create(:domain, title: "Cross NS Parent", name: "cross-ns-parent", namespace: "backstage")
+      create(:domain, title: "Cross NS Parent", name: "cross-ns-parent", namespace: "junction")
       visit new_domain_path
       item = open_reference_select("Parent").find("[data-ruby-ui--select-target='item']", text: "Cross NS Parent")
 
-      expect(item.text).to include("backstage")
+      expect(item.text).to include("junction")
     end
   end
 

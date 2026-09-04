@@ -70,7 +70,7 @@ module Junction
                 )
               }
 
-              %w[title email_address].each do |field|
+              %w[title email].each do |field|
                 row.sortable_head(field:, sort_url:, **sort_attrs(query, field)) do
                   User.human_attribute_name(field)
                 end
@@ -105,7 +105,7 @@ module Junction
                 end
 
                 row.cell do
-                  Link(href: "mailto:#{user.email_address}", class: "ps-0") { user.email_address }
+                  Link(href: "mailto:#{user.email}", class: "ps-0") { user.email }
                 end
               end
             end

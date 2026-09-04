@@ -26,19 +26,19 @@ def create_system_roles
     r = Junction::Role.find_or_initialize_by(name: role[:name])
     r.title = role[:title]
     r.description = role[:description]
-    r.system = true
+    r.system_role = true
     r.save!
   end
 end
 
 # Ensure default admin user exists (for standalone Junction installation)
 def create_default_admin_user
-  return if Junction::User.exists?(email_address: "admin@example.com")
+  return if Junction::User.exists?(email: "admin@example.com")
 
   Junction::User.create!(
     title: "Administrator",
     name: "admin",
-    email_address: "admin@example.com",
+    email: "admin@example.com",
     password: "passWord1!",
     password_confirmation: "passWord1!"
   )
@@ -50,17 +50,17 @@ def create_default_role_groups
   admin_name = Junction::Permissions::UserPermissions::ADMIN_ROLE_NAME
   read_all_name = Junction::Permissions::UserPermissions::READ_ALL_ROLE_NAME
 
-  Junction::Group.find_or_create_by!(name: "junction-admins", namespace: "default") do |g|
+  admins = Junction::Group.find_or_create_by!(name: "junction-admins", namespace: "default") do |g|
     g.title = "Junction Admins"
     g.description = "Default group for administrators. Members receive the Admin role."
-    g.annotations = { "junction.codes/role" => admin_name }
   end
+  admins.roles = [ Junction::Role.find_by(name: admin_name) ].compact
 
-  Junction::Group.find_or_create_by!(name: "junction-readers", namespace: "default") do |g|
+  readers = Junction::Group.find_or_create_by!(name: "junction-readers", namespace: "default") do |g|
     g.title = "Junction Readers"
     g.description = "Default group for read-only access. Members receive the Read all role."
-    g.annotations = { "junction.codes/role" => read_all_name }
   end
+  readers.roles = [ Junction::Role.find_by(name: read_all_name) ].compact
 end
 
 def add_default_admin_to_junction_admins
@@ -93,6 +93,22 @@ def find_reference(model, reference, namespace)
     model.find_by(namespace: Junction::Sluggable::DEFAULT_NAMESPACE, name: reference)
 end
 
+# Finds the group or user that owns an entity.
+#
+# Owners are named `group:name` or `user:name`. A bare name is a group, which is
+# the common case.
+#
+# @param reference [String] Owner reference, optionally kind qualified.
+# @param namespace [String] Namespace of the entity holding the reference.
+# @return [Junction::Entity, nil] The owner, if found.
+def find_owner(reference, namespace)
+  kind, name = reference.to_s.split(':', 2)
+  return find_reference(Junction::Group, kind, namespace) if name.blank?
+
+  model = { 'group' => Junction::Group, 'user' => Junction::User }[kind]
+  model ? find_reference(model, name, namespace) : nil
+end
+
 # TODO: Create an importer server to handle this logic in a more robust way.
 def import_apis(path)
   return unless File.exist?(Rails.root.join(path, 'apis.yaml'))
@@ -103,7 +119,7 @@ def import_apis(path)
 
     Rails.logger.info "Creating API #{api[:title]}"
     api[:system] = find_reference(Junction::System, api[:system], namespace) if api[:system].present?
-    api[:owner] = find_reference(Junction::Group, api[:owner], namespace) if api[:owner].present?
+    api[:owner] = find_owner(api[:owner], namespace) if api[:owner].present?
 
     Junction::Api.create(api.except(:dependencies))
   end
@@ -118,7 +134,7 @@ def import_components(path)
 
     Rails.logger.info "Creating component #{component[:title]}"
     component[:system] = find_reference(Junction::System, component[:system], namespace) if component[:system].present?
-    component[:owner] = find_reference(Junction::Group, component[:owner], namespace) if component[:owner].present?
+    component[:owner] = find_owner(component[:owner], namespace) if component[:owner].present?
 
     Junction::Component.create(component.except(:dependencies))
   end
@@ -134,7 +150,7 @@ def import_domains(path)
     next if Junction::Domain.find_by(name: domain[:name], namespace: namespace)
 
     Rails.logger.info "Creating domain #{domain[:title]}"
-    domain[:owner] = find_reference(Junction::Group, domain[:owner], namespace) if domain[:owner].present?
+    domain[:owner] = find_owner(domain[:owner], namespace) if domain[:owner].present?
 
     Junction::Domain.create(domain.except(:parent))
   end
@@ -166,7 +182,7 @@ def import_groups(path)
       find_reference(Junction::User, member, namespace)
     end
 
-    Junction::Group.create(group.except(:parent))
+    Junction::Group.create(group.except(:parent, :roles))
   end
 
   groups.each do |group|
@@ -182,6 +198,68 @@ def import_groups(path)
   end
 end
 
+def import_roles(path)
+  return unless File.exist?(Rails.root.join(path, 'roles.yaml'))
+
+  YAML.load_file(Rails.root.join(path, 'roles.yaml'), symbolize_names: true).each do |role|
+    namespace = role.fetch(:namespace, "default")
+    next if Junction::Role.find_by(name: role[:name], namespace: namespace)
+
+    Rails.logger.info "Creating role #{role[:title]}"
+    permissions = role.fetch(:permissions, [])
+    entity = Junction::Role.create(role.except(:permissions))
+    next unless entity.persisted?
+
+    permissions.each do |permission|
+      entity.role_permissions.create(permission: permission)
+    end
+  end
+end
+
+# Grants roles to groups. Runs after both exist, and after every other import,
+# so a grant is never resolved against a partially loaded catalog.
+def link_group_roles(path)
+  return unless File.exist?(Rails.root.join(path, 'groups.yaml'))
+
+  YAML.load_file(Rails.root.join(path, 'groups.yaml'), symbolize_names: true).each do |group|
+    next if group[:roles].blank?
+
+    namespace = group.fetch(:namespace, "default")
+    record = Junction::Group.find_by(name: group[:name], namespace: namespace)
+    next unless record
+
+    roles = group[:roles].filter_map { |name| find_reference(Junction::Role, name, namespace) }
+    Rails.logger.info "Granting #{roles.size} role(s) to #{group[:title]}"
+    record.roles = roles
+  end
+end
+
+def import_locations(path)
+  return unless File.exist?(Rails.root.join(path, 'locations.yaml'))
+
+  YAML.load_file(Rails.root.join(path, 'locations.yaml'), symbolize_names: true).each do |location|
+    namespace = location.fetch(:namespace, "default")
+    next if Junction::Location.find_by(name: location[:name], namespace: namespace)
+
+    Rails.logger.info "Creating location #{location[:title]}"
+    Junction::Location.create(location)
+  end
+end
+
+def import_templates(path)
+  return unless File.exist?(Rails.root.join(path, 'templates.yaml'))
+
+  YAML.load_file(Rails.root.join(path, 'templates.yaml'), symbolize_names: true).each do |template|
+    namespace = template.fetch(:namespace, "default")
+    next if Junction::Template.find_by(name: template[:name], namespace: namespace)
+
+    Rails.logger.info "Creating template #{template[:title]}"
+    template[:owner] = find_owner(template[:owner], namespace) if template[:owner].present?
+
+    Junction::Template.create(template)
+  end
+end
+
 def import_resources(path)
   return unless File.exist?(Rails.root.join(path, 'resources.yaml'))
 
@@ -191,7 +269,7 @@ def import_resources(path)
 
     Rails.logger.info "Creating resource #{resource[:title]}"
     resource[:system] = find_reference(Junction::System, resource[:system], namespace) if resource[:system].present?
-    resource[:owner] = find_reference(Junction::Group, resource[:owner], namespace) if resource[:owner].present?
+    resource[:owner] = find_owner(resource[:owner], namespace) if resource[:owner].present?
 
     Junction::Resource.create(resource.except(:dependencies))
   end
@@ -206,7 +284,7 @@ def import_systems(path)
 
     Rails.logger.info "Creating system #{system[:title]}"
     system[:domain] = find_reference(Junction::Domain, system[:domain], namespace) if system[:domain].present?
-    system[:owner] = find_reference(Junction::Group, system[:owner], namespace) if system[:owner].present?
+    system[:owner] = find_owner(system[:owner], namespace) if system[:owner].present?
     Junction::System.create(system)
   end
 end
@@ -281,6 +359,8 @@ if Rails.env.development?
   add_default_admin_to_junction_admins
 
   path = Junction::Engine.seed_data_path(ENV.fetch("JUNCTION_SEED_ORG", "sample"))
+  import_locations(path)
+  import_roles(path)
   import_users(path)
   import_groups(path)
   import_domains(path)
@@ -288,5 +368,7 @@ if Rails.env.development?
   import_resources(path)
   import_components(path)
   import_apis(path)
+  import_templates(path)
   link_dependencies(path)
+  link_group_roles(path)
 end

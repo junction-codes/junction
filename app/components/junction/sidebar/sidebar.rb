@@ -6,25 +6,9 @@ module Junction
       class Sidebar < Base
         include PluginDispatchHelper
 
-        ENTITY_ICONS = {
-          domains: "briefcase",
-          systems: "network",
-          components: "server",
-          apis: "webhook",
-          resources: "rows-4",
-          groups: "users-round",
-          users: "user-round"
-        }.freeze
-
-        INDEX_PATH_BY_CONTEXT = {
-          domains: :domains_path,
-          systems: :systems_path,
-          components: :components_path,
-          apis: :apis_path,
-          resources: :resources_path,
-          groups: :groups_path,
-          users: :users_path
-        }.freeze
+        # Kinds shown in the main navigation, in display order. Only the order
+        # lives here; the icon, path, and title come from the kind registry.
+        NAV_SCOPES = %i[domain system component api resource group user].freeze
 
         def view_template
           aside(
@@ -35,13 +19,12 @@ module Junction
               div(class: "space-y-2 px-2 py-4") do
                 item(href: view_context.dashboard_path, icon: "house", title: t(".dashboard")) if allowed_to?(:show?, :dashboard)
 
-                ENTITY_ICONS.each do |context, icon|
-                  path = INDEX_PATH_BY_CONTEXT.fetch(context)
+                NAV_SCOPES.filter_map { |scope| Junction::Kinds.by_scope(scope) }.each do |kind|
                   item(
-                    href: view_context.public_send(path),
-                    icon:,
-                    title: Junction.const_get(context.to_s.classify).model_name.human(count: 2)
-                  ) if allowed_to?(:index?, context)
+                    href: view_context.public_send(:"#{kind.plural}_path"),
+                    icon: kind.default_icon,
+                    title: kind.model.model_name.human(count: 2)
+                  ) if allowed_to?(:index?, kind.model)
                 end
 
                 # TODO: Implement techdocs and cost explorer.

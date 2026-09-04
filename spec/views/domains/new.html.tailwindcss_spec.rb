@@ -4,7 +4,7 @@ RSpec.describe "domains/new", type: :view do
   before do
     assign(:domain, Junction::Domain.new(
       name: "MyString",
-      domain_type: "product-area",
+      type: "product-area",
       description: "MyText",
       image_url: "https://example.com/image.png",
       owner: nil

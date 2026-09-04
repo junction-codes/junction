@@ -30,17 +30,17 @@ RSpec.shared_examples "a dependency creation action" do |source_factory, path_me
 
       it "creates a dependency" do
         expect { post path, params: valid_params }
-          .to change(Junction::Dependency, :count).by(1)
+          .to change(Junction::Relation, :count).by(1)
       end
 
       it "sets the correct source" do
         post path, params: valid_params
-        expect(Junction::Dependency.last.source).to eq(source)
+        expect(Junction::Relation.last.source).to eq(source)
       end
 
       it "sets the correct target" do
         post path, params: valid_params
-        expect(Junction::Dependency.last.target).to eq(target)
+        expect(Junction::Relation.last.target).to eq(target)
       end
 
       it "redirects with see_other status" do
@@ -50,7 +50,7 @@ RSpec.shared_examples "a dependency creation action" do |source_factory, path_me
 
       it "does not create a dependency with a blank target" do
         expect { post path, params: { dependency: { target: "" } } }
-          .not_to change(Junction::Dependency, :count)
+          .not_to change(Junction::Relation, :count)
       end
     end
   end

@@ -12,16 +12,11 @@ module SystemAuthenticationHelper
     create(
       :group_membership,
       user:,
-      group: create(
-        :group,
-        annotations: {
-          Junction::CorePlugin::ANNOTATION_GROUP_ROLE => create(:role, permissions:).name
-        }
-      )
+      group: create(:group, roles: [ create(:role, permissions:) ])
     )
 
     visit new_session_path
-    fill_in "Your email", with: user.email_address
+    fill_in "Your email", with: user.email
     fill_in "Password", with: password
     click_button "Submit"
 

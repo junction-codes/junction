@@ -12,6 +12,7 @@ module Junction
 
       validate :tree_child_parent_cannot_be_self
       validate :tree_child_parent_cannot_be_descendant
+      validate :tree_child_parent_kind_matches
     end
 
     private
@@ -39,6 +40,20 @@ module Junction
       return if parent_id.blank? || id.blank?
 
       errors.add(:parent_id, "cannot be itself") if parent_id == id
+    end
+
+    # Validates that the parent is the same kind as the entity.
+    #
+    # Domains and groups share one `parent_id` column, so a cross-kind parent is
+    # technically representable. The association is kind-scoped and would simply
+    # resolve to nil, hiding the problem, so reject it explicitly.
+    def tree_child_parent_kind_matches
+      return if parent_id.blank?
+
+      actual = self.class.base_class.where(id: parent_id).pick(:kind)
+      return if actual.nil? || actual == self.class.sti_name
+
+      errors.add(:parent_id, :invalid)
     end
 
     # Validates that the parent is not a descendant of the entity.

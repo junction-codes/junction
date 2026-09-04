@@ -3,15 +3,14 @@
 module Junction
   # Controller for the global search.
   #
-  # No additional authorization checks are performed, as `index_scope_for` will
-  # handle the authorization for each searchable model.
+  # No additional authorization checks are performed, as `entity_scope_for`
+  # restricts the relation to kinds the user may read.
   class SearchController < ApplicationController
-    include HasOwner
+    include ReadScoped
     include Paginatable
 
     skip_verify_authorized
 
-    SEARCHABLE_MODELS = [ Api, Component, Domain, Resource, System ].freeze
     SORT_FIELDS = %w[kind title].freeze
 
     # GET /search
@@ -19,10 +18,7 @@ module Junction
       @query = params[:q].to_s.strip
       sort_field, sort_dir = parse_sort
 
-      full_results = @query.present? ? fetch_models(@query) : []
-      sorted = sort_results(full_results, sort_field, sort_dir)
-
-      @pagy, @results = paginate(sorted)
+      @pagy, @results = paginate(sorted_results(sort_field, sort_dir))
 
       render Views::Search::Index.new(
         query: @query,
@@ -36,45 +32,35 @@ module Junction
     # GET /search/autocomplete
     def autocomplete
       query = params[:q].to_s.strip
-      results = query.present? ? fetch_models(query, limit: 2).first(5) : []
+      results = query.present? ? matching_entities(query).order(:title).limit(5) : []
 
       render Views::Search::Autocomplete.new(query:, results:)
     end
 
     private
 
-    # Fetches matching records across all searchable models.
+    # Ordered relation of entities matching the query.
     #
-    # @param query [String] The search query.
-    # @param limit [Integer] Per-model result cap.
-    # @return [Array<ApplicationRecord>] Flat array of matching records.
-    def fetch_models(query, limit: 100)
-      pattern = "%#{query}%"
-
-      SEARCHABLE_MODELS.flat_map do |model|
-        scope = index_scope_for(model)
-        next [] if scope.nil?
-
-        scope.where("title ILIKE :p OR description ILIKE :p", p: pattern)
-          .order(:title)
-          .limit(limit)
-          .to_a
-      end
-    end
-
-    # Sorts the combined results array.
+    # Sorting and paging happen in SQL. Sorting by kind orders on the
+    # discriminator, so results group by kind in storage order rather than by
+    # translated name.
     #
-    # @param results [Array<ApplicationRecord>] Flat results array.
     # @param field [String] Sort field ("title" or "kind").
     # @param direction [String] Sort direction ("asc" or "desc").
-    # @return [Array<ApplicationRecord>] Sorted results.
-    def sort_results(results, field = "title", direction = "asc")
-      sorted = case field
-      when "kind" then results.sort_by { |e| [ e.class.model_name.human, e.title ] }
-      else results.sort_by(&:title)
-      end
+    # @return [ActiveRecord::Relation] The sorted relation.
+    def sorted_results(field, direction)
+      return Entity.none if @query.blank?
 
-      direction == "desc" ? sorted.reverse : sorted
+      matching_entities(@query).order(field => direction, :title => :asc)
+    end
+
+    # Entities the user may read whose title or description matches.
+    #
+    # @param query [String] The search query.
+    # @return [ActiveRecord::Relation] The matching entities.
+    def matching_entities(query)
+      entity_scope_for(Junction::Kinds.catalog)
+        .where("title ILIKE :p OR description ILIKE :p", p: "%#{query}%")
     end
 
     # Parses and validates the sort params.

@@ -2,13 +2,17 @@
 
 module Junction
   # Represents a role used for authorization.
-  class Role < ApplicationRecord
-    include Sluggable
+  class Role < Entity
+    self.default_icon = "shield-check"
+
+    store_accessor :spec, :system_role
 
     validates :description, presence: true
 
-    has_many :groups, class_name: "Junction::Group"
-    has_many :role_permissions, dependent: :destroy, class_name: "Junction::RolePermission"
+    has_many :group_roles, dependent: :destroy, class_name: "Junction::GroupRole"
+    has_many :groups, through: :group_roles, class_name: "Junction::Group"
+    has_many :role_permissions, dependent: :destroy,
+             class_name: "Junction::RolePermission"
 
     before_destroy :prevent_system_role_deletion
 
@@ -33,7 +37,7 @@ module Junction
     #
     # @return [Boolean] True if the role is a system role, false otherwise.
     def system?
-      system == true
+      ActiveModel::Type::Boolean.new.cast(system_role) == true
     end
 
     private
