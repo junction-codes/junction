@@ -50,7 +50,7 @@ RSpec.describe Junction::Taggable do
       expect(component).not_to be_valid
     end
 
-    it "accepts the punctuation Backstage allows" do
+    it "accepts the punctuation allowed" do
       component.tags = %w[c++ dot.net my-tag]
       expect(component).to be_valid
     end

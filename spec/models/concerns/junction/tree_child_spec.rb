@@ -6,9 +6,6 @@ RSpec.describe Junction::TreeChild do
   let(:group) { create(:group) }
 
   describe "parent kind" do
-    # Domains and groups share one parent_id column, so a cross-kind parent is
-    # representable. The association is kind-scoped and would resolve to nil,
-    # hiding the problem, so it is rejected explicitly.
     it "rejects a parent of another kind" do
       domain = build(:domain, owner: group)
       domain.parent_id = create(:group).id

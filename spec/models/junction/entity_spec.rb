@@ -114,10 +114,6 @@ RSpec.describe Junction::Entity do
     end
   end
 
-  # Every kind shares junction_entities, so name uniqueness has to be scoped by
-  # kind explicitly. Without that scope ActiveRecord resolves the uniqueness
-  # query against Junction::Entity, which carries no type condition, and a name
-  # would silently become unique across the whole catalog.
   describe "slug uniqueness across kinds" do
     let(:group) { create(:group) }
 
@@ -177,8 +173,6 @@ RSpec.describe Junction::Entity do
     end
   end
 
-  # Every kind shares one table, so anything a model allows Ransack to query
-  # becomes a URL-driven query surface for that kind.
   describe "Ransack allowlists across kinds" do
     let(:forbidden) do
       %w[annotations labels links spec tags managed_by source_ref location_id
