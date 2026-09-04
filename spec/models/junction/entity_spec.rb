@@ -150,6 +150,79 @@ RSpec.describe Junction::Entity do
     end
   end
 
+  describe ".ownable?" do
+    it "is false for a kind with no owner" do
+      expect(Junction::User).not_to be_ownable
+    end
+
+    it "is true for a kind that includes Ownable" do
+      expect(Junction::Component).to be_ownable
+    end
+
+    it "is false on the base class" do
+      expect(described_class).not_to be_ownable
+    end
+  end
+
+  describe "#icon" do
+    it "falls back to the kind's default when the type declares none" do
+      expect(build(:user).icon).to eq("user-round")
+    end
+
+    it "uses the icon the catalog options give the type" do
+      allow(Junction::CatalogOptions).to receive(:section).with(:components)
+        .and_return({ "service" => { icon: "cloud" } }.with_indifferent_access)
+
+      expect(build(:component, type: "service").icon).to eq("cloud")
+    end
+  end
+
+  # Every kind shares one table, so anything a model allows Ransack to query
+  # becomes a URL-driven query surface for that kind.
+  describe "Ransack allowlists across kinds" do
+    let(:forbidden) do
+      %w[annotations labels links spec tags managed_by source_ref location_id
+         password_digest]
+    end
+
+    let(:models) do
+      Junction::Kinds.all.map(&:model) + [ Junction::Relation, Junction::GroupRole ]
+    end
+
+    it "exposes no forbidden attribute on any model" do
+      leaked = models.to_h { |m| [ m.name, m.ransackable_attributes & forbidden ] }
+                     .reject { |_, v| v.empty? }
+
+      expect(leaked).to be_empty
+    end
+
+    it "exposes only real columns or aliases" do
+      unknown = models.to_h do |model|
+        known = model.column_names + model.attribute_aliases.keys
+        [ model.name, model.ransackable_attributes - known ]
+      end.reject { |_, v| v.empty? }
+
+      expect(unknown).to be_empty
+    end
+
+    it "names only real associations" do
+      unknown = models.to_h do |model|
+        names = model.reflect_on_all_associations.map { |a| a.name.to_s }
+        [ model.name, model.ransackable_associations - names ]
+      end.reject { |_, v| v.empty? }
+
+      expect(unknown).to be_empty
+    end
+
+    it "exposes nothing on credentials" do
+      expect(Junction::Credential.ransackable_attributes).to be_empty
+    end
+
+    it "exposes no associations on credentials" do
+      expect(Junction::Credential.ransackable_associations).to be_empty
+    end
+  end
+
   describe ".policy_class" do
     it "routes every kind through the entity policy" do
       expect(Junction::Api.policy_class).to eq(Junction::EntityPolicy)

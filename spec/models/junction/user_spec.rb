@@ -110,4 +110,17 @@ RSpec.describe Junction::User, type: :model do
       expect(user.systems).to match_array(systems)
     end
   end
+
+  describe ".find_by_password_reset_token" do
+    subject(:user) { create(:user) }
+
+    it "finds the user a valid token names" do
+      expect(described_class.find_by_password_reset_token(user.password_reset_token))
+        .to eq(user)
+    end
+
+    it "returns nil for a token that does not verify" do
+      expect(described_class.find_by_password_reset_token("nonsense")).to be_nil
+    end
+  end
 end

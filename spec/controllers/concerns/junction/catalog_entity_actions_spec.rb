@@ -32,6 +32,24 @@ RSpec.describe Junction::CatalogEntityActions do
       expect(overrides).to all(be(true))
     end
 
+    it "refuses to run without an entity class" do
+      controller = Class.new(Junction::ApplicationController) do
+        include Junction::CatalogEntityActions
+      end.new
+
+      expect { controller.send(:entity_class) }
+        .to raise_error(NotImplementedError, /entity_class/)
+    end
+
+    it "refuses to run without permitted parameters" do
+      controller = Class.new(Junction::ApplicationController) do
+        include Junction::CatalogEntityActions
+      end.new
+
+      expect { controller.send(:create_params) }
+        .to raise_error(NotImplementedError, /create_params/)
+    end
+
     it "provides the seven shared actions" do
       expect(Junction::ApisController.new).to respond_to(
         :index, :show, :new, :edit, :create, :update, :destroy
