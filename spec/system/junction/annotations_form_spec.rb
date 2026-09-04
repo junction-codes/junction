@@ -2,8 +2,6 @@
 
 require "rails_helper"
 
-SAMPLE_ANNOTATION = "junction.codes/team"
-
 RSpec.describe "Junction::Annotations forms", type: :system do
   describe "known and other annotation fields" do
     before { driven_by(:rack_test) }

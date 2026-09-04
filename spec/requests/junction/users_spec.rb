@@ -162,6 +162,44 @@ RSpec.describe "/users", type: :request do
           expect(response).to have_http_status(:unprocessable_content)
         end
       end
+
+      context "when changing a password" do
+        let!(:subject_user) do
+          create(:user, password: "passWord1!", password_confirmation: "passWord1!")
+        end
+
+        let(:new_password) do
+          { password: "newPassword1!", password_confirmation: "newPassword1!" }
+        end
+
+        it "changes the password when the current one is given" do
+          patch user_url(subject_user),
+                params: { user: new_password.merge(password_challenge: "passWord1!") }
+
+          expect(subject_user.reload.authenticate("newPassword1!")).to be_truthy
+        end
+
+        it "redirects after a successful change" do
+          patch user_url(subject_user),
+                params: { user: new_password.merge(password_challenge: "passWord1!") }
+
+          expect(response).to redirect_to(user_url(subject_user))
+        end
+
+        it "refuses when the current password is wrong" do
+          patch user_url(subject_user),
+                params: { user: new_password.merge(password_challenge: "wrong") }
+
+          expect(subject_user.reload.authenticate("newPassword1!")).to be(false)
+        end
+
+        it "reports the refusal rather than erroring" do
+          patch user_url(subject_user),
+                params: { user: new_password.merge(password_challenge: "wrong") }
+
+          expect(response).to have_http_status(:unprocessable_content)
+        end
+      end
     end
 
     describe "DELETE /destroy" do

@@ -114,13 +114,43 @@ RSpec.describe Junction::User, type: :model do
   describe ".find_by_password_reset_token" do
     subject(:user) { create(:user) }
 
-    it "finds the user a valid token names" do
+    it "finds the user the token identifies" do
       expect(described_class.find_by_password_reset_token(user.password_reset_token))
         .to eq(user)
     end
 
     it "returns nil for a token that does not verify" do
       expect(described_class.find_by_password_reset_token("nonsense")).to be_nil
+    end
+  end
+
+  describe "#password_challenge" do
+    subject(:user) { create(:user, password: "passWord1!", password_confirmation: "passWord1!") }
+
+    it "accepts the attribute the password form submits" do
+      expect { user.password_challenge = "passWord1!" }.not_to raise_error
+    end
+
+    it "allows a change when the current password is given" do
+      user.assign_attributes(password: "newPassword1!", password_confirmation: "newPassword1!",
+                             password_challenge: "passWord1!")
+
+      expect(user).to be_valid
+    end
+
+    it "refuses a change when the current password is wrong" do
+      user.assign_attributes(password: "newPassword1!", password_confirmation: "newPassword1!",
+                             password_challenge: "wrong")
+
+      expect(user).not_to be_valid
+    end
+
+    it "reports the mismatch on password_challenge" do
+      user.assign_attributes(password: "newPassword1!", password_confirmation: "newPassword1!",
+                             password_challenge: "wrong")
+      user.valid?
+
+      expect(user.errors[:password_challenge]).to be_present
     end
   end
 end

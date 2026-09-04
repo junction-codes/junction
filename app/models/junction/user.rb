@@ -98,6 +98,14 @@ module Junction
       (credential || build_credential).password_confirmation = value
     end
 
+    def password_challenge
+      credential&.password_challenge
+    end
+
+    def password_challenge=(value)
+      (credential || build_credential).password_challenge = value
+    end
+
     def icon
       default_icon
     end

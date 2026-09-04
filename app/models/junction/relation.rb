@@ -25,7 +25,7 @@ module Junction
     validates :relation_type, presence: true, inclusion: { in: TYPES.keys }
     validates :source_id, uniqueness: { scope: %i[target_id relation_type] }
     validate :source_and_target_differ
-    validate :target_kind_is_dependable
+    validate :endpoints_are_dependable
 
     scope :depends_on, -> { where(relation_type: DEPENDS_ON) }
     scope :provides_api, -> { where(relation_type: PROVIDES_API) }
@@ -56,12 +56,16 @@ module Junction
       errors.add(:target_id, :invalid) if source_id == target_id
     end
 
-    # Validates that the target is a kind that may participate in relations.
-    def target_kind_is_dependable
-      return if target.nil?
-      return if Junction::Kinds.dependable_names.include?(target.kind)
+    # Validates that both ends are kinds that may participate in relations.
+    #
+    # Both, not just the target: EntityIntegrity reports a relation as corrupt
+    # on either end, so validating one would let the app write a row its own
+    # integrity check then flags.
+    def endpoints_are_dependable
+      dependable = Junction::Kinds.dependable_names
 
-      errors.add(:target_id, :invalid)
+      errors.add(:source_id, :invalid) if source && !dependable.include?(source.kind)
+      errors.add(:target_id, :invalid) if target && !dependable.include?(target.kind)
     end
   end
 end

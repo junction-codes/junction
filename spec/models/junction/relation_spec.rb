@@ -30,6 +30,17 @@ RSpec.describe Junction::Relation do
     it "rejects a target of a kind that cannot be depended on" do
       expect(build(:relation, source: component, target: create(:system))).not_to be_valid
     end
+
+    it "rejects a source of a kind that cannot be depended on" do
+      expect(build(:relation, source: create(:system), target: api)).not_to be_valid
+    end
+
+    it "reports an undependable source on source_id" do
+      relation = build(:relation, source: create(:system), target: api)
+      relation.valid?
+
+      expect(relation.errors[:source_id]).to be_present
+    end
   end
 
   describe "uniqueness" do

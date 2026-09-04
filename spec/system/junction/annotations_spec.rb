@@ -2,8 +2,6 @@
 
 require "rails_helper"
 
-SAMPLE_ANNOTATION = "junction.codes/team"
-
 RSpec.describe "Junction::Annotations overview", :js, type: :system do
   before do
     create(:component, annotations: { "github.com/project-slug" => "org/repo" })
