@@ -3,10 +3,8 @@
 module Junction
   # Provides access to the `tags` and `labels` fields.
   #
-  # These are Backstage's `metadata.tags` (a bare string list) and
-  # `metadata.labels` (its key/value counterpart). Tags are a Postgres array
-  # rather than jsonb so they can be matched with the array overlap operator
-  # and counted with `unnest`.
+  # Tags are a Postgres array rather than jsonb so they can be matched with the
+  # array overlap operator and counted with `unnest`.
   module Taggable
     extend ActiveSupport::Concern
 

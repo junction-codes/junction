@@ -192,10 +192,6 @@ RSpec.describe "/domains", type: :request do
         end
       end
 
-      # The signed in user may write every Domain, so they may hand one to a
-      # group they are not part of. The restriction to the user's own groups
-      # applies only to holders of `owned.write`, which
-      # spec/requests/junction/owner_assignment_spec.rb covers.
       context "with an owner outside the user's groups" do
         let!(:foreign_group) { create(:group) }
         let(:foreign_attributes) { valid_attributes.merge(owner_id: foreign_group.id) }
@@ -327,7 +323,7 @@ RSpec.describe "/domains", type: :request do
       end
 
       it "creates a domain with a parent in a different namespace" do
-        cross_ns_parent = create(:domain, namespace: "backstage", name: "backstage-parent")
+        cross_ns_parent = create(:domain, namespace: "junction", name: "junction-parent")
         post domains_url, params: {
           domain: valid_attributes.merge(parent_id: cross_ns_parent.id, namespace: "default")
         }

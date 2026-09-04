@@ -17,8 +17,6 @@ module Junction
     # handing an entity to someone else or claiming one for a group they do
     # not belong to.
     #
-    # Reads `entity_class` from {Junction::CatalogEntityActions}.
-    #
     # @return [Boolean]
     def assign_any_owner?
       allowed_to?(:create_all?, entity_class)

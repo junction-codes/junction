@@ -95,8 +95,8 @@ end
 
 # Finds the group or user that owns an entity.
 #
-# Owners are named `group:name` or `user:name`, as Backstage names them. A bare
-# name is a group, which is the common case.
+# Owners are named `group:name` or `user:name`. A bare name is a group, which is
+# the common case.
 #
 # @param reference [String] Owner reference, optionally kind qualified.
 # @param namespace [String] Namespace of the entity holding the reference.
