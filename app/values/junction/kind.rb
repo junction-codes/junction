@@ -35,11 +35,14 @@ module Junction
     #   all. A kind that is registered but not exposed still resolves from the
     #   database, so existing rows load, but it has no permissions, no routes,
     #   and appears in no listing.
+    # @param domain [String] Permission domain the kind's permissions belong to.
+    #   Defaults to the core domain. Kinds registered by plugins should set this
+    #   to the plugin's domain.
     # @param default_icon [String] Icon used when the entity's type declares
     #   none.
     def initialize(scope, model_name: nil, catalog: false, ownable: false,
                    sluggable: true, dependable: false, tree: false,
-                   exposed: true, default_icon: DEFAULT_ICON)
+                   exposed: true, domain: nil, default_icon: DEFAULT_ICON)
       @scope = scope.to_sym
       @model_name = model_name
       @catalog = catalog
@@ -48,7 +51,18 @@ module Junction
       @dependable = dependable
       @tree = tree
       @exposed = exposed
+      @domain = domain
       @default_icon = default_icon
+    end
+
+    # Permission domain this kind's permissions belong to.
+    #
+    # Resolved lazily rather than defaulted in the constructor: the registry
+    # loads before the core plugin does.
+    #
+    # @return [String] The domain.
+    def domain
+      @domain || Junction::CorePlugin::DOMAIN
     end
 
     # STI discriminator value stored in `junction_entities.kind`.

@@ -18,7 +18,7 @@ module Junction
     # Contexts are persisted in junction_role_permissions, and the registry
     # derives them from each kind's scope, which is why a scope may not be
     # renamed casually.
-    Junction::Kinds.exposed.each do |kind|
+    Junction::Kinds.exposed.select { |kind| kind.domain == DOMAIN }.each do |kind|
       Permission::Access::VALUES.each do |access|
         permission(
           context: kind.context,
