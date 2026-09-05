@@ -248,6 +248,7 @@ module Junction
 
         if current.is_a?(Class) && current <= ApplicationPlugin
           current.register
+          registrations.delete(name) unless current.plugin_name == name
         else
           registrations.delete(name)
         end

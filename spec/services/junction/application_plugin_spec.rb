@@ -167,6 +167,33 @@ RSpec.describe Junction::ApplicationPlugin do
       end
     end
 
+    context "when a reloaded plugin changes its name" do
+      let(:renamed) { uniquely_named_plugin }
+
+      before do
+        stub_const("RenamedPlugin", uniquely_named_plugin(shared_name))
+        RenamedPlugin.register
+
+        stub_const("RenamedPlugin", renamed)
+        described_class.replay_registrations
+      end
+
+      it "records it under its new name" do
+        expect(described_class.registrations[renamed.plugin_name]).to eq(renamed)
+      end
+
+      it "forgets the name it was recorded under" do
+        expect(described_class.registrations).not_to have_key(shared_name)
+      end
+
+      it "registers it once per replay rather than once per stale key" do
+        described_class.replay_registrations
+
+        expect(Junction::PluginRegistry).to have_received(:register_plugin)
+          .with(renamed).twice
+      end
+    end
+
     context "when a reloadable plugin class is replaced" do
       let(:replacement) { uniquely_named_plugin(shared_name) }
 
