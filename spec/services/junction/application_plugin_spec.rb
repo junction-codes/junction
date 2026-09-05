@@ -11,6 +11,12 @@ RSpec.describe Junction::ApplicationPlugin do
     end
   end
 
+  around do |example|
+    saved = described_class.registrations.dup
+    example.run
+    described_class.registrations.replace(saved)
+  end
+
   def uniquely_named_plugin(plugin_name = "plugin_#{SecureRandom.hex(4)}")
     Class.new(described_class).tap { |klass| klass.plugin_name(plugin_name) }
   end
@@ -122,6 +128,45 @@ RSpec.describe Junction::ApplicationPlugin do
       end
     end
 
+    context "when a plugin's constant is gone" do
+      let!(:removed) do
+        stub_const("RemovedPlugin", uniquely_named_plugin(shared_name))
+        RemovedPlugin.register
+        RemovedPlugin
+      end
+
+      before do
+        hide_const("RemovedPlugin")
+        described_class.replay_registrations
+      end
+
+      it "does not revive the stale class" do
+        expect(Junction::PluginRegistry).to have_received(:register_plugin)
+          .with(removed).once
+      end
+
+      it "forgets the registration" do
+        expect(described_class.registrations).not_to have_key(shared_name)
+      end
+    end
+
+    context "when a replayed plugin is no longer valid" do
+      before do
+        stub_const("InvalidatedPlugin", uniquely_named_plugin(shared_name))
+        InvalidatedPlugin.domain "example.com"
+        InvalidatedPlugin.register
+
+        replacement = uniquely_named_plugin(shared_name)
+        replacement.permission context: "widgets", ownership: "all", access: "read"
+        stub_const("InvalidatedPlugin", replacement)
+      end
+
+      it "validates it as a first registration would" do
+        expect { described_class.replay_registrations }
+          .to raise_error(ArgumentError, /no domain/)
+      end
+    end
+
     context "when a reloadable plugin class is replaced" do
       let(:replacement) { uniquely_named_plugin(shared_name) }
 
@@ -136,6 +181,10 @@ RSpec.describe Junction::ApplicationPlugin do
       it "re-registers the class that replaced it" do
         expect(Junction::PluginRegistry).to have_received(:register_plugin)
           .with(replacement)
+      end
+
+      it "records the class it resolved" do
+        expect(described_class.registrations[shared_name]).to eq(replacement)
       end
     end
   end

@@ -230,13 +230,27 @@ module Junction
     # Called from the engine's `:junction_plugins` load hook, which the engine
     # replays after clearing the registry on a code reload.
     #
-    # A plugin is resolved from its class name where it has one, so a plugin
-    # class in an autoload path re-registers as the class that replaced it
-    # rather than the one that first registered. An anonymous class has no name
-    # to resolve and is registered as itself.
+    # Replay goes back through {register} rather than straight to the registry,
+    # so a plugin that changed while reloading is validated and re-recorded
+    # exactly as it would be on a first registration.
+    #
+    # A named plugin is resolved from its class name, so a plugin class in an
+    # autoload path re-registers as the class that replaced it. One whose
+    # constant is gone is dropped rather than revived from the stale object,
+    # since a class keeps its name after its constant is removed. An anonymous
+    # class has no name to resolve and is registered as itself.
+    #
+    # The snapshot matters: {register} writes to the registrations, and a
+    # plugin renamed while reloading would add a key mid-iteration.
     def self.replay_registrations
-      registrations.each_value do |plugin|
-        Junction::PluginRegistry.register_plugin(plugin.name&.safe_constantize || plugin)
+      registrations.to_a.each do |name, plugin|
+        current = plugin.name ? plugin.name.safe_constantize : plugin
+
+        if current.is_a?(Class) && current <= ApplicationPlugin
+          current.register
+        else
+          registrations.delete(name)
+        end
       end
     end
 
