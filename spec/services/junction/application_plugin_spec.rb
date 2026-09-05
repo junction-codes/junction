@@ -11,6 +11,10 @@ RSpec.describe Junction::ApplicationPlugin do
     end
   end
 
+  def uniquely_named_plugin(plugin_name = "plugin_#{SecureRandom.hex(4)}")
+    Class.new(described_class).tap { |klass| klass.plugin_name(plugin_name) }
+  end
+
   describe ".title" do
     it "falls back to titleized plugin_name when not set" do
       klass = Class.new(described_class) { plugin_name "my_plugin" }
@@ -66,12 +70,73 @@ RSpec.describe Junction::ApplicationPlugin do
       expect(Junction::PluginRegistry).to have_received(:register_plugin).once
     end
 
+    it "records the plugin so a reload can register it again" do
+      klass = uniquely_named_plugin
+      klass.register
+
+      expect(described_class.registrations[klass.plugin_name]).to eq(klass)
+    end
+
     it "registers again when the junction_plugins hooks are replayed" do
-      plugin_class.register
+      klass = uniquely_named_plugin
+      klass.register
       ActiveSupport.run_load_hooks(:junction_plugins)
 
       expect(Junction::PluginRegistry).to have_received(:register_plugin)
-        .with(plugin_class).twice
+        .with(klass).twice
+    end
+
+    it "raises when permissions are declared before the domain is set" do
+      klass = Class.new(described_class) do
+        plugin_name "ordering"
+        permission context: "widgets", ownership: "all", access: "read"
+      end
+
+      expect { klass.register }.to raise_error(ArgumentError, /no domain/)
+    end
+  end
+
+  describe ".replay_registrations" do
+    let(:shared_name) { "replayed_#{SecureRandom.hex(4)}" }
+
+    before { allow(Junction::PluginRegistry).to receive(:register_plugin) }
+
+    context "when several classes claim one plugin name" do
+      let(:first) { uniquely_named_plugin(shared_name) }
+      let(:second) { uniquely_named_plugin(shared_name) }
+
+      before do
+        first.register
+        second.register
+        described_class.replay_registrations
+      end
+
+      it "replays the most recent registration" do
+        expect(Junction::PluginRegistry).to have_received(:register_plugin)
+          .with(second).twice
+      end
+
+      it "does not replay the registration it replaced" do
+        expect(Junction::PluginRegistry).to have_received(:register_plugin)
+          .with(first).once
+      end
+    end
+
+    context "when a reloadable plugin class is replaced" do
+      let(:replacement) { uniquely_named_plugin(shared_name) }
+
+      before do
+        stub_const("ReloadedPlugin", uniquely_named_plugin(shared_name))
+        ReloadedPlugin.register
+
+        stub_const("ReloadedPlugin", replacement)
+        described_class.replay_registrations
+      end
+
+      it "re-registers the class that replaced it" do
+        expect(Junction::PluginRegistry).to have_received(:register_plugin)
+          .with(replacement)
+      end
     end
   end
 
@@ -337,6 +402,21 @@ RSpec.describe Junction::ApplicationPlugin do
   end
 
   describe ".permission" do
+    # The permission is built when read, so the DSL may name a permission
+    # before the domain it belongs to.
+    let(:late_domain_plugin) do
+      Class.new(described_class) do
+        plugin_name "late_domain"
+        permission context: "widgets", ownership: "all", access: "read"
+        domain "example.com"
+      end
+    end
+
+    it "uses the domain even when declared before it" do
+      expect(late_domain_plugin.permissions.map(&:to_s))
+        .to eq([ "example.com/widgets.all.read" ])
+    end
+
     it "registers a global permission using the plugin's domain" do
       plugin_class.permission(context: "domains", ownership: "all",
                               access: "read")

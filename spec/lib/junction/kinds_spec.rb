@@ -129,6 +129,11 @@ RSpec.describe Junction::Kinds do
         .to raise_error(ArgumentError, /already registered to MyPlugin::Widget/)
     end
 
+    it "refuses a scope differing from a registered one only in case" do
+      expect { described_class.register(:API, model_name: "Other::Api") }
+        .to raise_error(ArgumentError, /already registered to Junction::Api/)
+    end
+
     it "refuses a plugin model claiming a core kind's scope" do
       expect { described_class.register(:component, model_name: "MyPlugin::Component") }
         .to raise_error(ArgumentError, /already registered to Junction::Component/)

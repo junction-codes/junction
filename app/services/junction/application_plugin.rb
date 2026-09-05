@@ -27,6 +27,15 @@ module Junction
     DEFAULT_ICON = "toy-brick"
     PLUGIN_NAME_REGEXP = /\A[a-z][a-z0-9_-]+\z/
 
+    # Every plugin that has registered, by plugin name.
+    #
+    # Held on the base class so the registry can be rebuilt after a code
+    # reload since the initializer that registered a plugin does not run again.
+    #
+    # A later registration under the same name replaces the earlier one, which
+    # is what a reload produces.
+    @registrations = {}
+
     # @!group Plugin Identity DSL
 
     # Gets or sets the machine-readable plugin name.
@@ -89,14 +98,8 @@ module Junction
     #   `:destroy`.
     # @param description [String] Optional description of the permission.
     def self.permission(context:, ownership:, access:, description: "")
-      @permissions ||= []
-      @permissions << Junction::Permission.new(
-        domain: self.domain,
-        context:,
-        ownership:,
-        access:,
-        description:
-      )
+      @permission_definitions ||= []
+      @permission_definitions << { context:, ownership:, access:, description: }
     end
 
     # Registers an authentication provider.
@@ -211,15 +214,40 @@ module Junction
           "Plugin name #{plugin_name.inspect} is invalid. Must match the format /[a-z][a-z0-9_-]+/"
       end
 
-      if permissions.any? && domain.blank?
+      if permissions.any? { |permission| permission.domain.blank? }
         raise ArgumentError,
           "Plugin #{plugin_name.inspect} declares permissions but no domain. " \
           "Permission strings are \"<domain>/<context>.<ownership>.<access>\", " \
           "so without one they cannot be parsed or granted."
       end
 
+      ApplicationPlugin.registrations[plugin_name] = self
       Junction::PluginRegistry.register_plugin(self)
-      install_reload_hook
+    end
+
+    # Re-registers every plugin that has registered in this process.
+    #
+    # Called from the engine's `:junction_plugins` load hook, which the engine
+    # replays after clearing the registry on a code reload.
+    #
+    # A plugin is resolved from its class name where it has one, so a plugin
+    # class in an autoload path re-registers as the class that replaced it
+    # rather than the one that first registered. An anonymous class has no name
+    # to resolve and is registered as itself.
+    def self.replay_registrations
+      registrations.each_value do |plugin|
+        Junction::PluginRegistry.register_plugin(plugin.name&.safe_constantize || plugin)
+      end
+    end
+
+    # Plugins that have been registered, by plugin name.
+    #
+    # Always reads the base class, since a subclass would otherwise see its own
+    # empty hash.
+    #
+    # @return [Hash{String => Class<ApplicationPlugin>}] The registrations.
+    def self.registrations
+      ApplicationPlugin.instance_variable_get(:@registrations)
     end
 
     # @!endgroup
@@ -283,7 +311,9 @@ module Junction
     #
     # @return [Array<Junction::Permission>]
     def self.permissions
-      @permissions || []
+      (@permission_definitions || []).map do |definition|
+        Junction::Permission.new(domain: self.domain, **definition)
+      end
     end
 
     # All registered authentication providers for this plugin.
@@ -308,30 +338,6 @@ module Junction
     end
 
     # @!endgroup
-
-    # Arranges for this plugin to be registered again after a code reload.
-    #
-    # The hook is installed once, holding the plugin in a local rather than
-    # reading from `self` since ActiveSupport runs a load hook with
-    # `instance_eval` against the hook's base object.
-    #
-    # Adding a hook after the hooks have already run replays it immediately,
-    # once for every base already loaded. The plugin has just been registered
-    # directly, so those replays are skipped. Only a later run (i.e. an actual
-    # reload) re-registers.
-    private_class_method def self.install_reload_hook
-      return if @reload_hook_installed
-
-      @reload_hook_installed = true
-      plugin = self
-      installing = true
-
-      ActiveSupport.on_load(:junction_plugins) do
-        Junction::PluginRegistry.register_plugin(plugin) unless installing
-      end
-
-      installing = false
-    end
 
     # The namespace module for this plugin.
     #

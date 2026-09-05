@@ -73,6 +73,13 @@ module Junction
       Junction::CorePlugin.register
     end
 
+    # Rebuild plugin registrations whenever the hooks are replayed. A plugin
+    # registers from an initializer, which doesn't run again after a code
+    # reload. Without this, it would be lost when the registry is cleared.
+    ActiveSupport.on_load(:junction_plugins) do
+      Junction::ApplicationPlugin.replay_registrations
+    end
+
     # Register core plugin when the engine loads (so annotations/permissions are
     # available even if config/initializers/omniauth.rb runs later or not at
     # all).
