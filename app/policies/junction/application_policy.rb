@@ -13,6 +13,16 @@ module Junction
 
     alias_rule :edit?, to: :update?
 
+    # Permission domain of the current policy.
+    #
+    # A plugin's policy overrides this, or sets its own DOMAIN constant, so its
+    # permissions are not resolved against the core domain.
+    #
+    # @return [String] Domain of the current policy.
+    def domain
+      self.class::DOMAIN
+    end
+
     # Context of the current policy.
     #
     # @return [String] Context of the current policy.
@@ -140,7 +150,7 @@ module Junction
     #
     # @return [String] Prefix for permission strings.
     def permission_prefix
-      @permission_prefix ||= "#{self.class::DOMAIN}/#{context}"
+      @permission_prefix ||= "#{domain}/#{context}"
     end
   end
 end

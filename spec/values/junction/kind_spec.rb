@@ -36,6 +36,17 @@ RSpec.describe Junction::Kind do
     end
   end
 
+  describe "#domain" do
+    it "defaults to the core domain" do
+      expect(kind.domain).to eq(Junction::CorePlugin::DOMAIN)
+    end
+
+    it "uses an explicit domain when given" do
+      plugin_kind = described_class.new(:widget, domain: "example.com")
+      expect(plugin_kind.domain).to eq("example.com")
+    end
+  end
+
   describe "#model_name" do
     it "defaults to the kind's name in the Junction namespace" do
       expect(kind.model_name).to eq("Junction::Api")
