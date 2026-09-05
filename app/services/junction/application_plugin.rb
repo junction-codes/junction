@@ -175,17 +175,22 @@ module Junction
     #
     # The block is evaluated immediately at class definition time.
     #
+    # Calling this more than once for the same context adds to the existing
+    # scope rather than replacing it, so a plugin may register for an entity
+    # from several places, each with its own condition.
+    #
     # @param context [String, Class] Name of the entity class to scope to.
-    # @param condition [Proc] Optional condition applied before rendering all
-    #   components and tabs.
+    # @param condition [Proc] Optional condition applied before rendering the
+    #   components and tabs registered in this block.
     # @yieldparam scope [EntityScope] Scope object for entity-specific
     #   registrations.
+    # @return [EntityScope] The scope for the context.
     def self.for_entity(context, condition = nil, &block)
-      scope = EntityScope.new(self, context.to_s, condition)
-      block.call(scope)
-
       @entities ||= {}
-      @entities[context.to_s] = scope
+      scope = (@entities[context.to_s] ||= EntityScope.new(self, context.to_s))
+      scope.with_condition(condition) { block.call(scope) }
+
+      scope
     end
 
     # @!endgroup
@@ -194,15 +199,27 @@ module Junction
 
     # Registers this plugin class with the global registry.
     #
-    # @raise [ArgumentError] If plugin_name is nil or does not match the valid
-    #   format.
+    # Registration also survives a code reload. The engine clears the registry
+    # on every `to_prepare` and replays the `:junction_plugins` load hooks to
+    # rebuild it.
+    #
+    # @raise [ArgumentError] If plugin_name is nil, does not match the valid
+    #   format, or if the plugin declares permissions without a domain.
     def self.register
       unless plugin_name&.match?(PLUGIN_NAME_REGEXP)
         raise ArgumentError,
           "Plugin name #{plugin_name.inspect} is invalid. Must match the format /[a-z][a-z0-9_-]+/"
       end
 
+      if permissions.any? && domain.blank?
+        raise ArgumentError,
+          "Plugin #{plugin_name.inspect} declares permissions but no domain. " \
+          "Permission strings are \"<domain>/<context>.<ownership>.<access>\", " \
+          "so without one they cannot be parsed or granted."
+      end
+
       Junction::PluginRegistry.register_plugin(self)
+      install_reload_hook
     end
 
     # @!endgroup
@@ -291,6 +308,30 @@ module Junction
     end
 
     # @!endgroup
+
+    # Arranges for this plugin to be registered again after a code reload.
+    #
+    # The hook is installed once, holding the plugin in a local rather than
+    # reading from `self` since ActiveSupport runs a load hook with
+    # `instance_eval` against the hook's base object.
+    #
+    # Adding a hook after the hooks have already run replays it immediately,
+    # once for every base already loaded. The plugin has just been registered
+    # directly, so those replays are skipped. Only a later run (i.e. an actual
+    # reload) re-registers.
+    private_class_method def self.install_reload_hook
+      return if @reload_hook_installed
+
+      @reload_hook_installed = true
+      plugin = self
+      installing = true
+
+      ActiveSupport.on_load(:junction_plugins) do
+        Junction::PluginRegistry.register_plugin(plugin) unless installing
+      end
+
+      installing = false
+    end
 
     # The namespace module for this plugin.
     #

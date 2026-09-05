@@ -107,9 +107,15 @@ RSpec.describe Junction::PluginRegistry do
 
     context "with registered annotations" do
       let(:annotations) { { "example.com/owner" => { title: "Owner" } } }
-      let(:methods) { super().merge(annotations_for: annotations) }
 
-      it_behaves_like "context type handling", :annotations_for, { "example.com/owner" => { title: "Owner" } }, {}
+      before do
+        allow(plugin).to receive(:annotations_for)
+          .with("Junction::Domain").and_return(annotations)
+      end
+
+      it_behaves_like "context type handling", "annotations",
+                      { "example.com/owner" => { title: "Owner" } },
+                      ->(registry, context) { registry.annotations_for(context) }
     end
   end
 
@@ -133,9 +139,15 @@ RSpec.describe Junction::PluginRegistry do
 
     context "with registered components" do
       let(:components) { [ { component: "HeaderComponent" } ] }
-      let(:methods) { super().merge(components_for: components) }
 
-      it_behaves_like "context type handling", :components_for, [ { component: "HeaderComponent" } ], { slot: :header }
+      before do
+        allow(plugin).to receive(:components_for)
+          .with("Junction::Domain", :header).and_return(components)
+      end
+
+      it_behaves_like "context type handling", "components",
+                      [ { component: "HeaderComponent" } ],
+                      ->(registry, context) { registry.components_for(context:, slot: :header) }
     end
   end
 
@@ -186,9 +198,62 @@ RSpec.describe Junction::PluginRegistry do
 
     context "with registered tabs" do
       let(:tabs) { [ { title: "Details", action: :domain_path } ] }
-      let(:methods) { super().merge(tabs_for: tabs) }
 
-      it_behaves_like "context type handling", :tabs_for, [ { title: "Details", action: :domain_path } ], {}
+      before do
+        allow(plugin).to receive(:tabs_for)
+          .with("Junction::Domain").and_return(tabs)
+      end
+
+      it_behaves_like "context type handling", "tabs",
+                      [ { title: "Details", action: :domain_path } ],
+                      ->(registry, context) { registry.tabs_for(context) }
+    end
+  end
+
+  describe "entity kind inheritance" do
+    let(:tabs) { [ { title: "Details", action: :component_path } ] }
+    let(:annotations) { { "example.com/owner" => { title: "Owner" } } }
+
+    before do
+      stub_const("MyPlugin::Widget", Class.new(Junction::Component))
+      registry.register_plugin(plugin)
+    end
+
+    it "answers a subclass with the tabs registered for its parent kind" do
+      allow(plugin).to receive(:tabs_for)
+        .with("Junction::Component").and_return(tabs)
+
+      expect(registry.tabs_for(MyPlugin::Widget)).to eq(tabs)
+    end
+
+    it "answers a subclass with the annotations registered on the base class" do
+      allow(plugin).to receive(:annotations_for)
+        .with("Junction::Entity").and_return(annotations)
+
+      expect(registry.annotations_for(MyPlugin::Widget)).to eq(annotations)
+    end
+
+    it "lets the more specific registration win" do
+      allow(plugin).to receive(:annotations_for)
+        .with("Junction::Entity").and_return(annotations)
+      allow(plugin).to receive(:annotations_for)
+        .with("MyPlugin::Widget")
+        .and_return({ "example.com/owner" => { title: "Widget Owner" } })
+
+      expect(registry.annotations_for(MyPlugin::Widget))
+        .to eq({ "example.com/owner" => { title: "Widget Owner" } })
+    end
+
+    it "does not leak a subclass registration to its parent kind" do
+      allow(plugin).to receive(:tabs_for)
+        .with("MyPlugin::Widget").and_return(tabs)
+
+      expect(registry.tabs_for(Junction::Component)).to eq([])
+    end
+
+    it "looks a context that is not an entity up under itself alone" do
+      expect(registry.send(:inherited_contexts, "Junction::Session"))
+        .to eq([ "Junction::Session" ])
     end
   end
 

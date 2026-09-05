@@ -3,7 +3,7 @@
 module Junction
   # Plugin registration scope for a specific entity context.
   class EntityScope
-    attr_reader :actions, :annotations, :plugin, :tabs
+    attr_reader :actions, :annotations, :condition, :plugin, :tabs
 
     # Initializes a new entity scope.
     #
@@ -20,6 +20,22 @@ module Junction
       @actions = []
       @tabs = []
       @components = Hash.new { |h, k| h[k] = [] }
+    end
+
+    # Applies a condition to everything registered within the block.
+    #
+    # A plugin may call `for_entity` more than once for the same entity, so a
+    # scope outlives any one registration block and the condition has to be
+    # scoped to the block rather than held for the life of the scope.
+    #
+    # @param condition [Proc] Condition to apply within the block.
+    # @return [Object] The block's return value.
+    def with_condition(condition = nil)
+      previous = @condition
+      @condition = condition
+      yield
+    ensure
+      @condition = previous
     end
 
     # Registers a routable action for the entity.

@@ -44,6 +44,35 @@ RSpec.describe Junction::ApplicationPlugin do
 
       expect { klass.register }.to raise_error(ArgumentError, /invalid/)
     end
+
+    it "raises ArgumentError when permissions are declared without a domain" do
+      klass = Class.new(described_class) do
+        plugin_name "no_domain"
+        permission context: "widgets", ownership: "all", access: "read"
+      end
+
+      expect { klass.register }.to raise_error(ArgumentError, /no domain/)
+    end
+
+    it "allows a plugin with no permissions to omit the domain" do
+      klass = Class.new(described_class) { plugin_name "no_domain" }
+
+      expect { klass.register }.not_to raise_error
+    end
+
+    it "registers exactly once despite installing the reload hook" do
+      plugin_class.register
+
+      expect(Junction::PluginRegistry).to have_received(:register_plugin).once
+    end
+
+    it "registers again when the junction_plugins hooks are replayed" do
+      plugin_class.register
+      ActiveSupport.run_load_hooks(:junction_plugins)
+
+      expect(Junction::PluginRegistry).to have_received(:register_plugin)
+        .with(plugin_class).twice
+    end
   end
 
   describe ".auth_provider" do
@@ -174,30 +203,41 @@ RSpec.describe Junction::ApplicationPlugin do
   end
 
   describe ".for_entity" do
-    let(:entity_scope) { instance_double(Junction::EntityScope) }
-
-    before do
-      allow(Junction::EntityScope).to receive(:new).and_return(entity_scope)
-    end
-
     it "creates an EntityScope for the given context" do
-      plugin_class.for_entity("Domain") { |scope| }
+      scope = plugin_class.for_entity("Domain") { |s| }
 
-      expect(Junction::EntityScope).to have_received(:new)
-        .with(plugin_class, "Domain", nil)
-    end
-
-    it "creates an EntityScope with a condition" do
-      condition = proc { true }
-      plugin_class.for_entity("Domain", condition) { |scope| }
-
-      expect(Junction::EntityScope).to have_received(:new)
-        .with(plugin_class, "Domain", condition)
+      expect(scope).to be_a(Junction::EntityScope)
     end
 
     it "yields the EntityScope to the block" do
       expect { |block| plugin_class.for_entity("Domain", &block) }.to \
-        yield_with_args(entity_scope)
+        yield_with_args(Junction::EntityScope)
+    end
+
+    it "applies the condition to registrations made in the block" do
+      condition = proc { true }
+      plugin_class.for_entity("Domain", condition) do |scope|
+        scope.tab(title: "Tab", action: :domain_path)
+      end
+
+      expect(plugin_class.tabs_for("Domain").first[:if]).to eq(condition)
+    end
+
+    it "adds to the existing scope when called again for the same context" do
+      plugin_class.for_entity("Domain") { |s| s.tab(title: "One", action: :one_path) }
+      plugin_class.for_entity("Domain") { |s| s.tab(title: "Two", action: :two_path) }
+
+      expect(plugin_class.tabs_for("Domain").map { |tab| tab[:title] })
+        .to eq(%w[One Two])
+    end
+
+    it "does not carry a condition past the block that set it" do
+      plugin_class.for_entity("Domain", proc { true }) do |scope|
+        scope.tab(title: "Conditional", action: :one_path)
+      end
+      plugin_class.for_entity("Domain") { |s| s.tab(title: "Plain", action: :two_path) }
+
+      expect(plugin_class.tabs_for("Domain").last[:if]).to be_nil
     end
   end
 
@@ -208,6 +248,7 @@ RSpec.describe Junction::ApplicationPlugin do
 
     before do
       allow(Junction::EntityScope).to receive(:new).and_return(entity_scope)
+      allow(entity_scope).to receive(:with_condition).and_yield
     end
 
     it "returns empty hash when no entities are registered" do
@@ -237,6 +278,7 @@ RSpec.describe Junction::ApplicationPlugin do
 
     before do
       allow(Junction::EntityScope).to receive(:new).and_return(entity_scope)
+      allow(entity_scope).to receive(:with_condition).and_yield
     end
 
     it "returns empty hash when context is not registered" do
@@ -257,6 +299,7 @@ RSpec.describe Junction::ApplicationPlugin do
 
     before do
       allow(Junction::EntityScope).to receive(:new).and_return(entity_scope)
+      allow(entity_scope).to receive(:with_condition).and_yield
     end
 
     it "returns empty array when context is not registered" do
@@ -278,6 +321,7 @@ RSpec.describe Junction::ApplicationPlugin do
 
     before do
       allow(Junction::EntityScope).to receive(:new).and_return(entity_scope)
+      allow(entity_scope).to receive(:with_condition).and_yield
     end
 
     it "returns empty array when context is not registered" do

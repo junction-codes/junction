@@ -39,15 +39,34 @@ module Junction
     @mutex = Mutex.new
 
     class << self
-      # Registers a kind, replacing any kind already using the same scope.
+      # Registers a kind.
+      #
+      # Re-registering a scope with the same model replaces it, so a kind may
+      # be re-registered after a code reload or have its flags overridden. A
+      # different model claiming a scope already taken raises instead.
+      #
+      # Kind names are a flat global namespace. An entity reference is
+      # `kind:namespace/name` with no qualifier saying who defined the kind.
+      # Letting a second registration win silently would make rows written under
+      # the first resolve to the wrong class.
       #
       # @param scope [Symbol] Singular scope for the kind.
       # @param options [Hash] Options forwarded to {Junction::Kind#initialize}.
       # @return [Junction::Kind] The registered kind.
+      #
+      # @raise [ArgumentError] If another model has already claimed the scope.
       def register(scope, **options)
         kind = Kind.new(scope, **options)
 
         @mutex.synchronize do
+          existing = registry[kind.scope]
+          if existing && existing.model_name != kind.model_name
+            raise ArgumentError,
+              "Kind #{kind.name.inspect} is already registered to " \
+              "#{existing.model_name}. Kind names are global, so " \
+              "#{kind.model_name} must use a different scope."
+          end
+
           registry[kind.scope] = kind
           @indexes = nil
         end
@@ -64,10 +83,14 @@ module Junction
 
       # Looks a kind up by its STI name.
       #
+      # Matching ignores case, because the name is also the kind. If an imported
+      # catalog defines a kind as "API" it should still resolve to the
+      # `Junction::Api` model.
+      #
       # @param name [String] The kind's name.
       # @return [Junction::Kind, nil] The kind, if registered.
       def for(name)
-        indexes[:by_name][name.to_s]
+        indexes[:by_name][name.to_s.downcase]
       end
 
       # Looks a kind up by its RBAC permission context.
@@ -186,7 +209,7 @@ module Junction
       # @return [Hash{Symbol => Hash}] Indexes by name and by context.
       def indexes
         @indexes ||= {
-          by_name: all.index_by(&:name),
+          by_name: all.index_by { |kind| kind.name.downcase },
           by_context: all.index_by(&:context)
         }
       end
