@@ -41,7 +41,7 @@ module Junction
       @pagy, records = paginate(results)
 
       render entity_view(:Index).new(
-        collection_key => records,
+        entities: records,
         pagy: @pagy,
         query: @q,
         query_params: params[:q]&.to_unsafe_h || {},
@@ -56,7 +56,7 @@ module Junction
       authorize! @entity
 
       render entity_view(:Show).new(
-        member_key => @entity,
+        entity: @entity,
         breadcrumbs:,
         can_edit: allowed_to?(:update?, @entity),
         can_destroy: allowed_to?(:destroy?, @entity),
@@ -70,7 +70,7 @@ module Junction
 
       record = entity_class.new
       render entity_view(:New).new(
-        member_key => record, breadcrumbs:, **form_options(record)
+        entity: record, breadcrumbs:, **form_options(record)
       )
     end
 
@@ -79,7 +79,7 @@ module Junction
       authorize! @entity
 
       render entity_view(:Edit).new(
-        member_key => @entity,
+        entity: @entity,
         breadcrumbs:,
         can_destroy: allowed_to?(:destroy?, @entity),
         **form_options(@entity)
@@ -97,7 +97,7 @@ module Junction
       else
         flash.now[:alert] = entity_message(:create_failed)
         render entity_view(:New).new(
-          member_key => @entity, breadcrumbs:, **form_options(@entity)
+          entity: @entity, breadcrumbs:, **form_options(@entity)
         ), status: :unprocessable_content
       end
     end
@@ -112,7 +112,7 @@ module Junction
       else
         flash.now[:alert] = entity_message(:update_failed)
         render entity_view(:Edit).new(
-          member_key => @entity,
+          entity: @entity,
           breadcrumbs:,
           can_destroy: allowed_to?(:destroy?, @entity),
           **form_options(@entity)
@@ -221,24 +221,28 @@ module Junction
 
     # View class for an action within this kind's view namespace.
     #
+    # Kinds subclass the generic views in {Junction::Views::Entities} so their
+    # headings resolve in their own translation scope. A kind that has not
+    # needed to say anything of its own yet has no namespace at all, and falls
+    # back to the generic view.
+    #
     # @param action [Symbol] The view name, e.g. +:Index+.
     # @return [Class] The view class.
     def entity_view(action)
-      Junction::Views.const_get(collection_key.to_s.camelize).const_get(action)
+      namespace = "Junction::Views::#{collection_key.to_s.camelize}".safe_constantize
+
+      return namespace.const_get(action) if namespace&.const_defined?(action, false)
+
+      Junction::Views::Entities.const_get(action)
     end
 
-    # Argument name a collection view expects, e.g. +:apis+.
+    # Route key for this kind.
     #
-    # @return [Symbol] The argument name.
+    # Names both the index path and the view namespace.
+    #
+    # @return [Symbol] The route key.
     def collection_key
       entity_class.model_name.route_key.to_sym
-    end
-
-    # Argument name a member view expects, e.g. +:api+.
-    #
-    # @return [Symbol] The argument name.
-    def member_key
-      entity_class.model_name.param_key.to_sym
     end
 
     # Flash message for an outcome, named for this kind.

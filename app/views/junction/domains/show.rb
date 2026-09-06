@@ -6,8 +6,8 @@ module Junction
       class Show < Views::Base
         attr_reader :breadcrumbs
 
-        def initialize(domain:, can_edit:, can_destroy:, breadcrumbs: [])
-          @domain = domain
+        def initialize(entity:, can_edit:, can_destroy:, breadcrumbs: [])
+          @domain = entity
           @can_edit = can_edit
           @can_destroy = can_destroy
           @breadcrumbs = breadcrumbs

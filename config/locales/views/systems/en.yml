@@ -2,14 +2,6 @@ en:
   junction:
     views:
       systems:
-        edit:
-          title: Edit System
-          description: Update the details for the '%{title}' system.
-        index:
-          new: New System
-        new:
-          title: Create a New System
-          description: Start by providing the basic details for your new system.
         show:
           edit: Edit System
           logo_alt: Logo for %{name}

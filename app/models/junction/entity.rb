@@ -30,6 +30,51 @@ module Junction
     # Icon used when the entity's type declares none.
     class_attribute :default_icon, default: "circle"
 
+    # Ordered form fields, as `[type, attribute, options]` tuples.
+    #
+    # The generic entity form renders these through the `Field::*` components.
+    # Each kind declares what it has rather than restating how to draw it. Types
+    # are `:text`, `:text_area`, `:slug`, `:immutable`, `:rich_select` and
+    # `:reference`.
+    #
+    # Recognized options:
+    #
+    # - `:required` - marks the field required.
+    # - `:placeholder` - a String is used literally, a Symbol is translated in
+    #   the form's own scope.
+    # - `:help_text` - Symbol translated in the form's own scope.
+    # - `:options` - name of the option set the controller supplies, e.g.
+    #   `:type_options` or `:available_owners`.
+    # - `:value` - association read for a reference field's current value.
+    # - `:icon`, `:rows` - passed through to the field component.
+    # - `:enabled_when` - name of a boolean option that, when false, disables
+    #   the field.
+    class_attribute :form_fields, default: [].freeze
+
+    # Ordered index columns, as `[type, field]` pairs.
+    #
+    # `field` is both the Ransack sort key and the attribute whose
+    # `human_attribute_name` heads the column.
+    #
+    # Types are:
+    #
+    # - `:entity` - the title cell with icon and description
+    # - `:reference` - a link to an associated entity, read from the field with
+    #   `_id` removed
+    # - `:type`, `:lifecycle`, `:email`
+    class_attribute :index_columns, default: [ [ :entity, :title ] ].freeze
+
+    # Ransack predicate backing the index's free-text search.
+    class_attribute :search_attribute, default: :title_or_description_cont
+
+    # Name of the component rendering this kind's form, when `form_fields`
+    # cannot express it, such as a group's role grants, a user's password
+    # fields.
+    #
+    # Held as a string and resolved at render time so a reload does not leave a
+    # stale class behind. Nil means the generic form.
+    class_attribute :form_component_name, default: nil
+
     # Declared here so cross-kind queries can preload them. Kinds that require
     # one redeclare it: Ownable makes `owner` mandatory, System makes `domain`
     # mandatory.
@@ -116,6 +161,16 @@ module Junction
 
       raise ActiveRecord::ReadonlyAttributeError,
             "kind is determined by the model class, not by assignment"
+    end
+
+    # Secondary line shown under the title wherever the entity is previewed.
+    #
+    # Kinds that describe themselves with something other than a description
+    # override this.
+    #
+    # @return [String] The subtitle.
+    def preview_subtitle
+      description
     end
 
     # Icon associated with the entity's type.

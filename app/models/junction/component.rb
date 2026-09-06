@@ -9,6 +9,33 @@ module Junction
     self.catalog_section = :components
     self.default_icon = "server"
 
+    self.form_fields = [
+      [ :text, :title, { required: true } ],
+      [ :slug, :name ],
+      [ :immutable, :namespace, { placeholder: "default", required: true,
+                                  help_text: :namespace_help } ],
+      [ :rich_select, :type, { required: true, options: :type_options } ],
+      [ :rich_select, :lifecycle, { required: true,
+                                    options: :lifecycle_options } ],
+      [ :reference, :owner_id, { required: true, icon: "users-round",
+                                 options: :available_owners, value: :owner,
+                                 help_text: :owner_help } ],
+      [ :reference, :system_id, { icon: "users-round",
+                                  options: :available_systems, value: :system,
+                                  help_text: :system_help } ],
+      [ :text, :repository_url ],
+      [ :text_area, :description, { required: true,
+                                    help_text: :description_help } ]
+    ].freeze
+
+    self.index_columns = [
+      [ :entity, :title ],
+      [ :reference, :system_id ],
+      [ :reference, :owner_id ],
+      [ :type, :type ],
+      [ :lifecycle, :lifecycle ]
+    ].freeze
+
     store_accessor :spec, :repository_url
 
     attribute :lifecycle, :string, default: "experimental"

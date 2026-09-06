@@ -2,14 +2,6 @@ en:
   junction:
     views:
       domains:
-        edit:
-          title: Edit Domain
-          description: Update the details for the '%{title}' domain.
-        index:
-          new: New Domain
-        new:
-          title: Create a New Domain
-          description: Start by providing the basic details for your new domain.
         show:
           edit: Edit Domain
           logo_alt: Logo for %{name}

@@ -1,0 +1,26 @@
+en:
+  junction:
+    views:
+      entities:
+        # Copy shared by every catalog kind. See Junction::EntityCopy for the
+        # `%{kind}` interpolations.
+        edit:
+          title: Edit %{kind}
+          description: Update the details for the '%{title}' %{kind_lower}.
+        index:
+          new: New %{kind}
+        new:
+          title: Create a New %{kind}
+          description: >-
+            Start by providing the basic details for your new %{kind_lower}.
+        show:
+          edit: Edit %{kind}
+          logo_alt: Logo for %{name}
+          no_owner: No owner
+          stat_active_incidents: Active Incidents
+          dependencies: Dependencies
+          dependents: Dependents
+          graph: Graph
+          part_of_system: Part of the '%{system_title}' System
+          raw: Raw
+          no_definition: No definition available.

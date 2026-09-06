@@ -2,19 +2,6 @@ en:
   junction:
     components:
       users:
-        user_edit_sidebar:
-          metadata: Metadata
-          danger_zone: Danger Zone
-          danger_zone_warning: These actions are irreversible. Please be certain.
-          delete: Delete User
-          delete_confirm_title: Are you absolutely sure?
-          delete_confirm_body: This will permanently remove the User.
-          cancel: Cancel
-          confirm_delete: Confirm Delete
-        user_filters:
-          all: All %{label}
-          placeholder: Name or email address…
-          search: Search
         user_form:
           title: User Details
           description: >-
