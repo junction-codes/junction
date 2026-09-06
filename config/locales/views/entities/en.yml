@@ -17,7 +17,6 @@ en:
           edit: Edit %{kind}
           logo_alt: Logo for %{name}
           no_owner: No owner
-          stat_active_incidents: Active Incidents
           dependencies: Dependencies
           dependents: Dependents
           graph: Graph

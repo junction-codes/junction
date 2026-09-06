@@ -143,10 +143,6 @@ module Junction
 
         def entity_stats
           div(class: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6") do
-            # TODO: Remove placeholder.
-            render StatCard.new(title: t(".stat_active_incidents"), value: "1",
-                                icon: "siren", status: :warning)
-
             render_plugin_ui_components(context: @entity, slot: :overview_cards)
           end
         end
@@ -161,9 +157,11 @@ module Junction
         def entity_tabs
           Tabs do |tabs|
             tabs.list do |list|
-              list.trigger(value: "dependencies") do
-                icon("blocks", class: "pe-2")
-                plain t(".dependencies")
+              if dependable?
+                list.trigger(value: "dependencies") do
+                  icon("blocks", class: "pe-2")
+                  plain t(".dependencies")
+                end
               end
 
               tab_triggers(list)
@@ -171,12 +169,24 @@ module Junction
               render_plugin_tab_triggers(@entity, list)
             end
 
-            tabs.content(value: "dependencies") { dependencies_section }
+            tabs.content(value: "dependencies") { dependencies_section } if dependable?
 
             tab_panes(tabs)
 
             render_plugin_tab_content(@entity, tabs)
           end
+        end
+
+        # Whether this kind may be a relation source or target.
+        #
+        # The dependency routes are only drawn for kinds the registry marks
+        # dependable, so a kind without them would raise rather than render.
+        # This view is the fallback for any kind with no `Show` of its own, so
+        # it can't assume the routes exist.
+        #
+        # @return [Boolean]
+        def dependable?
+          Junction::Kinds.by_scope(@entity.model_name.element)&.dependable? || false
         end
 
         # @param list [Object] The tab list being built.

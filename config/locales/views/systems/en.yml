@@ -7,6 +7,5 @@ en:
           logo_alt: Logo for %{name}
           no_owner: No owner
           stat_total_components: Total Components
-          stat_active_incidents: Active Incidents
           entities: Entities
           part_of_domain: Part of the '%{domain_title}' Domain

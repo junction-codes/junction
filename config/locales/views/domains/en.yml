@@ -8,4 +8,3 @@ en:
           no_owner: No owner
           part_of_parent: Part of the '%{parent_title}' Domain
           stat_total_systems: Total Systems
-          stat_active_incidents: Active Incidents

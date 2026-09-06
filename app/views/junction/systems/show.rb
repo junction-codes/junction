@@ -89,7 +89,6 @@ module Junction
         def system_stats
           div(class: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6") do
             StatCard(title: t(".stat_total_components"), value: @system.components.count, icon: "server")
-            StatCard(title: t(".stat_active_incidents"), value: "1", icon: "siren", status: :warning)
           end
         end
 
