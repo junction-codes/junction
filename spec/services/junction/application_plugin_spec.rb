@@ -11,6 +11,16 @@ RSpec.describe Junction::ApplicationPlugin do
     end
   end
 
+  around do |example|
+    saved = described_class.registrations.dup
+    example.run
+    described_class.registrations.replace(saved)
+  end
+
+  def uniquely_named_plugin(plugin_name = "plugin_#{SecureRandom.hex(4)}")
+    Class.new(described_class).tap { |klass| klass.plugin_name(plugin_name) }
+  end
+
   describe ".title" do
     it "falls back to titleized plugin_name when not set" do
       klass = Class.new(described_class) { plugin_name "my_plugin" }
@@ -43,6 +53,166 @@ RSpec.describe Junction::ApplicationPlugin do
       klass = Class.new(described_class) { plugin_name "Invalid-Name" }
 
       expect { klass.register }.to raise_error(ArgumentError, /invalid/)
+    end
+
+    it "raises ArgumentError when permissions are declared without a domain" do
+      klass = Class.new(described_class) do
+        plugin_name "no_domain"
+        permission context: "widgets", ownership: "all", access: "read"
+      end
+
+      expect { klass.register }.to raise_error(ArgumentError, /no domain/)
+    end
+
+    it "allows a plugin with no permissions to omit the domain" do
+      klass = Class.new(described_class) { plugin_name "no_domain" }
+
+      expect { klass.register }.not_to raise_error
+    end
+
+    it "registers exactly once despite installing the reload hook" do
+      plugin_class.register
+
+      expect(Junction::PluginRegistry).to have_received(:register_plugin).once
+    end
+
+    it "records the plugin so a reload can register it again" do
+      klass = uniquely_named_plugin
+      klass.register
+
+      expect(described_class.registrations[klass.plugin_name]).to eq(klass)
+    end
+
+    it "registers again when the junction_plugins hooks are replayed" do
+      klass = uniquely_named_plugin
+      klass.register
+      ActiveSupport.run_load_hooks(:junction_plugins)
+
+      expect(Junction::PluginRegistry).to have_received(:register_plugin)
+        .with(klass).twice
+    end
+
+    it "raises when permissions are declared before the domain is set" do
+      klass = Class.new(described_class) do
+        plugin_name "ordering"
+        permission context: "widgets", ownership: "all", access: "read"
+      end
+
+      expect { klass.register }.to raise_error(ArgumentError, /no domain/)
+    end
+  end
+
+  describe ".replay_registrations" do
+    let(:shared_name) { "replayed_#{SecureRandom.hex(4)}" }
+
+    before { allow(Junction::PluginRegistry).to receive(:register_plugin) }
+
+    context "when several classes claim one plugin name" do
+      let(:first) { uniquely_named_plugin(shared_name) }
+      let(:second) { uniquely_named_plugin(shared_name) }
+
+      before do
+        first.register
+        second.register
+        described_class.replay_registrations
+      end
+
+      it "replays the most recent registration" do
+        expect(Junction::PluginRegistry).to have_received(:register_plugin)
+          .with(second).twice
+      end
+
+      it "does not replay the registration it replaced" do
+        expect(Junction::PluginRegistry).to have_received(:register_plugin)
+          .with(first).once
+      end
+    end
+
+    context "when a plugin's constant is gone" do
+      let!(:removed) do
+        stub_const("RemovedPlugin", uniquely_named_plugin(shared_name))
+        RemovedPlugin.register
+        RemovedPlugin
+      end
+
+      before do
+        hide_const("RemovedPlugin")
+        described_class.replay_registrations
+      end
+
+      it "does not revive the stale class" do
+        expect(Junction::PluginRegistry).to have_received(:register_plugin)
+          .with(removed).once
+      end
+
+      it "forgets the registration" do
+        expect(described_class.registrations).not_to have_key(shared_name)
+      end
+    end
+
+    context "when a replayed plugin is no longer valid" do
+      before do
+        stub_const("InvalidatedPlugin", uniquely_named_plugin(shared_name))
+        InvalidatedPlugin.domain "example.com"
+        InvalidatedPlugin.register
+
+        replacement = uniquely_named_plugin(shared_name)
+        replacement.permission context: "widgets", ownership: "all", access: "read"
+        stub_const("InvalidatedPlugin", replacement)
+      end
+
+      it "validates it as a first registration would" do
+        expect { described_class.replay_registrations }
+          .to raise_error(ArgumentError, /no domain/)
+      end
+    end
+
+    context "when a reloaded plugin changes its name" do
+      let(:renamed) { uniquely_named_plugin }
+
+      before do
+        stub_const("RenamedPlugin", uniquely_named_plugin(shared_name))
+        RenamedPlugin.register
+
+        stub_const("RenamedPlugin", renamed)
+        described_class.replay_registrations
+      end
+
+      it "records it under its new name" do
+        expect(described_class.registrations[renamed.plugin_name]).to eq(renamed)
+      end
+
+      it "forgets the name it was recorded under" do
+        expect(described_class.registrations).not_to have_key(shared_name)
+      end
+
+      it "registers it once per replay rather than once per stale key" do
+        described_class.replay_registrations
+
+        expect(Junction::PluginRegistry).to have_received(:register_plugin)
+          .with(renamed).twice
+      end
+    end
+
+    context "when a reloadable plugin class is replaced" do
+      let(:replacement) { uniquely_named_plugin(shared_name) }
+
+      before do
+        stub_const("ReloadedPlugin", uniquely_named_plugin(shared_name))
+        ReloadedPlugin.register
+
+        stub_const("ReloadedPlugin", replacement)
+        described_class.replay_registrations
+      end
+
+      it "re-registers the class that replaced it" do
+        expect(Junction::PluginRegistry).to have_received(:register_plugin)
+          .with(replacement)
+      end
+
+      it "records the class it resolved" do
+        expect(described_class.registrations[shared_name]).to eq(replacement)
+      end
     end
   end
 
@@ -174,30 +344,41 @@ RSpec.describe Junction::ApplicationPlugin do
   end
 
   describe ".for_entity" do
-    let(:entity_scope) { instance_double(Junction::EntityScope) }
-
-    before do
-      allow(Junction::EntityScope).to receive(:new).and_return(entity_scope)
-    end
-
     it "creates an EntityScope for the given context" do
-      plugin_class.for_entity("Domain") { |scope| }
+      scope = plugin_class.for_entity("Domain") { |s| }
 
-      expect(Junction::EntityScope).to have_received(:new)
-        .with(plugin_class, "Domain", nil)
-    end
-
-    it "creates an EntityScope with a condition" do
-      condition = proc { true }
-      plugin_class.for_entity("Domain", condition) { |scope| }
-
-      expect(Junction::EntityScope).to have_received(:new)
-        .with(plugin_class, "Domain", condition)
+      expect(scope).to be_a(Junction::EntityScope)
     end
 
     it "yields the EntityScope to the block" do
       expect { |block| plugin_class.for_entity("Domain", &block) }.to \
-        yield_with_args(entity_scope)
+        yield_with_args(Junction::EntityScope)
+    end
+
+    it "applies the condition to registrations made in the block" do
+      condition = proc { true }
+      plugin_class.for_entity("Domain", condition) do |scope|
+        scope.tab(title: "Tab", action: :domain_path)
+      end
+
+      expect(plugin_class.tabs_for("Domain").first[:if]).to eq(condition)
+    end
+
+    it "adds to the existing scope when called again for the same context" do
+      plugin_class.for_entity("Domain") { |s| s.tab(title: "One", action: :one_path) }
+      plugin_class.for_entity("Domain") { |s| s.tab(title: "Two", action: :two_path) }
+
+      expect(plugin_class.tabs_for("Domain").map { |tab| tab[:title] })
+        .to eq(%w[One Two])
+    end
+
+    it "does not carry a condition past the block that set it" do
+      plugin_class.for_entity("Domain", proc { true }) do |scope|
+        scope.tab(title: "Conditional", action: :one_path)
+      end
+      plugin_class.for_entity("Domain") { |s| s.tab(title: "Plain", action: :two_path) }
+
+      expect(plugin_class.tabs_for("Domain").last[:if]).to be_nil
     end
   end
 
@@ -208,6 +389,7 @@ RSpec.describe Junction::ApplicationPlugin do
 
     before do
       allow(Junction::EntityScope).to receive(:new).and_return(entity_scope)
+      allow(entity_scope).to receive(:with_condition).and_yield
     end
 
     it "returns empty hash when no entities are registered" do
@@ -237,6 +419,7 @@ RSpec.describe Junction::ApplicationPlugin do
 
     before do
       allow(Junction::EntityScope).to receive(:new).and_return(entity_scope)
+      allow(entity_scope).to receive(:with_condition).and_yield
     end
 
     it "returns empty hash when context is not registered" do
@@ -257,6 +440,7 @@ RSpec.describe Junction::ApplicationPlugin do
 
     before do
       allow(Junction::EntityScope).to receive(:new).and_return(entity_scope)
+      allow(entity_scope).to receive(:with_condition).and_yield
     end
 
     it "returns empty array when context is not registered" do
@@ -278,6 +462,7 @@ RSpec.describe Junction::ApplicationPlugin do
 
     before do
       allow(Junction::EntityScope).to receive(:new).and_return(entity_scope)
+      allow(entity_scope).to receive(:with_condition).and_yield
     end
 
     it "returns empty array when context is not registered" do
@@ -293,6 +478,21 @@ RSpec.describe Junction::ApplicationPlugin do
   end
 
   describe ".permission" do
+    # The permission is built when read, so the DSL may name a permission
+    # before the domain it belongs to.
+    let(:late_domain_plugin) do
+      Class.new(described_class) do
+        plugin_name "late_domain"
+        permission context: "widgets", ownership: "all", access: "read"
+        domain "example.com"
+      end
+    end
+
+    it "uses the domain even when declared before it" do
+      expect(late_domain_plugin.permissions.map(&:to_s))
+        .to eq([ "example.com/widgets.all.read" ])
+    end
+
     it "registers a global permission using the plugin's domain" do
       plugin_class.permission(context: "domains", ownership: "all",
                               access: "read")

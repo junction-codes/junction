@@ -60,6 +60,14 @@ RSpec.describe Junction::Kinds do
     it "returns nil for an unregistered name" do
       expect(described_class.for("Nope")).to be_nil
     end
+
+    it "ignores case, so a Backstage kind string resolves" do
+      expect(described_class.for("API").name).to eq("Api")
+    end
+
+    it "matches a lowercased kind, as an entity reference carries it" do
+      expect(described_class.for("component").name).to eq("Component")
+    end
   end
 
   describe ".by_context" do
@@ -114,16 +122,41 @@ RSpec.describe Junction::Kinds do
       expect(described_class.for("Widget").model_name).to eq("MyPlugin::Widget")
     end
 
-    it "replaces a kind registered under the same scope" do
+    it "raises when another model has already claimed the scope" do
       described_class.register(:widget, model_name: "MyPlugin::Widget")
-      described_class.register(:widget, model_name: "Other::Widget")
-      expect(described_class.for("Widget").model_name).to eq("Other::Widget")
+
+      expect { described_class.register(:widget, model_name: "Other::Widget") }
+        .to raise_error(ArgumentError, /already registered to MyPlugin::Widget/)
+    end
+
+    it "refuses a scope differing from a registered one only in case" do
+      expect { described_class.register(:API, model_name: "Other::Api") }
+        .to raise_error(ArgumentError, /already registered to Junction::Api/)
+    end
+
+    it "refuses a plugin model claiming a core kind's scope" do
+      expect { described_class.register(:component, model_name: "MyPlugin::Component") }
+        .to raise_error(ArgumentError, /already registered to Junction::Component/)
+    end
+
+    it "lets the same model register again, as a code reload does" do
+      described_class.register(:widget, model_name: "MyPlugin::Widget")
+
+      expect { described_class.register(:widget, model_name: "MyPlugin::Widget") }
+        .not_to raise_error
     end
 
     it "does not duplicate the entry when re-registering" do
       described_class.register(:widget, model_name: "MyPlugin::Widget")
-      described_class.register(:widget, model_name: "Other::Widget")
-      expect(described_class.names.count { |n| n == "Widget" }).to eq(1)
+      described_class.register(:widget, model_name: "MyPlugin::Widget")
+
+      expect(described_class.names.count { |name| name == "Widget" }).to eq(1)
+    end
+
+    it "lets a core kind's flags be overridden" do
+      described_class.register(:location, catalog: true, exposed: true)
+
+      expect(described_class.exposed.map(&:name)).to include("Location")
     end
   end
 

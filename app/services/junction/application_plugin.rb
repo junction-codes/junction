@@ -27,6 +27,15 @@ module Junction
     DEFAULT_ICON = "toy-brick"
     PLUGIN_NAME_REGEXP = /\A[a-z][a-z0-9_-]+\z/
 
+    # Every plugin that has registered, by plugin name.
+    #
+    # Held on the base class so the registry can be rebuilt after a code
+    # reload since the initializer that registered a plugin does not run again.
+    #
+    # A later registration under the same name replaces the earlier one, which
+    # is what a reload produces.
+    @registrations = {}
+
     # @!group Plugin Identity DSL
 
     # Gets or sets the machine-readable plugin name.
@@ -89,14 +98,8 @@ module Junction
     #   `:destroy`.
     # @param description [String] Optional description of the permission.
     def self.permission(context:, ownership:, access:, description: "")
-      @permissions ||= []
-      @permissions << Junction::Permission.new(
-        domain: self.domain,
-        context:,
-        ownership:,
-        access:,
-        description:
-      )
+      @permission_definitions ||= []
+      @permission_definitions << { context:, ownership:, access:, description: }
     end
 
     # Registers an authentication provider.
@@ -175,17 +178,22 @@ module Junction
     #
     # The block is evaluated immediately at class definition time.
     #
+    # Calling this more than once for the same context adds to the existing
+    # scope rather than replacing it, so a plugin may register for an entity
+    # from several places, each with its own condition.
+    #
     # @param context [String, Class] Name of the entity class to scope to.
-    # @param condition [Proc] Optional condition applied before rendering all
-    #   components and tabs.
+    # @param condition [Proc] Optional condition applied before rendering the
+    #   components and tabs registered in this block.
     # @yieldparam scope [EntityScope] Scope object for entity-specific
     #   registrations.
+    # @return [EntityScope] The scope for the context.
     def self.for_entity(context, condition = nil, &block)
-      scope = EntityScope.new(self, context.to_s, condition)
-      block.call(scope)
-
       @entities ||= {}
-      @entities[context.to_s] = scope
+      scope = (@entities[context.to_s] ||= EntityScope.new(self, context.to_s))
+      scope.with_condition(condition) { block.call(scope) }
+
+      scope
     end
 
     # @!endgroup
@@ -194,15 +202,67 @@ module Junction
 
     # Registers this plugin class with the global registry.
     #
-    # @raise [ArgumentError] If plugin_name is nil or does not match the valid
-    #   format.
+    # Registration also survives a code reload. The engine clears the registry
+    # on every `to_prepare` and replays the `:junction_plugins` load hooks to
+    # rebuild it.
+    #
+    # @raise [ArgumentError] If plugin_name is nil, does not match the valid
+    #   format, or if the plugin declares permissions without a domain.
     def self.register
       unless plugin_name&.match?(PLUGIN_NAME_REGEXP)
         raise ArgumentError,
           "Plugin name #{plugin_name.inspect} is invalid. Must match the format /[a-z][a-z0-9_-]+/"
       end
 
+      if permissions.any? { |permission| permission.domain.blank? }
+        raise ArgumentError,
+          "Plugin #{plugin_name.inspect} declares permissions but no domain. " \
+          "Permission strings are \"<domain>/<context>.<ownership>.<access>\", " \
+          "so without one they cannot be parsed or granted."
+      end
+
+      ApplicationPlugin.registrations[plugin_name] = self
       Junction::PluginRegistry.register_plugin(self)
+    end
+
+    # Re-registers every plugin that has registered in this process.
+    #
+    # Called from the engine's `:junction_plugins` load hook, which the engine
+    # replays after clearing the registry on a code reload.
+    #
+    # Replay goes back through {register} rather than straight to the registry,
+    # so a plugin that changed while reloading is validated and re-recorded
+    # exactly as it would be on a first registration.
+    #
+    # A named plugin is resolved from its class name, so a plugin class in an
+    # autoload path re-registers as the class that replaced it. One whose
+    # constant is gone is dropped rather than revived from the stale object,
+    # since a class keeps its name after its constant is removed. An anonymous
+    # class has no name to resolve and is registered as itself.
+    #
+    # The snapshot matters: {register} writes to the registrations, and a
+    # plugin renamed while reloading would add a key mid-iteration.
+    def self.replay_registrations
+      registrations.to_a.each do |name, plugin|
+        current = plugin.name ? plugin.name.safe_constantize : plugin
+
+        if current.is_a?(Class) && current <= ApplicationPlugin
+          current.register
+          registrations.delete(name) unless current.plugin_name == name
+        else
+          registrations.delete(name)
+        end
+      end
+    end
+
+    # Plugins that have been registered, by plugin name.
+    #
+    # Always reads the base class, since a subclass would otherwise see its own
+    # empty hash.
+    #
+    # @return [Hash{String => Class<ApplicationPlugin>}] The registrations.
+    def self.registrations
+      ApplicationPlugin.instance_variable_get(:@registrations)
     end
 
     # @!endgroup
@@ -266,7 +326,9 @@ module Junction
     #
     # @return [Array<Junction::Permission>]
     def self.permissions
-      @permissions || []
+      (@permission_definitions || []).map do |definition|
+        Junction::Permission.new(domain: self.domain, **definition)
+      end
     end
 
     # All registered authentication providers for this plugin.

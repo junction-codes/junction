@@ -18,6 +18,20 @@ RSpec.describe Junction::Kind do
     end
   end
 
+  describe "#scope" do
+    it "normalizes to snake case" do
+      expect(described_class.new(:API).scope).to eq(:api)
+    end
+
+    it "gives a mixed-case scope the same name as its snake case form" do
+      expect(described_class.new(:API).name).to eq("Api")
+    end
+
+    it "leaves a multi-word scope alone" do
+      expect(described_class.new(:ai_resource).scope).to eq(:ai_resource)
+    end
+  end
+
   describe "#plural" do
     it "pluralizes the scope" do
       expect(kind.plural).to eq("apis")

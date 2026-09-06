@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "monitor"
 require "set"
 require "singleton"
 
@@ -25,9 +26,13 @@ module Junction
     end
 
     # Initialize the registry.
+    #
+    # We use a monitor rather than a mutex because {memoize} yields while
+    # holding the lock, so a memoized value computed from another memoized value
+    # would deadlock on a lock that is not reentrant.
     def initialize
       @cache = {}
-      @mutex = Mutex.new
+      @monitor = Monitor.new
       @plugins = {}
     end
 
@@ -36,7 +41,7 @@ module Junction
     # @param plugin [Class<ApplicationPlugin>] The plugin to register.
     def register_plugin(plugin)
       trace "junction.plugin.register", "junction.plugin.name" => plugin.plugin_name do
-        @mutex.synchronize do
+        @monitor.synchronize do
           @plugins[plugin.plugin_name] = plugin
           @cache = {}
         end
@@ -45,7 +50,7 @@ module Junction
 
     # Reset the registry, clearing all registered plugins and the cache.
     def reset!
-      @mutex.synchronize do
+      @monitor.synchronize do
         @plugins = {}
         @cache = {}
       end
@@ -83,8 +88,10 @@ module Junction
       ctx = context_string(context)
       trace "junction.registry.annotations_for", "junction.plugin.context" => ctx do
         memoize([ :annotations_for, ctx ]) do
-          @plugins.each_value.with_object({}) do |plugin, annotations|
-            annotations.merge!(plugin.annotations_for(ctx))
+          inherited_contexts(ctx).each_with_object({}) do |name, annotations|
+            @plugins.each_value do |plugin|
+              annotations.merge!(plugin.annotations_for(name))
+            end
           end
         end
       end
@@ -116,7 +123,9 @@ module Junction
             "junction.plugin.context" => ctx,
             "junction.plugin.slot" => slot.to_s do
         memoize([ :components_for, ctx, slot ]) do
-          @plugins.flat_map { |_, plugin| plugin.components_for(ctx, slot) }
+          inherited_contexts(ctx).flat_map do |name|
+            @plugins.flat_map { |_, plugin| plugin.components_for(name, slot) }
+          end
         end
       end
     end
@@ -188,7 +197,9 @@ module Junction
       ctx = context_string(context)
       trace "junction.registry.tabs_for", "junction.plugin.context" => ctx do
         memoize([ :tabs_for, ctx ]) do
-          @plugins.values.flat_map { |plugin| plugin.tabs_for(ctx) }
+          inherited_contexts(ctx).flat_map do |name|
+            @plugins.values.flat_map { |plugin| plugin.tabs_for(name) }
+          end
         end
       end
     end
@@ -220,7 +231,7 @@ module Junction
     # @param key [Symbol] The key to memoize the result by.
     # @return [Object] The memoized result.
     def memoize(key)
-      @mutex.synchronize do
+      @monitor.synchronize do
         if @cache.key?(key)
           span_attribute("junction.registry.cache_hit", true)
           return @cache[key]
@@ -229,6 +240,28 @@ module Junction
         span_attribute("junction.registry.cache_hit", false)
         @cache[key] = yield
       end
+    end
+
+    # Class names to use when looking up entity-scoped registrations.
+    #
+    # Every kind shares one base class, and subclassing a core kind is how a
+    # plugin adds one, so a registration for `Junction::Component` has to
+    # answer for a plugin kind that subclasses it. Least specific first means a
+    # registration on the subclass wins when the two collide.
+    #
+    # A context that is not an entity resolves to itself alone.
+    #
+    # @param name [String] Name of the context class.
+    # @return [Array<String>] The class names, ordered least specific to most
+    #   specific.
+    def inherited_contexts(name)
+      klass = name.safe_constantize
+      return [ name ] unless klass.is_a?(Class) && klass <= Junction::Entity
+
+      klass.ancestors
+           .select { |ancestor| ancestor.is_a?(Class) && ancestor <= Junction::Entity }
+           .map(&:to_s)
+           .reverse
     end
 
     # Converts a context object or class into its string representation.

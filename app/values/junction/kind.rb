@@ -19,7 +19,8 @@ module Junction
 
     # Initializes a new kind.
     #
-    # @param scope [Symbol] Singular scope everything else derives from.
+    # @param scope [Symbol] Singular scope everything else derives from, case
+    #   insensitive.
     # @param model_name [String] Model class name when it's not the kind's name
     #   in the Junction namespace. Used for kinds defined by plugins.
     # @param catalog [Boolean] Whether the kind appears in catalog listings,
@@ -43,7 +44,7 @@ module Junction
     def initialize(scope, model_name: nil, catalog: false, ownable: false,
                    sluggable: true, dependable: false, tree: false,
                    exposed: true, domain: nil, default_icon: DEFAULT_ICON)
-      @scope = scope.to_sym
+      @scope = scope.to_s.underscore.to_sym
       @model_name = model_name
       @catalog = catalog
       @ownable = ownable
