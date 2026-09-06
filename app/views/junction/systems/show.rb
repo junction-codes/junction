@@ -19,6 +19,7 @@ module Junction
             div(class: "px-6 py-3 space-y-8") do
               system_header
               system_stats
+              EntityMetadata(entity: @system)
               entities_section
             end
           end

@@ -24,9 +24,12 @@ module Junction
         # Field type to the component that renders it.
         FIELD_COMPONENTS = {
           immutable: Field::Immutable,
+          labels: Field::Labels,
+          links: Field::Links,
           reference: Field::Reference,
           rich_select: Field::RichSelectField,
           slug: Field::Slug,
+          tags: Field::Tags,
           text: Field::Text,
           text_area: Field::TextArea
         }.freeze

@@ -82,6 +82,80 @@ RSpec.describe Junction::Taggable do
     end
   end
 
+  describe "label rows" do
+    it "offers a blank row when there are no labels" do
+      expect(component.label_rows).to eq([ { key: "", value: "" } ])
+    end
+
+    it "lists a row per label, then a blank one to fill in" do
+      component.labels = { "tier" => "gold" }
+
+      expect(component.label_rows)
+        .to eq([ { key: "tier", value: "gold" }, { key: "", value: "" } ])
+    end
+
+    it "does not add a second blank row when one is already there" do
+      component.labels = { "" => "" }
+
+      expect(component.label_rows.count { |row| row[:key].blank? }).to eq(1)
+    end
+
+    it "builds labels from form rows" do
+      component.label_rows = {
+        "0" => { "key" => "tier", "value" => "gold" },
+        "1" => { "key" => "runtime", "value" => "go1.22" }
+      }
+      component.validate
+
+      expect(component.labels).to eq({ "tier" => "gold", "runtime" => "go1.22" })
+    end
+
+    it "accepts rows as an array" do
+      component.label_rows = [ { key: "tier", value: "gold" } ]
+      component.validate
+
+      expect(component.labels).to eq({ "tier" => "gold" })
+    end
+
+    it "discards a row with a blank key" do
+      component.label_rows = [ { key: "", value: "orphan" },
+                               { key: "tier", value: "gold" } ]
+      component.validate
+
+      expect(component.labels).to eq({ "tier" => "gold" })
+    end
+
+    it "trims whitespace around the key" do
+      component.label_rows = [ { key: "  tier  ", value: "gold" } ]
+      component.validate
+
+      expect(component.labels).to eq({ "tier" => "gold" })
+    end
+
+    it "clears the labels when every row is removed" do
+      component.labels = { "tier" => "gold" }
+      component.label_rows = []
+      component.validate
+
+      expect(component.labels).to eq({})
+    end
+
+    it "leaves the labels alone when no rows are submitted" do
+      component.labels = { "tier" => "gold" }
+      component.validate
+
+      expect(component.labels).to eq({ "tier" => "gold" })
+    end
+
+    it "keeps the last value when a key is repeated" do
+      component.label_rows = [ { key: "tier", value: "gold" },
+                               { key: "tier", value: "silver" } ]
+      component.validate
+
+      expect(component.labels).to eq({ "tier" => "silver" })
+    end
+  end
+
   describe "scopes" do
     let(:group) { create(:group) }
 

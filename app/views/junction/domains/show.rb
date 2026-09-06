@@ -18,6 +18,7 @@ module Junction
             div(class: "px-6 py-3 space-y-8") do
               domain_header
               domain_stats
+              EntityMetadata(entity: @domain)
               domain_tabs
             end
           end

@@ -15,6 +15,15 @@ en:
           delete_confirm_body: This will permanently remove the %{kind}.
           cancel: Cancel
           confirm_delete: Confirm Delete
+        entity_metadata:
+          title: Metadata
+          description: >-
+            What this %{kind_lower} is, in terms other things can search and
+            match on.
+          tags: Tags
+          labels: Labels
+          links: Links
+          none: None
         entity_filters:
           all: All %{label}
           search: Search
@@ -42,6 +51,12 @@ en:
           image_url_help: >-
             Optional URL for an image representing this %{kind_lower}.
           image_url_placeholder: https://example.com/logo.png
+          tags_help: >-
+            Lowercase, free-form, and what people filter and group by.
+          labels_help: >-
+            Exact-match pairs for machines to select on, not free text.
+          links_help: >-
+            Pages outside Junction. Another entity belongs in a relation.
           roles_title: Roles
           roles_description: >-
             Roles granted to this group. Members inherit them, along with the

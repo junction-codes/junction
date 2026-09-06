@@ -6,3 +6,6 @@ en:
     attributes:
       junction/entity:
         parent_id: "Parent"
+        tags: "Tags"
+        label_rows: "Labels"
+        links: "Links"

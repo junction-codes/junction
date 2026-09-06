@@ -57,7 +57,7 @@ RSpec.describe "Junction::Annotations forms", type: :system do
       visit edit_component_path(component)
 
       click_button "Add annotation"
-      within all("[data-annotations-form-target='list'] .other-annotation-row").last do
+      within all("#other-annotations [data-repeatable-rows-target='row']").last do
         fill_in "Name", with: "custom/example"
         fill_in "Value", with: "custom-value"
       end
@@ -86,7 +86,7 @@ RSpec.describe "Junction::Annotations forms", type: :system do
 
       # jsonb does not preserve key insertion order, so locate the row by its
       # rendered value instead of assuming a fixed position.
-      row = all("[data-annotations-form-target='list'] .other-annotation-row")
+      row = all("#other-annotations [data-repeatable-rows-target='row']")
         .find { |candidate| candidate.find_field("Name").value == "region" }
       within(row) { click_button "Remove annotation" }
       click_button "Save Changes"
@@ -109,7 +109,7 @@ RSpec.describe "Junction::Annotations forms", type: :system do
       ])
       visit edit_component_path(component)
 
-      all("[data-annotations-form-target='list'] .other-annotation-row").each do |row|
+      all("#other-annotations [data-repeatable-rows-target='row']").each do |row|
         within(row) { click_button "Remove annotation" }
       end
       click_button "Save Changes"

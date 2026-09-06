@@ -4,6 +4,22 @@ en:
       field:
         immutable:
           immutable: "%{label} cannot be changed after creation."
+        labels:
+          key: Key
+          value: Value
+          key_placeholder: team
+          value_placeholder: atlas
+          add_row: Add label
+          remove_row: Remove label
+        links:
+          url: URL
+          title: Title
+          icon: Icon
+          url_placeholder: https://runbook.example.com
+          title_placeholder: Runbook
+          icon_placeholder: book-open
+          add_row: Add link
+          remove_row: Remove link
         reference:
           blank: No %{label} selected
           logo_alt: Logo for %{title}
@@ -20,3 +36,6 @@ en:
           auto: Auto
           edit: Edit
           immutable: "%{label} cannot be changed after creation."
+        tags:
+          placeholder: Add a tag…
+          remove: Remove the %{tag} tag

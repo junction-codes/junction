@@ -26,7 +26,10 @@ module Junction
       [ :text_area, :description, { required: true,
                                     help_text: :description_help } ],
       [ :text_area, :definition, { required: true, rows: 10,
-                                   help_text: :definition_help } ]
+                                   help_text: :definition_help } ],
+      [ :tags, :tags, { help_text: :tags_help } ],
+      [ :labels, :label_rows, { help_text: :labels_help } ],
+      [ :links, :links, { help_text: :links_help } ]
     ].freeze
 
     self.index_columns = [

@@ -29,6 +29,7 @@ module Junction
             div(class: "px-6 py-3 space-y-8") do
               group_header
               group_stats
+              EntityMetadata(entity: @group)
               group_tabs
             end
           end
