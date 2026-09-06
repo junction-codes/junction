@@ -31,6 +31,20 @@ module Junction
       DEFAULT_ATTRS = {}.freeze
       TAILWIND_MERGER = ::TailwindMerge::Merger.new.freeze unless defined?(TAILWIND_MERGER)
 
+      class << self
+        # Pins relative `t(".key")` lookups to this class's scope, so
+        # subclasses reuse its copy instead of each needing a locale file.
+        #
+        # Phlex derives the scope from the *instance's* class name, which is
+        # what would otherwise force a component shared by every entity kind to
+        # carry seven identical sets of translations. A subclass that does want
+        # its own wording overrides `translation_path` again.
+        def share_translations
+          scope = translation_path
+          define_singleton_method(:translation_path) { scope }
+        end
+      end
+
       attr_reader :attrs
 
       if Rails.env.development?

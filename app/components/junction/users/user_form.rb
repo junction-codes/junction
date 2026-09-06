@@ -6,8 +6,8 @@ module Junction
       class UserForm < Base
         include Phlex::Rails::Helpers::FormWith
 
-        def initialize(user:)
-          @user = user
+        def initialize(entity:)
+          @user = entity
         end
 
         def view_template

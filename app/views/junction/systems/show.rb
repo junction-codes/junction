@@ -7,8 +7,8 @@ module Junction
       class Show < Views::Base
         attr_reader :breadcrumbs
 
-        def initialize(system:, can_edit:, can_destroy:, breadcrumbs: [])
-          @system = system
+        def initialize(entity:, can_edit:, can_destroy:, breadcrumbs: [])
+          @system = entity
           @can_edit = can_edit
           @can_destroy = can_destroy
           @breadcrumbs = breadcrumbs
@@ -89,7 +89,6 @@ module Junction
         def system_stats
           div(class: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6") do
             StatCard(title: t(".stat_total_components"), value: @system.components.count, icon: "server")
-            StatCard(title: t(".stat_active_incidents"), value: "1", icon: "siren", status: :warning)
           end
         end
 

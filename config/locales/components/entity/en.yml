@@ -1,0 +1,50 @@
+en:
+  junction:
+    components:
+      entity:
+        # Copy shared by every catalog kind. `%{kind}` names the kind
+        # ("Component", "API"), `%{kind_lower}` names it mid-sentence
+        # ("component", "API"), and `%{kinds}` / `%{kinds_lower}` are their
+        # plurals. See Junction::EntityCopy.
+        entity_edit_sidebar:
+          metadata: Metadata
+          danger_zone: Danger Zone
+          danger_zone_warning: These actions are irreversible. Please be certain.
+          delete: Delete %{kind}
+          delete_confirm_title: Are you absolutely sure?
+          delete_confirm_body: This will permanently remove the %{kind}.
+          cancel: Cancel
+          confirm_delete: Confirm Delete
+        entity_filters:
+          all: All %{label}
+          search: Search
+          # Keyed by the kind's `search_attribute`.
+          placeholder:
+            title_or_description_cont: Name or description…
+            title_or_email_cont: Name or email address…
+        entity_form:
+          title: "%{kind} Details"
+          description: >-
+            This information will be displayed on the %{kind_lower}'s main page.
+          namespace_help: >-
+            Namespaces allow the same identifier to exist in different contexts.
+          owner_help: Assign an owner for this %{kind_lower}.
+          system_help: System this %{kind_lower} belongs to.
+          domain_help: Assign this %{kind_lower} to an existing domain.
+          description_help: A brief summary of the %{kind_lower}'s goals.
+          mission_help: >-
+            A brief, high-level summary of the %{kind_lower}'s mission.
+          parent_help: Select a parent for this %{kind_lower}.
+          nested_parent_help: >-
+            Optionally nest this %{kind_lower} under a parent. Deleting a parent
+            removes its child %{kinds_lower}.
+          definition_help: "%{kind} spec definition."
+          image_url_help: >-
+            Optional URL for an image representing this %{kind_lower}.
+          image_url_placeholder: https://example.com/logo.png
+          roles_title: Roles
+          roles_description: >-
+            Roles granted to this group. Members inherit them, along with the
+            roles granted to any parent group.
+          cancel: Cancel
+          save: Save Changes

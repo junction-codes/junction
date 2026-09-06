@@ -37,7 +37,7 @@ module Junction
             end
 
             div(class: "text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs") do
-              plain @entity.description
+              plain @entity.preview_subtitle
             end
           end
         end

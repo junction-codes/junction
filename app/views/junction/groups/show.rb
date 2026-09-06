@@ -15,9 +15,9 @@ module Junction
         # @param can_view_members [Boolean] Whether the user can view the
         #   group's members.
         # @param breadcrumbs [Array<Hash>] Breadcrumb items from the controller.
-        def initialize(group:, can_edit:, can_destroy:, can_view_members: false,
-                       breadcrumbs: [])
-          @group = group
+        def initialize(entity:, can_edit:, can_destroy:,
+                       can_view_members: false, breadcrumbs: [])
+          @group = entity
           @can_edit = can_edit
           @can_destroy = can_destroy
           @can_view_members = can_view_members

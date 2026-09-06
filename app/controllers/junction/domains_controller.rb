@@ -53,7 +53,7 @@ module Junction
     def show
       authorize! @entity
       render Views::Domains::Show.new(
-        domain: @entity,
+        entity: @entity,
         breadcrumbs:,
         can_edit: allowed_to?(:update?, @entity),
         can_destroy: allowed_to?(:destroy?, @entity)

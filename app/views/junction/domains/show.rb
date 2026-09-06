@@ -6,8 +6,8 @@ module Junction
       class Show < Views::Base
         attr_reader :breadcrumbs
 
-        def initialize(domain:, can_edit:, can_destroy:, breadcrumbs: [])
-          @domain = domain
+        def initialize(entity:, can_edit:, can_destroy:, breadcrumbs: [])
+          @domain = entity
           @can_edit = can_edit
           @can_destroy = can_destroy
           @breadcrumbs = breadcrumbs
@@ -90,7 +90,6 @@ module Junction
         def domain_stats
           div(class: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6") do
             render StatCard.new(title: t(".stat_total_systems"), value: @domain.systems.count, icon: "network")
-            render StatCard.new(title: t(".stat_active_incidents"), value: "1", icon: "siren", status: :warning)
           end
         end
 

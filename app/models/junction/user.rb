@@ -4,6 +4,10 @@ module Junction
   class User < Entity
     self.default_icon = "user-round"
 
+    self.index_columns = [ [ :entity, :title ], [ :email, :email ] ].freeze
+    self.search_attribute = :title_or_email_cont
+    self.form_component_name = "Junction::Components::Users::UserForm"
+
     store_accessor :spec, :pronouns
 
     has_one :credential, dependent: :destroy, autosave: true,
@@ -104,6 +108,13 @@ module Junction
 
     def password_challenge=(value)
       (credential || build_credential).password_challenge = value
+    end
+
+    # Users don't have a description, so use their pronouns instead.
+    #
+    # @return [String] The subtitle.
+    def preview_subtitle
+      pronouns
     end
 
     def icon

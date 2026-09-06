@@ -8,6 +8,30 @@ module Junction
     self.catalog_section = :groups
     self.default_icon = "users-round"
 
+    self.form_fields = [
+      [ :text, :title, { required: true } ],
+      [ :slug, :name ],
+      [ :immutable, :namespace, { placeholder: "default", required: true,
+                                  help_text: :namespace_help } ],
+      [ :rich_select, :type, { required: true, options: :type_options } ],
+      [ :reference, :parent_id, { icon: "users-round",
+                                  options: :available_parents, value: :parent,
+                                  enabled_when: :parent_editable,
+                                  help_text: :parent_help } ],
+      [ :text, :email, { placeholder: "example@example.com" } ],
+      [ :text, :image_url, { placeholder: "https://example.com/logo.png" } ],
+      [ :text_area, :description, { required: true,
+                                    help_text: :mission_help } ]
+    ].freeze
+
+    self.index_columns = [
+      [ :entity, :title ],
+      [ :type, :type ],
+      [ :email, :email ],
+      [ :reference, :parent_id ]
+    ].freeze
+    self.form_component_name = "Junction::Components::Group::GroupForm"
+
     attribute :type, :string, default: "team"
 
     validates :description, presence: true

@@ -3,70 +3,24 @@
 module Junction
   module Components
     module Group
-      # Form for creating and editing groups.
-      class GroupForm < Base
-        def initialize(group:, available_parents:, type_options:,
-                       parent_editable: true, available_roles: nil)
-          @group = group
-          @available_parents = available_parents
-          @parent_editable = parent_editable
-          @type_options = type_options
-          @available_roles = available_roles
-        end
-
-        def view_template
-          form_with(model: @group, url: junction_catalog_form_url(@group), class: "space-y-8",
-                    data: { controller: "form", action: "submit->form#disable" }) do |f|
-            # Basic information section.
-            Card do |card|
-              card.header do |header|
-                header.title { t(".title") }
-                header.description { t(".description") }
-              end
-
-              card.content(class: "space-y-4") do
-                Text(f, :title, required: true)
-                Slug(f, :name)
-                Immutable(f, :namespace, placeholder: "default",
-                              required: true,
-                              help_text: t(".namespace_help"))
-                RichSelectField(f, :type, required: true,
-                                   options: @type_options)
-
-                Reference(f, :parent_id, required: false, icon: "users-round",
-                              options: @available_parents, value: @group.parent,
-                              disabled: !@parent_editable,
-                              help_text: t(".parent_help"))
-
-                Text(f, :email, placeholder: "example@example.com")
-                Text(f, :image_url, placeholder: "https://example.com/logo.png")
-                TextArea(f, :description, required: true,
-                              help_text: t(".description_help"))
-              end
-            end
-
-            roles_section(f)
-
-            AnnotationsForm(form: f, context: @group)
-
-            # Form actions.
-            div(class: "flex items-center justify-end gap-x-4 pt-4") do
-              Link(href: cancel_path, class: "text-sm font-semibold leading-6") { t(".cancel") }
-              Button(type: "submit", variant: :primary, data: { form_target: "submit" }) do
-                icon("save", class: "w-4 h-4 mr-2")
-                plain t(".save")
-              end
-            end
-          end
-        end
-
+      # Create and edit form for a Group.
+      #
+      # The fields come from `Junction::Group.form_fields` and the rendering
+      # from {Entity::EntityForm}. Groups add the role grants, which is the one
+      # section no other kind has.
+      class GroupForm < Entity::EntityForm
         private
 
-        # Role grants, shown only to users who may manage them.
+        # Renders the role grants, when the current user may change them.
+        #
+        # `available_roles` is nil for anyone without write access to roles, so
+        # the section is absent rather than disabled -- editing a group must not
+        # be a way to hand it a permission set.
         #
         # @param form [ActionView::Helpers::FormBuilder] The form builder.
-        def roles_section(form)
-          return if @available_roles.nil?
+        def extra_sections(form)
+          available_roles = @options[:available_roles]
+          return if available_roles.nil?
 
           Card do |card|
             card.header do |header|
@@ -75,13 +29,9 @@ module Junction
             end
 
             card.content do
-              Roles(form, :role_ids, available_roles: @available_roles, label: "")
+              render Field::Roles.new(form, :role_ids, available_roles:, label: "")
             end
           end
-        end
-
-        def cancel_path
-          @group.id.nil? ? groups_path : junction_catalog_path(@group)
         end
       end
     end
