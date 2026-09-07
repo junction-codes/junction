@@ -24,6 +24,15 @@ export default class extends Controller {
     }
   }
 
+  // A user can paste a list, which doesn't trigger the keydown event so the
+  // comma separator never fires. Only a paste that looks like a list is
+  // committed, so pasting part of a tag still leaves it being typed.
+  paste(event) {
+    if (!(event.clipboardData?.getData("text") ?? "").includes(",")) return
+
+    setTimeout(() => this.commitPending(), 0)
+  }
+
   // Commits whatever is left in the box when focus leaves, so a tag typed but
   // not confirmed is not silently dropped on submit.
   commitPending() {
@@ -39,7 +48,13 @@ export default class extends Controller {
     event.target.closest("[data-tags-field-target='chip']")?.remove()
   }
 
+  // One value may hold several tags, such as on a paste, or a comma typed fast
+  // enough to arrive with the text around it.
   #add(value) {
+    value.split(",").forEach((part) => this.#addOne(part))
+  }
+
+  #addOne(value) {
     const tag = value.trim().toLowerCase()
     if (tag === "" || this.#values().includes(tag)) return
 

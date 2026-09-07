@@ -20,6 +20,11 @@ RSpec.describe Junction::Taggable do
       expect(component.tags).to eq(%w[portal java])
     end
 
+    it "splits a comma-separated entry inside a list" do
+      component.tags = [ "payments, billing" ]
+      expect(component.tags).to eq(%w[payments billing])
+    end
+
     it "lowercases them" do
       component.tags = %w[Portal JAVA]
       expect(component.tags).to eq(%w[portal java])

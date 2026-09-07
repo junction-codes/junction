@@ -48,6 +48,7 @@ module Junction
                 data: {
                   tags_field_target: "input",
                   action: "keydown->tags-field#commit " \
+                          "paste->tags-field#paste " \
                           "blur->tags-field#commitPending"
                 },
                 class: INPUT_CLASSES

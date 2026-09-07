@@ -63,6 +63,27 @@ RSpec.describe "Junction::Entity metadata", type: :system do
       end
     end
 
+    context "when a comma-separated list reaches the box" do
+      before do
+        page.execute_script(<<~JS)
+          const input = document.querySelector("#tags-field [data-tags-field-target='input']")
+          input.value = "payments, billing"
+          input.dispatchEvent(new Event("blur", {bubbles: true}))
+        JS
+      end
+
+      it "shows them as separate chips" do
+        expect(page).to have_css("#tags-field [data-tags-field-target='chip']",
+                                 count: 2)
+      end
+
+      it "stores them as separate tags" do
+        click_button "Save Changes"
+
+        expect(component.reload.tags).to eq(%w[payments billing])
+      end
+    end
+
     context "when a chip is removed" do
       let(:component) { create(:component, tags: %w[payments go]) }
 

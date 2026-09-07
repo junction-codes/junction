@@ -40,17 +40,20 @@ module Junction
     #   and no fallback was given, or if the fallback does not resolve either.
     def icon(name, library: RailsIcons.configuration.default_library,
              variant: nil, fallback: nil, **arguments)
-      name = fallback if name.blank? && fallback.present?
-      name = name.to_s
+      requested = (name.presence || fallback).to_s
 
-      raise Icons::IconNotFound, "Invalid icon name #{name.inspect}" unless
-        name.match?(SAFE_NAME)
+      raise Icons::IconNotFound, "Invalid icon name #{requested.inspect}" unless
+        requested.match?(SAFE_NAME)
 
-      library, name, variant = name.split(":", 3) if name.include?(":")
+      if requested.include?(":")
+        library, name, variant = requested.split(":", 3)
+      else
+        name = requested
+      end
 
       super(name, library:, variant:, **arguments)
     rescue Icons::IconNotFound
-      raise if fallback.blank? || name == fallback
+      raise if fallback.blank?
 
       icon(fallback, **arguments)
     end

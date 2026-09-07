@@ -93,6 +93,14 @@ RSpec.describe Junction::IconHelper do
     expect { render(nil, nil) }.to raise_error(Icons::IconNotFound)
   end
 
+  it "falls back when a qualified name shares its bare part with the fallback" do
+    expect(render("boxicons:circle", "circle")).to eq(render("circle"))
+  end
+
+  it "falls back when a qualified name is unknown" do
+    expect(render("lucide:nope", "circle")).to eq(render("circle"))
+  end
+
   it "still raises when the fallback itself is unknown" do
     expect { render("grafana", "also-missing") }
       .to raise_error(Icons::IconNotFound)

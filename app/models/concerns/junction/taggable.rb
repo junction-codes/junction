@@ -118,11 +118,17 @@ module Junction
 
     # Normalizes assorted input shapes into a list of unique tags.
     #
+    # Each entry is split on commas, not just a bare string. A chip editor
+    # submits a list, and one of its entries can still hold a list that wasn't
+    # split client side.
+    #
     # @param value [Array<String>, String, nil] The raw value.
     # @return [Array<String>] The normalized tags.
     def normalize_tags(value)
-      list = value.is_a?(String) ? value.split(",") : Array(value)
-      list.map { |tag| tag.to_s.strip.downcase }.reject(&:blank?).uniq
+      Array(value).flat_map { |tag| tag.to_s.split(",") }
+                  .map { |tag| tag.strip.downcase }
+                  .reject(&:blank?)
+                  .uniq
     end
 
     # Validates that every tag matches the expected tag format.
