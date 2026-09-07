@@ -42,8 +42,8 @@ module Junction
 
               input(
                 type: "text",
+                id: input_id,
                 placeholder: t(".placeholder"),
-                aria: { label: label_text },
                 autocomplete: "off",
                 data: {
                   tags_field_target: "input",

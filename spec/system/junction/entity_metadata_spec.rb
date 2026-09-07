@@ -98,6 +98,39 @@ RSpec.describe "Junction::Entity metadata", type: :system do
     end
   end
 
+  describe "field labelling", :js do
+    before { visit edit_component_path(component) }
+
+    it "points the tags label at the box you type in" do
+      expect(page).to have_css("input#component_tags[data-tags-field-target='input']")
+    end
+
+    it "labels the labels group with an element that exists" do
+      target = find("#label-rows-field[role='group']")["aria-labelledby"]
+
+      expect(page).to have_css("##{target}", text: "Labels")
+    end
+
+    it "labels the links group with an element that exists" do
+      target = find("#links-field[role='group']")["aria-labelledby"]
+
+      expect(page).to have_css("##{target}", text: "Links")
+    end
+
+    it "leaves Tab free to move focus out of the tag box" do
+      find("#tags-field [data-tags-field-target='input']").send_keys("payments", :tab)
+
+      expect(page).to have_no_css("#tags-field [data-tags-field-target='input']:focus")
+    end
+
+    it "keeps the tag that was pending when Tab left the box" do
+      find("#tags-field [data-tags-field-target='input']").send_keys("payments", :tab)
+
+      expect(page).to have_css("#tags-field [data-tags-field-target='chip']",
+                               text: "payments")
+    end
+  end
+
   describe "labels and links", :js do
     before { visit edit_component_path(component) }
 

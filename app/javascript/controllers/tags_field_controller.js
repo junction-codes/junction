@@ -11,8 +11,7 @@ export default class extends Controller {
   static values = {removeLabel: String}
 
   commit(event) {
-    const separator =
-      event.key === "Enter" || event.key === "Tab" || event.key === ","
+    const separator = event.key === "Enter" || event.key === ","
 
     if (separator) {
       if (this.inputTarget.value.trim() === "") return

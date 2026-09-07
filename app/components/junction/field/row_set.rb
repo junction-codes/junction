@@ -30,8 +30,10 @@ module Junction
         end
 
         def view_template
-          div(id: section_id, data: { controller: "repeatable-rows" }) do
-            render_label
+          div(id: section_id, role: "group",
+              aria: { labelledby: label_id },
+              data: { controller: "repeatable-rows" }) do
+            render_group_label
 
             if @help_text
               p(class: "mt-1 text-sm text-gray-500 dark:text-gray-400") do
@@ -86,14 +88,19 @@ module Junction
           "#{entity_type}[#{@method}][][#{column}]"
         end
 
+        # Headings for the row inputs.
         def column_headings
-          div(class: "mt-2 grid gap-2 #{grid_columns}") do
-            self.class.columns.each do |column|
-              span(class: "text-xs font-medium text-gray-500 " \
-                         "dark:text-gray-400") do
-                t(".#{column}")
+          div(class: "mt-2 hidden items-start gap-2 md:flex") do
+            div(class: "grid flex-1 gap-2 #{grid_columns}") do
+              self.class.columns.each do |column|
+                span(class: "text-xs font-medium text-gray-500 " \
+                           "dark:text-gray-400") do
+                  t(".#{column}")
+                end
               end
             end
+
+            div(class: "w-6", aria: { hidden: "true" })
           end
         end
 
