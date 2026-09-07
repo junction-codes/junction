@@ -6,6 +6,15 @@ en:
           title: User Details
           description: >-
             This information will be displayed on the user's main page.
+          metadata_title: Metadata
+          metadata_description: >-
+            What this user is, in terms other things can search and match on.
+          tags_help: >-
+            Lowercase, free-form, and what people filter and group by.
+          labels_help: >-
+            Exact-match pairs for machines to select on, not free text.
+          links_help: >-
+            Pages outside Junction. Another entity belongs in a relation.
           namespace_help: >-
             Namespaces allow the same identifier to exist in different contexts.
           cancel: Cancel

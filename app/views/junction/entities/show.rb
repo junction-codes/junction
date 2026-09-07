@@ -39,6 +39,7 @@ module Junction
             div(class: "px-6 py-3 space-y-8") do
               entity_header
               entity_stats
+              EntityMetadata(entity: @entity)
               body
             end
           end
@@ -69,7 +70,8 @@ module Junction
                 class: "h-20 w-20 rounded-lg object-cover flex-shrink-0")
           else
             div(class: "h-20 w-20 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0") do
-              icon(@entity.icon, class: "h-10 w-10 text-gray-500")
+              icon(@entity.icon, fallback: Junction::Kind::DEFAULT_ICON,
+                   class: "h-10 w-10 text-gray-500")
             end
           end
         end

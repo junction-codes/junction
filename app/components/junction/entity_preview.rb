@@ -27,7 +27,8 @@ module Junction
             )
           else
             div(class: "h-12 w-12 rounded-md bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0") do
-              icon(@entity.icon, class: "h-6 w-6 text-gray-500")
+              icon(@entity.icon, fallback: Junction::Kind::DEFAULT_ICON,
+                   class: "h-6 w-6 text-gray-500")
             end
           end
 

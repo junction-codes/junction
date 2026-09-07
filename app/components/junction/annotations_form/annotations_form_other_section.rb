@@ -16,8 +16,9 @@ module Junction
 
         def view_template
           section(
+            id: "other-annotations",
             class: "space-y-4",
-            data: { controller: "annotations-form" }
+            data: { controller: "repeatable-rows" }
           ) do
             h4(class: "text-sm font-semibold text-gray-900 dark:text-gray-100") do
               t(".other")
@@ -41,20 +42,20 @@ module Junction
               value: ""
             )
 
-            div(data: { annotations_form_target: "list" }, class: "space-y-4") do
+            div(data: { repeatable_rows_target: "list" }, class: "space-y-4") do
               @context.other_annotation_rows.each do |row|
                 other_annotation_row(key_value: row[:key], value_value: row[:value])
               end
             end
 
-            template(data: { annotations_form_target: "rowTemplate" }) do
+            template(data: { repeatable_rows_target: "rowTemplate" }) do
               other_annotation_row
             end
 
             Button(
               type: "button",
               variant: :secondary,
-              data: { action: "click->annotations-form#add" }
+              data: { action: "click->repeatable-rows#add" }
             ) do
               icon("plus", class: "w-4 h-4 mr-2")
               plain t(".add_row")
@@ -69,7 +70,8 @@ module Junction
         # @param key_value [String] Value of the key field.
         # @param value_value [String] Value of the value field.
         def other_annotation_row(key_value: nil, value_value: nil)
-          div(class: "flex items-center gap-2 other-annotation-row") do
+          div(class: "flex items-center gap-2",
+              data: { repeatable_rows_target: "row" }) do
             div(class: "grid flex-1 grid-cols-1 gap-4 md:grid-cols-2") do
               AnnotationsFormOtherRow(
                 key_name: "#{@form.object_name}[other_annotations][][key]",
@@ -85,7 +87,7 @@ module Junction
               size: :sm,
               icon: true,
               aria: { label: t(".remove_row") },
-              data: { action: "click->annotations-form#remove" }
+              data: { action: "click->repeatable-rows#remove" }
             ) do
               icon("trash", class: "w-4 h-4")
             end

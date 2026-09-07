@@ -80,6 +80,67 @@ RSpec.describe Junction::Linkable do
     end
   end
 
+  describe "url scheme" do
+    it "accepts an https url" do
+      component.links = [ { url: "https://runbook.example.com" } ]
+      expect(component).to be_valid
+    end
+
+    it "accepts an http url" do
+      component.links = [ { url: "http://runbook.example.com" } ]
+      expect(component).to be_valid
+    end
+
+    it "rejects a url with no scheme, which would resolve inside Junction" do
+      component.links = [ { url: "runbook.example.com" } ]
+      expect(component).not_to be_valid
+    end
+
+    it "rejects a scheme other than http or https" do
+      component.links = [ { url: "javascript:alert(1)" } ]
+      expect(component).not_to be_valid
+    end
+
+    it "rejects a relative path that merely contains a url" do
+      component.links = [ { url: "/dashboards/1?next=https://x.example.com" } ]
+      expect(component).not_to be_valid
+    end
+
+    it "rejects a javascript url that mentions a http one" do
+      component.links = [ { url: "javascript:alert('http://x.example.com')" } ]
+      expect(component).not_to be_valid
+    end
+
+    it "accepts a url with a path and query of its own" do
+      component.links = [ { url: "https://x.example.com/d/1?tab=logs" } ]
+      expect(component).to be_valid
+    end
+
+    it "reports the problem on links" do
+      component.links = [ { url: "runbook.example.com" } ]
+      component.validate
+
+      expect(component.errors[:links]).to be_present
+    end
+  end
+
+  describe "icon names" do
+    it "accepts a plain slug" do
+      component.links = [ { url: "https://x.example.com", icon: "book-open" } ]
+      expect(component).to be_valid
+    end
+
+    it "rejects one that could traverse out of the icon directory" do
+      component.links = [ { url: "https://x.example.com", icon: "../../etc/passwd" } ]
+      expect(component).not_to be_valid
+    end
+
+    it "rejects a path separator" do
+      component.links = [ { url: "https://x.example.com", icon: "outline/circle" } ]
+      expect(component).not_to be_valid
+    end
+  end
+
   describe "persistence" do
     it "round-trips through the database" do
       component.links = [ link ]

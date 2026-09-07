@@ -119,7 +119,10 @@ module Junction
                       row.cell(class: "font-mono text-xs") { option.fetch(:value) }
                       row.cell do
                         div(class: "inline-flex items-center gap-2") do
-                          icon(option.fetch(:icon), class: "h-4 w-4 text-gray-500") if option[:icon].present?
+                          if option[:icon].present?
+                            icon(option[:icon], class: "h-4 w-4 text-gray-500",
+                                 fallback: Junction::Kind::DEFAULT_ICON)
+                          end
                           span { option.fetch(:name) }
                         end
                       end

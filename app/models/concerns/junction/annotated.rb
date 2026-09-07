@@ -79,10 +79,14 @@ module Junction
 
     # Merges known and other annotations into the annotations attribute.
     #
-    # Only performs the merge if @other_annotations_assigned is true.
+    # Only performs the merge if @other_annotations_assigned is true, and the
+    # rows are consumed rather than kept. A later write to `annotations` on the
+    # same object would otherwise be silently overwritten by a stale submission
+    # the next time validation runs.
     def merge_other_annotations
       return unless @other_annotations_assigned
 
+      @other_annotations_assigned = false
       known_keys = self.class.known_annotation_keys
       known = (self[:annotations] || {}).stringify_keys.slice(*known_keys)
       other = build_other_annotations_hash(known_keys)

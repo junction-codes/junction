@@ -6,6 +6,7 @@ module Junction
     include CatalogEntityActions
     include Breadcrumbs
     include HasAnnotations
+    include HasMetadata
     include Paginatable
 
     private
@@ -28,7 +29,8 @@ module Junction
       sanitize_annotations(params.expect(user: [
         :email, :email_confirmation, :image_url, :name,
         :namespace, :password, :password_challenge,
-        :password_confirmation, :pronouns, :title, *annotation_param_entries
+        :password_confirmation, :pronouns, :title, *annotation_param_entries,
+        *metadata_param_entries
       ]))
     end
 

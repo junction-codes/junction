@@ -112,6 +112,47 @@ module Junction
             span(class: "text-red-500 ml-1") { " *" } if @required
           end
         end
+
+        # Labels a field made of several inputs.
+        #
+        # A `for` attribute can only point at one input, so a composite field
+        # labels itself as a group. The container carries `role="group"` and
+        # `aria-labelledby` naming this element.
+        def render_group_label
+          return if label_text.blank?
+
+          span(id: label_id, class: LABEL_CLASSES) do
+            plain label_text
+            span(class: "text-red-500 ml-1") { " *" } if @required
+          end
+        end
+
+        # Id of the element naming a composite field.
+        #
+        # @return [String] The id.
+        def label_id
+          "#{entity_type}_#{@method}_label"
+        end
+
+        # Id of the input a plain label points at.
+        #
+        # @return [String] The id.
+        def input_id
+          "#{entity_type}_#{@method}"
+        end
+
+        # Renders the field's validation errors, if it has any.
+        #
+        # A field that leaves this out re-renders after a failed save with no
+        # sign of what went wrong, so saving looks like it did nothing.
+        def render_errors
+          return if errors.empty?
+
+          div(class: "mt-2 text-sm text-red-600 dark:text-red-400",
+              id: "#{@method}_errors") do
+            errors.each { |error| p { "#{label_text} #{error}" } }
+          end
+        end
       end
     end
   end

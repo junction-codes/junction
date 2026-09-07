@@ -18,6 +18,7 @@ module Junction
             div(class: "px-6 py-3 space-y-8") do
               domain_header
               domain_stats
+              EntityMetadata(entity: @domain)
               domain_tabs
             end
           end
@@ -33,7 +34,8 @@ module Junction
                 img(src: @domain.image_url, alt: t(".logo_alt", name: @domain.title), class: "h-20 w-20 rounded-lg object-cover flex-shrink-0")
               else
                 div(class: "h-20 w-20 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0") do
-                  icon(@domain.icon, class: "h-10 w-10 text-gray-500")
+                  icon(@domain.icon, fallback: Junction::Kind::DEFAULT_ICON,
+                       class: "h-10 w-10 text-gray-500")
                 end
               end
 

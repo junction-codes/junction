@@ -79,7 +79,8 @@ module Junction
           div(class: "grid gap-2") do
             Junction::PluginRegistry.auth_providers.each_value do |provider|
               button_to("/auth/#{provider[:provider]}", method: :post, data: { turbo: false }, class: "cursor-pointer inline-flex h-9 w-full items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50") do
-                icon(provider[:icon], class: "mr-2 h-4 w-4")
+                icon(provider[:icon], class: "mr-2 h-4 w-4",
+                     fallback: Junction::ApplicationPlugin::DEFAULT_ICON)
                 plain provider[:title]
               end
             end

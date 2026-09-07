@@ -35,6 +35,22 @@ RSpec.shared_examples "an annotated model" do |factory|
       expect(record.reload[:annotations]["custom/key"]).to eq("saved")
     end
 
+    context "when the annotations are written again on the same object" do
+      let(:record) { create(factory) }
+
+      before do
+        record.other_annotations = [ { key: "custom/key", value: "saved" } ]
+        record.save!
+
+        record.annotations = { "replaced/key" => "later" }
+        record.save!
+      end
+
+      it "does not re-apply the rows" do
+        expect(record.reload[:annotations]).to eq({ "replaced/key" => "later" })
+      end
+    end
+
     it "removes annotations when other rows are cleared" do
       record = create(factory, annotations: { "custom/key" => "value" })
       record.other_annotations = [ { key: "", value: "" } ]

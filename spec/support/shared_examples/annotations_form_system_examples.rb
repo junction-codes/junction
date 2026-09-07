@@ -49,7 +49,7 @@ RSpec.shared_examples "an annotations form" do |factory, edit_path, permissions,
 
   describe "after saving a custom annotation" do
     before do
-      within("[data-annotations-form-target='list']") do
+      within("#other-annotations [data-repeatable-rows-target='list']") do
         fill_in "Name", with: "custom/example"
         fill_in "Value", with: "custom-value"
       end

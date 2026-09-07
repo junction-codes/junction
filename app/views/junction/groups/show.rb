@@ -29,6 +29,7 @@ module Junction
             div(class: "px-6 py-3 space-y-8") do
               group_header
               group_stats
+              EntityMetadata(entity: @group)
               group_tabs
             end
           end
@@ -45,7 +46,8 @@ module Junction
                     class: "h-20 w-20 rounded-lg object-cover flex-shrink-0")
               else
                 div(class: "h-20 w-20 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0") do
-                  icon(@group.icon, class: "h-10 w-10 text-gray-500")
+                  icon(@group.icon, fallback: Junction::Kind::DEFAULT_ICON,
+                       class: "h-10 w-10 text-gray-500")
                 end
               end
 

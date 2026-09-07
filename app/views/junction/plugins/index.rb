@@ -60,7 +60,8 @@ module Junction
               plugins.each do |plugin|
                 li(class: "bg-white dark:bg-gray-800 rounded-lg shadow p-4") do
                   div(class: "flex items-start gap-3") do
-                    icon(plugin.icon, class: "h-5 w-5 mt-0.5 text-gray-500")
+                    icon(plugin.icon, class: "h-5 w-5 mt-0.5 text-gray-500",
+                         fallback: Junction::ApplicationPlugin::DEFAULT_ICON)
                     div(class: "space-y-1") do
                       p(class: "text-sm font-medium text-gray-900 dark:text-white") do
                         plugin.title

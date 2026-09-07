@@ -18,7 +18,8 @@ module Junction
             end
 
             div(class: "m-5 flex-shrink-0 p-3 rounded-full #{icon_bg_color}") do
-              icon(@icon, class: "w-6 h-6 #{icon_color}")
+              icon(@icon, fallback: Junction::Kind::DEFAULT_ICON,
+                   class: "w-6 h-6 #{icon_color}")
             end
           end
 

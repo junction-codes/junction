@@ -11,6 +11,7 @@ module Junction
     include Breadcrumbs
     include CatalogOptionSets
     include HasAnnotations
+    include HasMetadata
     include HasDependencyGraph
     include HasOwner
     include Paginatable
@@ -43,7 +44,7 @@ module Junction
       sanitize_owner_id(sanitize_annotations(params.expect(api: [
         :definition, :description, :image_url, :lifecycle, :name,
         :namespace, :owner_id, :system_id, :title, :type,
-        *annotation_param_entries
+        *annotation_param_entries, *metadata_param_entries
       ])))
     end
 

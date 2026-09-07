@@ -79,11 +79,11 @@ RSpec.describe "Junction::AnnotationsController", type: :request do
     end
 
     it "renders the add-row control" do
-      expect(response.body).to include('data-action="click->annotations-form#add"')
+      expect(response.body).to include('data-action="click->repeatable-rows#add"')
     end
 
     it "renders the row template" do
-      expect(response.body).to include('data-annotations-form-target="rowTemplate"')
+      expect(response.body).to include('data-repeatable-rows-target="rowTemplate"')
     end
 
     it "renders other annotation fields with bare-bracket array notation" do

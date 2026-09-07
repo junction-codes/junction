@@ -189,6 +189,64 @@ RSpec.describe "/components", type: :request do
       end
     end
 
+    describe "entity metadata" do
+      let(:metadata) {
+        {
+          tags: [ "portal", "java", "" ],
+          label_rows: { "0" => { key: "tier", value: "gold" }, "1" => { key: "", value: "" } },
+          links: { "0" => { url: "https://runbook.example.com", title: "Runbook", icon: "book-open" } }
+        }
+      }
+
+      it "stores tags, labels and links on create" do
+        post components_url,
+             params: { component: valid_attributes.merge(metadata) }
+        created = Junction::Component.find_by(title: "Test Component")
+
+        expect(created).to have_attributes(
+          tags: %w[portal java],
+          labels: { "tier" => "gold" },
+          links: [ { "url" => "https://runbook.example.com", "title" => "Runbook",
+                     "icon" => "book-open" } ]
+        )
+      end
+
+      it "updates them" do
+        patch component_path(component), params: { component: metadata }
+
+        expect(component.reload).to have_attributes(
+          tags: %w[portal java],
+          labels: { "tier" => "gold" }
+        )
+      end
+
+      it "clears them when the form comes back empty" do
+        component.update!(tags: %w[portal], labels: { "tier" => "gold" },
+                          links: [ { "url" => "https://example.com" } ])
+
+        patch component_path(component),
+              params: { component: { tags: [ "" ], label_rows: { "0" => { key: "", value: "" } },
+                                     links: { "0" => { url: "", title: "", icon: "" } } } }
+
+        expect(component.reload).to have_attributes(tags: [], labels: {}, links: [])
+      end
+
+      it "leaves them alone when the form does not carry them" do
+        component.update!(tags: %w[portal], labels: { "tier" => "gold" })
+
+        patch component_path(component), params: { component: { lifecycle: "production" } }
+
+        expect(component.reload).to have_attributes(tags: %w[portal],
+                                                    labels: { "tier" => "gold" })
+      end
+
+      it "ignores a tag that is not well formed" do
+        patch component_path(component), params: { component: { tags: [ "not a tag" ] } }
+
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+    end
+
     describe "DELETE /components/:id" do
       it_behaves_like "an action that requires permission",
         :delete, -> { component_path(component) },

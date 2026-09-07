@@ -20,7 +20,10 @@ module Junction
                                  options: :available_owners, value: :owner,
                                  help_text: :owner_help } ],
       [ :text_area, :description, { required: true,
-                                    help_text: :description_help } ]
+                                    help_text: :description_help } ],
+      [ :tags, :tags, { help_text: :tags_help } ],
+      [ :labels, :label_rows, { help_text: :labels_help } ],
+      [ :links, :links, { help_text: :links_help } ]
     ].freeze
 
     self.index_columns = [

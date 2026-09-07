@@ -10,6 +10,7 @@ module Junction
     include Breadcrumbs
     include CatalogOptionSets
     include HasAnnotations
+    include HasMetadata
     include HasTreeParent
     include Paginatable
 
@@ -52,7 +53,7 @@ module Junction
     def create_params
       attrs = sanitize_annotations(params.expect(group: [
         :description, :email, :image_url, :name, :namespace,
-        :parent_id, :title, :type, *annotation_param_entries
+        :parent_id, :title, :type, *annotation_param_entries, *metadata_param_entries
       ]))
 
       attrs = sanitize_tree_parent_id(attrs, parent_candidates: available_parents)
