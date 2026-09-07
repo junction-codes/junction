@@ -14,6 +14,7 @@ module Junction
           form_with(model: @user, url: junction_catalog_form_url(@user), class: "space-y-8",
                     data: { controller: "form", action: "submit->form#disable" }) do |f|
             basic_settings(f)
+            metadata_settings(f)
             annotations(f)
             email_settings(f)
             security_settings(f)
@@ -48,6 +49,27 @@ module Junction
 
         def annotations(form)
           AnnotationsForm(form:, context: @user)
+        end
+
+        # Tags, labels and links.
+        #
+        # A user is an entity like any other, so it carries the same metadata.
+        # The other kinds get these from `form_fields`, but this form is written
+        # out by hand, so they're named here.
+        def metadata_settings(form)
+          Card do |card|
+            card.header do |header|
+              header.title { t(".metadata_title") }
+              header.description { t(".metadata_description") }
+            end
+
+            card.content(class: "space-y-4") do
+              render Field::Tags.new(form, :tags, help_text: t(".tags_help"))
+              render Field::Labels.new(form, :label_rows,
+                                       help_text: t(".labels_help"))
+              render Field::Links.new(form, :links, help_text: t(".links_help"))
+            end
+          end
         end
 
         def basic_settings(form)

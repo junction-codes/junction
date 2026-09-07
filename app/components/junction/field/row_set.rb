@@ -33,7 +33,11 @@ module Junction
           div(id: section_id, data: { controller: "repeatable-rows" }) do
             render_label
 
-            p(class: "mt-1 text-sm text-gray-500 dark:text-gray-400") { @help_text } if @help_text
+            if @help_text
+              p(class: "mt-1 text-sm text-gray-500 dark:text-gray-400") do
+                @help_text
+              end
+            end
 
             column_headings
 
@@ -42,13 +46,17 @@ module Junction
             # blank row is discarded when the rows are normalized.
             blank_marker
 
-            div(data: { repeatable_rows_target: "list" }, class: "mt-2 space-y-2") do
+            div(data: { repeatable_rows_target: "list" },
+                class: "mt-2 space-y-2") do
               rows.each { |row| render_row(row) }
             end
 
-            template(data: { repeatable_rows_target: "rowTemplate" }) { render_row }
+            template(data: { repeatable_rows_target: "rowTemplate" }) do
+              render_row
+            end
 
             add_button
+            render_errors
           end
         end
 
@@ -81,7 +89,8 @@ module Junction
         def column_headings
           div(class: "mt-2 grid gap-2 #{grid_columns}") do
             self.class.columns.each do |column|
-              span(class: "text-xs font-medium text-gray-500 dark:text-gray-400") do
+              span(class: "text-xs font-medium text-gray-500 " \
+                         "dark:text-gray-400") do
                 t(".#{column}")
               end
             end

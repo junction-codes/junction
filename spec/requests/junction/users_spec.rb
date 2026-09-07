@@ -202,6 +202,24 @@ RSpec.describe "/users", type: :request do
       end
     end
 
+    describe "entity metadata" do
+      it "offers the editor on the form" do
+        get edit_user_path(user)
+
+        expect(response.body).to include('id="tags-field"')
+      end
+
+      it "stores what the editor submits" do
+        patch user_path(user), params: { user: {
+          tags: [ "on-call", "" ],
+          label_rows: { "0" => { key: "team", value: "platform" } }
+        } }
+
+        expect(user.reload).to have_attributes(tags: %w[on-call],
+                                               labels: { "team" => "platform" })
+      end
+    end
+
     describe "DELETE /destroy" do
       let(:user_to_delete) { create(:user) }
 

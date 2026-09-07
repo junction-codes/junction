@@ -38,7 +38,8 @@ module Junction
                     href: item[:disabled] ? "#" : item[:href],
                     data_disabled: item[:disabled]
                   ) do
-                    icon(item[:icon], class: "w-4 h-4 mr-2")
+                    icon(item[:icon], class: "w-4 h-4 mr-2",
+                         fallback: Junction::ApplicationPlugin::DEFAULT_ICON)
                     plain item[:title]
                   end
                 end

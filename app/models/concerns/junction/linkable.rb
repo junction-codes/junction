@@ -11,10 +11,16 @@ module Junction
 
     LINK_KEYS = %w[url title icon].freeze
 
+    # Links point outside Junction, so they have to carry a scheme. Without
+    # one the browser resolves the value relative to the current page and the
+    # link silently stays inside the app.
+    URL_FORMAT = URI::DEFAULT_PARSER.make_regexp(%w[http https]).freeze
+
     included do
       attribute :links, :jsonb, default: []
 
       validate :links_have_urls
+      validate :link_urls_are_absolute
     end
 
     # Sets the links, discarding blank rows and unknown keys.
@@ -55,6 +61,17 @@ module Junction
       return if links.blank?
 
       errors.add(:links, :blank) if links.any? { |link| link["url"].blank? }
+    end
+
+    # Validates that every URL is absolute and http(s).
+    def link_urls_are_absolute
+      return if links.blank?
+
+      offending = links.reject do |link|
+        link["url"].blank? || link["url"].match?(URL_FORMAT)
+      end
+
+      errors.add(:links, :invalid) if offending.any?
     end
   end
 end

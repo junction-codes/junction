@@ -9,6 +9,11 @@ module Junction
       # a hidden input, so the form submits a list rather than a string to be
       # split.
       class Tags < FieldType
+        INPUT_CLASSES = <<~CSS
+          flex-1 border-0 bg-transparent p-0 text-sm focus:ring-0
+          dark:text-white
+        CSS
+
         BOX_CLASSES = <<~CSS
           mt-2 flex flex-wrap items-center gap-2 rounded-md px-3 py-2 shadow-sm
           ring-1 ring-inset ring-gray-300 focus-within:ring-2
@@ -18,7 +23,10 @@ module Junction
 
         def view_template
           div(id: "#{@method.to_s.dasherize}-field",
-              data: { controller: "tags-field" }) do
+              data: {
+                controller: "tags-field",
+                tags_field_remove_label_value: t(".remove", tag: "%{tag}")
+              }) do
             render_label
 
             div(class: BOX_CLASSES) do
@@ -39,9 +47,10 @@ module Junction
                 autocomplete: "off",
                 data: {
                   tags_field_target: "input",
-                  action: "keydown->tags-field#commit blur->tags-field#commitPending"
+                  action: "keydown->tags-field#commit " \
+                          "blur->tags-field#commitPending"
                 },
-                class: "flex-1 border-0 bg-transparent p-0 text-sm focus:ring-0 dark:text-white"
+                class: INPUT_CLASSES
               )
             end
 
@@ -77,17 +86,9 @@ module Junction
               type: "button",
               aria: { label: t(".remove", tag: tag.to_s) },
               data: { action: "click->tags-field#remove" },
-              class: "cursor-pointer text-gray-400 hover:text-gray-600 dark:hover:text-white"
+              class: "cursor-pointer text-gray-400 hover:text-gray-600 " \
+                     "dark:hover:text-white"
             ) { icon("x", class: "w-3 h-3") }
-          end
-        end
-
-        def render_errors
-          return if errors.empty?
-
-          div(class: "mt-2 text-sm text-red-600 dark:text-red-400",
-              id: "#{@method}_errors") do
-            errors.each { |error| p { "#{label_text} #{error}" } }
           end
         end
       end

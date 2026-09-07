@@ -101,7 +101,8 @@ module Junction
         def empty_content(target = "valueContent")
           div(class: "flex items-center space-x-4 text-left", data_ruby_ui__select_target: target) do
             div(class: "h-6 w-6 rounded-md bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0") do
-              icon(@icon, class: "h-6 w-6 text-gray-500")
+              icon(@icon, fallback: Junction::Kind::DEFAULT_ICON,
+                   class: "h-6 w-6 text-gray-500")
             end
 
             div do
@@ -117,7 +118,8 @@ module Junction
               img(src: record.image_url, alt: t(".logo_alt", title: record.title), class: "h-6 w-6 rounded-md object-cover flex-shrink-0")
             else
               div(class: "h-6 w-6 rounded-md bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0") do
-                icon(@icon, class: "h-6 w-6 text-gray-500")
+                icon(@icon, fallback: Junction::Kind::DEFAULT_ICON,
+                     class: "h-6 w-6 text-gray-500")
               end
             end
 

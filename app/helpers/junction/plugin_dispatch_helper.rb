@@ -37,7 +37,11 @@ module Junction
     def render_plugin_tab_triggers(context, tabs_list)
       visible_tabs(context).each do |tab|
         tabs_list.trigger(value: tab[:title].parameterize) do
-          icon(tab[:icon], class: "pe-2") if tab[:icon].present?
+          if tab[:icon].present?
+            icon(tab[:icon], class: "pe-2",
+                 fallback: Junction::ApplicationPlugin::DEFAULT_ICON)
+          end
+
           plain tab[:title]
         end
       end

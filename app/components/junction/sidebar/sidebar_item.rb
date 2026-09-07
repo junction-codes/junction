@@ -15,7 +15,10 @@ module Junction
         def view_template
           div do
             render Link.new(variant: @disabled ? :disabled : :link, **attrs) do
-              span(class: "flex-shrink-0") { icon(@icon, class: "w-6 h-6") }
+              span(class: "flex-shrink-0") do
+                icon(@icon, fallback: Junction::Kind::DEFAULT_ICON,
+                     class: "w-6 h-6")
+              end
               span(data_sidebar_target: "linkText", class: "ml-4 whitespace-nowrap") { @title }
             end
           end

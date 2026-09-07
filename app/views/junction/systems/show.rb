@@ -35,7 +35,8 @@ module Junction
                 img(src: @system.image_url, alt: t(".logo_alt", name: @system.title), class: "h-20 w-20 rounded-lg object-cover flex-shrink-0")
               else
                 div(class: "h-20 w-20 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0") do
-                  icon(@system.icon, class: "h-10 w-10 text-gray-500")
+                  icon(@system.icon, fallback: Junction::Kind::DEFAULT_ICON,
+                       class: "h-10 w-10 text-gray-500")
                 end
               end
 

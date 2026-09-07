@@ -44,7 +44,8 @@ module Junction
                 div(class: "flex items-start justify-between gap-3") do
                   div(class: "min-w-0") do
                     div(class: "flex items-center gap-2") do
-                      icon(entity.icon, class: "h-4 w-4 text-gray-500 shrink-0")
+                      icon(entity.icon, fallback: Junction::Kind::DEFAULT_ICON,
+                           class: "h-4 w-4 text-gray-500 shrink-0")
 
                       Tooltip(placement: "top-end") do |t|
                         t.trigger do

@@ -30,7 +30,8 @@ module Junction
         def view_template
           div(**attrs) do
             div(class: ICON_WRAPPER_CLASS) do
-              icon(@icon, class: "h-6 w-6 text-gray-500")
+              icon(@icon, fallback: Junction::Kind::DEFAULT_ICON,
+                   class: "h-6 w-6 text-gray-500")
             end
 
             div do

@@ -112,6 +112,19 @@ module Junction
             span(class: "text-red-500 ml-1") { " *" } if @required
           end
         end
+
+        # Renders the field's validation errors, if it has any.
+        #
+        # A field that leaves this out re-renders after a failed save with no
+        # sign of what went wrong, so saving looks like it did nothing.
+        def render_errors
+          return if errors.empty?
+
+          div(class: "mt-2 text-sm text-red-600 dark:text-red-400",
+              id: "#{@method}_errors") do
+            errors.each { |error| p { "#{label_text} #{error}" } }
+          end
+        end
       end
     end
   end

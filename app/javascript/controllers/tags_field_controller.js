@@ -8,9 +8,11 @@ import {Controller} from "@hotwired/stimulus"
 // so this only has to avoid obvious duplicates.
 export default class extends Controller {
   static targets = ["input", "list", "chipTemplate"]
+  static values = {removeLabel: String}
 
   commit(event) {
-    const separator = event.key === "Enter" || event.key === "Tab" || event.key === ","
+    const separator =
+      event.key === "Enter" || event.key === "Tab" || event.key === ","
 
     if (separator) {
       if (this.inputTarget.value.trim() === "") return
@@ -44,11 +46,19 @@ export default class extends Controller {
     const chip = this.chipTemplateTarget.content.cloneNode(true)
     chip.querySelector("input").value = tag
     chip.querySelector("[data-tag-label]").textContent = tag
+    chip.querySelector("button")
+      .setAttribute("aria-label", this.#removeLabel(tag))
     this.listTarget.appendChild(chip)
   }
 
+  #removeLabel(tag) {
+    return this.removeLabelValue.replace("%{tag}", tag)
+  }
+
   #chips() {
-    return Array.from(this.listTarget.querySelectorAll("[data-tags-field-target='chip']"))
+    return Array.from(
+      this.listTarget.querySelectorAll("[data-tags-field-target='chip']")
+    )
   }
 
   #values() {

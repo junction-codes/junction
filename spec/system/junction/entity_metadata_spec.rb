@@ -12,11 +12,15 @@ RSpec.describe "Junction::Entity metadata", type: :system do
     ])
   end
 
+  def tag_input
+    find("#tags-field [data-tags-field-target='input']")
+  end
+
   describe "tags", :js do
     before { visit edit_component_path(component) }
 
     context "when a tag is confirmed with Enter" do
-      before { find("#tags-field [data-tags-field-target='input']").send_keys("payments", :enter) }
+      before { tag_input.send_keys("payments", :enter) }
 
       it "turns it into a chip" do
         expect(page).to have_css("#tags-field [data-tags-field-target='chip']",
@@ -25,6 +29,14 @@ RSpec.describe "Junction::Entity metadata", type: :system do
 
       it "does not submit the form" do
         expect(page).to have_current_path(edit_component_path(component))
+      end
+    end
+
+    context "when a chip is created by the browser" do
+      before { tag_input.send_keys("payments", :enter) }
+
+      it "names the tag in the remove button's label" do
+        expect(page).to have_button("Remove the payments tag")
       end
     end
 
@@ -41,9 +53,8 @@ RSpec.describe "Junction::Entity metadata", type: :system do
 
     context "when the same tag is entered twice in different cases" do
       before do
-        input = find("#tags-field [data-tags-field-target='input']")
-        input.send_keys("Payments", :enter)
-        input.send_keys("payments", :enter)
+        tag_input.send_keys("Payments", :enter)
+        tag_input.send_keys("payments", :enter)
         click_button "Save Changes"
       end
 
@@ -89,8 +100,39 @@ RSpec.describe "Junction::Entity metadata", type: :system do
       end
 
       it "saves the link" do
-        expect(component.reload.links)
-          .to eq([ { "url" => "https://runbook.example.com", "title" => "Runbook" } ])
+        expect(component.reload.links).to eq(
+          [ { "url" => "https://runbook.example.com", "title" => "Runbook" } ]
+        )
+      end
+    end
+
+    context "when a link is saved without a url" do
+      before do
+        within("#links-field") { fill_in "Title", with: "Runbook" }
+        click_button "Save Changes"
+      end
+
+      it "says what is wrong instead of looking like nothing happened" do
+        expect(page).to have_css("#links_errors")
+      end
+
+      it "keeps the user on the form" do
+        expect(page).to have_current_path(edit_component_path(component))
+      end
+    end
+
+    context "when a link url has no scheme" do
+      before do
+        within("#links-field") do
+          fill_in "URL", with: "runbook.example.com"
+          fill_in "Title", with: "Runbook"
+        end
+
+        click_button "Save Changes"
+      end
+
+      it "rejects it rather than linking back into Junction" do
+        expect(page).to have_css("#links_errors")
       end
     end
 

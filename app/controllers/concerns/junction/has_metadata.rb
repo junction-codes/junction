@@ -18,7 +18,11 @@ module Junction
     #
     # @return [Array<Hash>] Expected parameters.
     def metadata_param_entries
-      [ { tags: [], label_rows: [ %i[key value] ], links: [ %i[url title icon] ] } ]
+      [ {
+        tags: [],
+        label_rows: [ %i[key value] ],
+        links: [ %i[url title icon] ]
+      } ]
     end
   end
 end
