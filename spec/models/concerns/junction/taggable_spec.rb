@@ -147,6 +147,16 @@ RSpec.describe Junction::Taggable do
       expect(component.labels).to eq({ "tier" => "gold" })
     end
 
+    it "does not re-apply the rows on a later save" do
+      component.label_rows = [ { key: "a", value: "1" } ]
+      component.save!
+
+      component.labels = { "b" => "2" }
+      component.save!
+
+      expect(component.reload.labels).to eq({ "b" => "2" })
+    end
+
     it "keeps the last value when a key is repeated" do
       component.label_rows = [ { key: "tier", value: "gold" },
                                { key: "tier", value: "silver" } ]

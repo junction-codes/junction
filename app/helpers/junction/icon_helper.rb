@@ -4,6 +4,13 @@ module Junction
   module IconHelper
     extend RailsIcons::Helpers::IconHelper
 
+    # An icon name is joined into a filesystem path and read, so anything that
+    # is not a plain slug, optionally qualified as `library:name:variant`, is
+    # refused before it reaches disk. Without this, a name from a plugin or the
+    # database can walk out of the icon directory, and one that lands on a
+    # readable file that is not an icon fails in a way `fallback` cannot catch.
+    SAFE_NAME = /\A[A-Za-z0-9_-]+(?::[A-Za-z0-9_-]+){0,2}\z/
+
     # Renders an icon.
     #
     # Icon names can be passed as the bare name, or qualified as
@@ -29,11 +36,16 @@ module Junction
     # @param arguments [Hash] Attributes for the rendered SVG.
     # @return [String] The rendered icon.
     #
-    # @raise [Icons::IconNotFound] If the name does not resolve and no fallback
-    #   was given, or if the fallback does not resolve either.
+    # @raise [Icons::IconNotFound] If the name is invalid or does not resolve
+    #   and no fallback was given, or if the fallback does not resolve either.
     def icon(name, library: RailsIcons.configuration.default_library,
              variant: nil, fallback: nil, **arguments)
-      name = fallback if name.blank?
+      name = fallback if name.blank? && fallback.present?
+      name = name.to_s
+
+      raise Icons::IconNotFound, "Invalid icon name #{name.inspect}" unless
+        name.match?(SAFE_NAME)
+
       library, name, variant = name.split(":", 3) if name.include?(":")
 
       super(name, library:, variant:, **arguments)

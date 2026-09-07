@@ -74,10 +74,18 @@ module Junction
     private
 
     # Replaces the labels with whatever the form submitted.
+    #
+    # The rows are consumed rather than kept, so a later write to `labels` on
+    # the same object is not silently overwritten by a stale submission the
+    # next time validation runs.
     def merge_label_rows
       return unless @label_rows_assigned
 
-      self.labels = @label_rows.each_with_object({}) do |row, hash|
+      rows = @label_rows
+      @label_rows = nil
+      @label_rows_assigned = false
+
+      self.labels = rows.each_with_object({}) do |row, hash|
         key = row[:key].to_s.strip
         next if key.blank?
 
