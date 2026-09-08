@@ -10,6 +10,18 @@ module Junction
       }
 
       COLORS = {
+        # Entity kinds carry a tint of their own, so a badge naming a kind
+        # reads the same as that kind's chip elsewhere.
+        domain: "text-kind-domain-fg bg-kind-domain ring-kind-domain-fg/20",
+        system: "text-kind-system-fg bg-kind-system ring-kind-system-fg/20",
+        component: "text-kind-component-fg bg-kind-component ring-kind-component-fg/20",
+        api: "text-kind-api-fg bg-kind-api ring-kind-api-fg/20",
+        resource: "text-kind-resource-fg bg-kind-resource ring-kind-resource-fg/20",
+        group: "text-kind-group-fg bg-kind-group ring-kind-group-fg/20",
+        user: "text-kind-user-fg bg-kind-user ring-kind-user-fg/20",
+        template: "text-kind-template-fg bg-kind-template ring-kind-template-fg/20",
+        location: "text-kind-location-fg bg-kind-location ring-kind-location-fg/20",
+
         primary: "text-primary bg-primary/5 ring-primary/20",
         secondary: "text-secondary bg-secondary/10 ring-secondary/20",
         outline: "text-foreground bg-background ring-border",
