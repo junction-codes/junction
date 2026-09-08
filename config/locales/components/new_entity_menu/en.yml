@@ -1,0 +1,6 @@
+en:
+  junction:
+    components:
+      new_entity_menu:
+        label: Add to the catalog
+        new: New

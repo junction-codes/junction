@@ -26,9 +26,18 @@ RSpec.describe "Junction accessibility", :js, type: :system do
 
   before do
     sign_in_with_permissions(%w[
+      junction.codes/dashboards.all.read
       junction.codes/components.all.read
       junction.codes/components.all.write
     ])
+  end
+
+  context "with the dashboard" do
+    before { visit dashboard_path }
+
+    it "has no violations" do
+      expect(page).to audit
+    end
   end
 
   context "with the catalog listing" do

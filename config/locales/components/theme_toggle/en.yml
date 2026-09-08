@@ -3,5 +3,7 @@ en:
     components:
       theme_toggle:
         theme_toggle:
-          set_dark: Switch to dark mode
-          set_light: Switch to light mode
+          dark: Dark
+          label: Colour theme
+          light: Light
+          system: Match my system

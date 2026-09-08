@@ -18,7 +18,8 @@ module Junction
         def view_template(&)
           Card(**attrs) do |card|
             card.header do |header|
-              header.title(class: "text-2xl font-bold text-gray-900 dark:text-white") do
+              header.title(level: 1,
+                           class: "text-2xl font-bold text-gray-900 dark:text-white") do
                 t(".welcome_title", name: @user.title)
               end
 
@@ -44,7 +45,7 @@ module Junction
             UserAvatar(user: @user, size: :xl)
 
             div do
-              h3(class: "text-lg font-semibold text-gray-900 dark:text-white") { @user.title }
+              h2(class: "text-lg font-semibold text-gray-900 dark:text-white") { @user.title }
               p(class: "text-sm text-gray-600 dark:text-gray-400") { @user.pronouns } if @user.pronouns.present?
               Link(href: "mailto:#{@user.email}", class: "p-0 ") do
                 @user.email

@@ -2,5 +2,4 @@ en:
   junction:
     components:
       application_header:
-        notifications: Notifications
-        toggle_sidebar: Toggle sidebar
+        toggle_sidebar: Toggle the navigation rail

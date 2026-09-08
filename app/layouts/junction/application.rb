@@ -27,25 +27,28 @@ module Junction
             javascript_importmap_tags
           end
 
-          body(class: "bg-gray-50 dark:bg-gray-900") do
-            div(data_controller: "sidebar", class: "flex flex-col h-screen") do
-              render Components::ApplicationHeader.new
+          body(class: "bg-background text-foreground") do
+            div(data_controller: "sidebar",
+                class: "flex h-screen overflow-hidden") do
+              Sidebar()
 
-              div(class: "fixed top-4 right-4 w-80 z-1000") do
-                flash&.each do |type, message|
-                  Alert(variant: type) do |alert|
-                    alert.description { message }
-                  end
+              # The top bar belongs to the content column, not the whole
+              # window. It starts where the rail ends, so the collapse toggle
+              # sits against the rail edge and follows it.
+              div(class: "flex-1 flex flex-col min-w-0") do
+                render Components::ApplicationHeader.new(breadcrumbs:)
+
+                main(data_sidebar_target: "content",
+                     class: "flex-1 overflow-y-auto") do
+                  div(class: "max-w-[1112px] mx-auto") { yield }
                 end
               end
+            end
 
-              div(data_sidebar_collapsed_value: "false", class: "flex flex-1 overflow-hidden") do
-                Sidebar()
-
-                main(data_sidebar_target: "content", class: "flex-1 overflow-y-auto transition-all duration-300 md:mx-10") do
-                  Trail(items: breadcrumbs) if breadcrumbs.present?
-
-                  yield
+            div(class: "fixed top-4 right-4 w-80 z-1000") do
+              flash&.each do |type, message|
+                Alert(variant: type) do |alert|
+                  alert.description { message }
                 end
               end
             end

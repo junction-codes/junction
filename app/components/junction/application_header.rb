@@ -2,45 +2,51 @@
 
 module Junction
   module Components
+    # The bar across the top of the content column.
     class ApplicationHeader < Base
-      def initialize(user: Junction::Current.user, **user_attrs)
-        @user = user
+      # Initializes a new component.
+      #
+      # @param breadcrumbs [Array<Hash>] Breadcrumb items for the page.
+      # @param user_attrs [Hash] Additional HTML attributes.
+      def initialize(breadcrumbs: [], **user_attrs)
+        @breadcrumbs = breadcrumbs
 
-        super
+        super(**user_attrs)
       end
 
       def view_template
-        header(class: "bg-white dark:bg-gray-800 shadow-sm p-4 flex justify-between items-center border-b border-gray-200 dark:border-gray-700") do
-          div(class: "flex items-center space-x-4") do
-            button(data_action: "click->sidebar#toggle",
-                   aria_label: t(".toggle_sidebar"),
-                   class: "cursor-pointer text-gray-500 dark:text-gray-400 focus:outline-none") do
-              icon("menu", class: "w-6 h-6")
-            end
-
-            h1(class: "text-xl font-semibold text-gray-800 dark:text-white whitespace-nowrap inline-flex items-center justify-center") do
-              icon(Junction.config.icon, fallback: Junction::CorePlugin.icon,
-                   class: "h-8 w-8 pe-2")
-              plain t("app.title")
-            end
+        header(**attrs) do
+          div(class: "flex items-center gap-4 min-w-0") do
+            collapse_toggle
+            Trail(items: @breadcrumbs) if @breadcrumbs.present?
           end
 
-          render SearchBar.new
-
-          # User preferences and menus.
-          div(class: "flex items-center space-x-4") do
-            ThemeToggle()
-
-            button(aria_label: t(".notifications"),
-                   class: "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white") do
-              icon("bell", class: "w-6 h-6")
-            end
-
-            div(class: "relative") do
-              UserMenu(user: @user)
-            end
-          end
+          NewEntityMenu()
         end
+      end
+
+      private
+
+      def collapse_toggle
+        button(type: "button",
+               data_action: "click->sidebar#toggle",
+               data_sidebar_target: "toggle",
+               aria_controls: "junction-sidebar",
+               aria_expanded: "true",
+               aria_label: t(".toggle_sidebar"),
+               class: "shrink-0 cursor-pointer text-muted-foreground " \
+                      "hover:text-foreground focus-visible:outline-none " \
+                      "focus-visible:ring-1 focus-visible:ring-ring " \
+                      "rounded-md p-0.5") do
+          icon("panel-left", class: "w-[18px] h-[18px]")
+        end
+      end
+
+      def default_attrs
+        {
+          class: "h-15 shrink-0 flex items-center justify-between gap-4 " \
+                 "px-5 bg-surface border-b border-border"
+        }
       end
     end
   end

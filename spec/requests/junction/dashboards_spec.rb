@@ -99,19 +99,21 @@ RSpec.describe "/dashboard", type: :request do
     end
   end
 
-  describe "sidebar settings menu visibility" do
-    it "does not render settings when no settings items are allowed" do
+  describe "settings menu visibility" do
+    let(:settings_group) { "instance settings" }
+
+    it "does not render the settings group when none are allowed" do
       sign_in_user_with_permissions(%w[junction.codes/dashboards.all.read])
       get dashboard_path
-      expect(response.body).not_to include("Settings")
+      expect(response.body).not_to include(settings_group)
     end
 
-    it "renders settings when roles is allowed" do
+    it "renders the settings group when roles is allowed" do
       sign_in_user_with_permissions(
         %w[junction.codes/dashboards.all.read junction.codes/roles.all.read]
       )
       get dashboard_path
-      expect(response.body).to include("Settings")
+      expect(response.body).to include(settings_group)
     end
 
     it "renders roles in settings when roles is allowed" do
@@ -130,12 +132,12 @@ RSpec.describe "/dashboard", type: :request do
       expect(response.body).to include("Plugins")
     end
 
-    it "renders settings when catalog options is allowed" do
+    it "renders the settings group when catalog options is allowed" do
       sign_in_user_with_permissions(
         %w[junction.codes/dashboards.all.read junction.codes/options.all.read]
       )
       get dashboard_path
-      expect(response.body).to include("Settings")
+      expect(response.body).to include(settings_group)
     end
 
     it "renders catalog options in settings when allowed" do

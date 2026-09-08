@@ -2,14 +2,28 @@ en:
   junction:
     components:
       sidebar:
+        account_menu:
+          account: Account
+          groups: Your groups
+          instance_settings: instance settings
+          junction: Junction
+          profile: Your profile
+          sign_out: Sign out
+          theme: Theme
+          trigger: Open the account menu
         sidebar:
           annotations: Annotations
+          catalog: Catalog
           cost_explorer: Cost Explorer
-          dashboard: Dashboard
-          footer: Built using Junction
+          dashboard: Home
+          explore: Explore
           navigation: Primary
           options: Catalog Options
+          people: People
           plugins: Plugins
           roles: Roles
-          settings: Settings
+          scorecards: Scorecards
+          soon: soon
           techdocs: TechDocs
+        sidebar_search:
+          expand: Expand the rail to search

@@ -101,6 +101,26 @@ module Junction
         ]
       end
 
+      # Rows in the navigation rail: full width, left aligned, and quiet until
+      # hovered. `bg-subtle` rather than `bg-accent` on hover so the hover
+      # state doesn't get mistaken for the current page.
+      def sidebar_classes
+        [
+          BASE_CLASSES,
+          "text-sm text-text-body",
+          "hover:bg-subtle hover:text-foreground"
+        ]
+      end
+
+      # The row for the page being viewed.
+      def sidebar_current_classes
+        [
+          BASE_CLASSES,
+          "text-sm bg-accent text-accent-foreground",
+          "hover:bg-accent"
+        ]
+      end
+
       def disabled_classes
         [
           BASE_CLASSES,
@@ -118,6 +138,8 @@ module Junction
         when :outline then outline_classes
         when :ghost then ghost_classes
         when :disabled then disabled_classes
+        when :sidebar then sidebar_classes
+        when :sidebar_current then sidebar_current_classes
         end
       end
 

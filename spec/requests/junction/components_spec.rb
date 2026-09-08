@@ -249,7 +249,7 @@ RSpec.describe "/components", type: :request do
 
     describe "the rail counts" do
       def rail_count_for(label)
-        rail = response.body[/<nav aria-label="Primary".*?<\/nav>/m]
+        rail = response.body[/<nav id="junction-sidebar".*?<\/nav>/m]
         rail[/whitespace-nowrap">#{label}<\/span><span[^>]*tabular-nums[^>]*>\s*(\d+)/, 1]&.to_i
       end
 
