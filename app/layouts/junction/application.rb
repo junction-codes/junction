@@ -19,7 +19,7 @@ module Junction
       def view_template(&block)
         doctype
 
-        html do
+        html(lang: I18n.locale) do
           head do
             meta_tags
             link_tags

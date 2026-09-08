@@ -85,7 +85,7 @@ module Junction
               div(class: LABEL_CLASSES) do
                 dt(class: "font-mono font-medium text-gray-700 " \
                           "dark:text-gray-100") { key }
-                dd(class: "font-mono text-gray-500 dark:text-gray-400") do
+                dd(class: "font-mono text-gray-600 dark:text-gray-400") do
                   "= #{value}"
                 end
               end

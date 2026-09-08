@@ -122,10 +122,9 @@ module Junction
       end
 
       def default_attrs
-        {
-          type: "button",
-          class: default_classes
-        }
+        attrs = { type: "button", class: default_classes }
+        attrs[:aria] = { disabled: "true" } if @variant == :disabled
+        attrs
       end
     end
   end

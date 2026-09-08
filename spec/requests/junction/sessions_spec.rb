@@ -28,7 +28,7 @@ RSpec.describe "/sessions", type: :request do
 
       it "sets the forbidden status code" do
         post session_url, params: { email: user.email, password: "wrong_password" }
-        expect(response.status).to eq(403)
+        expect(response).to have_http_status(:forbidden)
       end
 
       it "sets an alert message" do

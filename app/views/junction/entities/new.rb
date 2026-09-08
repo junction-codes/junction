@@ -34,7 +34,7 @@ module Junction
                 p(class: "mt-1 text-sm text-gray-600 dark:text-gray-400") { t(".description") }
               end
 
-              main(class: "mt-6 max-w-2xl mx-auto") do
+              div(class: "mt-6 max-w-2xl mx-auto") do
                 render form_component.new(entity: @entity, **@options)
               end
             end

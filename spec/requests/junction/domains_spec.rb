@@ -288,6 +288,22 @@ RSpec.describe "/domains", type: :request do
       end
     end
 
+    describe "eager loading" do
+      # `index_includes` declares `%i[parent owner]`, and the listing renders
+      # both for every row. Nothing else fails if that declaration is dropped,
+      # so this is what stops the index quietly becoming an N+1.
+      #
+      # Measured with ten rows: 34 entity queries with the eager load, 51
+      # without. The bound sits between the two with room for the fixtures to
+      # grow a little.
+      it "does not query per row for parents and owners" do
+        create_list(:domain, 10, parent: create(:domain), owner: create(:group))
+
+        expect { get domains_url }
+          .to make_database_queries(count: ..40, matching: /FROM "junction_entities"/)
+      end
+    end
+
     describe "DELETE /destroy" do
       it_behaves_like "an action that requires permission",
         :delete, -> { domain_path(domain) },

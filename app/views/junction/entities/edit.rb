@@ -40,7 +40,7 @@ module Junction
               end
 
               div(class: "grid grid-cols-1 lg:grid-cols-3 gap-8") do
-                main(class: "lg:col-span-2") do
+                div(class: "lg:col-span-2") do
                   render form_component.new(entity: @entity, **@options)
                 end
 

@@ -8,6 +8,9 @@ module Junction
         # Initializes a new component.
         #
         # @param value [String] Currently selected value.
+        # @param aria_labelledby [String] Id of the element naming the control.
+        #   The `label` points its `for` at the hidden input, which leaves the
+        #   combobox button itself with no accessible name.
         # @param input_id [String] ID of the input element.
         # @param input_name [String] Name of the input element.
         # @param options [Hash] Selectable options keyed by stored value.
@@ -22,12 +25,14 @@ module Junction
         # @param blank_description [String] Description for blank option.
         # @param create_action [Hash] Configuration for create-new action.
         # @param user_attrs [Hash] Additional HTML attributes for the component.
-        def initialize(value:, input_id:, input_name:, options: {},
+        def initialize(value:, input_id:, input_name:, aria_labelledby: nil,
+                       options: {},
                        icon: "circle-small", allow_create: true, known_label:,
                        other_label:, search_placeholder:, no_results_text:,
                        blank_label:, blank_description:, create_action:,
                        **user_attrs)
           @value = value
+          @aria_labelledby = aria_labelledby
           @input_id = input_id
           @input_name = input_name
           @options = options
@@ -47,7 +52,8 @@ module Junction
         def view_template
           Select(**select_attrs) do |select|
             select.input(value: @value, id: @input_id, name: @input_name)
-            select.trigger(class: "h-auto") do |trigger|
+            select.trigger(class: "h-auto",
+                           aria_labelledby: @aria_labelledby) do |trigger|
               trigger.value(id: @input_id, class: "px-2") do
                 render RichSelectTriggerValue.new(
                   value: @value,

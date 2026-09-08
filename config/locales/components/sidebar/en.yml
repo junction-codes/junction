@@ -7,6 +7,7 @@ en:
           cost_explorer: Cost Explorer
           dashboard: Dashboard
           footer: Built using Junction
+          navigation: Primary
           options: Catalog Options
           plugins: Plugins
           roles: Roles

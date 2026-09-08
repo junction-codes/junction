@@ -2,7 +2,9 @@
 
 module Junction
   class Current < ActiveSupport::CurrentAttributes
+    attribute :readable_entities
     attribute :session
+
     delegate :user, to: :session, allow_nil: true
   end
 end

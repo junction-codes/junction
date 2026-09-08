@@ -12,8 +12,10 @@ module Junction
       def view_template
         header(class: "bg-white dark:bg-gray-800 shadow-sm p-4 flex justify-between items-center border-b border-gray-200 dark:border-gray-700") do
           div(class: "flex items-center space-x-4") do
-            button(data_action: "click->sidebar#toggle", class: "cursor-pointer text-gray-500 dark:text-gray-400 focus:outline-none") do
-            icon("menu", class: "w-6 h-6")
+            button(data_action: "click->sidebar#toggle",
+                   aria_label: t(".toggle_sidebar"),
+                   class: "cursor-pointer text-gray-500 dark:text-gray-400 focus:outline-none") do
+              icon("menu", class: "w-6 h-6")
             end
 
             h1(class: "text-xl font-semibold text-gray-800 dark:text-white whitespace-nowrap inline-flex items-center justify-center") do
@@ -29,7 +31,10 @@ module Junction
           div(class: "flex items-center space-x-4") do
             ThemeToggle()
 
-            button(class: "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white") { icon("bell", class: "w-6 h-6") }
+            button(aria_label: t(".notifications"),
+                   class: "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white") do
+              icon("bell", class: "w-6 h-6")
+            end
 
             div(class: "relative") do
               UserMenu(user: @user)

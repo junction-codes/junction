@@ -18,10 +18,13 @@ module Junction
           SetDarkMode do
             Tooltip(placement: "bottom") do |t|
               t.trigger do
-                Button(variant: :ghost, icon: true) { icon("moon", class: "w-4 h-4") }
+                Button(variant: :ghost, icon: true,
+                       aria_label: t(".set_light")) do
+                  icon("moon", class: "w-4 h-4")
+                end
               end
 
-              t.content { "Switch to light mode" }
+              t.content { t(".set_light") }
             end
           end
         end
@@ -30,10 +33,13 @@ module Junction
           SetLightMode do
             Tooltip(placement: "bottom") do |t|
               t.trigger do
-                Button(variant: :ghost, icon: true) { icon("sun", class: "w-4 h-4") }
+                Button(variant: :ghost, icon: true,
+                       aria_label: t(".set_dark")) do
+                  icon("sun", class: "w-4 h-4")
+                end
               end
 
-              t.content { "Switch to dark mode" }
+              t.content { t(".set_dark") }
             end
           end
         end

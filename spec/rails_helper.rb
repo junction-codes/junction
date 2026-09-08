@@ -22,6 +22,8 @@ Capybara.enable_aria_label = true
 
 # Include additional support.
 require "junction/testing"
+require_relative 'support/axe'
+require_relative 'support/db_query_matchers'
 require_relative 'support/entity_fixtures'
 require_relative 'support/sample_annotation'
 require_relative 'support/factorybot'
@@ -81,6 +83,11 @@ end
 Capybara.javascript_driver = :cuprite
 
 RSpec.configure do |config|
+  # `Junction::Current` is reset per request in production. Reset it per
+  # example too, so that a memoized `ReadableEntities` cannot leak a user from
+  # one example into the next.
+  config.before { Junction::Current.reset }
+
   # Include helpers.
   config.include AuthenticationHelper, type: :request
   config.include Junction::Engine.routes.url_helpers, type: :request

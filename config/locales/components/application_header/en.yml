@@ -1,0 +1,6 @@
+en:
+  junction:
+    components:
+      application_header:
+        notifications: Notifications
+        toggle_sidebar: Toggle sidebar

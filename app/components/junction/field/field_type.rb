@@ -107,7 +107,7 @@ module Junction
         def render_label
           return if label_text.blank?
 
-          @form.label @method, class: LABEL_CLASSES do
+          @form.label @method, id: label_id, class: LABEL_CLASSES do
             plain label_text
             span(class: "text-red-500 ml-1") { " *" } if @required
           end

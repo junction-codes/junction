@@ -34,7 +34,7 @@ RSpec.describe Junction::RolePermission, type: :model do
 
   describe "uniqueness scope" do
     it "allows the same permission for different roles" do
-      roles = 2.times.map { create(:role) }
+      roles = create_list(:role, 2)
       create(:role_permission, role: roles[0], permission: "junction/codes.all.read")
       second = build(:role_permission, role: roles[1], permission: "junction/codes.all.read")
 

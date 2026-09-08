@@ -78,7 +78,7 @@ module Junction
         def render_select_field
           Select(**attrs) do |select|
             select.input(value: @value&.id, id: @form.field_id(@method), name: @form.field_name(@method))
-            select.trigger(class: "h-auto") do |trigger|
+            select.trigger(class: "h-auto", aria_labelledby: label_id) do |trigger|
               trigger.value(id: @form.field_id(@method), class: "px-2") do
                 @value.present? ? item_content(@value, "valueContent") : empty_content
               end
