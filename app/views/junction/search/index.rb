@@ -34,7 +34,7 @@ module Junction
         # Renders a page header for the search results.
         def page_header
           div do
-            h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") do
+            h1(class: "text-2xl font-semibold text-gray-800 dark:text-white") do
               t(".title")
             end
 

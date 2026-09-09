@@ -6,8 +6,12 @@ RSpec.describe "Junction::Tooltip", :js, type: :system do
   let(:trigger) { "[data-ruby-ui--tooltip-target='trigger']" }
   let(:mounted) { "body > [id^='tooltip']" }
 
+  let!(:component) { create(:component, title: "payments-api") }
+
   before do
-    sign_in_with_permissions(%w[junction.codes/dashboards.all.read])
+    sign_in_with_permissions(
+      %w[junction.codes/dashboards.all.read junction.codes/components.all.read]
+    )
     visit root_path
   end
 
@@ -30,13 +34,13 @@ RSpec.describe "Junction::Tooltip", :js, type: :system do
     end
 
     it "shows the tooltip text" do
-      expect(page).to have_css(mounted, text: "Switch to")
+      expect(page).to have_css(mounted, text: component.title)
     end
 
     # aria-describedby is not inherited, so it has to sit on the focusable
     # control itself rather than on the trigger wrapper.
     it "describes the focusable control for assistive tech" do
-      expect(page).to have_css("#{trigger} button[aria-describedby]", visible: :all)
+      expect(page).to have_css("#{trigger} a[aria-describedby]", visible: :all)
     end
 
     it "does not put the description on the wrapper" do
@@ -60,13 +64,13 @@ RSpec.describe "Junction::Tooltip", :js, type: :system do
     end
 
     it "describes the focused control" do
-      expect(page).to have_css("#{trigger} button[aria-describedby]", visible: :all)
+      expect(page).to have_css("#{trigger} a[aria-describedby]", visible: :all)
     end
   end
 
-  # Focuses the button inside the first visible tooltip trigger. Capybara has no
-  # direct "focus this element" API, and the theme toggle renders both a light
-  # and a dark trigger with one of them hidden.
+  # Focuses the control inside the first visible tooltip trigger. Capybara has
+  # no direct "focus this element" API, and a trigger that is scrolled out of
+  # view has no offsetParent to focus through.
   #
   # Waits for Stimulus to connect first: the controller attaches its focusin
   # listener on connect, and focusing beforehand is silently dropped because

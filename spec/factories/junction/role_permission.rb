@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory "junction/role_permission", aliases: [ :role_permission ], class: "Junction::RolePermission" do
-    association :role, factory: :role
+    association :role
     sequence(:permission) { |n| "junction.codes/ctx#{n}.all.read" }
   end
 end

@@ -1,11 +1,16 @@
 inherit_gem:
   rubocop-rails-omakase: rubocop.yml
 
+require:
+  - rubocop-rails-accessibility
+
 plugins:
   - rubocop-capybara
+  - rubocop-factory_bot
   - rubocop-performance
   - rubocop-rails
   - rubocop-rspec
+  - rubocop-rspec_rails
 
 AllCops:
   NewCops: enable
@@ -18,6 +23,16 @@ RSpec/ExampleLength:
     - hash
     - heredoc
     - method_call
+
+RSpecRails/InferredSpecType:
+  Enabled: false
+
+FactoryBot/AssociationStyle:
+  EnforcedStyle: explicit
+
+# One more than the smallest paginated page size.
+FactoryBot/ExcessiveCreateList:
+  MaxAmount: 11
 
 # Prefer greater nesting depth for better organization.
 RSpec/NestedGroups:

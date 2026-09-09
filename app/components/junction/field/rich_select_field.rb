@@ -37,6 +37,7 @@ module Junction
             div(class: "mt-2") do
               render Junction::Components::RichSelect::RichSelect.new(
                 value: @form.object.send(@method),
+                aria_labelledby: label_id,
                 input_id: @form.field_id(@method),
                 input_name: @form.field_name(@method),
                 options: @options,

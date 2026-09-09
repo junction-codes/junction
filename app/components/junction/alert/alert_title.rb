@@ -6,7 +6,7 @@ module Junction
       # UI component for the title section of an alert.
       class AlertTitle < Base
         def view_template(&)
-          h5(**attrs, &)
+          div(**attrs, &)
         end
 
         private

@@ -28,14 +28,14 @@ module Junction
           render Junction::Layouts::Application.new(breadcrumbs:) do
             div(class: "px-6 py-3 space-y-6") do
               div do
-                h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") { t(".title") }
+                h1(class: "text-2xl font-semibold text-gray-800 dark:text-white") { t(".title") }
                 p(class: "mt-1 text-sm text-gray-600 dark:text-gray-400") do
                   plain t(".description", name: @role.title)
                 end
               end
 
               div(class: "grid grid-cols-1 lg:grid-cols-3 gap-8") do
-                main(class: "lg:col-span-2") do
+                div(class: "lg:col-span-2") do
                   RoleForm(role:, available_permissions:)
                 end
 

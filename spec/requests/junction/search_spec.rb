@@ -83,7 +83,7 @@ RSpec.describe "/search", type: :request do
 
       context "when paginating results" do
         before do
-          create_list(:api, 30)
+          create_list(:api, 11)
           sign_in_user_with_permissions([ "junction.codes/apis.all.read" ])
         end
 

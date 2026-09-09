@@ -20,7 +20,7 @@ module Junction
             class: "space-y-4",
             data: { controller: "repeatable-rows" }
           ) do
-            h4(class: "text-sm font-semibold text-gray-900 dark:text-gray-100") do
+            h3(class: "text-sm font-semibold text-gray-900 dark:text-gray-100") do
               t(".other")
             end
 

@@ -79,7 +79,7 @@ module Junction
         # @param title [String] Title of the group.
         def render_permission_block(permissions, title)
           div(class: "min-w-0 rounded-lg border border-gray-200 dark:border-gray-700 p-4 lg:min-w-[10rem]") do
-            h4(class: "break-words text-sm font-semibold text-gray-900 dark:text-white mb-3") { title }
+            h3(class: "break-words text-sm font-semibold text-gray-900 dark:text-white mb-3") { title }
 
             div(class: "grid w-full grid-cols-1 gap-4 sm:grid-cols-2") do
               Junction::Permission::Ownership::VALUES.each do |ownership|

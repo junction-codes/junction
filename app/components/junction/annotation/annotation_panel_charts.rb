@@ -24,7 +24,7 @@ module Junction
         def view_template
           div(**attrs) do
             div(class: "bg-white dark:bg-gray-800 rounded-lg shadow p-4 space-y-3") do
-              h4(class: "text-sm font-semibold text-gray-900 dark:text-gray-100") do
+              h3(class: "text-sm font-semibold text-gray-900 dark:text-gray-100") do
                 t(".value_breakdown")
               end
 
@@ -35,7 +35,7 @@ module Junction
             end
 
             div(class: "bg-white dark:bg-gray-800 rounded-lg shadow p-4 space-y-3") do
-              h4(class: "text-sm font-semibold text-gray-900 dark:text-gray-100") do
+              h3(class: "text-sm font-semibold text-gray-900 dark:text-gray-100") do
                 t(".by_entity_type")
               end
 

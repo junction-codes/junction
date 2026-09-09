@@ -6,6 +6,7 @@
 # Access configuration values via:
 #   Junction.config.icon
 #   Junction.config.title
+#   Junction.config.organization_name
 #   Junction.config.allow_demo_mode
 
 default: &default
@@ -14,6 +15,11 @@ default: &default
 
   # Application title shown in navigation
   title: Junction
+
+  # Name of the organization this catalog belongs to, shown under the title in
+  # the navigation rail. Junction is single-tenant, so this is a label rather
+  # than a switcher. Leave unset to show the title alone.
+  # organization_name: Acme Corp
 
   # Allow unauthenticated access (useful for demos/testing)
   # Can also be set via JUNCTION_DEMO_MODE environment variable

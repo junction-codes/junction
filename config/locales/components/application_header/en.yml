@@ -1,0 +1,5 @@
+en:
+  junction:
+    components:
+      application_header:
+        toggle_sidebar: Toggle the navigation rail

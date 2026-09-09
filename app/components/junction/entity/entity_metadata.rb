@@ -58,7 +58,7 @@ module Junction
         # @param title [String] The section's heading.
         def section(title)
           div do
-            h4(class: "text-sm font-semibold text-gray-900 " \
+            h3(class: "text-sm font-semibold text-gray-900 " \
                        "dark:text-gray-100 mb-2") do
               title
             end
@@ -85,7 +85,7 @@ module Junction
               div(class: LABEL_CLASSES) do
                 dt(class: "font-mono font-medium text-gray-700 " \
                           "dark:text-gray-100") { key }
-                dd(class: "font-mono text-gray-500 dark:text-gray-400") do
+                dd(class: "font-mono text-gray-600 dark:text-gray-400") do
                   "= #{value}"
                 end
               end

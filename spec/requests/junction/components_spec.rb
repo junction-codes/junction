@@ -247,6 +247,45 @@ RSpec.describe "/components", type: :request do
       end
     end
 
+    describe "the rail counts" do
+      def rail_count_for(label)
+        rail = response.body[/<nav id="junction-sidebar".*?<\/nav>/m]
+        rail[/whitespace-nowrap">#{label}<\/span><span[^>]*tabular-nums[^>]*>\s*(\d+)/, 1]&.to_i
+      end
+
+      context "when the user may read every component" do
+        it "counts them all" do
+          get components_url
+
+          expect(rail_count_for("Components")).to eq(Junction::Component.count)
+        end
+      end
+
+      context "when the user may only read the ones their groups own" do
+        let(:owned) { create(:group) }
+
+        before do
+          user = create_user_with_permissions([ "junction.codes/components.owned.read" ])
+          create(:group_membership, user:, group: owned)
+          create(:component, owner: owned)
+          sign_in(user:, password: "Password1!")
+        end
+
+        it "counts only those" do
+          get components_url
+
+          expect(rail_count_for("Components"))
+            .to eq(Junction::Component.where(owner: owned).count)
+        end
+
+        it "counts fewer than exist" do
+          get components_url
+
+          expect(rail_count_for("Components")).to be < Junction::Component.count
+        end
+      end
+    end
+
     describe "DELETE /components/:id" do
       it_behaves_like "an action that requires permission",
         :delete, -> { component_path(component) },

@@ -23,7 +23,7 @@ module Junction
 
         def view_template
           section(**attrs) do
-            h4(class: "text-sm font-semibold text-gray-900 dark:text-gray-100") do
+            h3(class: "text-sm font-semibold text-gray-900 dark:text-gray-100") do
               t(".entity_types")
             end
 

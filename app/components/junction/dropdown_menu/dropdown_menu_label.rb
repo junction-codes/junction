@@ -5,7 +5,7 @@ module Junction
     module DropdownMenu
       class DropdownMenuLabel < Base
         def view_template(&)
-          h3(**attrs, &)
+          div(**attrs, &)
         end
 
         private

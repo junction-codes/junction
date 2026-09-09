@@ -99,19 +99,39 @@ RSpec.describe "/dashboard", type: :request do
     end
   end
 
-  describe "sidebar settings menu visibility" do
-    it "does not render settings when no settings items are allowed" do
+  describe "the current rail row" do
+    before do
       sign_in_user_with_permissions(%w[junction.codes/dashboards.all.read])
-      get dashboard_path
-      expect(response.body).not_to include("Settings")
     end
 
-    it "renders settings when roles is allowed" do
+    it "marks the Home row on /dashboard" do
+      get dashboard_path
+
+      expect(response.body.scan(/aria-current="page"/).size).to eq(1)
+    end
+
+    it "marks the Home row on the root path" do
+      get root_path
+
+      expect(response.body.scan(/aria-current="page"/).size).to eq(1)
+    end
+  end
+
+  describe "settings menu visibility" do
+    let(:settings_group) { "instance settings" }
+
+    it "does not render the settings group when none are allowed" do
+      sign_in_user_with_permissions(%w[junction.codes/dashboards.all.read])
+      get dashboard_path
+      expect(response.body).not_to include(settings_group)
+    end
+
+    it "renders the settings group when roles is allowed" do
       sign_in_user_with_permissions(
         %w[junction.codes/dashboards.all.read junction.codes/roles.all.read]
       )
       get dashboard_path
-      expect(response.body).to include("Settings")
+      expect(response.body).to include(settings_group)
     end
 
     it "renders roles in settings when roles is allowed" do
@@ -130,12 +150,12 @@ RSpec.describe "/dashboard", type: :request do
       expect(response.body).to include("Plugins")
     end
 
-    it "renders settings when catalog options is allowed" do
+    it "renders the settings group when catalog options is allowed" do
       sign_in_user_with_permissions(
         %w[junction.codes/dashboards.all.read junction.codes/options.all.read]
       )
       get dashboard_path
-      expect(response.body).to include("Settings")
+      expect(response.body).to include(settings_group)
     end
 
     it "renders catalog options in settings when allowed" do
@@ -166,6 +186,28 @@ RSpec.describe "/dashboard", type: :request do
       sign_in_user_with_permissions(%w[junction.codes/dashboards.all.read])
       get dashboard_path
       expect(response.body).to include("Plugin Settings")
+    end
+
+    context "when a plugin registers a disabled item" do
+      before do
+        allow(Junction::PluginRegistry).to receive(:settings_menu_items)
+          .and_return([ {
+            action: "/plugin-settings", title: "Plugin Settings",
+            icon: "blocks", disabled: true
+          } ])
+        sign_in_user_with_permissions(%w[junction.codes/dashboards.all.read])
+        get dashboard_path
+      end
+
+      let(:row) { response.body[/<a[^>]*>(?:(?!<\/a>).)*Plugin Settings/m] }
+
+      it "does not link it anywhere" do
+        expect(row).to include('href="#"')
+      end
+
+      it "marks it disabled" do
+        expect(row).to include("data-disabled")
+      end
     end
   end
 end

@@ -83,7 +83,7 @@ module Junction
 
         def page_header
           div(class: "flex justify-between items-center mb-6") do
-            h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") do
+            h1(class: "text-2xl font-semibold text-gray-800 dark:text-white") do
               entity_class.model_name.human(count: 2)
             end
 

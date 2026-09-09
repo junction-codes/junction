@@ -1,0 +1,9 @@
+en:
+  junction:
+    components:
+      theme_toggle:
+        theme_toggle:
+          dark: Dark
+          label: Colour theme
+          light: Light
+          system: Match my system

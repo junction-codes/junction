@@ -16,8 +16,7 @@ module Junction
         def default_attrs
           {
             aria: { hidden: true },
-            class: "[&>svg]:w-3.5 [&>svg]:h-3.5",
-            role: "presentation"
+            class: "[&>svg]:w-3.5 [&>svg]:h-3.5"
           }
         end
       end
