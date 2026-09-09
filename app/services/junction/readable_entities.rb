@@ -77,7 +77,14 @@ module Junction
     # @return [Hash{String => Integer}] Counts keyed by kind name. A kind the
     #   user cannot read is absent rather than zero.
     def counts(kinds)
-      @counts[kinds.map(&:name)] ||= scope_across(kinds).group(:kind).count
+      @counts[kinds.map(&:name)] ||= begin
+        scopes = kinds.to_h { |kind| [ kind.name, kind_scope(kind) ] }.compact
+        relation = scopes.values.reduce(:or) || Entity.none
+
+        # `GROUP BY` only returns the kinds that have rows, so the readable
+        # kinds are seeded to zero first.
+        scopes.keys.index_with(0).merge(relation.group(:kind).count)
+      end
     end
 
     private

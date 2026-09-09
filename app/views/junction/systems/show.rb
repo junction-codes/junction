@@ -41,7 +41,7 @@ module Junction
               end
 
               div do
-                h2(class: "text-3xl font-bold text-gray-900 dark:text-white") { @system.title }
+                h1(class: "text-3xl font-bold text-gray-900 dark:text-white") { @system.title }
 
                 if @system.type.present?
                   p(class: "mt-1 text-sm text-gray-500 dark:text-gray-400") do

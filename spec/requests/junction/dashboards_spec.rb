@@ -99,6 +99,24 @@ RSpec.describe "/dashboard", type: :request do
     end
   end
 
+  describe "the current rail row" do
+    before do
+      sign_in_user_with_permissions(%w[junction.codes/dashboards.all.read])
+    end
+
+    it "marks the Home row on /dashboard" do
+      get dashboard_path
+
+      expect(response.body.scan(/aria-current="page"/).size).to eq(1)
+    end
+
+    it "marks the Home row on the root path" do
+      get root_path
+
+      expect(response.body.scan(/aria-current="page"/).size).to eq(1)
+    end
+  end
+
   describe "settings menu visibility" do
     let(:settings_group) { "instance settings" }
 
@@ -168,6 +186,28 @@ RSpec.describe "/dashboard", type: :request do
       sign_in_user_with_permissions(%w[junction.codes/dashboards.all.read])
       get dashboard_path
       expect(response.body).to include("Plugin Settings")
+    end
+
+    context "when a plugin registers a disabled item" do
+      before do
+        allow(Junction::PluginRegistry).to receive(:settings_menu_items)
+          .and_return([ {
+            action: "/plugin-settings", title: "Plugin Settings",
+            icon: "blocks", disabled: true
+          } ])
+        sign_in_user_with_permissions(%w[junction.codes/dashboards.all.read])
+        get dashboard_path
+      end
+
+      let(:row) { response.body[/<a[^>]*>(?:(?!<\/a>).)*Plugin Settings/m] }
+
+      it "does not link it anywhere" do
+        expect(row).to include('href="#"')
+      end
+
+      it "marks it disabled" do
+        expect(row).to include("data-disabled")
+      end
     end
   end
 end

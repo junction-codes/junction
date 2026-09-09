@@ -15,7 +15,7 @@ module Junction
         def view_template
           render Junction::Layouts::Application.new(breadcrumbs: @breadcrumbs) do
             div(class: "px-6 py-3 space-y-6") do
-              h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") do
+              h1(class: "text-2xl font-semibold text-gray-800 dark:text-white") do
                 t(".title")
               end
 

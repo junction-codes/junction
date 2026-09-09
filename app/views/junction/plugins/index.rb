@@ -21,7 +21,7 @@ module Junction
         def view_template
           render Junction::Layouts::Application.new(breadcrumbs: @breadcrumbs) do
             div(class: "px-6 py-3 space-y-8") do
-              h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") do
+              h1(class: "text-2xl font-semibold text-gray-800 dark:text-white") do
                 t(".title")
               end
 
@@ -49,7 +49,7 @@ module Junction
         #   plugins.
         def render_section(title:, plugins:, empty_message: "")
           section(class: "space-y-4") do
-            h3(class: "text-lg font-medium text-gray-800 dark:text-white") { title }
+            h2(class: "text-lg font-medium text-gray-800 dark:text-white") { title }
 
             if plugins.empty?
               p(class: "text-sm text-gray-500 dark:text-gray-400") { empty_message }

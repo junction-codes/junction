@@ -29,6 +29,10 @@ RSpec.describe "Junction accessibility", :js, type: :system do
       junction.codes/dashboards.all.read
       junction.codes/components.all.read
       junction.codes/components.all.write
+      junction.codes/options.all.read
+      junction.codes/plugins.all.read
+      junction.codes/roles.all.read
+      junction.codes/roles.all.write
     ])
   end
 
@@ -50,6 +54,30 @@ RSpec.describe "Junction accessibility", :js, type: :system do
 
   context "with an entity page" do
     before { visit component_path(component) }
+
+    it "has no violations" do
+      expect(page).to audit
+    end
+  end
+
+  context "with the catalog options page" do
+    before { visit options_path }
+
+    it "has no violations" do
+      expect(page).to audit
+    end
+  end
+
+  context "with the plugins page" do
+    before { visit plugins_path }
+
+    it "has no violations" do
+      expect(page).to audit
+    end
+  end
+
+  context "with the role form" do
+    before { visit new_role_path }
 
     it "has no violations" do
       expect(page).to audit

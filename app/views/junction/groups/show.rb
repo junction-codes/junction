@@ -52,7 +52,7 @@ module Junction
               end
 
               div do
-                h2(class: "text-3xl font-bold text-gray-900 dark:text-white") { @group.title }
+                h1(class: "text-3xl font-bold text-gray-900 dark:text-white") { @group.title }
                 p(class: "mt-1 text-md text-gray-600 dark:text-gray-400 max-w-2xl") { @group.description }
 
                 p(class: "mt-1 text-md text-gray-600 dark:text-gray-400 max-w-2xl") do

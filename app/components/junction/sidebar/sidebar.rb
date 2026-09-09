@@ -84,7 +84,7 @@ module Junction
           path = view_context.dashboard_path
 
           item(href: path, icon: "house", title: t(".dashboard"),
-               current: current?(path))
+               current: current?(path) || at_root?)
         end
 
         # A run of catalog kinds, each with the number the user may read.
@@ -154,6 +154,14 @@ module Junction
           current = view_context.request.path
 
           current == path || current.start_with?("#{path}/")
+        end
+
+        # The engine's root renders `dashboards#show` as well, and it is where
+        # signing in lands, so the Home row has to answer to both paths.
+        #
+        # @return [Boolean] Whether the root path is being viewed.
+        def at_root?
+          view_context.request.path == view_context.root_path
         end
 
         def organization_name

@@ -101,6 +101,13 @@ RSpec.describe Junction::ReadableEntities do
       expect(readable.counts(catalog_kinds)).not_to have_key("Resource")
     end
 
+    it "counts a readable kind with no rows as zero" do
+      empty = user_with("junction.codes/resources.all.read")
+
+      expect(described_class.new(user: empty).counts(catalog_kinds))
+        .to include("Resource" => 0)
+    end
+
     it "asks the database once for a repeated question" do
       create(:component)
       readable.counts(catalog_kinds)

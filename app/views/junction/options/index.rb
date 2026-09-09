@@ -17,7 +17,7 @@ module Junction
         def view_template
           render Junction::Layouts::Application.new(breadcrumbs: @breadcrumbs) do
             div(class: "px-6 py-3 space-y-6") do
-              h2(class: "text-2xl font-semibold text-gray-800 dark:text-white") do
+              h1(class: "text-2xl font-semibold text-gray-800 dark:text-white") do
                 t(".title")
               end
 
@@ -57,7 +57,7 @@ module Junction
         def render_field(field)
           section(class: "space-y-6") do
             div(class: "space-y-1") do
-              h3(class: "text-lg font-semibold text-gray-900 dark:text-gray-100") do
+              h2(class: "text-lg font-semibold text-gray-900 dark:text-gray-100") do
                 field.fetch(:label)
               end
               p(class: "text-sm text-gray-500 dark:text-gray-400") do
@@ -74,14 +74,14 @@ module Junction
         def render_charts(field)
           div(class: "grid grid-cols-1 xl:grid-cols-2 gap-4") do
             div(class: "bg-white dark:bg-gray-800 rounded-lg shadow p-4 space-y-3") do
-              h4(class: "text-sm font-semibold text-gray-900 dark:text-gray-100") do
+              h3(class: "text-sm font-semibold text-gray-900 dark:text-gray-100") do
                 t(".known_vs_other")
               end
               pie_chart field.dig(:charts, :known_vs_other), height: "280px"
             end
 
             div(class: "bg-white dark:bg-gray-800 rounded-lg shadow p-4 space-y-3") do
-              h4(class: "text-sm font-semibold text-gray-900 dark:text-gray-100") do
+              h3(class: "text-sm font-semibold text-gray-900 dark:text-gray-100") do
                 t(".value_breakdown")
               end
               bar_chart field.dig(:charts, :value_breakdown),
@@ -93,7 +93,7 @@ module Junction
 
         def render_known_table(field)
           section(class: "space-y-3") do
-            h4(class: "text-sm font-semibold text-gray-900 dark:text-gray-100") do
+            h3(class: "text-sm font-semibold text-gray-900 dark:text-gray-100") do
               t(".known")
             end
 
@@ -140,7 +140,7 @@ module Junction
 
         def render_other_table(field)
           section(class: "space-y-3") do
-            h4(class: "text-sm font-semibold text-gray-900 dark:text-gray-100") do
+            h3(class: "text-sm font-semibold text-gray-900 dark:text-gray-100") do
               t(".other")
             end
 

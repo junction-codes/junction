@@ -103,7 +103,8 @@ module Junction
           end
 
           @settings_items.each do |item|
-            content.item(href: item[:href]) do
+            content.item(href: item[:disabled] ? "#" : item[:href],
+                         data_disabled: item[:disabled]) do
               icon(item[:icon], fallback: Junction::Kind::DEFAULT_ICON,
                    class: "w-4 h-4 mr-2")
               plain item[:title]
