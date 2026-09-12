@@ -54,7 +54,7 @@ module Junction
       def view_template
         return unless @pagy.pages > 1 || @per_page_url
 
-        div(class: "flex flex-wrap items-center gap-x-4 gap-y-2", **attrs) do
+        div(**attrs) do
           PerPageSelector(
             per_page_url: @per_page_url,
             current: @pagy.options[:limit],
@@ -76,6 +76,10 @@ module Junction
       # @return [Integer, nil] The total.
       def total
         @total == :count ? @pagy.count : @total
+      end
+
+      def default_attrs
+        { class: "mt-4 flex flex-col gap-2" }
       end
 
       # Renders the pagination controls.

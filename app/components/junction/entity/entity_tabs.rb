@@ -21,14 +21,18 @@ module Junction
         #   string.
         # @param added_filters [Array<String>] Predicates on the filter bar
         #   without a value, carried across for the same reason.
+        # @param per_page [Integer] Number of results per page, if set.
         # @param user_attrs [Hash] Additional HTML attributes.
         def initialize(entity_class:, tabs:, current:, query_params: {},
-                       added_filters: [], **user_attrs)
+                       added_filters: [], per_page: nil, **user_attrs)
           @entity_class = entity_class
           @tabs = tabs
           @current = current
           @query_params = query_params
           @added_filters = Array(added_filters)
+
+          # If it's the default, leave it out of the URL.
+          @per_page = per_page if per_page && per_page != Junction::Paginatable::DEFAULT_PER_PAGE
 
           super(**user_attrs)
         end
@@ -84,11 +88,27 @@ module Junction
         # @param name [String] The tab.
         # @return [String] The path.
         def tab_path(name)
-          args = { q: @query_params.presence,
-                   filters: @added_filters.join(",").presence }.compact
+          args = { q: carried(name).presence,
+                   filters: @added_filters.join(",").presence,
+                   per_page: @per_page }.compact
           args[:tab] = name unless name == Junction::CatalogTabs::DEFAULT
 
           public_send(:"#{@entity_class.model_name.route_key}_path", **args)
+        end
+
+        # Filters and sorts that should be carried across a tab change.
+        #
+        # A tab's sort and filters take precedence over any that the user may
+        # have selected.
+        #
+        # @param name [String] The destination tab.
+        # @return [Hash] The filters to carry.
+        def carried(name)
+          filters = @query_params
+          filters = filters.except(:s, "s") if @tabs.sorts(name)
+
+          predicate = @tabs.implied_filter(name)&.first
+          predicate ? filters.except(predicate.to_sym, predicate) : filters
         end
 
         # @return [Class] The entity class.

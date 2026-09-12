@@ -58,6 +58,17 @@ RSpec.describe "/apis", type: :request do
   context "when the user is authenticated" do
     requires_authentication
 
+    describe "the listing footer" do
+      it "names the kind the way the kind is written" do
+        create_list(:api, 2)
+        sign_in_user_with_permissions(%w[junction.codes/apis.all.read])
+
+        get apis_path
+
+        expect(response.body[/Showing[^<]*/]).to include("APIs")
+      end
+    end
+
     describe "GET /apis" do
       it_behaves_like "an action that requires permission",
         :get, -> { apis_path }, %w[junction.codes/apis.all.read]

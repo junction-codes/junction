@@ -52,10 +52,11 @@ module Junction
         # @param query_params [Hash] Filters already applied.
         # @param added [Array<String>] Predicates the viewer put on the bar
         #   without choosing a value yet.
+        # @param per_page [Integer] Number of results per page, if set.
         # @param options [Hash] Option sets keyed by name, as supplied by the
         #   controller's `index_options`. Anything not in {FILTERS} is ignored.
         def initialize(entity_class:, query:, tabs: nil, tab: nil,
-                       query_params: {}, added: [], **options)
+                       query_params: {}, added: [], per_page: nil, **options)
           @entity_class = entity_class
           @query = query
           @tabs = tabs
@@ -63,6 +64,9 @@ module Junction
           @query_params = query_params.to_h.symbolize_keys
           @added = Array(added).map(&:to_s)
           @options = options
+
+          # If it's the default, leave it out of the URL.
+          @per_page = per_page if per_page && per_page != Junction::Paginatable::DEFAULT_PER_PAGE
 
           super()
         end
@@ -276,7 +280,7 @@ module Junction
           filters = value.nil? ? @added - [ predicate ] : @added
 
           path(query: @query_params.merge(predicate.to_sym => value),
-               added: filters, tab: (nil if leaving))
+               added: filters, tab: (leaving ? nil : :current))
         end
 
         # Hidden inputs carrying what the search box is not itself responsible
@@ -285,6 +289,10 @@ module Junction
         # @param except [Symbol] The predicate the box owns.
         def carried_fields(except:)
           input(type: "hidden", name: "tab", value: @tab) if carry_tab?(@tab)
+          if @per_page
+            input(type: "hidden", name: "per_page", value: @per_page)
+          end
+
           if @added.any?
             input(type: "hidden", name: "filters", value: @added.join(","))
           end
@@ -316,7 +324,8 @@ module Junction
         def path(query: @query_params, added: @added, tab: :current)
           tab = @tab if tab == :current
           args = { q: query.compact_blank.presence,
-                   filters: added.uniq.join(",").presence }
+                   filters: added.uniq.join(",").presence,
+                   per_page: @per_page }
           args[:tab] = tab if carry_tab?(tab)
 
           public_send(:"#{@entity_class.model_name.route_key}_path",

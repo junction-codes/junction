@@ -265,6 +265,45 @@ RSpec.describe "/components", type: :request do
       end
     end
 
+    describe "the column headings" do
+      before do
+        create(:component)
+        get components_url
+      end
+
+      let(:headings) { response.parsed_body.css("th") }
+
+      it "offers a sort on a column the database can order by" do
+        name = headings.find { |th| th.text.include?("Component Name") }
+
+        expect(name.css("a")).not_to be_empty
+      end
+
+      it "offers none on a column it cannot" do
+        tags = headings.find { |th| th.text.strip == "Tags" }
+
+        expect(tags.css("a")).to be_empty
+      end
+    end
+
+    describe "carrying the page size" do
+      before { create(:component) }
+
+      it "keeps it when a tab is chosen" do
+        get components_url(per_page: 50)
+
+        link = response.body[%r{href="([^"]*tab=mine[^"]*)"}, 1]
+        expect(CGI.unescape(link.to_s)).to include("per_page=50")
+      end
+
+      it "leaves the default out of the URL" do
+        get components_url
+
+        link = response.body[%r{href="([^"]*tab=mine[^"]*)"}, 1]
+        expect(CGI.unescape(link.to_s)).not_to include("per_page")
+      end
+    end
+
     describe "the listing tabs" do
       let(:owned) { create(:group) }
 

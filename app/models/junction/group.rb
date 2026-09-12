@@ -29,7 +29,6 @@ module Junction
 
     self.index_columns = [
       [ :entity, :title ],
-      [ :type, :type ],
       [ :email, :email ],
       [ :reference, :parent_id ],
       [ :tags, :tags ],

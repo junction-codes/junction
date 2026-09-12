@@ -66,12 +66,12 @@ module Junction
 
               render Junction::Components::Entity::EntityTabs.new(
                 entity_class:, tabs:, current: tab, query_params:,
-                added_filters:
+                added_filters:, per_page:
               )
 
               render Junction::Components::Entity::EntityFilters.new(
                 entity_class:, query:, tabs:, tab:, query_params:,
-                added: added_filters, **@options
+                added: added_filters, per_page:, **@options
               )
 
               div(class: "rounded-xl border border-border bg-surface " \
@@ -131,6 +131,13 @@ module Junction
           end
         end
 
+        # Number of items to display per page.
+        #
+        # @return [Integer] The page size.
+        def per_page
+          @pagy.options[:limit]
+        end
+
         # Minimum width the table is given.
         #
         # @return [Integer] The width in pixels.
@@ -149,6 +156,7 @@ module Junction
             PaginationNav(
               pagy: @pagy,
               total: nil,
+              class: "mt-0 flex-row flex-wrap items-center gap-x-4 gap-y-2",
               page_url: ->(page) { index_path(**page_args, page:) },
               per_page_url: lambda { |per_page|
                 index_path(**tab_args, q: @query_params, per_page:)
@@ -161,8 +169,7 @@ module Junction
         def showing
           return t(".showing_none") if @pagy.count.zero?
 
-          t(".showing", from: @pagy.from, to: @pagy.to, count: @pagy.count,
-                        kinds: entity_class.model_name.human(count: @pagy.count).downcase)
+          t(".showing", from: @pagy.from, to: @pagy.to, count: @pagy.count)
         end
 
         # Query-string arguments that have to survive a page change.
@@ -194,14 +201,36 @@ module Junction
               }
 
               entity_class.index_columns.each do |type, field|
-                row.sortable_head(field: field.to_s, sort_url:,
-                                  class: COLUMN_WIDTHS[type],
-                                  **sort_attrs(query, field.to_s)) do
-                  entity_class.human_attribute_name(field)
-                end
+                heading(row, type, field, sort_url)
               end
             end
           end
+        end
+
+        # Heading for a single column.
+        #
+        # @param row [Table::Row] Table header row.
+        # @param type [Symbol] The column type.
+        # @param field [Symbol] The column's field.
+        # @param sort_url [Proc] URL to sort by this column, if it's sortable.
+        def heading(row, type, field, sort_url)
+          label = entity_class.human_attribute_name(field)
+
+          unless sortable?(field)
+            return row.head(class: COLUMN_WIDTHS[type]) { label }
+          end
+
+          row.sortable_head(field: field.to_s, sort_url:,
+                            class: COLUMN_WIDTHS[type],
+                            **sort_attrs(query, field.to_s)) { label }
+        end
+
+        # Whether or not a field can be sorted for the current kind.
+        #
+        # @param field [Symbol] The column's field.
+        # @return [Boolean] Whether it's sortable.
+        def sortable?(field)
+          entity_class.ransackable_attributes.include?(field.to_s)
         end
 
         def table_body(table)
@@ -225,6 +254,7 @@ module Junction
           case type
           when :entity    then EntityPreview(entity:)
           when :reference then reference_cell(entity, field)
+          when :type      then plain entity.type_name
           when :lifecycle then lifecycle_cell(entity)
           when :email     then email_cell(entity)
           when :tags      then TagList(tags: entity.tags)
@@ -253,7 +283,7 @@ module Junction
 
         # @param entity [Junction::Entity] The row's entity.
         def lifecycle_cell(entity)
-          Badge(variant: entity.lifecycle&.to_sym) { entity.lifecycle&.capitalize }
+          LifecyclePill(lifecycle: entity.lifecycle)
         end
 
         # @param entity [Junction::Entity] The row's entity.

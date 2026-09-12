@@ -10,6 +10,8 @@ RSpec.describe "Junction catalog listing", :js, type: :system do
                        lifecycle: "production", tags: %w[payments go platform])
   end
 
+  let(:parent_system) { create(:system, title: "Payments") }
+
   let!(:legacy) do
     create(:component, title: "legacy-billing", lifecycle: "deprecated",
                        tags: [])
@@ -19,7 +21,9 @@ RSpec.describe "Junction catalog listing", :js, type: :system do
     sign_in_with_permissions(%w[
       junction.codes/components.all.read
       junction.codes/groups.all.read
+      junction.codes/systems.all.read
     ])
+    parent_system
     visit components_path
   end
 
@@ -54,6 +58,19 @@ RSpec.describe "Junction catalog listing", :js, type: :system do
 
   def within_tabs(&)
     within("nav[aria-label^='Views of']", &)
+  end
+
+  # Both navigations have to be waited on.
+  #
+  # `visit` returns before the page has rendered, so an immediate click acts on
+  # the page being replaced. The rows exist on both pages, so an assertion about
+  # order can read the old one.
+  def take_sorted_listing_to(tab)
+    visit components_path(q: { s: "title desc" })
+    expect(find("tbody tr:first-child").text).to include(api.title)
+
+    click_link tab
+    expect(page).to have_current_path(/tab=/)
   end
 
   describe "the row" do
@@ -230,6 +247,31 @@ RSpec.describe "Junction catalog listing", :js, type: :system do
       it "puts the tab in the URL" do
         expect(page).to have_current_path(/tab=production/)
       end
+
+      it "stays on the tab when another filter is given a value" do
+        add_filter "System"
+        click_button "System: any"
+        within_menu { click_link parent_system.title }
+
+        expect(page).to have_current_path(/tab=production/)
+      end
+    end
+
+    context "when a sorted listing is taken to a sorting tab" do
+      let!(:freshest) do
+        create(:component, title: "most-recently-touched",
+                           updated_at: 1.hour.from_now)
+      end
+
+      before { take_sorted_listing_to("Recently changed") }
+
+      it "drops the sort it overrides" do
+        expect(page).to have_no_current_path(/title\+desc|title%20desc/)
+      end
+
+      it "orders by when things changed" do
+        expect(find("tbody tr:first-child").text).to include(freshest.title)
+      end
     end
   end
 
@@ -293,6 +335,23 @@ RSpec.describe "Junction catalog listing", :js, type: :system do
   describe "the filter a tab stands for" do
     it "shows nothing on the tab that filters nothing" do
       expect(page).to have_no_button(/Owner:/)
+    end
+
+    context "when a conflicting filter is already set" do
+      before do
+        add_filter "Lifecycle"
+        click_button "Lifecycle: any"
+        within_menu { click_link "Deprecated" }
+        choose_tab "Production", chip: "Lifecycle: Production"
+      end
+
+      it "drops the filter the tab contradicts" do
+        expect(page).to have_current_path(/tab=production/)
+      end
+
+      it "keeps the entities the tab does match" do
+        expect(page).to have_text(api.title)
+      end
     end
 
     context "when the production tab is chosen" do
