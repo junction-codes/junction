@@ -24,7 +24,8 @@ module Junction
 
         def default_attrs
           {
-            class: "border-b transition-colors hover:bg-muted hover:bg-opacity-50 data-[state=selected]:bg-muted hover:bg-gray-50 dark:hover:bg-gray-700/50"
+            class: "border-b border-subtle transition-colors last:border-0 " \
+                   "hover:bg-subtle/60 data-[state=selected]:bg-muted"
           }
         end
       end

@@ -32,9 +32,10 @@ module Junction
 
     self.index_columns = [
       [ :entity, :title ],
-      [ :type, :type ],
       [ :reference, :owner_id ],
-      [ :reference, :parent_id ]
+      [ :reference, :parent_id ],
+      [ :tags, :tags ],
+      [ :updated, :updated_at ]
     ].freeze
 
     has_many :systems, class_name: "Junction::System"

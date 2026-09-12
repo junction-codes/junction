@@ -9,6 +9,12 @@ en:
           description: Update the details for the '%{title}' %{kind_lower}.
         index:
           new: New %{kind}
+          description: >-
+            Filters live in the URL, so you can share a view by copying the URL.
+          showing:
+            one: Showing %{from}–%{to} of %{count} %{kinds}
+            other: Showing %{from}–%{to} of %{count} %{kinds}
+          showing_none: Nothing to show yet
         new:
           title: Create a New %{kind}
           description: >-

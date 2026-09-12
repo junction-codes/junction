@@ -1,0 +1,9 @@
+en:
+  junction:
+    components:
+      table:
+        tag_list:
+          more:
+            one: One more tag
+            other: "%{count} more tags"
+          none: none

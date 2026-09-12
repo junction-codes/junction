@@ -1,0 +1,5 @@
+en:
+  junction:
+    components:
+      relative_time:
+        ago: "%{time} ago"

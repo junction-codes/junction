@@ -28,9 +28,10 @@ module Junction
 
     self.index_columns = [
       [ :entity, :title ],
-      [ :type, :type ],
       [ :reference, :owner_id ],
-      [ :reference, :domain_id ]
+      [ :reference, :domain_id ],
+      [ :tags, :tags ],
+      [ :updated, :updated_at ]
     ].freeze
 
     belongs_to :domain, class_name: "Junction::Domain"

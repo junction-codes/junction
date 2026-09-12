@@ -34,8 +34,11 @@ module Junction
     def index
       authorize! entity_class
 
-      @q = index_relation.ransack(params[:q])
-      @q.sorts = default_sort if @q.sorts.empty?
+      tabs = catalog_tabs
+      tab = tabs.resolve(params[:tab].to_s)
+
+      @q = tabs.scope(tab).ransack(params[:q])
+      @q.sorts = tabs.sorts(tab) || default_sort if @q.sorts.empty?
       results = @q.result
       results = results.includes(*index_includes) if index_includes.any?
       @pagy, records = paginate(results)
@@ -45,6 +48,9 @@ module Junction
         pagy: @pagy,
         query: @q,
         query_params: params[:q]&.to_unsafe_h || {},
+        tab:,
+        tabs:,
+        added_filters: params[:filters].to_s.split(",").map(&:strip).compact_blank,
         breadcrumbs:,
         can_create: allowed_to?(:create?, entity_class),
         **index_options
@@ -161,6 +167,17 @@ module Junction
     # @return [ActiveRecord::Relation] The relation.
     def index_relation
       index_scope_for(entity_class)
+    end
+
+    # The tab strip above the listing.
+    #
+    # @return [Junction::CatalogTabs] The tabs.
+    def catalog_tabs
+      Junction::CatalogTabs.new(
+        relation: index_relation,
+        kind: Junction::Kinds.for(entity_class.sti_name),
+        user: Junction::Current.user
+      )
     end
 
     # Associations to preload for the index.

@@ -247,6 +247,72 @@ RSpec.describe "/components", type: :request do
       end
     end
 
+    describe "the updated column" do
+      it "carries a machine-readable timestamp" do
+        component
+
+        get components_url
+
+        expect(response.body).to include(%(datetime="#{component.updated_at.iso8601}"))
+      end
+
+      it "says how long ago in words" do
+        component
+
+        get components_url
+
+        expect(response.body).to include("less than a minute ago")
+      end
+    end
+
+    describe "the listing tabs" do
+      let(:owned) { create(:group) }
+
+      before do
+        user = create_user_with_permissions([ "junction.codes/components.all.read" ])
+        create(:group_membership, user:, group: owned)
+        create(:component, title: "ours", owner: owned, lifecycle: "production")
+        create(:component, title: "theirs", lifecycle: "experimental")
+        sign_in(user:, password: "Password1!")
+      end
+
+      it "shows everything by default" do
+        get components_url
+
+        expect(response.body).to include("ours").and include("theirs")
+      end
+
+      it "narrows to what the user's groups own" do
+        get components_url(tab: "mine")
+
+        expect(response.body).to include("ours")
+      end
+
+      it "leaves out what they do not own" do
+        get components_url(tab: "mine")
+
+        expect(response.body).not_to include("theirs")
+      end
+
+      it "narrows to production" do
+        get components_url(tab: "production")
+
+        expect(response.body).not_to include("theirs")
+      end
+
+      it "falls back to everything for an unknown tab" do
+        get components_url(tab: "nonsense")
+
+        expect(response.body).to include("ours").and include("theirs")
+      end
+
+      it "keeps the filters when a tab is chosen" do
+        get components_url(tab: "mine", q: { title_or_description_cont: "ours" })
+
+        expect(response.body).to include("ours")
+      end
+    end
+
     describe "the rail counts" do
       def rail_count_for(label)
         rail = response.body[/<nav id="junction-sidebar".*?<\/nav>/m]

@@ -24,9 +24,20 @@ en:
           labels: Labels
           links: Links
           none: None
+        entity_tabs:
+          label: Views of the %{kinds_lower}
+          all: All
+          mine: Mine
+          production: Production
+          recent: Recently changed
         entity_filters:
           all: All %{label}
+          add: + Add filter
+          any: any
+          clear: Clear filters
+          remove: Remove the %{label} filter
           search: Search
+          viewer: you and your groups
           # Keyed by the kind's `search_attribute`.
           placeholder:
             title_or_description_cont: Name or description…

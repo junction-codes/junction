@@ -8,9 +8,9 @@ module Junction
 
       # Initialize a new component.
       #
-      # @param time [Time, DateTime] The timestamp to display.
-      # @param format [Symbol] The format to use for the tooltip.
-      # @param user_attrs [Hash] Additional HTML attributes for the component.
+      # @param time       [Time, DateTime] The timestamp to display.
+      # @param format     [Symbol]         The format to use for the tooltip.
+      # @param user_attrs [Hash]           Additional HTML attributes for the component.
       def initialize(time:, format: :datetime, **user_attrs)
         @time = time
         @format = format
@@ -18,12 +18,12 @@ module Junction
       end
 
       def view_template
-        Tooltip do |t|
-          t.trigger do
-            time(**attrs) { plain "#{time_ago_in_words(@time)} ago" }
+        Tooltip do |tooltip|
+          tooltip.trigger do
+            time(**attrs) { t(".ago", time: time_ago_in_words(@time)) }
           end
 
-          t.content { plain @time.to_formatted_s(@format) }
+          tooltip.content { plain @time.to_formatted_s(@format) }
         end
       end
 
@@ -31,7 +31,7 @@ module Junction
 
       def default_attrs
         {
-          datetime: @time.to_formatted_s(@format)
+          datetime: @time.iso8601
         }
       end
     end

@@ -32,7 +32,6 @@ module Junction
               "cursor-pointer inline-flex items-center justify-center",
               "whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium",
               "ring-offset-background transition-all",
-              "text-text-body",
               "disabled:pointer-events-none disabled:opacity-50",
               "aria-disabled:pointer-events-none aria-disabled:opacity-50",
               "aria-disabled:cursor-not-allowed",

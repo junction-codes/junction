@@ -219,8 +219,14 @@ RSpec.describe "Junction::Domains", type: :system do
     it "shows a blank parent column for the parent row" do
       visit domains_path
 
-      parent_row = all("tr").find { |row| row.text.include?("Parent Area") && row.text.exclude?("Child Group") }
-      expect(parent_row.all("td").last.text.strip).to be_empty
+      column = all("th").index { |th| th.text.match?(/parent/i) }
+      parent_row = all("tr").find { |row| parent_row?(row) }
+
+      expect(parent_row.all("td")[column].text.strip).to be_empty
+    end
+
+    def parent_row?(row)
+      row.text.include?("Parent Area") && row.text.exclude?("Child Group")
     end
 
     it "shows the parent domain on show" do

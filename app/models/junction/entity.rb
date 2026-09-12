@@ -170,7 +170,18 @@ module Junction
     #
     # @return [String] The subtitle.
     def preview_subtitle
-      description
+      [ type_name, description ].compact_blank.join(" · ")
+    end
+
+    # The name the catalog options give this entity's type.
+    #
+    # @return [String, nil] The name, humanized when the value was not declared
+    #   and `nil` when the entity has no type.
+    def type_name
+      return if type.blank?
+
+      section = Junction::CatalogOptions.section(catalog_section)
+      section&.dig(type, :name) || type.humanize
     end
 
     # Icon associated with the entity's type.

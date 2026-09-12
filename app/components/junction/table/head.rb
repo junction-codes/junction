@@ -13,7 +13,9 @@ module Junction
         def default_attrs
           {
             scope: "col",
-            class: "h-10 px-6 py-3 text-left text-xs align-middle font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
+            class: "h-11 px-4 text-left align-middle text-[10.5px] font-semibold " \
+                   "uppercase tracking-[0.06em] text-muted-foreground " \
+                   "[&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
           }
         end
       end

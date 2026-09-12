@@ -40,7 +40,7 @@ module Junction
 
                 main(data_sidebar_target: "content",
                      class: "flex-1 overflow-y-auto") do
-                  div(class: "max-w-[1112px] mx-auto") { yield }
+                  div(class: "max-w-[1160px] mx-auto") { yield }
                 end
               end
             end

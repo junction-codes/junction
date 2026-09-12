@@ -38,9 +38,12 @@ module Junction
       #   selector.
       # @param turbo_action [String] Turbo action to use for pagination links.
       # @param user_attrs [Hash] Additional HTML attributes for the component.
-      def initialize(pagy:, page_url:, per_page_url: nil,
+      # @param total [Integer, nil] Total shown beside the per-page choice, or
+      #   `nil` to skip displaying the total.
+      def initialize(pagy:, page_url:, per_page_url: nil, total: :count,
                      turbo_action: "advance", **user_attrs)
         @pagy = pagy
+        @total = total
         @page_url = page_url
         @per_page_url = per_page_url
         @turbo_action = turbo_action
@@ -51,11 +54,11 @@ module Junction
       def view_template
         return unless @pagy.pages > 1 || @per_page_url
 
-        div(class: "mt-4 flex flex-col gap-2") do
+        div(class: "flex flex-wrap items-center gap-x-4 gap-y-2", **attrs) do
           PerPageSelector(
             per_page_url: @per_page_url,
             current: @pagy.options[:limit],
-            total: @pagy.count,
+            total:,
             turbo_action:,
           ) if @per_page_url
 
@@ -66,6 +69,14 @@ module Junction
       private
 
       attr_reader :turbo_action
+
+      # Resolved when the component renders rather than when it is built, so
+      # constructing one never touches the Pagy object.
+      #
+      # @return [Integer, nil] The total.
+      def total
+        @total == :count ? @pagy.count : @total
+      end
 
       # Renders the pagination controls.
       def render_page_controls

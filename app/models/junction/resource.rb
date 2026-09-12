@@ -33,7 +33,8 @@ module Junction
       [ :entity, :title ],
       [ :reference, :system_id ],
       [ :reference, :owner_id ],
-      [ :type, :type ]
+      [ :tags, :tags ],
+      [ :updated, :updated_at ]
     ].freeze
 
     belongs_to :system, class_name: "Junction::System", optional: true
