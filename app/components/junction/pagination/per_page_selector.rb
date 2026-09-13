@@ -11,7 +11,8 @@ module Junction
         #   and returns a URL string.
         # @param current [Integer] The current per-page setting.
         # @param options [Array<Integer>] Available per-page options.
-        # @param total [Integer] The total number of results.
+        # @param total [Integer, nil] The total number of results, or `nil` to
+        #   skip displaying the total.
         # @param turbo_action [String] Turbo action to use for pagination links.
         # @param user_attrs [Hash] Additional HTML attributes for the component.
         def initialize(per_page_url:,
@@ -28,25 +29,28 @@ module Junction
         end
 
         def view_template(&)
-          div(class: "flex items-center justify-between text-sm text-gray-600 dark:text-gray-400", **attrs) do
-            div(class: "flex items-center gap-2") do
+          div(class: "flex items-center gap-4 text-[12.5px] text-text-tertiary",
+              **attrs) do
+            div(class: "flex items-center gap-1") do
               span { t(".per_page") }
 
               @options.each do |option|
                 if option == @current
-                  span(class: "px-2 py-1 rounded border border-input bg-accent font-medium") { option.to_s }
+                  span(class: "px-2 py-0.5 rounded-lg bg-accent " \
+                              "text-accent-foreground font-semibold") { option.to_s }
                 else
                   Link(
                     href: @per_page_url.call(option),
                     variant: :ghost,
-                    class: "px-2 py-1 rounded hover:bg-accent hover:text-accent-foreground",
+                    class: "h-auto px-2 py-0.5 rounded-lg text-[12.5px] " \
+                           "hover:bg-subtle",
                     data: { turbo: { action: @turbo_action }.compact }
                   ) { option.to_s }
                 end
               end
             end
 
-            span { t(".total", count: @total) }
+            span { t(".total", count: @total) } if @total
           end
         end
       end

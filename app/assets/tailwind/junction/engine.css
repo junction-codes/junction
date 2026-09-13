@@ -64,7 +64,7 @@
   --secondary: #f1f5f9;
   --secondary-foreground: #334155;
   --muted: #f1f5f9;
-  --muted-foreground: #64748b;
+  --muted-foreground: #5b6b80;
   --accent: #f3f0ff;
   --accent-foreground: #4a3796;
   --destructive: #b91c1c;
@@ -82,7 +82,7 @@
   /* Text ramp. */
   --text-strong: #1e293b;
   --text-body: #334155;
-  --text-tertiary: #64748b;
+  --text-tertiary: #5b6b80;
 
   /* Accent ramp. */
   --accent-solid: #6e56cf;

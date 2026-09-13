@@ -54,14 +54,19 @@ module Junction
     # Ordered index columns, as `[type, field]` pairs.
     #
     # `field` is both the Ransack sort key and the attribute whose
-    # `human_attribute_name` heads the column.
+    # `human_attribute_name` heads the column. Any fields in
+    # {.ransackable_attributes} are sortable.
     #
     # Types are:
     #
-    # - `:entity` - the title cell with icon and description
-    # - `:reference` - a link to an associated entity, read from the field with
+    # - `:entity`: The title cell with entity preview
+    # - `:reference`: A link to an associated entity, read from the field with
     #   `_id` removed
-    # - `:type`, `:lifecycle`, `:email`
+    # - `:tags`: The tag chips, with a count of any that did not fit
+    # - `:updated`: A relative time, with the exact one in a tooltip
+    # - `:type`: The entity's type
+    # - `:lifecycle`: A lifecycle badge
+    # - `:email`: An email address, with a `mailto:` link
     class_attribute :index_columns, default: [ [ :entity, :title ] ].freeze
 
     # Ransack predicate backing the index's free-text search.
@@ -170,7 +175,18 @@ module Junction
     #
     # @return [String] The subtitle.
     def preview_subtitle
-      description
+      [ type_name, description ].compact_blank.join(" · ")
+    end
+
+    # The name the catalog options give this entity's type.
+    #
+    # @return [String, nil] The name, humanized when the value was not declared
+    #   and `nil` when the entity has no type.
+    def type_name
+      return if type.blank?
+
+      section = Junction::CatalogOptions.section(catalog_section)
+      section&.dig(type, :name) || type.humanize
     end
 
     # Icon associated with the entity's type.

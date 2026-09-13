@@ -42,24 +42,23 @@ module Junction
     # @return [Hash] The interpolations.
     def kind_interpolations
       name = copy_model.model_name
+      singular = name.human
+      plural = name.human(count: 2)
 
       {
-        kind: name.human,
-        kind_lower: lowercase_kind(name.human),
-        kinds: name.human(count: 2),
-        kinds_lower: lowercase_kind(name.human(count: 2))
+        kind: singular,
+        kind_lower: acronym?(singular) ? singular : singular.downcase,
+        kinds: plural,
+        kinds_lower: acronym?(singular) ? plural : plural.downcase
       }
     end
 
-    # Lowercases a kind name unless it is an acronym.
+    # Whether a kind's name is an acronym and should retain its case.
     #
-    # "Component" reads as "component" mid-sentence, but "API" has to stay
-    # "API".
-    #
-    # @param name [String] The kind's name.
-    # @return [String] The name as it reads mid-sentence.
-    def lowercase_kind(name)
-      name == name.upcase ? name : name.downcase
+    # @param singular [String] The kind's name.
+    # @return [Boolean] Whether it is an acronym.
+    def acronym?(singular)
+      singular == singular.upcase
     end
   end
 end

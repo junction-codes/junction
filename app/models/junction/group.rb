@@ -29,9 +29,10 @@ module Junction
 
     self.index_columns = [
       [ :entity, :title ],
-      [ :type, :type ],
       [ :email, :email ],
-      [ :reference, :parent_id ]
+      [ :reference, :parent_id ],
+      [ :tags, :tags ],
+      [ :updated, :updated_at ]
     ].freeze
     self.form_component_name = "Junction::Components::Group::GroupForm"
 

@@ -35,8 +35,9 @@ module Junction
       [ :entity, :title ],
       [ :reference, :system_id ],
       [ :reference, :owner_id ],
-      [ :type, :type ],
-      [ :lifecycle, :lifecycle ]
+      [ :lifecycle, :lifecycle ],
+      [ :tags, :tags ],
+      [ :updated, :updated_at ]
     ].freeze
 
     store_accessor :spec, :repository_url
