@@ -30,7 +30,7 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    action_policy (0.7.6)
+    action_policy (0.7.7)
       ruby-next-core (>= 1.0)
     action_text-trix (2.1.19)
       railties
@@ -117,7 +117,7 @@ GEM
     bcrypt (3.1.22)
     bigdecimal (4.1.2)
     bindex (0.8.1)
-    bootsnap (1.25.0)
+    bootsnap (1.26.0)
       msgpack (~> 1.5)
     brakeman (8.0.6)
       racc
@@ -401,7 +401,7 @@ GEM
       lint_roller (~> 1.1)
       rubocop (~> 1.72, >= 1.72.1)
       rubocop-rspec (~> 3.5)
-    ruby-next-core (1.2.0)
+    ruby-next-core (1.2.1)
     ruby-progressbar (1.13.0)
     ruby_ui (1.6.0)
     rubyzip (2.4.1)
