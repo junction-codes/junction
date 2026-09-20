@@ -281,7 +281,8 @@ module Junction
         end
 
         def overview
-          div(class: "grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_22rem] " \
+          div(data: { controller: "overflow-title" },
+              class: "grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_22rem] " \
                      "gap-6 items-start") do
             div(class: "space-y-6 min-w-0") do
               stat_cards_grid
@@ -332,7 +333,8 @@ module Junction
         # Annotations are used by Junction and plugins rather than people, so
         # they have this tab and no overview.
         def annotations_section
-          EntityCard(title: t(".annotations"), action: annotations_edit_action) do
+          EntityCard(title: t(".annotations"), action: annotations_edit_action,
+                     data: { controller: "overflow-title" }) do
             if annotations.empty?
               p(class: "text-[12px] text-muted-foreground") { t(".no_annotations") }
             else

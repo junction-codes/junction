@@ -38,7 +38,8 @@ module Junction
         def entities_list
           return empty_list if @entities.empty?
 
-          ul(class: "divide-y divide-gray-200 dark:divide-gray-700") do
+          ul(data: { controller: "overflow-title" },
+             class: "divide-y divide-gray-200 dark:divide-gray-700") do
             @entities.each do |entity|
               li(class: "py-4") do
                 div(class: "flex items-start justify-between gap-3") do
@@ -47,15 +48,8 @@ module Junction
                       icon(entity.icon, fallback: Junction::Kind::DEFAULT_ICON,
                            class: "h-4 w-4 text-gray-500 shrink-0")
 
-                      # TODO: Use `overflow_title_controller` instead of always
-                      # showing the tooltip.
-                      Tooltip(placement: "top-end", class: "min-w-0") do |t|
-                        t.trigger(class: "min-w-0") do
-                          EntityLink(entity:, class: "block max-w-full truncate")
-                        end
-
-                        t.content { entity.title }
-                      end
+                      EntityLink(entity:,
+                                 class: "block min-w-0 max-w-full truncate")
                     end
 
                     div(class: "mt-1") do
