@@ -3,16 +3,17 @@
 require "rails_helper"
 
 RSpec.describe "Junction::Tooltip", :js, type: :system do
-  let(:trigger) { "[data-ruby-ui--tooltip-target='trigger']" }
+  let(:trigger) { "[data-ruby-ui--tooltip-target='trigger']:has([tabindex='0'])" }
   let(:mounted) { "body > [id^='tooltip']" }
 
-  let!(:component) { create(:component, title: "payments-api") }
+  # The listing's tag overflow marker: a tooltip whose trigger holds a
+  # focusable control, which is what the keyboard examples below need.
+  let(:hidden_tags) { "platform, ruby" }
 
   before do
-    sign_in_with_permissions(
-      %w[junction.codes/dashboards.all.read junction.codes/components.all.read]
-    )
-    visit root_path
+    create(:component, title: "payments-api", tags: %w[payments go platform ruby])
+    sign_in_with_permissions(%w[junction.codes/components.all.read])
+    visit components_path
   end
 
   it "renders the content inside a template" do
@@ -34,13 +35,14 @@ RSpec.describe "Junction::Tooltip", :js, type: :system do
     end
 
     it "shows the tooltip text" do
-      expect(page).to have_css(mounted, text: component.title)
+      expect(page).to have_css(mounted, text: hidden_tags)
     end
 
     # aria-describedby is not inherited, so it has to sit on the focusable
     # control itself rather than on the trigger wrapper.
     it "describes the focusable control for assistive tech" do
-      expect(page).to have_css("#{trigger} a[aria-describedby]", visible: :all)
+      expect(page).to have_css("#{trigger} [tabindex='0'][aria-describedby]",
+                               visible: :all)
     end
 
     it "does not put the description on the wrapper" do
@@ -64,7 +66,8 @@ RSpec.describe "Junction::Tooltip", :js, type: :system do
     end
 
     it "describes the focused control" do
-      expect(page).to have_css("#{trigger} a[aria-describedby]", visible: :all)
+      expect(page).to have_css("#{trigger} [tabindex='0'][aria-describedby]",
+                               visible: :all)
     end
   end
 
@@ -82,10 +85,10 @@ RSpec.describe "Junction::Tooltip", :js, type: :system do
 
     page.execute_script(<<~JS)
       const triggers = [...document.querySelectorAll(
-        "[data-ruby-ui--tooltip-target='trigger']"
+        "[data-ruby-ui--tooltip-target='trigger']:has([tabindex='0'])"
       )];
       const visible = triggers.find((t) => t.offsetParent !== null);
-      visible.querySelector("button, a").focus();
+      visible.querySelector("button, a, [tabindex='0']").focus();
     JS
   end
 
@@ -94,7 +97,7 @@ RSpec.describe "Junction::Tooltip", :js, type: :system do
       (() => {
         if (!window.Stimulus) return false;
         const triggers = [...document.querySelectorAll(
-          "[data-ruby-ui--tooltip-target='trigger']"
+          "[data-ruby-ui--tooltip-target='trigger']:has([tabindex='0'])"
         )];
         const visible = triggers.find((t) => t.offsetParent !== null);
         if (!visible) return false;

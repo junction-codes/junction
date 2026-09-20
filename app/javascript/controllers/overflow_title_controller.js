@@ -3,9 +3,11 @@ import { Controller } from "@hotwired/stimulus"
 // Connects to data-controller="overflow-title"
 //
 // Gives a value that has been cut off a way to be read in full, without adding
-// noise to the rest of the table. A `title` on everything would fire tooltips
-// visible, which is noise rather than help, so we add and remove them as needed
-// based on the viewport size.
+// noise to everything else. A `title` on every value would fire tooltips on
+// values that are perfectly readable, so they are added and removed as the
+// available width changes.
+//
+// Attach it to whatever contains the values: a table, a card, a list.
 export default class extends Controller {
   connect() {
     this.#refresh()
@@ -20,7 +22,7 @@ export default class extends Controller {
   }
 
   #refresh() {
-    for (const el of this.element.querySelectorAll("td, td *")) {
+    for (const el of this.element.querySelectorAll("*")) {
       // A value inside a tooltip already has a way to be read in full, and a
       // native title on top of it would fire a second one.
       if (el.closest("[data-ruby-ui--tooltip-target='trigger']")) continue
