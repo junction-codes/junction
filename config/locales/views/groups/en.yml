@@ -17,13 +17,5 @@ en:
           add_member_title: Add a Member
           search_label: Search users
           search_placeholder: Type to search by name or email…
-        show:
-          edit: Edit Group
-          logo_alt: Logo for %{name}
-          no_owner: No owner
-          stat_total_systems: Total Systems
-          stat_total_components: Total Components
-          members: Members
-          part_of_parent: Part of the '%{parent_title}' Group
         user_search:
           no_results: No matching users found.

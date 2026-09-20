@@ -15,15 +15,32 @@ en:
           delete_confirm_body: This will permanently remove the %{kind}.
           cancel: Cancel
           confirm_delete: Confirm Delete
-        entity_metadata:
-          title: Metadata
-          description: >-
-            What this %{kind_lower} is, in terms other things can search and
-            match on.
-          tags: Tags
-          labels: Labels
-          links: Links
-          none: None
+        entity_tags_card:
+          title: Tags & labels
+          edit: Edit
+          tags: Tags · %{count}
+          labels: Labels · %{count}
+          no_tags: No tags yet
+          no_labels: No labels yet
+          tags_note: Free-form and lowercase, for people to group things by.
+          labels_note: Exact key/value pairs, for machines and plugins.
+        entity_links_card:
+          title: Links
+          none: No links yet
+        entity_dependencies_card:
+          title: Dependencies
+          depends_on: Depends on · %{count}
+          used_by: Used by · %{count}
+          depends_on_none: Depends on nothing
+          used_by_none: Nothing depends on this %{kind_lower}
+          more:
+            one: "+ 1 more"
+            other: "+ %{count} more"
+        entity_ownership_card:
+          title: Ownership
+          members:
+            one: 1 member
+            other: "%{count} members"
         entity_tabs:
           label: Views of the %{kinds_lower}
           all: All

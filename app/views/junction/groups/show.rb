@@ -3,118 +3,53 @@
 module Junction
   module Views
     module Groups
-      # Show view for groups.
-      class Show < Views::Base
-        attr_reader :breadcrumbs
-
-        # Initialize the view.
-        #
-        # @param group [Junction::Group] Group to display.
-        # @param can_edit [Boolean] Whether the user can edit the group.
-        # @param can_destroy [Boolean] Whether the user can destroy the group.
-        # @param can_view_members [Boolean] Whether the user can view the
-        #   group's members.
-        # @param breadcrumbs [Array<Hash>] Breadcrumb items from the controller.
-        def initialize(entity:, can_edit:, can_destroy:,
-                       can_view_members: false, breadcrumbs: [])
-          @group = entity
-          @can_edit = can_edit
-          @can_destroy = can_destroy
-          @can_view_members = can_view_members
-          @breadcrumbs = breadcrumbs
-        end
-
-        def view_template
-          render Junction::Layouts::Application.new(breadcrumbs:) do
-            div(class: "px-6 py-3 space-y-8") do
-              group_header
-              group_stats
-              EntityMetadata(entity: @group)
-              group_tabs
-            end
-          end
-        end
-
+      # Detail page for a Group.
+      #
+      # Rendering lives in {Entities::Show}; this adds what a group has of its
+      # own: a contact address, the group above it, what it owns, and its
+      # members.
+      class Show < Entities::Show
         private
 
-        def group_header
-          div(class: "flex justify-between items-start") do
-            # Left side: logo, title, and description.
-            div(class: "flex items-center space-x-6") do
-              if @group.image_url.present?
-                img(src: @group.image_url, alt: t(".logo_alt", name: @group.title),
-                    class: "h-20 w-20 rounded-lg object-cover flex-shrink-0")
-              else
-                div(class: "h-20 w-20 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0") do
-                  icon(@group.icon, fallback: Junction::Kind::DEFAULT_ICON,
-                       class: "h-10 w-10 text-gray-500")
-                end
-              end
+        def related_items
+          related_item(@entity.parent, @entity.class.human_attribute_name(:parent_id))
+          email_item
+        end
 
-              div do
-                h1(class: "text-3xl font-bold text-gray-900 dark:text-white") { @group.title }
-                p(class: "mt-1 text-md text-gray-600 dark:text-gray-400 max-w-2xl") { @group.description }
+        def stat_cards
+          StatCard(title: t(".stat_total_systems"),
+                   value: @entity.systems.count, icon: "network")
+          StatCard(title: t(".stat_total_components"),
+                   value: @entity.components.count, icon: "server")
+        end
 
-                p(class: "mt-1 text-md text-gray-600 dark:text-gray-400 max-w-2xl") do
-                  Link(href: "mailto:#{@group.email}", class: "p-0 inline") { @group.email }
-                end if @group.email.present?
-              end
+        def plugin_slots
+          super + [ :group_profile_cards ]
+        end
 
-              div do
-                break unless @group.parent.present?
+        def tab_triggers(list)
+          return unless can_view_members?
 
-                if allowed_to?(:show?, @group.parent)
-                  Link(href: junction_catalog_path(@group.parent)) { t(".part_of_parent", parent_title: @group.parent.title) }
-                else
-                  Link(variant: :disabled) { t(".part_of_parent", parent_title: @group.parent.title) }
-                end
-              end
-            end
+          tab_trigger(list, "members", t(".members"), @entity.members.count)
+        end
 
-            # Right side: action buttons.
-            div(class: "flex-shrink-0") do
-              if @can_edit
-                Link(variant: :primary, href: junction_edit_catalog_path(@group)) do
-                  icon("pencil", class: "w-4 h-4 mr-2")
-                  plain t(".edit")
-                end
-              end
+        def tab_panes(tabs)
+          return unless can_view_members?
+
+          pane(tabs, "members") do
+            turbo_frame_tag "group_members",
+                            src: junction_group_members_path(@entity),
+                            loading: :lazy do
+              div(class: "p-4") { Skeleton(class: "h-20") }
             end
           end
         end
 
-        def group_stats
-          div(class: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6") do
-            render StatCard.new(title: t(".stat_total_systems"), value: @group.systems.count, icon: "network")
-            render StatCard.new(title: t(".stat_total_components"), value: @group.components.count, icon: "server")
-
-            render_plugin_ui_components(context: @group, slot: :group_profile_cards)
-          end
-        end
-
-        def group_tabs
-          Tabs do |tabs|
-            tabs.list do |list|
-              if @can_view_members
-                list.trigger(value: "members") do
-                  icon("blocks", class: "pe-2")
-                  plain t(".members")
-                end
-              end
-
-              render_plugin_tab_triggers(@group, list)
-            end
-
-            if @can_view_members
-              tabs.content(value: "members") do
-                turbo_frame_tag "group_members", src: junction_group_members_path(@group), loading: :lazy do
-                  div(class: "p-4") { Skeleton(class: "h-20") }
-                end
-              end
-            end
-
-            render_plugin_tab_content(@group, tabs)
-          end
+        # Members are users, so seeing them takes permission to list users.
+        #
+        # @return [Boolean]
+        def can_view_members?
+          @options.fetch(:can_view_members, false)
         end
       end
     end

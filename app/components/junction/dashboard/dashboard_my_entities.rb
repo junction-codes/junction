@@ -50,7 +50,7 @@ module Junction
                     div(class: "flex items-center gap-2") do
                       icon(entity.icon, fallback: Junction::Kind::DEFAULT_ICON,
                            class: "h-4 w-4 text-gray-500")
-                      render_view_link(entity, class: "ps-0")
+                      EntityLink(entity:)
                     end
 
                     div(class: "mt-1") do

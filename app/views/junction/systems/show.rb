@@ -3,126 +3,42 @@
 module Junction
   module Views
     module Systems
-      # Show view for Systems.
-      class Show < Views::Base
-        attr_reader :breadcrumbs
-
-        def initialize(entity:, can_edit:, can_destroy:, breadcrumbs: [])
-          @system = entity
-          @can_edit = can_edit
-          @can_destroy = can_destroy
-          @breadcrumbs = breadcrumbs
-        end
-
-        def view_template
-          render Junction::Layouts::Application.new(breadcrumbs:) do
-            div(class: "px-6 py-3 space-y-8") do
-              system_header
-              system_stats
-              EntityMetadata(entity: @system)
-              entities_section
-            end
-          end
-        end
+      # Detail page for a System.
+      #
+      # Rendering lives in {Entities::Show}; this adds what a system has of its
+      # own: the domain it belongs to, and a tab for each kind that makes it
+      # up.
+      class Show < Entities::Show
+        # The kinds a system is made of, in tab order.
+        PARTS = %i[apis components resources].freeze
 
         private
 
-        def system_header
-          div(class: "flex justify-between items-start") do
-            # Left side: logo, title, and description.
-            div(class: "flex items-center space-x-6") do
-              if @system.image_url.present?
-                img(src: @system.image_url, alt: t(".logo_alt", name: @system.title), class: "h-20 w-20 rounded-lg object-cover flex-shrink-0")
-              else
-                div(class: "h-20 w-20 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0") do
-                  icon(@system.icon, fallback: Junction::Kind::DEFAULT_ICON,
-                       class: "h-10 w-10 text-gray-500")
-                end
-              end
+        def related_items
+          related_item(@entity.domain, @entity.class.human_attribute_name(:domain_id))
+        end
 
-              div do
-                h1(class: "text-3xl font-bold text-gray-900 dark:text-white") { @system.title }
+        def tab_triggers(list)
+          PARTS.each do |plural|
+            tab_trigger(list, plural.to_s, part_kind(plural).model_name.human(count: 2),
+                        @entity.public_send(plural).count)
+          end
+        end
 
-                if @system.type.present?
-                  p(class: "mt-1 text-sm text-gray-500 dark:text-gray-400") do
-                    if Junction::CatalogOptions.systems.key?(@system.type)
-                      plain Junction::CatalogOptions.systems[@system.type][:name]
-                    else
-                      plain @system.type.humanize
-                    end
-                  end
-                end
-
-                p(class: "mt-1 text-md text-gray-600 dark:text-gray-400 max-w-2xl") { @system.description }
-                div(class: "mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400") do
-                  span(class: "font-semibold mr-2") { "#{Junction::System.human_attribute_name(:owner)}:" }
-
-                  if @system.owner.present?
-                    span { render_view_link(@system.owner, class: "p-0 inline") }
-                  else
-                    span { plain t(".no_owner") }
-                  end
-                end
-              end
-
-              div do
-                break unless @system.domain.present?
-
-                if allowed_to?(:show?, @system.domain)
-                  Link(href: junction_catalog_path(@system.domain)) { t(".part_of_domain", domain_title: @system.domain.title) }
-                else
-                  Link(variant: :disabled) { t(".part_of_domain", domain_title: @system.domain.title) }
-                end
-              end
-            end
-
-            # Right side: action buttons.
-            div(class: "flex-shrink-0") do
-              if @can_edit
-                Link(variant: :primary, href: junction_edit_catalog_path(@system)) do
-                  icon("pencil", class: "w-4 h-4 mr-2")
-                  plain t(".edit")
-                end
+        def tab_panes(tabs)
+          PARTS.each do |plural|
+            pane(tabs, plural.to_s) do
+              turbo_frame_tag "system_#{plural}",
+                              src: public_send(:"junction_#{plural}_system_path", @entity),
+                              loading: :lazy do
+                div(class: "p-4") { Skeleton(class: "h-20") }
               end
             end
           end
         end
 
-        def system_stats
-          div(class: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6") do
-            StatCard(title: t(".stat_total_components"), value: @system.components.count, icon: "server")
-          end
-        end
-
-        def entities_section
-          div do
-            h3(class: "text-xl font-semibold text-gray-800 dark:text-white mb-4") { t(".entities") }
-            Tabs(default: "apis") do |tabs|
-              tabs.list do |list|
-                list.trigger(value: "apis") { Junction::Api.model_name.human(count: 2) }
-                list.trigger(value: "components") { Junction::Component.model_name.human(count: 2) }
-                list.trigger(value: "resources") { Junction::Resource.model_name.human(count: 2) }
-              end
-
-              tabs.content(value: "apis") do
-                turbo_frame_tag "system_apis", src: junction_apis_system_path(@system), loading: :lazy do
-                  div(class: "p-4") { Skeleton(class: "h-20") }
-                end
-              end
-
-              tabs.content(value: "components") do
-                turbo_frame_tag "system_components", src: junction_components_system_path(@system), loading: :lazy do
-                  div(class: "p-4") { Skeleton(class: "h-20") }
-                end
-              end
-
-              tabs.content(value: "resources") do
-                turbo_frame_tag "system_resources", src: junction_resources_system_path(@system), loading: :lazy do
-                  div(class: "p-4") { Skeleton(class: "h-20") }
-                end
-              end
-            end
-          end
+        def part_kind(plural)
+          Junction::Kinds.by_scope(plural.to_s.singularize).model
         end
       end
     end

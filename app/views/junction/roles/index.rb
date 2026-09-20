@@ -66,7 +66,7 @@ module Junction
                     @roles.each do |role|
                       body.row do |row|
                         row.cell do
-                          render_view_link(role, class: "ps-0")
+                          EntityLink(entity: role)
                         end
 
                         row.cell { role.description }

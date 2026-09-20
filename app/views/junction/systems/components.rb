@@ -46,7 +46,7 @@ module Junction
               table.body do |body|
                 @components.each do |component|
                   body.row do |row|
-                    row.cell { render_view_link(component) }
+                    row.cell { EntityLink(entity: component) }
                     row.cell do
                       Badge(variant: component.lifecycle&.to_sym) { component.lifecycle&.titleize }
                     end

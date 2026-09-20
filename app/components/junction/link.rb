@@ -13,6 +13,14 @@ module Junction
         "aria-disabled:cursor-not-allowed"
       ].freeze
 
+      # Initializes the component.
+      #
+      # @param href [String] Link destination.
+      # @param variant [Symbol] Link variant to render.
+      # @param size [Symbol] Button size, `:sm` to `:xl`. Ignored by `:text`.
+      # @param icon [Boolean] Whether the button is square, holding only an
+      #   icon. Ignored by `:text`.
+      # @param user_attrs [Hash] Additional HTML attributes.
       def initialize(href: "#", variant: :link, size: :md, icon: false,
                      **user_attrs)
         @href = href
@@ -121,6 +129,16 @@ module Junction
         ]
       end
 
+      # No layout, sizing or weight of its own, so it can truncate and inherit
+      # the surrounding type; only the focus ring and the hover underline.
+      def text_classes
+        [
+          "rounded-sm underline-offset-4 hover:underline",
+          "focus-visible:outline-none focus-visible:ring-1",
+          "focus-visible:ring-ring"
+        ]
+      end
+
       def disabled_classes
         [
           BASE_CLASSES,
@@ -140,11 +158,12 @@ module Junction
         when :disabled then disabled_classes
         when :sidebar then sidebar_classes
         when :sidebar_current then sidebar_current_classes
+        when :text then text_classes
         end
       end
 
       def default_attrs
-        attrs = { type: "button", class: default_classes }
+        attrs = { class: default_classes }
         attrs[:aria] = { disabled: "true" } if @variant == :disabled
         attrs
       end

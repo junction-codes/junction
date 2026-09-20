@@ -45,7 +45,7 @@ module Junction
               table.body do |body|
                 @apis.each do |api|
                   body.row do |row|
-                    row.cell { render_view_link(api) }
+                    row.cell { EntityLink(entity: api) }
                     row.cell { api.type }
                   end
                 end

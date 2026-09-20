@@ -278,7 +278,7 @@ module Junction
           associated = entity.public_send(field.to_s.delete_suffix("_id"))
           return if associated.nil?
 
-          render_view_link(associated, class: "ps-0 max-w-full block truncate")
+          EntityLink(entity: associated, class: "max-w-full block truncate")
         end
 
         # @param entity [Junction::Entity] The row's entity.

@@ -13,6 +13,7 @@ RSpec.describe "Junction::Dependencies", :js, type: :system do
          junction.codes/resources.all.read]
     )
     visit component_path(component)
+    click_button "Dependencies"
 
     within("turbo-frame#dependencies") { click_button "Add Dependency" }
     within("dialog") do

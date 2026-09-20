@@ -66,6 +66,7 @@ module Junction
         breadcrumbs:,
         can_edit: allowed_to?(:update?, @entity),
         can_destroy: allowed_to?(:destroy?, @entity),
+        tab: params[:tab].presence,
         **show_options(@entity)
       )
     end

@@ -63,7 +63,7 @@ module Junction
               table.body do |body|
                 @dependencies.each do |dependency|
                   body.row do |row|
-                    row.cell { render_view_link(dependency) }
+                    row.cell { EntityLink(entity: dependency) }
                     row.cell { dependency.type }
 
                     dep_id = @dependency_map[dependency.id]

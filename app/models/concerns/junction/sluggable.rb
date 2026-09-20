@@ -32,6 +32,15 @@ module Junction
       validates :title, presence: true
     end
 
+    # The entity's reference string.
+    #
+    # Uses the format `kind:namespace/name`.
+    #
+    # @return [String] The reference string for the entity.
+    def entity_ref
+      "#{kind.downcase}:#{namespace}/#{name}"
+    end
+
     private
 
     # Generates the name and namespace for the entity if either is missing.

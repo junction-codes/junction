@@ -14,6 +14,7 @@ RSpec.describe "Junction::GroupMembers", :js, type: :system do
          junction.codes/users.all.read]
     )
     visit group_path(group)
+    click_button "Members"
 
     within("turbo-frame#group_members") { click_button "Add Member" }
     fill_in "Search users", with: "Grace"

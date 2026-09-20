@@ -53,7 +53,7 @@ module Junction
 
           div(class: "text-sm text-gray-600 dark:text-gray-400 flex items-center gap-1 min-w-[15em]") do
             span(class: "shrink-0") { label }
-            render_view_link(@entity.public_send(association), class: "ps-0")
+            EntityLink(entity: @entity.public_send(association))
           end
         end
       end

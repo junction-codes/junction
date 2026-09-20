@@ -46,7 +46,7 @@ module Junction
               table.body do |body|
                 @systems.each do |system|
                   body.row do |row|
-                    row.cell { render_view_link(system) }
+                    row.cell { EntityLink(entity: system) }
                   end
                 end
               end
