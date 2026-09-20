@@ -37,6 +37,23 @@ RSpec.describe "/search", type: :request do
         end
       end
 
+      context "with a result whose owner is missing" do
+        # An owner is required of every core kind, but the column is nullable
+        # and a kind registered by a plugin need not be ownable at all.
+        let!(:api) { create(:api) }
+
+        before do
+          api.update_column(:owner_id, nil)
+          sign_in_user_with_permissions(%w[junction.codes/apis.all.read])
+        end
+
+        it "still renders the row" do
+          get search_path, params: { q: api.title }
+
+          expect(response.body).to include(api.title)
+        end
+      end
+
       context "when the user only has owned.read for a model" do
         let(:user) { create_user_with_permissions(%w[junction.codes/apis.owned.read]) }
         let!(:owned_api) { create(:api, owner: user.groups.first) }

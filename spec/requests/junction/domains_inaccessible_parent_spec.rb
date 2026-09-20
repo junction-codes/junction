@@ -26,7 +26,7 @@ RSpec.describe "/domains owned child with inaccessible parent", type: :request d
   it "shows the parent title on show" do
     get domain_path(owned_child)
 
-    expect(response.body).to include("Part of the &#39;Parent Area&#39; Domain")
+    expect(response.parsed_body.at_css("main header").text).to include("Parent Area")
   end
 
   it "does not link to the inaccessible parent on show" do

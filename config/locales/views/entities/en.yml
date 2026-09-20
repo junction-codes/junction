@@ -20,12 +20,20 @@ en:
           description: >-
             Start by providing the basic details for your new %{kind_lower}.
         show:
-          edit: Edit %{kind}
-          logo_alt: Logo for %{name}
-          no_owner: No owner
+          overview: Overview
           dependencies: Dependencies
           dependents: Dependents
           graph: Graph
-          part_of_system: Part of the '%{system_title}' System
-          raw: Raw
+          annotations: Annotations
+          annotations_edit: Edit
+          no_annotations: No annotations yet
+          # Followed by a relative time, as in "Updated 2 hours ago".
+          updated: Updated
+          more_actions: More actions
+          edit: Edit %{kind}
+          open_repo: Open repo
+          stat_total_groups: Total Groups
+          stat_total_systems: Total Systems
+          stat_total_components: Total Components
+          members: Members
           no_definition: No definition available.

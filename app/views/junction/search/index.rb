@@ -31,6 +31,16 @@ module Junction
 
         private
 
+      # The owner, for kinds that have one.
+      #
+      # @param entity [Junction::Entity] The row's entity.
+      def owner_cell(entity)
+        owner = entity.try(:owner)
+        return if owner.nil?
+
+        EntityLink(entity: owner)
+      end
+
         # Renders a page header for the search results.
         def page_header
           div do
@@ -78,7 +88,7 @@ module Junction
                   body.row do |row|
                     row.cell { EntityPreview(entity:) }
                     row.cell { kind_cell(entity) }
-                    row.cell { render_view_link(entity.owner, class: "ps-0") if entity.respond_to?(:owner) }
+                    row.cell { owner_cell(entity) }
                   end
                 end
               end

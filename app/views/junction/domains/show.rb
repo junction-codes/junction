@@ -3,111 +3,28 @@
 module Junction
   module Views
     module Domains
-      class Show < Views::Base
-        attr_reader :breadcrumbs
-
-        def initialize(entity:, can_edit:, can_destroy:, breadcrumbs: [])
-          @domain = entity
-          @can_edit = can_edit
-          @can_destroy = can_destroy
-          @breadcrumbs = breadcrumbs
-        end
-
-        def view_template
-          render Junction::Layouts::Application.new(breadcrumbs:) do
-            div(class: "px-6 py-3 space-y-8") do
-              domain_header
-              domain_stats
-              EntityMetadata(entity: @domain)
-              domain_tabs
-            end
-          end
-        end
-
+      # Detail page for a Domain.
+      #
+      # Rendering lives in {Entities::Show}. This adds what a domain has of its
+      # own: the domain above it, and the systems within it.
+      class Show < Entities::Show
         private
 
-        def domain_header
-          div(class: "flex justify-between items-start") do
-            # Left side: logo, title, and description.
-            div(class: "flex items-center space-x-6") do
-              if @domain.image_url.present?
-                img(src: @domain.image_url, alt: t(".logo_alt", name: @domain.title), class: "h-20 w-20 rounded-lg object-cover flex-shrink-0")
-              else
-                div(class: "h-20 w-20 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0") do
-                  icon(@domain.icon, fallback: Junction::Kind::DEFAULT_ICON,
-                       class: "h-10 w-10 text-gray-500")
-                end
-              end
-
-              div do
-                h1(class: "text-3xl font-bold text-gray-900 dark:text-white") { @domain.title }
-                if @domain.type.present?
-                  p(class: "mt-1 text-sm text-gray-500 dark:text-gray-400") do
-                    if Junction::CatalogOptions.domains.key?(@domain.type)
-                      plain Junction::CatalogOptions.domains[@domain.type][:name]
-                    else
-                      plain @domain.type.humanize
-                    end
-                  end
-                end
-                p(class: "mt-1 text-md text-gray-600 dark:text-gray-400 max-w-2xl") { @domain.description }
-                div(class: "mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400") do
-                  span(class: "font-semibold mr-2") { "#{Junction::Domain.human_attribute_name(:owner)}:" }
-
-                  if @domain.owner.present?
-                    span do
-                      render_view_link(@domain.owner, class: "p-0 inline")
-                    end
-                  else
-                    span { plain t(".no_owner") }
-                  end
-                end
-
-                if @domain.parent.present?
-                  p(class: "mt-1 text-md text-gray-600 dark:text-gray-400 max-w-2xl") do
-                    if allowed_to?(:show?, @domain.parent)
-                      Link(href: junction_catalog_path(@domain.parent)) do
-                        t(".part_of_parent", parent_title: @domain.parent.title)
-                      end
-                    else
-                      plain t(".part_of_parent", parent_title: @domain.parent.title)
-                    end
-                  end
-                end
-              end
-            end
-
-            # Right side: action buttons.
-            div(class: "flex-shrink-0") do
-              if @can_edit
-                Link(variant: :primary, href: junction_edit_catalog_path(@domain)) do
-                  icon("pencil", class: "w-4 h-4 mr-2")
-                  plain t(".edit")
-                end
-              end
-            end
-          end
+        def related_items
+          related_item(@entity.parent, @entity.class.human_attribute_name(:parent_id))
         end
 
-        def domain_stats
-          div(class: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6") do
-            render StatCard.new(title: t(".stat_total_systems"), value: @domain.systems.count, icon: "network")
-          end
+        def tab_triggers(list)
+          tab_trigger(list, "systems", Junction::System.model_name.human(count: 2),
+                      @entity.systems.count)
         end
 
-        def domain_tabs
-          Tabs do |tabs|
-            tabs.list do |list|
-              list.trigger(value: "systems") do
-                icon("network", class: "pe-2")
-                plain Junction::Domain.human_attribute_name(:systems).pluralize
-              end
-            end
-
-            tabs.content(value: "systems") do
-              turbo_frame_tag "domain_systems", src: junction_systems_domain_path(@domain), loading: :lazy do
-                div(class: "p-4") { Skeleton(class: "h-20") }
-              end
+        def tab_panes(tabs)
+          pane(tabs, "systems") do
+            turbo_frame_tag "domain_systems",
+                            src: junction_systems_domain_path(@entity),
+                            loading: :lazy do
+              div(class: "p-4") { Skeleton(class: "h-20") }
             end
           end
         end

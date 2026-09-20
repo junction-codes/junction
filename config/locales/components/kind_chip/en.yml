@@ -1,5 +1,5 @@
 en:
   junction:
     components:
-      entity_preview:
+      kind_chip:
         logo_alt: Logo for %{name}

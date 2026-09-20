@@ -12,7 +12,6 @@ module Junction
       include Phlex::Rails::Helpers::T
       include Phlex::Rails::Helpers::TurboFrameTag
       include IconHelper
-      include ViewLinkHelper
 
       # Include engine and mounted helpers
       include Junction::Engine.routes.url_helpers
@@ -24,7 +23,6 @@ module Junction
       register_output_helper :column_chart
       register_output_helper :line_chart
       register_output_helper :pie_chart
-      register_output_helper :render_view_link
 
       register_value_helper :allowed_to?
 

@@ -19,7 +19,8 @@ RSpec.describe "Junction accessibility", :js, type: :system do
   end
 
   let(:component) do
-    create(:component, tags: %w[payments go], labels: { "tier" => "gold" },
+    create(:component, lifecycle: "production",
+                       tags: %w[payments go], labels: { "tier" => "gold" },
                        links: [ { "url" => "https://runbook.example.com",
                                   "title" => "Runbook" } ])
   end
@@ -45,7 +46,12 @@ RSpec.describe "Junction accessibility", :js, type: :system do
   end
 
   context "with the catalog listing" do
-    before { visit components_path }
+    before do
+      %w[production experimental deprecated].each do |lifecycle|
+        create(:component, lifecycle:)
+      end
+      visit components_path
+    end
 
     it "has no violations" do
       expect(page).to audit

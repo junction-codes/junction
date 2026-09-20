@@ -64,7 +64,7 @@ module Junction
               table.body do |body|
                 @members.each do |user|
                   body.row do |row|
-                    row.cell { render_view_link(user) }
+                    row.cell { EntityLink(entity: user) }
                     row.cell do
                       Link(href: "mailto:#{user.email}") { user.email }
                     end

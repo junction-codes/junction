@@ -18,7 +18,9 @@ module Junction
       end
 
       def view_template
-        Tooltip do |tooltip|
+        # The tooltip's wrapper is a block, so in a flex row it collapses and
+        # the time overflows whatever sits beside it.
+        Tooltip(class: "w-fit shrink-0") do |tooltip|
           tooltip.trigger do
             time(**attrs) { t(".ago", time: time_ago_in_words(@time)) }
           end

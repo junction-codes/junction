@@ -5,24 +5,14 @@ module Junction
     module Resources
       # Detail page for a Resource.
       #
-      # Rendering lives in {Entities::Show}; this adds the rows a resource has
-      # of its own and resolves the copy in the Resource translation scope.
+      # Rendering lives in {Entities::Show}; this adds where a resource sits and
+      # resolves the copy in the Resource translation scope.
       class Show < Entities::Show
         private
 
-        def meta_rows
-          owner_row
-          type_row
-        end
-
-        def type_row
-          meta_row(@entity.class.human_attribute_name(:type)) do
-            span { plain @entity.type }
-          end
-        end
-
-        def parent_link
-          related_link(@entity.system, :part_of_system, :system_title)
+        def related_items
+          related_item(@entity.system, @entity.class.human_attribute_name(:system_id))
+          related_item(@entity.system&.domain, @entity.class.human_attribute_name(:domain_id))
         end
       end
     end

@@ -66,8 +66,8 @@ module Junction
           value = @tabs.counts[name]
           return if value.nil?
 
-          span(class: "ml-2 text-[12.5px] tabular-nums " \
-                      "text-muted-foreground") { value.to_s }
+          whitespace
+          TabCount(value:)
         end
 
         # @param current [Boolean] Whether this is the tab being viewed.

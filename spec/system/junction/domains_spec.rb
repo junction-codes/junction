@@ -100,7 +100,7 @@ RSpec.describe "Junction::Domains", type: :system do
     it "does not show a parent line on show" do
       load_page_with_text(domain_path(root_domain), "Root Area")
 
-      expect(page).to have_no_text("Part of the")
+      expect(find("main header")).to have_no_text("Parent:")
     end
 
     it "creates a root domain without a parent" do
@@ -186,7 +186,9 @@ RSpec.describe "Junction::Domains", type: :system do
       clear_parent
       submit_domain_form
 
-      expect(page).to have_no_text("Part of the")
+      expect(page).to have_css(
+        "main header:not(:has(a[href='#{domain_path(parent_domain)}']))"
+      )
     end
 
     it "changes the parent to another domain" do

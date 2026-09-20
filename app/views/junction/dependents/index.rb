@@ -46,7 +46,7 @@ module Junction
               table.body do |body|
                 @dependents.each do |dependent|
                   body.row do |row|
-                    row.cell { render_view_link(dependent) }
+                    row.cell { EntityLink(entity: dependent) }
                     row.cell { dependent.type }
                   end
                 end

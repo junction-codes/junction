@@ -47,15 +47,11 @@ module Junction
                       icon(entity.icon, fallback: Junction::Kind::DEFAULT_ICON,
                            class: "h-4 w-4 text-gray-500 shrink-0")
 
-                      Tooltip(placement: "top-end") do |t|
-                        t.trigger do
-                          # We've already checked access to the entity, so we can
-                          # safely render the entity's link here.
-                          Link(href: junction_catalog_path(entity), class: "p-0") do
-                            span(class: "inline-block max-w-[10em] truncate") do
-                              entity.title
-                            end
-                          end
+                      # TODO: Use `overflow_title_controller` instead of always
+                      # showing the tooltip.
+                      Tooltip(placement: "top-end", class: "min-w-0") do |t|
+                        t.trigger(class: "min-w-0") do
+                          EntityLink(entity:, class: "block max-w-full truncate")
                         end
 
                         t.content { entity.title }

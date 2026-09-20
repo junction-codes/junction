@@ -5,9 +5,10 @@ module Junction
     module Entities
       # Detail page for a catalog entity.
       #
-      # The header, the stat row and the dependency tabs are the same for every
-      # kind. What differs is which meta rows sit under the description, which
-      # parent the entity is "part of", and what fills the tabs, each a hook
+      # The header, the tab strip and the overview are the same for every kind.
+      # What differs is which related entities the meta row names, what the
+      # header offers beside Edit, which tabs sit between Dependencies and
+      # Annotations, and what the overview adds below its cards, each a hook
       # that a kind view overrides.
       class Show < Views::Base
         include PluginDispatchHelper
@@ -23,24 +24,24 @@ module Junction
         # @param can_edit [Boolean] Whether the user may edit it.
         # @param can_destroy [Boolean] Whether the user may delete it.
         # @param breadcrumbs [Array<Hash>] Breadcrumb items from the controller.
+        # @param tab [String] Optional tab to start open.
         # @param options [Hash] Extra arguments from the controller's
         #   `show_options`.
         def initialize(entity:, can_edit:, can_destroy:, breadcrumbs: [],
-                       **options)
+                       tab: nil, **options)
           @entity = entity
           @can_edit = can_edit
           @can_destroy = can_destroy
           @breadcrumbs = breadcrumbs
+          @tab = tab
           @options = options
         end
 
         def view_template
           render Junction::Layouts::Application.new(breadcrumbs:) do
-            div(class: "px-6 py-3 space-y-8") do
+            div(class: "px-6 py-6 space-y-7") do
               entity_header
-              entity_stats
-              EntityMetadata(entity: @entity)
-              body
+              entity_tabs
             end
           end
         end
@@ -53,130 +54,196 @@ module Junction
         end
 
         def entity_header
-          div(class: "flex justify-between items-start") do
-            div(class: "flex items-center space-x-6") do
-              header_image
-              header_details
-              div { parent_link }
+          header(class: "flex flex-wrap items-start justify-between " \
+                        "gap-x-6 gap-y-4") do
+            div(class: "flex items-start gap-4 min-w-0") do
+              KindChip(entity: @entity, size: :lg)
+
+              div(class: "min-w-0") do
+                title_row
+                p(class: "mt-1.5 font-mono text-[12.5px] text-muted-foreground " \
+                         "break-all") { @entity.entity_ref }
+                description
+                meta
+              end
             end
 
-            div(class: "flex-shrink-0") { edit_button if @can_edit }
-          end
-        end
-
-        def header_image
-          if @entity.image_url.present?
-            img(src: @entity.image_url, alt: t(".logo_alt", name: @entity.title),
-                class: "h-20 w-20 rounded-lg object-cover flex-shrink-0")
-          else
-            div(class: "h-20 w-20 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0") do
-              icon(@entity.icon, fallback: Junction::Kind::DEFAULT_ICON,
-                   class: "h-10 w-10 text-gray-500")
+            div(class: "flex items-center gap-2 shrink-0") do
+              header_actions
+              more_menu
             end
           end
         end
 
-        def header_details
-          div do
-            h1(class: "text-3xl font-bold text-gray-900 dark:text-white") { @entity.title }
-            p(class: "mt-1 text-md text-gray-600 dark:text-gray-400 max-w-2xl") { @entity.description }
-
-            meta_rows
+        def title_row
+          div(class: "flex flex-wrap items-center gap-x-3 gap-y-1.5") do
+            h1(class: "text-[28px] leading-tight font-bold tracking-tight " \
+                      "text-foreground") { @entity.title }
+            LifecyclePill(lifecycle: @entity.lifecycle)
+            type_badge
           end
         end
 
-        # Rows of `Label: value` under the description.
+        def type_badge
+          return if @entity.type.blank?
+
+          span(class: "inline-flex items-center rounded-full bg-subtle px-2 " \
+                      "py-0.5 text-[11.5px] font-medium text-text-body") do
+            @entity.type_name
+          end
+        end
+
+        def description
+          return if summary.blank?
+
+          p(class: "mt-3 max-w-3xl text-[14px] text-text-tertiary") { summary }
+        end
+
+        # The line under the slug.
         #
-        # Overridden by kinds; the owner row is the one nearly all of them
-        # share.
-        def meta_rows
-          owner_row
+        # @return [String, nil] The text.
+        def summary
+          @entity.description
         end
 
-        # Renders the owning group, or the fact that there isn't one.
-        def owner_row
-          meta_row(@entity.class.human_attribute_name(:owner_id)) do
-            if @entity.owner.present?
-              span { render_view_link(@entity.owner, class: "p-0 inline") }
-            else
-              span { plain t(".no_owner") }
+        # The line of related entities and freshness under the description.
+        def meta
+          div(class: "mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 " \
+                     "text-[12.5px] text-text-body") do
+            owner_item if @entity.class.ownable?
+            related_items
+            updated_item
+          end
+        end
+
+        # The owner, with the owner's own chip standing in for an icon.
+        def owner_item
+          owner = @entity.owner
+
+          span(class: "inline-flex items-center gap-1.5 min-w-0") do
+            KindChip(entity: owner, size: :xs)
+            span(class: "sr-only") do
+              "#{@entity.class.human_attribute_name(:owner_id)}: "
             end
+            EntityLink(entity: owner, class: "font-medium")
           end
         end
 
-        # Renders one meta row.
-        #
-        # @param label [String] The row's label.
-        def meta_row(label, &block)
-          div(class: "mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400") do
-            span(class: "font-semibold mr-2") { "#{label}:" }
-            yield
-          end
+        # Entities this one belongs to, named after the owner.
+        def related_items
         end
 
-        # The "part of ..." line beside the header. Nothing by default.
-        def parent_link
-        end
-
-        # Renders a link to the entity this one belongs to, greyed out when the
-        # user may not open it.
+        # Renders one related entity in the meta row, or nothing if there is
+        # none.
         #
         # @param related [Junction::Entity, nil] The related entity.
-        # @param key [Symbol] Translation key for the phrasing.
-        # @param interpolation [Symbol] Name the title interpolates as.
-        def related_link(related, key, interpolation)
+        # @param label [String] Relationship label.
+        def related_item(related, label)
           return if related.nil?
 
-          label = t(".#{key}", interpolation => related.title)
-
-          if allowed_to?(:show?, related)
-            Link(href: junction_catalog_path(related)) { label }
-          else
-            Link(variant: :disabled) { label }
+          span(class: "inline-flex items-center gap-1.5 min-w-0") do
+            # The kind's icon rather than the type's, since what is being said
+            # is which kind of thing this belongs to.
+            icon(related.default_icon, fallback: Junction::Kind::DEFAULT_ICON,
+                 class: "w-[15px] h-[15px] shrink-0 text-muted-foreground")
+            span(class: "sr-only") { "#{label}: " }
+            EntityLink(entity: related)
           end
         end
 
-        def edit_button
-          Link(variant: :primary, href: junction_edit_catalog_path(@entity)) do
-            icon("pencil", class: "w-4 h-4 mr-2")
-            plain t(".edit")
+        def email_item
+          return if @entity.email.blank?
+
+          span(class: "inline-flex items-center gap-1.5 min-w-0") do
+            icon("mail", class: "w-[15px] h-[15px] shrink-0 text-muted-foreground")
+            span(class: "sr-only") { "#{@entity.class.human_attribute_name(:email)}: " }
+            Link(href: "mailto:#{@entity.email}", variant: :text) { @entity.email }
           end
         end
 
-        def entity_stats
-          div(class: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6") do
-            render_plugin_ui_components(context: @entity, slot: :overview_cards)
+        def updated_item
+          span(class: "inline-flex items-center gap-1.5") do
+            icon("clock", class: "w-[15px] h-[15px] shrink-0 text-muted-foreground")
+            span(class: "inline-flex items-baseline gap-1") do
+              plain t(".updated")
+              whitespace
+              RelativeTime(time: @entity.updated_at, format: :long)
+            end
           end
         end
 
-        # Everything below the stat row. Kinds override this.
-        def body
-          entity_tabs
+        # Actions ahead of the menu.
+        def header_actions
+        end
+
+        # The overflow menu beside the header actions.
+        def more_menu
+          return unless @can_edit
+
+          DropdownMenu(options: { placement: "bottom-end" }) do |menu|
+            menu.trigger do |trigger|
+              trigger.button(variant: :outline, size: :md, icon: true,
+                             aria_label: t(".more_actions"),
+                             class: "border-border bg-surface shadow-none " \
+                                    "text-muted-foreground") do
+                icon("ellipsis", class: "w-4 h-4")
+              end
+            end
+
+            menu.content do |content|
+              content.item(href: junction_edit_catalog_path(@entity)) do
+                icon("pencil", class: "w-4 h-4 mr-2")
+                plain t(".edit")
+              end
+            end
+          end
         end
 
         # The tab strip. Kinds add their own triggers and panes by overriding
         # {#tab_triggers} and {#tab_panes}.
         def entity_tabs
-          Tabs do |tabs|
+          Tabs(default: "overview", open: @tab, variant: :underline,
+               param: "tab") do |tabs|
             tabs.list do |list|
-              if dependable?
-                list.trigger(value: "dependencies") do
-                  icon("blocks", class: "pe-2")
-                  plain t(".dependencies")
-                end
-              end
-
+              list.trigger(value: "overview") { t(".overview") }
+              tab_trigger(list, "dependencies", t(".dependencies"), dependency_count) if dependable?
               tab_triggers(list)
+              tab_trigger(list, "annotations", t(".annotations"), annotations.size)
 
               render_plugin_tab_triggers(@entity, list)
             end
 
-            tabs.content(value: "dependencies") { dependencies_section } if dependable?
-
+            pane(tabs, "overview") { overview }
+            pane(tabs, "dependencies") { dependencies_section } if dependable?
             tab_panes(tabs)
+            pane(tabs, "annotations") { annotations_section }
 
             render_plugin_tab_content(@entity, tabs)
           end
+        end
+
+        # Renders a tab trigger with an optional count beside its label.
+        #
+        # @param list [Object] The tab list being built.
+        # @param value [String] The pane it shows.
+        # @param label [String] The tab's label.
+        # @param count [Integer] How many items are behind the tab.
+        def tab_trigger(list, value, label, count = nil)
+          list.trigger(value:) do
+            plain label
+            if count
+              whitespace
+              TabCount(value: count)
+            end
+          end
+        end
+
+        # Renders a tab pane, spaced below the strip.
+        #
+        # @param tabs [Object] The tab set being built.
+        # @param value [String] The pane.
+        def pane(tabs, value, &)
+          tabs.content(value:, class: "mt-6", &)
         end
 
         # Whether this kind may be a relation source or target.
@@ -191,6 +258,20 @@ module Junction
           Junction::Kinds.by_scope(@entity.model_name.element)&.dependable? || false
         end
 
+        # Number of dependencies and dependents the current entity has.
+        #
+        # @return [Integer] Relations in both directions.
+        def dependency_count
+          @entity.dependency_targets.count + @entity.dependent_sources.count
+        end
+
+        # Annotations attached to the current entity.
+        #
+        # @return [Array<Array(String, Object)>] Annotations, ordered by key.
+        def annotations
+          @annotations ||= @entity.annotations.to_h.sort_by(&:first)
+        end
+
         # @param list [Object] The tab list being built.
         def tab_triggers(list)
         end
@@ -199,43 +280,100 @@ module Junction
         def tab_panes(tabs)
         end
 
-        def dependencies_section
-          div do
-            h3(class: "text-xl font-semibold text-gray-800 dark:text-white mb-4") do
-              t(".dependencies")
+        def overview
+          div(class: "grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_22rem] " \
+                     "gap-6 items-start") do
+            div(class: "space-y-6 min-w-0") do
+              stat_cards_grid
+              plugin_cards
+              EntityTagsCard(entity: @entity, edit_path:)
+              EntityDependenciesCard(entity: @entity) if dependable?
             end
 
-            Tabs(default: "dependencies") do |tabs|
-              tabs.list do |list|
-                list.trigger(value: "dependencies") { t(".dependencies") }
-                list.trigger(value: "dependents") { t(".dependents") }
-                list.trigger(value: "graph") { t(".graph") }
-              end
-
-              tabs.content(value: "dependencies") do
-                turbo_frame_tag "dependencies", src: junction_dependencies_path(@entity), loading: :lazy do
-                  div(class: "p-4") { Skeleton(class: "h-20") }
-                end
-              end
-
-              tabs.content(value: "dependents") do
-                turbo_frame_tag "dependents", src: junction_dependents_path(@entity), loading: :lazy do
-                  div(class: "p-4") { Skeleton(class: "h-20") }
-                end
-              end
-
-              tabs.content(value: "graph") { dependency_graph }
+            div(class: "space-y-6 min-w-0") do
+              EntityLinksCard(entity: @entity)
+              EntityOwnershipCard(entity: @entity) if @entity.class.ownable?
             end
           end
         end
 
-        def dependency_graph
-          div do
-            div(class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden p-5") do
-              div(data_controller: "graph",
-                  data_graph_url_value: junction_dependency_graph_path(@entity)) do
-                div(data_graph_target: "container", class: "w-full h-60")
+        # Edit path for the current entity.
+        #
+        # @return [String, nil] Where to edit the entity, when the user may.
+        def edit_path
+          junction_edit_catalog_path(@entity) if @can_edit
+        end
+
+        def stat_cards_grid
+          div(class: "grid grid-cols-1 sm:grid-cols-2 gap-6 empty:hidden") do
+            stat_cards
+          end
+        end
+
+        # Counts a kind shows on its overview. None by default.
+        def stat_cards
+        end
+
+        def plugin_cards
+          plugin_slots.each do |slot|
+            render_plugin_ui_components(context: @entity, slot:)
+          end
+        end
+
+        # The slots plugins may register for this page..
+        #
+        # @return [Array<Symbol>] The slots, in render order.
+        def plugin_slots
+          [ :overview_cards ]
+        end
+
+        # Every annotation attached to the current entity.
+        #
+        # Annotations are used by Junction and plugins rather than people, so
+        # they have this tab and no overview.
+        def annotations_section
+          EntityCard(title: t(".annotations"), action: annotations_edit_action) do
+            if annotations.empty?
+              p(class: "text-[12px] text-muted-foreground") { t(".no_annotations") }
+            else
+              EntityAnnotationList(annotations:)
+            end
+          end
+        end
+
+        def annotations_edit_action
+          [ t(".annotations_edit"), edit_path ] if edit_path
+        end
+
+        def dependencies_section
+          Tabs(default: "dependencies") do |tabs|
+            tabs.list do |list|
+              list.trigger(value: "dependencies") { t(".dependencies") }
+              list.trigger(value: "dependents") { t(".dependents") }
+              list.trigger(value: "graph") { t(".graph") }
+            end
+
+            tabs.content(value: "dependencies") do
+              turbo_frame_tag "dependencies", src: junction_dependencies_path(@entity), loading: :lazy do
+                div(class: "p-4") { Skeleton(class: "h-20") }
               end
+            end
+
+            tabs.content(value: "dependents") do
+              turbo_frame_tag "dependents", src: junction_dependents_path(@entity), loading: :lazy do
+                div(class: "p-4") { Skeleton(class: "h-20") }
+              end
+            end
+
+            tabs.content(value: "graph") { dependency_graph }
+          end
+        end
+
+        def dependency_graph
+          div(class: "rounded-xl border border-border bg-surface overflow-hidden p-5") do
+            div(data_controller: "graph",
+                data_graph_url_value: junction_dependency_graph_path(@entity)) do
+              div(data_graph_target: "container", class: "w-full h-60")
             end
           end
         end
