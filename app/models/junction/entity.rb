@@ -191,9 +191,13 @@ module Junction
 
     # The repository or other source this entity is defined by, if any.
     #
+    # Only an absolute http(s) URL counts.
+    #
     # @return [String, nil] The URL.
     def source_location
-      annotations[Junction::CorePlugin::SOURCE_LOCATION].presence
+      value = annotations[Junction::CorePlugin::SOURCE_LOCATION].to_s.strip
+
+      value if value.match?(Junction::Linkable::URL_FORMAT)
     end
 
     # Icon associated with the entity's type.

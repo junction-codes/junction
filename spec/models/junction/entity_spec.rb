@@ -235,6 +235,16 @@ RSpec.describe Junction::Entity do
       expect(build(:component).source_location).to be_nil
     end
 
+    [ "javascript:alert(1)", "data:text/html,<script>alert(1)</script>",
+      "vbscript:msgbox(1)", "/admin/roles", "not a url" ].each do |value|
+      it "ignores #{value.inspect}, which is not an http(s) URL" do
+        component = build(:component,
+                          annotations: { Junction::CorePlugin::SOURCE_LOCATION => value })
+
+        expect(component.source_location).to be_nil
+      end
+    end
+
     it "is registered as a known annotation, so the form offers it" do
       keys = Junction::PluginRegistry.annotations_for(Junction::Component).keys
 
@@ -246,6 +256,14 @@ RSpec.describe Junction::Entity do
     it "are not stored" do
       component = create(:component)
       component.other_annotations = [ { key: "team/owner", value: "" } ]
+      component.save!
+
+      expect(component.reload[:annotations]).to eq({})
+    end
+
+    it "are not stored when set outside the form" do
+      component = create(:component)
+      component.annotations = { "team/owner" => "  " }
       component.save!
 
       expect(component.reload[:annotations]).to eq({})

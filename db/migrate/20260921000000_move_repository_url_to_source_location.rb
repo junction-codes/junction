@@ -21,15 +21,11 @@ class MoveRepositoryUrlToSourceLocation < ActiveRecord::Migration[8.1]
             "WHERE spec ? 'repository_url'")
   end
 
+  # Not reversible: once this has run, a source-location annotation may have
+  # been set by a seed, an import or a person, and nothing records which values
+  # were once `repository_url`. Reversing would move all of them into a field
+  # they may not belong in.
   def down
-    execute(<<~SQL.squish)
-      UPDATE junction_entities
-      SET spec = spec || jsonb_build_object(
-            'repository_url', annotations ->> '#{KEY}'
-          ),
-          annotations = annotations - '#{KEY}'
-      WHERE annotations ? '#{KEY}'
-        AND kind = 'Component'
-    SQL
+    raise ActiveRecord::IrreversibleMigration
   end
 end
