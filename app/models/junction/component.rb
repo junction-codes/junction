@@ -23,7 +23,6 @@ module Junction
       [ :reference, :system_id, { icon: "users-round",
                                   options: :available_systems, value: :system,
                                   help_text: :system_help } ],
-      [ :text, :repository_url ],
       [ :text_area, :description, { required: true,
                                     help_text: :description_help } ],
       [ :tags, :tags, { help_text: :tags_help } ],
@@ -39,8 +38,6 @@ module Junction
       [ :tags, :tags ],
       [ :updated, :updated_at ]
     ].freeze
-
-    store_accessor :spec, :repository_url
 
     attribute :lifecycle, :string, default: "experimental"
 

@@ -23,3 +23,4 @@
     interface.
   annotations:
     github.com/project-slug: junction-codes/junction
+    junction.codes/source-location: https://github.com/junction-codes/junction

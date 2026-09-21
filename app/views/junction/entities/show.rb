@@ -174,6 +174,20 @@ module Junction
 
         # Actions ahead of the menu.
         def header_actions
+          repository_link
+        end
+
+        # Link to the entity's source code, if set.
+        def repository_link
+          return if @entity.source_location.blank?
+
+          Link(href: @entity.source_location, variant: :outline,
+               target: "_blank", rel: "noopener noreferrer",
+               class: "border-border bg-surface shadow-none text-[13.5px] " \
+                      "text-text-strong gap-2") do
+            icon("external-link", class: "w-4 h-4")
+            plain t(".open_repo")
+          end
         end
 
         # The overflow menu beside the header actions.

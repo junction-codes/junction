@@ -222,4 +222,43 @@ RSpec.describe Junction::Entity do
       expect(Junction::Api.policy_class).to eq(Junction::EntityPolicy)
     end
   end
+
+  describe "#source_location" do
+    it "reads the annotation every kind shares" do
+      api = build(:api, annotations: { Junction::CorePlugin::SOURCE_LOCATION =>
+                                       "https://git.example.com/billing" })
+
+      expect(api.source_location).to eq("https://git.example.com/billing")
+    end
+
+    it "is nil when the entity does not say" do
+      expect(build(:component).source_location).to be_nil
+    end
+
+    it "is registered as a known annotation, so the form offers it" do
+      keys = Junction::PluginRegistry.annotations_for(Junction::Component).keys
+
+      expect(keys).to include(Junction::CorePlugin::SOURCE_LOCATION)
+    end
+  end
+
+  describe "blank annotations" do
+    it "are not stored" do
+      component = create(:component)
+      component.other_annotations = [ { key: "team/owner", value: "" } ]
+      component.save!
+
+      expect(component.reload[:annotations]).to eq({})
+    end
+
+    it "drop a known annotation that has been emptied" do
+      component = create(:component,
+                         annotations: { Junction::CorePlugin::SOURCE_LOCATION => "https://x.test" })
+      component.annotations = { Junction::CorePlugin::SOURCE_LOCATION => "" }
+      component.other_annotations = []
+      component.save!
+
+      expect(component.reload[:annotations]).to eq({})
+    end
+  end
 end

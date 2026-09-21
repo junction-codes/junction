@@ -14,8 +14,7 @@ RSpec.describe "/components", type: :request do
       lifecycle: "experimental",
       type: "api",
       image_url: "https://example.com/image.png",
-      owner_id: junction_groups(:group_one).id,
-      repository_url: "https://example.com/example/component.git"
+      owner_id: junction_groups(:group_one).id
     }
   }
 
@@ -23,8 +22,7 @@ RSpec.describe "/components", type: :request do
     {
       lifecycle: "invalid_lifecycle",
       type: "invalid_type",
-      image_url: "gopher://example.com/image.png",
-      repository_url: "ftp://example.com/example/component.git"
+      image_url: "gopher://example.com/image.png"
     }
   }
 

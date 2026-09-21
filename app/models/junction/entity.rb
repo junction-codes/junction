@@ -189,6 +189,13 @@ module Junction
       section&.dig(type, :name) || type.humanize
     end
 
+    # The repository or other source this entity is defined by, if any.
+    #
+    # @return [String, nil] The URL.
+    def source_location
+      annotations[Junction::CorePlugin::SOURCE_LOCATION].presence
+    end
+
     # Icon associated with the entity's type.
     #
     # @return [String] The icon name.

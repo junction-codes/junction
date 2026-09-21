@@ -43,7 +43,7 @@ module Junction
     def create_params
       sanitize_owner_id(sanitize_annotations(params.expect(component: [
         :description, :image_url, :lifecycle, :name,
-        :namespace, :owner_id, :repository_url, :system_id, :title, :type,
+        :namespace, :owner_id, :system_id, :title, :type,
         *annotation_param_entries, *metadata_param_entries
       ])))
     end

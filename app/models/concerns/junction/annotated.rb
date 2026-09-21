@@ -90,7 +90,9 @@ module Junction
       known_keys = self.class.known_annotation_keys
       known = (self[:annotations] || {}).stringify_keys.slice(*known_keys)
       other = build_other_annotations_hash(known_keys)
-      self[:annotations] = known.merge(other)
+
+      # Only include annotations that have non-empty values.
+      self[:annotations] = known.merge(other).reject { |_, value| value.to_s.strip.empty? }
     end
 
     # Builds a hash of other annotations, excluding known annotation keys.

@@ -10,9 +10,12 @@ RSpec.describe "The entity page", type: :request do
     create(:component, title: "Payments API", namespace: "acme",
                        name: "payments-api", owner: group, system:,
                        lifecycle: "production",
-                       repository_url: "https://git.example.com/payments-api",
-                       annotations: { "b.example/key" => "two",
-                                      "a.example/key" => "one" })
+                       annotations: {
+                         "b.example/key" => "two",
+                         "a.example/key" => "one",
+                         Junction::CorePlugin::SOURCE_LOCATION =>
+                           "https://git.example.com/payments-api"
+                       })
   end
   let(:permissions) do
     %w[junction.codes/components.all.read junction.codes/components.all.write
@@ -60,7 +63,7 @@ RSpec.describe "The entity page", type: :request do
       expect(page_header.at_css("a[href='#{domain_path(domain)}']").text).to eq("Commerce")
     end
 
-    it "opens the repository in a new tab" do
+    it "links out to wherever the entity's source lives" do
       link = page_header.at_css("a[href='https://git.example.com/payments-api']")
 
       expect(link["target"]).to eq("_blank")
@@ -180,7 +183,7 @@ RSpec.describe "The entity page", type: :request do
     it "counts annotations" do
       get component_path(component)
 
-      expect(trigger("annotations").text).to include("2")
+      expect(trigger("annotations").text).to include("3")
     end
 
     it "offers to edit annotations from their tab" do
@@ -197,7 +200,8 @@ RSpec.describe "The entity page", type: :request do
 
     it "lists annotations by key" do
       get component_path(component)
-      expect(annotations_pane.css("dt").map(&:text)).to eq(%w[a.example/key b.example/key])
+      expect(annotations_pane.css("dt").map(&:text))
+        .to eq([ "a.example/key", "b.example/key", Junction::CorePlugin::SOURCE_LOCATION ])
     end
   end
 
