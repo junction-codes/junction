@@ -5,6 +5,9 @@ module Junction
   class CorePlugin < ApplicationPlugin
     DOMAIN = "junction.codes"
 
+    # Where an entity says its source lives.
+    SOURCE_LOCATION = "#{DOMAIN}/source-location"
+
     domain DOMAIN
     description "Junction Core plugin"
     icon "train-track"
@@ -96,5 +99,14 @@ module Junction
       icon: "tags",
       access: { action: :index?, record: :annotations }
     )
+
+    # Registered against the base kind, so every kind inherits it.
+    for_entity "Junction::Entity" do |entity|
+      entity.annotation(
+        key: SOURCE_LOCATION,
+        title: "Source location",
+        placeholder: "https://github.com/acme/payments-api"
+      )
+    end
   end
 end

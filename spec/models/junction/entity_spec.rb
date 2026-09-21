@@ -222,4 +222,61 @@ RSpec.describe Junction::Entity do
       expect(Junction::Api.policy_class).to eq(Junction::EntityPolicy)
     end
   end
+
+  describe "#source_location" do
+    it "reads the annotation every kind shares" do
+      api = build(:api, annotations: { Junction::CorePlugin::SOURCE_LOCATION =>
+                                       "https://git.example.com/billing" })
+
+      expect(api.source_location).to eq("https://git.example.com/billing")
+    end
+
+    it "is nil when the entity does not say" do
+      expect(build(:component).source_location).to be_nil
+    end
+
+    [ "javascript:alert(1)", "data:text/html,<script>alert(1)</script>",
+      "vbscript:msgbox(1)", "/admin/roles", "not a url" ].each do |value|
+      it "ignores #{value.inspect}, which is not an http(s) URL" do
+        component = build(:component,
+                          annotations: { Junction::CorePlugin::SOURCE_LOCATION => value })
+
+        expect(component.source_location).to be_nil
+      end
+    end
+
+    it "is registered as a known annotation, so the form offers it" do
+      keys = Junction::PluginRegistry.annotations_for(Junction::Component).keys
+
+      expect(keys).to include(Junction::CorePlugin::SOURCE_LOCATION)
+    end
+  end
+
+  describe "blank annotations" do
+    it "are not stored" do
+      component = create(:component)
+      component.other_annotations = [ { key: "team/owner", value: "" } ]
+      component.save!
+
+      expect(component.reload[:annotations]).to eq({})
+    end
+
+    it "are not stored when set outside the form" do
+      component = create(:component)
+      component.annotations = { "team/owner" => "  " }
+      component.save!
+
+      expect(component.reload[:annotations]).to eq({})
+    end
+
+    it "drop a known annotation that has been emptied" do
+      component = create(:component,
+                         annotations: { Junction::CorePlugin::SOURCE_LOCATION => "https://x.test" })
+      component.annotations = { Junction::CorePlugin::SOURCE_LOCATION => "" }
+      component.other_annotations = []
+      component.save!
+
+      expect(component.reload[:annotations]).to eq({})
+    end
+  end
 end

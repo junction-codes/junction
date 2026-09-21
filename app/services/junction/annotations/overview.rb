@@ -122,7 +122,10 @@ module Junction
 
         known_total = known_rows.sum { |row| row[:count] }
         other_total = other_rows.sum { |row| row[:count] }
-        top_keys = (known_rows + other_rows).sort_by { |row| [ -row[:count], row[:key] ] }.first(5)
+        top_keys = (known_rows + other_rows)
+                   .reject { |row| row[:count].zero? }
+                   .sort_by { |row| [ -row[:count], row[:key] ] }
+                   .first(5)
 
         {
           id: entity_type.id,

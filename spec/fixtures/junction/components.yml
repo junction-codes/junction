@@ -10,8 +10,6 @@ component_one:
   type: api
   image_url: https://example.com/image.png
   owner: group_two
-  spec:
-    repository_url: MyString
 
 component_two:
   kind: Component

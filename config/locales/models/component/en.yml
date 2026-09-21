@@ -2,7 +2,6 @@ en:
   activerecord:
     attributes:
       junction/component:
-        repository_url: "Repository URL"
         title: "Component Name"
     models:
       junction/component:
