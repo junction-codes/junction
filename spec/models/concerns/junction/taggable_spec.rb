@@ -206,4 +206,57 @@ RSpec.describe Junction::Taggable do
         .to eq([ %w[portal], { "tier" => "gold" } ])
     end
   end
+
+  describe "blank label values" do
+    it "are not stored" do
+      component = build(:component, labels: { "team" => "  ", "tier" => "gold" })
+
+      expect(component.labels).to eq("tier" => "gold")
+    end
+
+    it "clear a label that had one" do
+      component = create(:component, labels: { "team" => "atlas" })
+      component.labels = { "team" => "" }
+      component.save!
+
+      expect(component.reload.labels).to eq({})
+    end
+  end
+
+  describe ".labeled_with" do
+    it "finds entities whose label holds the value" do
+      match = create(:component, labels: { "team" => "atlas" })
+      create(:component, labels: { "team" => "nova" })
+
+      expect(Junction::Component.labeled_with("team", "atlas")).to eq([ match ])
+    end
+
+    it "is the table every kind shares, which the options service assumes" do
+      expect(Junction::Entity.table_name)
+        .to eq(Junction::MetadataOptions::TABLE)
+    end
+  end
+
+  describe ".without_label" do
+    # Fixtures carry components of their own, so these assert membership
+    # rather than the whole result.
+    it "finds entities carrying no label for the key" do
+      match = create(:component, labels: { "tier" => "gold" })
+
+      expect(Junction::Component.without_label("team")).to include(match)
+    end
+
+    it "does not match one whose label is set" do
+      other = create(:component, labels: { "team" => "atlas" })
+
+      expect(Junction::Component.without_label("team")).not_to include(other)
+    end
+
+    it "does not match one whose label was blanked, since that is not stored" do
+      other = create(:component, labels: { "team" => "atlas" })
+      other.update!(labels: { "team" => "" })
+
+      expect(Junction::Component.without_label("team")).to include(other)
+    end
+  end
 end

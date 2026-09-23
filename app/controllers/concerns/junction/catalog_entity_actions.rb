@@ -37,7 +37,12 @@ module Junction
       tabs = catalog_tabs
       tab = tabs.resolve(params[:tab].to_s)
 
-      @q = tabs.scope(tab).ransack(params[:q])
+      metadata = Junction::MetadataFilters.new(
+        tags: params[:tags], labels: params[:labels],
+        unset: params[:labels_unset]
+      )
+
+      @q = metadata.apply(tabs.scope(tab)).ransack(params[:q])
       @q.sorts = tabs.sorts(tab) || default_sort if @q.sorts.empty?
       results = @q.result
       results = results.includes(*index_includes) if index_includes.any?
@@ -51,6 +56,8 @@ module Junction
         tab:,
         tabs:,
         added_filters: params[:filters].to_s.split(",").map(&:strip).compact_blank,
+        metadata_filters: metadata,
+        metadata_options: metadata_options(tabs.scope(tab)),
         breadcrumbs:,
         can_create: allowed_to?(:create?, entity_class),
         **index_options
@@ -193,6 +200,17 @@ module Junction
     # @return [String] The sort expression.
     def default_sort
       "title asc"
+    end
+
+    # Tags and labels the kind actually carries.
+    #
+    # Read from the tab's scope rather than the whole kind, so the menu offers
+    # values that can return something.
+    #
+    # @param scope [ActiveRecord::Relation] The scope being listed.
+    # @return [Junction::MetadataOptions] The options.
+    def metadata_options(scope)
+      Junction::MetadataOptions.new(scope)
     end
 
     # Extra arguments for the index view.
