@@ -41,6 +41,11 @@ module Junction
       [ :updated, :updated_at ]
     ].freeze
 
+    self.detail_meta = [
+      [ :relation, :system ],
+      [ :relation, :domain, { through: :system } ]
+    ].freeze
+
     store_accessor :spec, :definition
 
     attribute :lifecycle, :string, default: "experimental"

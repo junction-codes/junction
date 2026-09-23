@@ -50,17 +50,6 @@ module Junction
       )
     end
 
-    # GET /domains/:id
-    def show
-      authorize! @entity
-      render Views::Domains::Show.new(
-        entity: @entity,
-        breadcrumbs:,
-        can_edit: allowed_to?(:update?, @entity),
-        can_destroy: allowed_to?(:destroy?, @entity)
-      )
-    end
-
     private
 
     def entity_class

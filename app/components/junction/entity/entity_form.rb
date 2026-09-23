@@ -10,9 +10,9 @@ module Junction
       # the fields (the card, annotations editor, actions, etc.) is the same
       # for every kind.
       #
-      # Kinds subclass this so their labels and help text resolve in their own
-      # translation scope. A kind needing an extra section overrides
-      # {#extra_sections}.
+      # A kind needing an extra section subclasses and overrides
+      # {#extra_sections}. A kind that requires its own form names the component
+      # through `form_component_name`.
       class EntityForm < Base
         include Phlex::Rails::Helpers::FormWith
         include Phlex::Rails::Helpers::OptionsForSelect

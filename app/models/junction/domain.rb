@@ -38,6 +38,10 @@ module Junction
       [ :updated, :updated_at ]
     ].freeze
 
+    self.detail_meta = [ [ :relation, :parent ] ].freeze
+
+    self.detail_tabs = %i[systems].freeze
+
     has_many :systems, class_name: "Junction::System"
 
     validates :description, presence: true

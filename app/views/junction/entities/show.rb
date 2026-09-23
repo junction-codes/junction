@@ -129,8 +129,39 @@ module Junction
           end
         end
 
-        # Entities this one belongs to, named after the owner.
+        # Related items in the meta row as defined by the kind's model.
+        #
+        # Built from the kind's `detail_meta`. Kinds can add additional items
+        # that don't fit the same shape as the standard ones by overriding.
         def related_items
+          @entity.class.detail_meta.each do |type, field, options|
+            case type
+            when :relation
+              related_item(relation_for(field, options || {}), relation_label(field))
+            when :email
+              email_item
+            end
+          end
+        end
+
+        # Resolves a related entity for a `:relation` entry in the meta row.
+        #
+        # @param field [Symbol] The association to follow.
+        # @param options [Hash] `through:` names an association to follow
+        #   first, as a component reaches its domain through its system.
+        # @return [Junction::Entity, nil] The related entity, if there is one.
+        def relation_for(field, options)
+          source = options[:through] ? @entity.public_send(options[:through]) : @entity
+
+          source&.public_send(field)
+        end
+
+        # Label for a relation.
+        #
+        # @param field [Symbol] The association.
+        # @return [String] The label.
+        def relation_label(field)
+          @entity.class.human_attribute_name(:"#{field}_id")
         end
 
         # Renders one related entity in the meta row, or nothing if there is
@@ -286,12 +317,43 @@ module Junction
           @annotations ||= @entity.annotations.to_h.sort_by(&:first)
         end
 
+        # A tab per kind this one is made of.
+        #
+        # Built from the kind's `detail_tabs`. Kinds can add additional tabs by
+        # overriding.
+        #
         # @param list [Object] The tab list being built.
         def tab_triggers(list)
+          @entity.class.detail_tabs.each do |plural|
+            tab_trigger(list, plural.to_s,
+                        part_model(plural).model_name.human(count: 2),
+                        @entity.public_send(plural).count)
+          end
         end
 
         # @param tabs [Object] The tab set being built.
         def tab_panes(tabs)
+          @entity.class.detail_tabs.each do |plural|
+            pane(tabs, plural.to_s) { part_frame(plural) }
+          end
+        end
+
+        # One lazily loaded list of the entities that make this one up.
+        #
+        # @param plural [Symbol] The kind's plural scope.
+        def part_frame(plural)
+          scope = @entity.model_name.element
+
+          turbo_frame_tag "#{scope}_#{plural}", loading: :lazy,
+                          src: public_send(:"junction_#{plural}_#{scope}_path", @entity) do
+            div(class: "p-4") { Skeleton(class: "h-20") }
+          end
+        end
+
+        # @param plural [Symbol] The kind's plural scope.
+        # @return [Class] The model behind that kind.
+        def part_model(plural)
+          Junction::Kinds.by_scope(plural.to_s.singularize).model
         end
 
         def overview

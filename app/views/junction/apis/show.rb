@@ -5,21 +5,21 @@ module Junction
     module Apis
       # Detail page for an API.
       #
-      # Rendering lives in {Entities::Show}. This adds where an API sits and its
-      # definition tab, and resolves the copy in the API translation scope.
+      # Rendering lives in {Entities::Show}. This adds the API definition tab.
       class Show < Entities::Show
         private
 
-        def related_items
-          related_item(@entity.system, @entity.class.human_attribute_name(:system_id))
-          related_item(@entity.system&.domain, @entity.class.human_attribute_name(:domain_id))
-        end
-
+        # The spec itself, which is a pane of its own rather than a list of
+        # other entities, so it is not a `detail_tabs` entry.
         def tab_triggers(list)
+          super
+
           tab_trigger(list, "definition", @entity.class.human_attribute_name(:definition))
         end
 
         def tab_panes(tabs)
+          super
+
           pane(tabs, "definition") { definition_section }
         end
 
