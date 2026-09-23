@@ -5,6 +5,8 @@ module Junction
     self.default_icon = "user-round"
 
     self.index_columns = [ [ :entity, :title ], [ :email, :email ] ].freeze
+
+    self.detail_meta = [ [ :email, :email ] ].freeze
     self.search_attribute = :title_or_email_cont
     self.form_component_name = "Junction::Components::Users::UserForm"
 

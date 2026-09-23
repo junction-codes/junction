@@ -34,6 +34,8 @@ module Junction
       [ :tags, :tags ],
       [ :updated, :updated_at ]
     ].freeze
+
+    self.detail_meta = [ [ :relation, :parent ], [ :email, :email ] ].freeze
     self.form_component_name = "Junction::Components::Group::GroupForm"
 
     attribute :type, :string, default: "team"

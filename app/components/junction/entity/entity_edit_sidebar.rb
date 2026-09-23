@@ -5,9 +5,6 @@ module Junction
     module Entity
       # Renders the sidebar beside the edit form with read-only metadata and the
       # danger zone.
-      #
-      # Identical for every kind. Kinds subclass this so the delete copy names
-      # the right thing in their own translation scope.
       class EntityEditSidebar < Base
         include Junction::EntityCopy
 

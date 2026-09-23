@@ -69,6 +69,26 @@ module Junction
     # - `:email`: An email address, with a `mailto:` link
     class_attribute :index_columns, default: [ [ :entity, :title ] ].freeze
 
+    # Ordered meta row items for the entity page, as `[type, field]` pairs.
+    #
+    # The owner leads the row for every ownable kind and is not listed here.
+    #
+    # Types are:
+    #
+    # - `:relation`: A related entity, named by its own kind's icon. `field` is
+    #   the association, and its `_id` form names the item for screen readers,
+    #   so `:system` reads "System". Pass `through:` for a relation reached
+    #   through another, as a component reaches its domain through its system.
+    # - `:email`: An email address, linked with `mailto:`.
+    class_attribute :detail_meta, default: [].freeze
+
+    # Kinds this one is made of, as plural scopes, each shown as a tab on the
+    # entity page listing them.
+    #
+    # The kind must have a `junction_<plural>_<kind>_path` route, which is what
+    # the catalog draws for a member's children.
+    class_attribute :detail_tabs, default: [].freeze
+
     # Ransack predicate backing the index's free-text search.
     class_attribute :search_attribute, default: :title_or_description_cont
 

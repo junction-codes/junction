@@ -34,6 +34,10 @@ module Junction
       [ :updated, :updated_at ]
     ].freeze
 
+    self.detail_meta = [ [ :relation, :domain ] ].freeze
+
+    self.detail_tabs = %i[apis components resources].freeze
+
     belongs_to :domain, class_name: "Junction::Domain"
 
     has_many :apis, class_name: "Junction::Api"

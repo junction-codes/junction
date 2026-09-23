@@ -11,11 +11,6 @@ module Junction
       class Show < Entities::Show
         private
 
-        def related_items
-          related_item(@entity.parent, @entity.class.human_attribute_name(:parent_id))
-          email_item
-        end
-
         def stat_cards
           StatCard(title: t(".stat_total_systems"),
                    value: @entity.systems.count, icon: "network")
@@ -27,13 +22,17 @@ module Junction
           super + [ :group_profile_cards ]
         end
 
+        # Members are users rather than a kind the group is made of, and the
+        # route is shaped differently, so this can't be a `detail_tabs` entry.
         def tab_triggers(list)
+          super
           return unless can_view_members?
 
           tab_trigger(list, "members", t(".members"), @entity.members.count)
         end
 
         def tab_panes(tabs)
+          super
           return unless can_view_members?
 
           pane(tabs, "members") do

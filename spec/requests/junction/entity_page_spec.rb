@@ -222,6 +222,43 @@ RSpec.describe "The entity page", type: :request do
     end
   end
 
+  # The page is derived from the kind's `detail_meta` and `detail_tabs`, so a
+  # kind with no view of its own still gets both.
+  describe "a resource, which has no view of its own" do
+    let(:permissions) do
+      %w[junction.codes/resources.all.read junction.codes/systems.all.read
+         junction.codes/domains.all.read]
+    end
+
+    before { get resource_path(create(:resource, system:)) }
+
+    it "names the system it sits in" do
+      expect(page_header.at_css("a[href='#{system_path(system)}']").text).to eq("Payments")
+    end
+
+    it "names the domain it reaches through that system" do
+      expect(page_header.at_css("a[href='#{domain_path(domain)}']").text).to eq("Commerce")
+    end
+  end
+
+  describe "a domain" do
+    let(:permissions) { %w[junction.codes/domains.all.read] }
+
+    before do
+      create_list(:system, 2, domain:)
+      get domain_path(domain, tab: "systems")
+    end
+
+    it "counts its systems on their tab" do
+      expect(trigger("systems").text).to include("2")
+    end
+
+    it "opens the tab named in the URL" do
+      expect(response.parsed_body.at_css("[data-controller='ruby-ui--tabs']")["data-ruby-ui--tabs-active-value"])
+        .to eq("systems")
+    end
+  end
+
   describe "a group" do
     let(:permissions) { %w[junction.codes/groups.all.read] }
 

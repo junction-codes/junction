@@ -37,6 +37,11 @@ module Junction
       [ :updated, :updated_at ]
     ].freeze
 
+    self.detail_meta = [
+      [ :relation, :system ],
+      [ :relation, :domain, { through: :system } ]
+    ].freeze
+
     belongs_to :system, class_name: "Junction::System", optional: true
 
     validates :description, presence: true

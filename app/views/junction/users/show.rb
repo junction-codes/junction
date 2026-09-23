@@ -5,9 +5,9 @@ module Junction
     module Users
       # Detail page for a User.
       #
-      # Rendering lives in {Entities::Show}; this adds what a person has of
-      # their own: pronouns in place of a description, an email address, and
-      # counts of what they belong to.
+      # Rendering lives in {Entities::Show}. This adds what a person has of
+      # their own: pronouns in place of a description, and counts of what they
+      # belong to.
       class Show < Entities::Show
         private
 
@@ -15,10 +15,6 @@ module Junction
         # do in previews.
         def summary
           @entity.pronouns
-        end
-
-        def related_items
-          email_item
         end
 
         def stat_cards
