@@ -9,13 +9,9 @@ module Junction
     # The max number of items displayed in the menu.
     LIMIT = 50
 
-    # Every kind lives in one table, so these are literals rather than
-    # interpolated table names. Nothing here is built from input, and there is
-    # no interpolation for a reader to have to rule out. `Junction::Entity`
-    # naming another table is a spec failure.
-    TABLE = "junction_entities"
-    TAGS_FROM = "#{TABLE}, unnest(tags) AS tag".freeze
-    LABELS_FROM = "#{TABLE}, jsonb_each_text(labels) AS pair(key, value)".freeze
+    # Expanding a row's tags or labels into one row each.
+    TAGS_JOIN = "CROSS JOIN LATERAL unnest(tags) AS tag"
+    LABELS_JOIN = "CROSS JOIN LATERAL jsonb_each_text(labels) AS pair(key, value)"
 
     # Initializes the metadata options for a given scope.
     #
@@ -29,7 +25,7 @@ module Junction
     # @return [Array<String>] The tags.
     def tags
       @tags ||= @scope.reorder(nil)
-                      .from(TAGS_FROM)
+                      .joins(TAGS_JOIN)
                       .group("tag").order(Arel.sql("COUNT(*) DESC, tag"))
                       .limit(LIMIT).pluck(Arel.sql("tag"))
     end
@@ -70,7 +66,7 @@ module Junction
     # @return [Hash<String, Array<String>>] Values by key.
     def label_pairs
       @label_pairs ||= @scope.reorder(nil)
-                             .from(LABELS_FROM)
+                             .joins(LABELS_JOIN)
                              .group("pair.key", "pair.value")
                              .order(Arel.sql("COUNT(*) DESC, pair.key, pair.value"))
                              .limit(LIMIT)

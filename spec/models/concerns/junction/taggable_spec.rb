@@ -230,11 +230,6 @@ RSpec.describe Junction::Taggable do
 
       expect(Junction::Component.labeled_with("team", "atlas")).to eq([ match ])
     end
-
-    it "is the table every kind shares, which the options service assumes" do
-      expect(Junction::Entity.table_name)
-        .to eq(Junction::MetadataOptions::TABLE)
-    end
   end
 
   describe ".without_label" do
