@@ -5,8 +5,10 @@ en:
         # Copy shared by every catalog kind. See Junction::EntityCopy for the
         # `%{kind}` interpolations.
         edit:
-          title: Edit %{kind}
-          description: Update the details for the '%{title}' %{kind_lower}.
+          title: Edit %{title}
+          description: >-
+            The same form backs create and edit: Junction stores the record
+            itself, so there is no file being reconciled behind it.
         index:
           new: New %{kind}
           description: >-
@@ -16,9 +18,19 @@ en:
             other: Showing %{from}–%{to} of %{count} %{kinds_lower}
           showing_none: Nothing to show yet
         new:
-          title: Create a New %{kind}
+          title: New %{kind}
           description: >-
-            Start by providing the basic details for your new %{kind_lower}.
+            Junction holds the catalog itself: a %{kind_lower} is created and
+            edited here, not reconciled from somewhere else.
+          source: Source
+          soon: soon
+          source_manual: Enter it manually
+          source_manual_detail: >-
+            Type the details in. Everything, including annotations.
+          source_scan: Scan a repository
+          source_scan_detail: Read junction.yaml from a repo and keep it in sync.
+          source_import: Import YAML
+          source_import_detail: Paste or upload a catalog file.
         show:
           overview: Overview
           dependencies: Dependencies

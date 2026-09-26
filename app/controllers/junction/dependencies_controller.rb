@@ -13,7 +13,7 @@ module Junction
     def index
       authorize! @source, to: :show?
 
-      can_edit = allowed_to?(:update?, @source)
+      can_edit = allowed_to?(:manage?, @source)
       entities, sort_query = dependencies_query
 
       render Views::Dependencies::Index.new(
@@ -48,9 +48,11 @@ module Junction
 
     # POST /[apis|components|resources]/:namespace/:name/dependencies
     def create
-      authorize! @source, to: :update?
+      authorize! @source, to: :manage?
 
-      @dependency = @source.dependencies.build(target_id: decode_entity(dependency_params[:target]))
+      @dependency = @source.dependencies.build(
+        target_id: decode_entity(dependency_params[:target])
+      )
 
       if @dependency.save
         redirect_back fallback_location: junction_catalog_path(@source),
@@ -84,7 +86,7 @@ module Junction
 
     # DELETE /dependencies/:id
     def destroy
-      authorize! @dependency.source, to: :update?
+      authorize! @dependency.source, to: :manage?
       @dependency.destroy!
 
       redirect_back fallback_location: junction_catalog_path(@dependency.source),

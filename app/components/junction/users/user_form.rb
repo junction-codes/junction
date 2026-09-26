@@ -3,103 +3,26 @@
 module Junction
   module Components
     module Users
-      class UserForm < Base
-        include Phlex::Rails::Helpers::FormWith
-
-        def initialize(entity:)
-          @user = entity
-        end
-
-        def view_template
-          form_with(model: @user, url: junction_catalog_form_url(@user), class: "space-y-8",
-                    data: { controller: "form", action: "submit->form#disable" }) do |f|
-            basic_settings(f)
-            metadata_settings(f)
-            annotations(f)
-            email_settings(f)
-            security_settings(f)
-
-            div(class: "flex items-center justify-end gap-x-4 pt-4") do
-              Link(href: cancel_path, class: "text-sm font-semibold leading-6") { t(".cancel") }
-              Button(type: "submit", variant: :primary, data: { form_target: "submit" }) do
-                icon("save", class: "w-4 h-4 mr-2")
-                plain t(".save")
-              end
-            end
-          end
-        end
-
+      # Create and edit form for a User.
+      #
+      # The fields come from `Junction::User.form_fields` and the rendering
+      # from {Entity::EntityForm}. Users add the email and password settings,
+      # since they require confirmation and special handling.
+      class UserForm < Entity::EntityForm
         private
 
-        def cancel_path
-          @user.id.nil? ? users_path : junction_catalog_path(@user)
-        end
-
-        def new?
-          @user.new_record?
-        end
-
-        def existing?
-          !new?
-        end
-
-        def self?
-          @user == Junction::Current.user
-        end
-
-        def annotations(form)
-          AnnotationsForm(form:, context: @user)
-        end
-
-        # Tags, labels and links.
+        # The account's own sections, between the details card and the
+        # metadata.
         #
-        # A user is an entity like any other, so it carries the same metadata.
-        # The other kinds get these from `form_fields`, but this form is written
-        # out by hand, so they're named here.
-        def metadata_settings(form)
-          Card do |card|
-            card.header do |header|
-              header.title { t(".metadata_title") }
-              header.description { t(".metadata_description") }
-            end
-
-            card.content(class: "space-y-4") do
-              render Field::Tags.new(form, :tags, help_text: t(".tags_help"))
-              render Field::Labels.new(form, :label_rows,
-                                       help_text: t(".labels_help"))
-              render Field::Links.new(form, :links, help_text: t(".links_help"))
-            end
-          end
+        # @param form [ActionView::Helpers::FormBuilder] The form builder.
+        def extra_sections(form)
+          email_settings(form)
+          security_settings(form)
         end
 
-        def basic_settings(form)
-          Card do |card|
-            card.header do |header|
-              header.title { t(".basic_info_title") }
-              header.description { t(".basic_info_description") }
-            end
-
-            card.content(class: "space-y-4") do
-              Text(form, :title, required: true)
-              Slug(form, :name)
-              Immutable(form, :namespace, required: true,
-                            help_text: t(".namespace_help"))
-              Text(form, :pronouns, placeholder: t(".pronouns_placeholder"))
-              Text(form, :image_url, placeholder: t(".image_url_placeholder"))
-            end
-          end
-        end
-
-        def email_description
-          if new?
-            t(".email_new")
-          elsif self?
-            t(".email_self")
-          else
-            t(".email_other")
-          end
-        end
-
+        # Renders the email address and its confirmation.
+        #
+        # @param form [ActionView::Helpers::FormBuilder] The form builder.
         def email_settings(form)
           Card do |card|
             card.header do |header|
@@ -114,16 +37,12 @@ module Junction
           end
         end
 
-        def password_description
-          if new?
-            t(".password_new")
-          elsif self?
-            t(".password_self")
-          else
-            t(".password_other")
-          end
-        end
-
+        # Renders the password fields.
+        #
+        # A password is only ever set for a new account or changed by the
+        # person it belongs to, so the section is absent otherwise.
+        #
+        # @param form [ActionView::Helpers::FormBuilder] The form builder.
         def security_settings(form)
           return unless self? || new?
 
@@ -144,6 +63,54 @@ module Junction
                             autocomplete: "new-password")
             end
           end
+        end
+
+        # Description for the email section.
+        #
+        # @return [String] What the email section is for, here.
+        def email_description
+          if new?
+            t(".email_new")
+          elsif self?
+            t(".email_self")
+          else
+            t(".email_other")
+          end
+        end
+
+        # Description for the password section.
+        #
+        # @return [String] What the password section is for, here.
+        def password_description
+          if new?
+            t(".password_new")
+          elsif self?
+            t(".password_self")
+          else
+            t(".password_other")
+          end
+        end
+
+        # Whether or not the user is being created.
+        #
+        # @return [Boolean] Whether the account is being created.
+        def new?
+          @entity.new_record?
+        end
+
+        # Whether or not the user already exists.
+        #
+        # @return [Boolean] Whether the account already exists.
+        def existing?
+          !new?
+        end
+
+        # Whether or not the user entity is the current user.
+        #
+        # @return [Boolean] Whether the account belongs to the person editing
+        #   it.
+        def self?
+          @entity == Junction::Current.user
         end
       end
     end

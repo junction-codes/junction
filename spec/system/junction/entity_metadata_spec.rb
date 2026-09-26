@@ -106,15 +106,15 @@ RSpec.describe "Junction::Entity metadata", type: :system do
     end
 
     it "labels the labels group with an element that exists" do
-      target = find("#label-rows-field[role='group']")["aria-labelledby"]
+      target = find("#label-rows-field[role='group']", visible: :all)["aria-labelledby"]
 
-      expect(page).to have_css("##{target}", text: "Labels")
+      expect(page).to have_css("##{target}", text: "Labels", visible: :all)
     end
 
     it "labels the links group with an element that exists" do
-      target = find("#links-field[role='group']")["aria-labelledby"]
+      target = find("#links-field[role='group']", visible: :all)["aria-labelledby"]
 
-      expect(page).to have_css("##{target}", text: "Links")
+      expect(page).to have_css("##{target}", text: "Links", visible: :all)
     end
 
     it "leaves Tab free to move focus out of the tag box" do
@@ -131,16 +131,42 @@ RSpec.describe "Junction::Entity metadata", type: :system do
     end
   end
 
+  describe "an externally managed entity", :js do
+    let(:component) do
+      create(:component, managed_by: "location", source_ref: "junction.yaml",
+                         labels: { "tier" => "gold" })
+    end
+
+    before do
+      visit edit_component_path(component)
+      open_metadata_pane("Labels")
+    end
+
+    it "opens the pane behind the tab" do
+      expect(page).to have_css("#label-rows-field", visible: :visible)
+    end
+
+    it "shows what it holds" do
+      expect(page).to have_field("Key", with: "tier", disabled: true)
+    end
+
+    it "does not let it be changed" do
+      expect(page).to have_field("Key", disabled: true)
+    end
+  end
+
   describe "labels and links", :js do
     before { visit edit_component_path(component) }
 
     context "when typed into the blank rows" do
       before do
+        open_metadata_pane("Labels")
         within("#label-rows-field") do
           fill_in "Key", with: "tier"
           fill_in "Value", with: "gold"
         end
 
+        open_metadata_pane("Links")
         within("#links-field") do
           fill_in "URL", with: "https://runbook.example.com"
           fill_in "Title", with: "Runbook"
@@ -162,6 +188,7 @@ RSpec.describe "Junction::Entity metadata", type: :system do
 
     context "when a link is saved without a url" do
       before do
+        open_metadata_pane("Links")
         within("#links-field") { fill_in "Title", with: "Runbook" }
         click_button "Save Changes"
       end
@@ -177,6 +204,7 @@ RSpec.describe "Junction::Entity metadata", type: :system do
 
     context "when a link url has no scheme" do
       before do
+        open_metadata_pane("Links")
         within("#links-field") do
           fill_in "URL", with: "runbook.example.com"
           fill_in "Title", with: "Runbook"
@@ -194,6 +222,7 @@ RSpec.describe "Junction::Entity metadata", type: :system do
       let(:component) { create(:component, labels: { "tier" => "gold" }) }
 
       before do
+        open_metadata_pane("Labels")
         within("#label-rows-field") do
           all("[data-repeatable-rows-target='row'] button").each(&:click)
         end

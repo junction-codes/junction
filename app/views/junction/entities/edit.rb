@@ -19,32 +19,30 @@ module Junction
         #
         # @param entity [Junction::Entity] The entity being edited.
         # @param can_destroy [Boolean] Whether the entity may be deleted.
+        # @param can_manage [Boolean] Whether the entity may be changed here.
         # @param breadcrumbs [Array<Hash>] Breadcrumb items from the controller.
         # @param options [Hash] Option sets from the controller's
         #   `form_options`, forwarded to the form.
-        def initialize(entity:, can_destroy:, breadcrumbs: [], **options)
+        def initialize(entity:, can_destroy:, can_manage: true, breadcrumbs: [],
+                       **options)
           @entity = entity
           @can_destroy = can_destroy
+          @can_manage = can_manage
           @breadcrumbs = breadcrumbs
           @options = options
         end
 
         def view_template
           render Junction::Layouts::Application.new(breadcrumbs:) do
-            div(class: "px-6 py-3 space-y-6") do
-              div do
-                h1(class: "text-2xl font-semibold text-gray-800 dark:text-white") { t(".title") }
-                p(class: "mt-1 text-sm text-gray-600 dark:text-gray-400") do
-                  t(".description", title: @entity.title)
-                end
-              end
+            div(class: "px-6 py-6 space-y-6") do
+              page_header
 
-              div(class: "grid grid-cols-1 lg:grid-cols-3 gap-8") do
-                div(class: "lg:col-span-2") do
-                  render form_component.new(entity: @entity, **@options)
-                end
+              div(class: "grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_20rem] " \
+                         "gap-6 items-start") do
+                render form_component.new(entity: @entity, can_manage: @can_manage,
+                                          **@options)
 
-                aside(class: "space-y-6") do
+                aside(class: "space-y-6 min-w-0") do
                   render Junction::Components::Entity::EntityEditSidebar.new(
                     entity: @entity, can_destroy: @can_destroy
                   )
@@ -55,6 +53,17 @@ module Junction
         end
 
         private
+
+        def page_header
+          div do
+            h1(class: "text-[28px] leading-tight font-bold tracking-tight " \
+                      "text-foreground") { t(".title", title: @entity.title) }
+            p(class: "mt-1 max-w-3xl text-[14px] text-text-tertiary") do
+              t(".description")
+            end
+          end
+        end
+
 
         # @return [Class] The entity class.
         def copy_model

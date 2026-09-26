@@ -6,6 +6,20 @@ module Junction
 
     self.index_columns = [ [ :entity, :title ], [ :email, :email ] ].freeze
 
+    # Email address and password are managed through their own dedicated form
+    # component, since they require special handling.
+    self.form_fields = [
+      [ :text, :title, { required: true } ],
+      [ :slug, :name ],
+      [ :immutable, :namespace, { placeholder: "default", required: true,
+                                  help_text: :namespace_help } ],
+      [ :text, :pronouns, { placeholder: :pronouns_placeholder } ],
+      [ :text, :image_url, { placeholder: :image_url_placeholder } ],
+      [ :tags, :tags, { help_text: :tags_help } ],
+      [ :labels, :label_rows, { help_text: :labels_help } ],
+      [ :links, :links, { help_text: :links_help } ]
+    ].freeze
+
     self.detail_meta = [ [ :email, :email ] ].freeze
     self.search_attribute = :title_or_email_cont
     self.form_component_name = "Junction::Components::Users::UserForm"
