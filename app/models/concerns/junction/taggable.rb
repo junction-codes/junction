@@ -25,6 +25,19 @@ module Junction
       scope :tagged_with_any, lambda { |*tags|
         where("tags && ARRAY[?]::varchar[]", tags.flatten.map(&:to_s))
       }
+
+      # Entities whose label for a key holds the given value.
+      scope :labeled_with, lambda { |key, value|
+        where("labels ->> ? = ?", key.to_s, value.to_s)
+      }
+
+      # Entities carrying no label for a key at all.
+      #
+      # A blank value is not stored, so "has the key" and "has a value for the
+      # key" are the same question.
+      scope :without_label, lambda { |key|
+        where.not("jsonb_exists(labels, ?)", key.to_s)
+      }
     end
 
     # Sets the tags, accepting either a list or a comma-separated string.
@@ -34,7 +47,7 @@ module Junction
       super(normalize_tags(value))
     end
 
-    # Sets the labels, discarding rows with a blank key.
+    # Sets the labels, discarding rows with a blank key or value.
     #
     # Takes the labels themselves. A form editing them submits {#label_rows=}
     # instead, because a key/value editor has to let the key be edited too,
@@ -43,8 +56,8 @@ module Junction
     # @param value [Hash, nil] The labels to assign.
     def labels=(value)
       super((value || {}).to_h.transform_keys { |k| k.to_s.strip }
-                              .transform_values(&:to_s)
-                              .reject { |key, _| key.blank? })
+                              .transform_values { |v| v.to_s.strip }
+                              .reject { |key, val| key.blank? || val.blank? })
     end
 
     # Rows for the labels form section.

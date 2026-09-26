@@ -47,12 +47,30 @@ en:
           mine: Mine
           production: Production
           recent: Recently changed
-        entity_filters:
+        filter_menu:
           add: + Add filter
+          back: Back to filters
+          tags: Tags
+          labels: Labels
+          tags_note: Each tag you add narrows the listing further.
+          labels_note: >-
+            Pick a key, then a value. Only values in use are offered, and
+            (not set) finds entities carrying no such label.
+          label_key: Key
+          label_value: Value
+          label_unset: (not set)
+        entity_filters:
           any: any
           clear: Clear filters
           remove: Remove the %{label} filter
           search: Search
+          tag_chip: "Tag: %{value}"
+          tag: "%{value} tag"
+          label_chip: "Label: %{key} = %{value}"
+          # An em dash rather than "=", which would claim the key is set to
+          # something called "not set".
+          label_chip_unset: "Label: %{key} — not set"
+          label: "%{key} label"
           viewer: you and your groups
           # Keyed by the kind's `search_attribute`.
           placeholder:

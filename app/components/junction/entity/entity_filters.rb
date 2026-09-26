@@ -39,9 +39,6 @@ module Junction
           available_systems available_owners available_domains available_parents
         ].freeze
 
-        CHIP = "inline-flex items-center gap-1.5 h-[30px] px-3 rounded-lg " \
-               "text-[12.5px] font-medium whitespace-nowrap"
-
         # Initializes the component.
         #
         # @param entity_class [Class] The kind being listed.
@@ -55,18 +52,26 @@ module Junction
         # @param per_page [Integer] Number of results per page, if set.
         # @param options [Hash] Option sets keyed by name, as supplied by the
         #   controller's `index_options`. Anything not in {FILTERS} is ignored.
+        # @param metadata_filters [Junction::MetadataFilters] Any tag or label
+        #   filters in use.
+        # @param metadata_options [Junction::MetadataOptions] Tags and labels
+        #   the listing carries.
         def initialize(entity_class:, query:, tabs: nil, tab: nil,
-                       query_params: {}, added: [], per_page: nil, **options)
+                       query_params: {}, added: [], per_page: nil,
+                       metadata_filters: nil, metadata_options: nil, **options)
           @entity_class = entity_class
           @query = query
           @tabs = tabs
           @tab = tab
           @query_params = query_params.to_h.symbolize_keys
+          @metadata = metadata_filters || Junction::MetadataFilters.new
+          @metadata_options = metadata_options
           @added = Array(added).map(&:to_s)
           @options = options
-
-          # If it's the default, leave it out of the URL.
-          @per_page = per_page if per_page && per_page != Junction::Paginatable::DEFAULT_PER_PAGE
+          @params = Junction::CatalogFilterParams.new(
+            query: @query_params, added: @added, per_page:, tab:,
+            metadata: @metadata
+          )
 
           super()
         end
@@ -75,6 +80,8 @@ module Junction
           div(class: "flex flex-wrap items-center gap-2") do
             search_box
             shown.each { |filter| chip(*filter) }
+            tag_chips
+            label_chips
             add_menu
             clear_link
           end
@@ -86,8 +93,11 @@ module Junction
         def search_box
           attribute = @entity_class.search_attribute
 
-          form(action: path, method: :get, class: "relative") do
-            carried_fields(except: attribute)
+          # A GET form replaces the action's query string with its own
+          # fields, so the action is the bare listing and the state is in the
+          # hidden fields below.
+          form(action: listing_path, method: :get, class: "relative") do
+            hidden_fields(except: attribute)
 
             span(class: "absolute left-3 top-1/2 -translate-y-1/2 " \
                         "text-muted-foreground pointer-events-none") do
@@ -114,9 +124,9 @@ module Junction
           label = @entity_class.human_attribute_name(field)
           value = value_for(predicate)
 
-          div(class: "flex items-center") do
+          FilterChip(remove: (chosen(predicate, nil) if value),
+                     remove_label: t(".remove", label:)) do
             menu(label, predicate, pairs(set), value)
-            remove_link(label, predicate) if value
           end
         end
 
@@ -128,18 +138,20 @@ module Junction
           DropdownMenu(options: { placement: "bottom-start" }) do |dropdown|
             dropdown.trigger do |trigger|
               trigger.button(variant: :ghost,
-                             class: chip_classes(value.present?)) do
+                             class: FilterChip::STYLES.fetch(
+                               value.present? ? :applied : :waiting
+                             )) do
                 plain "#{label}: #{value_label(options, value)}"
                 icon("chevron-down", class: "w-3 h-3 opacity-70") if value.nil?
               end
             end
 
             dropdown.content(class: "max-h-80 overflow-y-auto") do |content|
-              content.item(href: choose(predicate, nil)) { plain t(".any") }
+              content.item(href: chosen(predicate, nil)) { plain t(".any") }
               content.separator
 
               options.each do |option_label, option_value|
-                content.item(href: choose(predicate, option_value)) do
+                content.item(href: chosen(predicate, option_value)) do
                   plain option_label
                 end
               end
@@ -147,61 +159,55 @@ module Junction
           end
         end
 
-        # The filters not on the bar yet.
-        def add_menu
-          remaining = available - shown
-          return if remaining.empty?
-
-          DropdownMenu(options: { placement: "bottom-start" }) do |dropdown|
-            dropdown.trigger do |trigger|
-              trigger.button(variant: :ghost,
-                             class: "#{CHIP} bg-subtle text-text-tertiary " \
-                                    "hover:text-foreground") { t(".add") }
-            end
-
-            dropdown.content do |content|
-              remaining.each do |_set, predicate, field|
-                content.item(href: path(added: @added + [ predicate ])) do
-                  plain @entity_class.human_attribute_name(field)
-                end
-              end
-            end
+        # One chip per tag, each removable on its own. Two tags means both, so
+        # a chip holding several values would be claiming otherwise.
+        def tag_chips
+          @metadata.tags.each do |tag|
+            FilterChip(text: t(".tag_chip", value: tag),
+                       remove: metadata_path(tags: @metadata.tags - [ tag ]),
+                       remove_label: t(".remove", label: t(".tag", value: tag)))
           end
         end
 
-        # The `x` on an active chip.
-        #
-        # Rendered as a separate link rather than a menu item so dropping a
-        # filter takes one click.
-        #
-        # @param label [String] Human name for the field.
-        # @param predicate [String] The Ransack predicate.
-        def remove_link(label, predicate)
-          a(href: choose(predicate, nil),
-            aria_label: t(".remove", label:),
-            class: "-ml-1 h-[30px] pr-2 pl-1 flex items-center rounded-r-lg " \
-                   "bg-accent text-accent-muted hover:text-accent-foreground") do
-            icon("x", class: "w-3.5 h-3.5")
+        # A label names a key and what it holds, or that it holds nothing.
+        def label_chips
+          @metadata.labels.each do |key, value|
+            FilterChip(text: t(".label_chip", key:, value:),
+                       remove: metadata_path(labels: @metadata.labels.except(key)),
+                       remove_label: t(".remove", label: t(".label", key:)))
           end
+
+          @metadata.unset.each do |key|
+            FilterChip(text: t(".label_chip_unset", key:),
+                       remove: metadata_path(unset: @metadata.unset - [ key ]),
+                       remove_label: t(".remove", label: t(".label", key:)))
+          end
+        end
+
+        # The menu of filters not on the bar yet.
+        def add_menu
+          FilterMenu(entity_class: @entity_class, params: @params,
+                     filters: available - shown,
+                     path: method(:filter_path),
+                     metadata_filters: @metadata,
+                     metadata_options: @metadata_options,
+                     chip_templates: chip_templates)
+        end
+
+        # How a label chip reads, with the interpolations left in for the
+        # menu's preview to fill.
+        #
+        # @return [Array(String, String)] Set and unset wordings.
+        def chip_templates
+          [ t(".label_chip", key: "%{key}", value: "%{value}"),
+            t(".label_chip_unset", key: "%{key}") ]
         end
 
         def clear_link
-          return if @query_params.blank? && @added.empty?
+          return unless @params.any?
 
-          a(href: path(query: {}, added: []),
-            class: "#{CHIP} bg-subtle text-text-tertiary " \
-                   "hover:text-foreground") { t(".clear") }
-        end
-
-        # @param active [Boolean] Whether the chip carries a value.
-        # @return [String] The classes.
-        def chip_classes(active)
-          if active
-            return "#{CHIP} bg-accent text-accent-foreground rounded-r-none pr-2"
-          end
-
-          "#{CHIP} bg-surface border border-border text-text-body " \
-            "hover:bg-subtle"
+          a(href: filter_path(@params.cleared),
+            class: FilterChip::STYLES.fetch(:quiet)) { t(".clear") }
         end
 
         # Filters available for the entity.
@@ -266,70 +272,54 @@ module Junction
           options
         end
 
-        # Path with one filter set to a value, or cleared when it is nil.
-        #
-        # Choosing a value for the filter the tab stands for leaves the tab. The
-        # tab forces its own value, so staying would be asking for two different
-        # ones at once.
-        #
-        # @param predicate [String] The Ransack predicate.
-        # @param value [Object, nil] The value, or nil to clear it.
-        # @return [String] The path.
-        def choose(predicate, value)
-          leaving = implied&.first == predicate
-          filters = value.nil? ? @added - [ predicate ] : @added
-
-          path(query: @query_params.merge(predicate.to_sym => value),
-               added: filters, tab: (leaving ? nil : :current))
-        end
-
-        # Hidden inputs carrying what the search box is not itself responsible
-        # for.
-        #
-        # @param except [Symbol] The predicate the box owns.
-        def carried_fields(except:)
-          input(type: "hidden", name: "tab", value: @tab) if carry_tab?(@tab)
-          if @per_page
-            input(type: "hidden", name: "per_page", value: @per_page)
-          end
-
-          if @added.any?
-            input(type: "hidden", name: "filters", value: @added.join(","))
-          end
-
-          @query_params.except(except).each do |key, value|
-            next if value.blank?
-
-            input(type: "hidden", name: "q[#{key}]", value:)
-          end
-        end
-
-        # @param tab [String, nil] The tab.
-        # @return [Boolean] Whether it belongs in the URL.
-        def carry_tab?(tab)
-          tab.present? && tab != Junction::CatalogTabs::DEFAULT
-        end
-
         # @return [Class] The entity class.
         def copy_model
           @entity_class
         end
 
-        # The listing's path, holding the bar and the tab in place.
+        # The path with one filter set to a value, or cleared when nil.
         #
-        # @param query [Hash] Filter values.
-        # @param added [Array<String>] Predicates on the bar without a value.
-        # @param tab [String] The tab, defaulting to the current one.
+        # @param predicate [String] The Ransack predicate.
+        # @param value [Object, nil] The value.
         # @return [String] The path.
-        def path(query: @query_params, added: @added, tab: :current)
-          tab = @tab if tab == :current
-          args = { q: query.compact_blank.presence,
-                   filters: added.uniq.join(",").presence,
-                   per_page: @per_page }
-          args[:tab] = tab if carry_tab?(tab)
+        def chosen(predicate, value)
+          filter_path(@params.choose(predicate, value, implied: implied&.first))
+        end
 
+        # The path with the tag and label filters changed.
+        #
+        # @param tags [Array<String>] Tags to filter on.
+        # @param labels [Hash] Label key to value.
+        # @param unset [Array<String>] Label keys that must be absent.
+        # @return [String] The path.
+        def metadata_path(tags: @metadata.tags, labels: @metadata.labels,
+                          unset: @metadata.unset)
+          filter_path(@params.with_metadata(tags:, labels:, unset:))
+        end
+
+        # Hidden inputs carrying what the search box is not responsible for.
+        #
+        # @param except [Symbol] The predicate the box owns.
+        def hidden_fields(except:)
+          @params.to_fields(except:).each do |name, value|
+            input(type: "hidden", name:, value:)
+          end
+        end
+
+        # The path to the listing with no filters applied.
+        #
+        # @return [String] The listing's path, with nothing on it.
+        def listing_path
+          public_send(:"#{@entity_class.model_name.route_key}_path")
+        end
+
+        # The listing's path for a set of parameters.
+        #
+        # @param params [Junction::CatalogFilterParams] The parameters.
+        # @return [String] The path.
+        def filter_path(params)
           public_send(:"#{@entity_class.model_name.route_key}_path",
-                      **args.compact)
+                      **params.to_h)
         end
       end
     end

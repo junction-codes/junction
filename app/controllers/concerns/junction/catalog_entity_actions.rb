@@ -37,9 +37,15 @@ module Junction
       tabs = catalog_tabs
       tab = tabs.resolve(params[:tab].to_s)
 
-      @q = tabs.scope(tab).ransack(params[:q])
+      metadata = Junction::MetadataFilters.new(
+        tags: params[:tags], labels: params[:labels],
+        unset: params[:labels_unset]
+      )
+
+      @q = metadata.apply(tabs.scope(tab)).ransack(params[:q])
       @q.sorts = tabs.sorts(tab) || default_sort if @q.sorts.empty?
       results = @q.result
+      options = metadata_options(results)
       results = results.includes(*index_includes) if index_includes.any?
       @pagy, records = paginate(results)
 
@@ -51,6 +57,8 @@ module Junction
         tab:,
         tabs:,
         added_filters: params[:filters].to_s.split(",").map(&:strip).compact_blank,
+        metadata_filters: metadata,
+        metadata_options: options,
         breadcrumbs:,
         can_create: allowed_to?(:create?, entity_class),
         **index_options
@@ -193,6 +201,17 @@ module Junction
     # @return [String] The sort expression.
     def default_sort
       "title asc"
+    end
+
+    # Tags and labels the listing carries, for the filter menus.
+    #
+    # Read from the listing as filtered, not from the kind, so every value a
+    # menu offers narrows the listing rather than emptying it.
+    #
+    # @param scope [ActiveRecord::Relation] The listing, already filtered.
+    # @return [Junction::MetadataOptions] The options.
+    def metadata_options(scope)
+      Junction::MetadataOptions.new(scope)
     end
 
     # Extra arguments for the index view.
