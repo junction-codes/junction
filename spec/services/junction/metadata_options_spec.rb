@@ -45,4 +45,31 @@ RSpec.describe Junction::MetadataOptions do
 
     expect(fragments).not_to include(Junction::Entity.table_name)
   end
+
+  # A key with a value per entity -- a build number, a commit -- must not
+  # spend the whole menu's budget.
+  describe "a key with many values" do
+    subject(:options) { described_class.new(Junction::Component.where(id: ids)) }
+
+    let(:ids) { crowded.map(&:id) + [ rare.id ] }
+    let(:crowded) do
+      Array.new(described_class::VALUES_PER_KEY + 5) do |i|
+        create(:component, labels: { "build" => "sha#{i}" })
+      end
+    end
+    let(:rare) { create(:component, labels: { "rare" => "yes" }) }
+
+    it "still offers the other keys" do
+      expect(options.label_keys).to include("rare")
+    end
+
+    it "offers that key its own share of values" do
+      expect(options.label_values("build").size)
+        .to eq(described_class::VALUES_PER_KEY)
+    end
+
+    it "offers the other key its values" do
+      expect(options.label_values("rare")).to eq([ "yes" ])
+    end
+  end
 end

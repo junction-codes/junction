@@ -54,14 +54,21 @@ module Junction
 
     private
 
+    # `Array()` turns a hash into pairs, so `?tags[a]=b` would otherwise
+    # filter on the string "[\"a\", \"b\"]".
     def clean_list(value)
+      return [] if value.is_a?(Hash) || value.respond_to?(:to_unsafe_h)
+
       Array(value).map { |item| item.to_s.strip }.compact_blank.uniq
     end
 
+    # A URL can say anything: `?labels=x` and `?labels[]=x` both reach here,
+    # and neither is a set of pairs. Anything that is not is no filter at all.
     def clean_pairs(value)
       pairs = value.respond_to?(:to_unsafe_h) ? value.to_unsafe_h : value
+      return {} unless pairs.is_a?(Hash)
 
-      (pairs || {}).to_h.filter_map do |key, item|
+      pairs.filter_map do |key, item|
         key = key.to_s.strip
         item = item.to_s.strip
         [ key, item ] if key.present? && item.present?

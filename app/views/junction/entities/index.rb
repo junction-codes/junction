@@ -44,9 +44,11 @@ module Junction
         # @param query_params [Hash] Query parameters from the controller.
         # @param options [Hash] Option sets from the controller's
         #   `index_options`, forwarded to the filters.
+        # @param metadata_filters [Junction::MetadataFilters, nil] The tag and
+        #   label filters in force, which every link has to carry.
         def initialize(entities:, query:, pagy:, tabs:, tab: nil,
                        added_filters: [], can_create: true, breadcrumbs: [],
-                       query_params: {}, **options)
+                       query_params: {}, metadata_filters: nil, **options)
           @entities = entities
           @query = query
           @pagy = pagy
@@ -56,6 +58,7 @@ module Junction
           @can_create = can_create
           @breadcrumbs = breadcrumbs
           @query_params = query_params
+          @metadata = metadata_filters || Junction::MetadataFilters.new
           @options = options
         end
 
@@ -66,12 +69,13 @@ module Junction
 
               render Junction::Components::Entity::EntityTabs.new(
                 entity_class:, tabs:, current: tab, query_params:,
-                added_filters:, per_page:
+                added_filters:, per_page:, metadata_filters: @metadata
               )
 
               render Junction::Components::Entity::EntityFilters.new(
                 entity_class:, query:, tabs:, tab:, query_params:,
-                added: added_filters, per_page:, **@options
+                added: added_filters, per_page:,
+                metadata_filters: @metadata, **@options
               )
 
               div(class: "rounded-xl border border-border bg-surface " \
@@ -179,14 +183,17 @@ module Junction
           tab_args.merge(q: @query_params, per_page: @pagy.options[:limit])
         end
 
-        # The tab and the filter bar.
+        # The tab, the filter bar, and the tag and label filters.
+        #
+        # Everything the listing is showing has to survive a page change, a
+        # sort or a page size: each of those is a link back to this listing.
         #
         # @return [Hash] The arguments.
         def tab_args
           args = {}
           args[:tab] = tab unless tab == Junction::CatalogTabs::DEFAULT
           args[:filters] = added_filters.join(",") if added_filters.any?
-          args
+          args.merge(@metadata.to_params)
         end
 
         def table_header(table)

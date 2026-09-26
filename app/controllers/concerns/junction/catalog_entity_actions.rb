@@ -45,6 +45,9 @@ module Junction
       @q = metadata.apply(tabs.scope(tab)).ransack(params[:q])
       @q.sorts = tabs.sorts(tab) || default_sort if @q.sorts.empty?
       results = @q.result
+      # The menus offer what the listing as it stands still carries, so no
+      # choice in them can empty it.
+      options = metadata_options(results)
       results = results.includes(*index_includes) if index_includes.any?
       @pagy, records = paginate(results)
 
@@ -57,7 +60,7 @@ module Junction
         tabs:,
         added_filters: params[:filters].to_s.split(",").map(&:strip).compact_blank,
         metadata_filters: metadata,
-        metadata_options: metadata_options(tabs.scope(tab)),
+        metadata_options: options,
         breadcrumbs:,
         can_create: allowed_to?(:create?, entity_class),
         **index_options
@@ -202,12 +205,12 @@ module Junction
       "title asc"
     end
 
-    # Tags and labels the kind actually carries.
+    # Tags and labels the listing carries, for the filter menus.
     #
-    # Read from the tab's scope rather than the whole kind, so the menu offers
-    # values that can return something.
+    # Read from the listing as filtered, not from the kind, so every value a
+    # menu offers narrows the listing rather than emptying it.
     #
-    # @param scope [ActiveRecord::Relation] The scope being listed.
+    # @param scope [ActiveRecord::Relation] The listing, already filtered.
     # @return [Junction::MetadataOptions] The options.
     def metadata_options(scope)
       Junction::MetadataOptions.new(scope)

@@ -6,8 +6,14 @@ module Junction
   # Read from the scope being listed rather than from the kind as a whole, so
   # a menu never offers a value that would empty the listing.
   class MetadataOptions
-    # The max number of items displayed in the menu.
+    # The most a menu offers. A catalog can carry thousands of distinct tags,
+    # and a menu listing them all is not a menu.
     LIMIT = 50
+
+    # The most values one label key offers. Its own budget, so a key with a
+    # value per entity -- a build number, a commit -- cannot crowd the other
+    # keys out of the menu entirely.
+    VALUES_PER_KEY = 20
 
     # Expanding a row's tags or labels into one row each.
     TAGS_JOIN = "CROSS JOIN LATERAL unnest(tags) AS tag"
@@ -32,9 +38,17 @@ module Junction
 
     # Label keys in use, most used first.
     #
+    # Counted over keys rather than read off the pairs: a key is offered on
+    # how much it is used, not on how few values it has.
+    #
     # @return [Array<String>] The keys.
     def label_keys
-      label_pairs.keys
+      @label_keys ||= @scope.reorder(nil)
+                            .joins(LABELS_JOIN)
+                            .group("pair.key")
+                            .order(Arel.sql("COUNT(*) DESC, pair.key"))
+                            .limit(LIMIT)
+                            .pluck(Arel.sql("pair.key"))
     end
 
     # Values in use for a label key.
@@ -61,18 +75,50 @@ module Junction
 
     private
 
-    # Every key and its values in one pass, since a menu shows both.
+    # Every offered key's values, in one pass: the menu renders all of them,
+    # so a query per key would be a query per row of the key column.
+    #
+    # Ranked within each key rather than limited overall, so each key gets its
+    # own share of the menu.
     #
     # @return [Hash<String, Array<String>>] Values by key.
     def label_pairs
-      @label_pairs ||= @scope.reorder(nil)
-                             .joins(LABELS_JOIN)
-                             .group("pair.key", "pair.value")
-                             .order(Arel.sql("COUNT(*) DESC, pair.key, pair.value"))
-                             .limit(LIMIT)
-                             .pluck(Arel.sql("pair.key"), Arel.sql("pair.value"))
-                             .group_by(&:first)
-                             .transform_values { |rows| rows.map(&:last).uniq }
+      @label_pairs ||= ranked_values.group_by(&:first)
+                                    .transform_values { |rows| rows.map(&:last).uniq }
+    end
+
+    # @return [Array<Array(String, String)>] Key and value, most used first.
+    def ranked_values
+      return [] if label_keys.empty?
+
+      # The base class, unscoped: a kind's own STI condition belongs to the
+      # subquery, and repeating it out here would name a table this query has
+      # no FROM entry for. Conditions name the subquery for the same reason.
+      model.base_class.unscoped.from(values_by_use, :ranked)
+           .where("ranked.key IN (?)", label_keys)
+           .where("ranked.rank <= ?", VALUES_PER_KEY)
+           .order(Arel.sql("ranked.uses DESC, ranked.key, ranked.value"))
+           .pluck(Arel.sql("ranked.key"), Arel.sql("ranked.value"))
+    end
+
+    # Each key/value pair with how often it is used and where that places it
+    # among its own key's values.
+    #
+    # @return [ActiveRecord::Relation] The subquery.
+    def values_by_use
+      @scope.reorder(nil).joins(LABELS_JOIN)
+            .group("pair.key", "pair.value")
+            .select(Arel.sql(<<~SQL.squish))
+              pair.key AS key, pair.value AS value, COUNT(*) AS uses,
+              ROW_NUMBER() OVER (
+                PARTITION BY pair.key ORDER BY COUNT(*) DESC, pair.value
+              ) AS rank
+            SQL
+    end
+
+    # @return [Class] The model being listed.
+    def model
+      @scope.model
     end
   end
 end

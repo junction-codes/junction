@@ -106,4 +106,67 @@ RSpec.describe "Catalog tag and label filters", type: :request do
       expect(clear["href"]).to eq(components_path)
     end
   end
+
+  # Every one of these is a link back to the same listing, so each has to
+  # carry what the listing is showing.
+  describe "links off the listing" do
+    def hrefs(selector)
+      response.parsed_body.css(selector).map { |node| node["href"] }.compact
+    end
+
+    before { get components_path(tags: [ "payments" ], labels: { "team" => "atlas" }) }
+
+    it "keeps the filters when a column is sorted" do
+      expect(hrefs("thead a")).to all(include("tags%5B%5D=payments"))
+    end
+
+    it "keeps the filters when the page size changes" do
+      links = hrefs("a[href*='per_page']")
+
+      expect(links).to all(include("labels%5Bteam%5D=atlas"))
+    end
+
+    # The listing's own tab strip, not the rail's navigation.
+    it "keeps the filters when a tab is chosen" do
+      expect(hrefs("main nav[aria-label] a")).to all(include("tags%5B%5D=payments"))
+    end
+  end
+
+  # A URL can say anything, and none of it should reach the database as a
+  # different shape than expected.
+  describe "a malformed filter" do
+    it "ignores labels given as a string" do
+      get components_path(labels: "nonsense")
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "ignores labels given as a list" do
+      get components_path(labels: [ "nonsense" ])
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "ignores tags given as pairs" do
+      get components_path(tags: { "a" => "b" })
+
+      expect(titles).to contain_exactly("Alpha", "Beta", "Gamma")
+    end
+  end
+
+  describe "the values a menu offers" do
+    before do
+      create(:component, title: "Delta", tags: %w[solo])
+      get components_path(tags: [ "payments" ])
+    end
+
+    # Offering one would be offering an empty listing.
+    it "leaves out a tag no remaining entity carries" do
+      expect(response.body).not_to include(">solo<")
+    end
+
+    it "still offers a tag the remaining entities carry" do
+      expect(response.body).to include(">go<")
+    end
+  end
 end

@@ -163,30 +163,6 @@ module Junction
         # a chip holding several values would be claiming otherwise.
         def tag_chips
           @metadata.tags.each do |tag|
-            applied_chip(t(".tag_chip", value: tag),
-                         t(".tag", value: tag),
-                         metadata_path(tags: @metadata.tags - [ tag ]))
-          end
-        end
-
-        # A label names a key and what it holds, or that it holds nothing.
-        def label_chips
-          @metadata.labels.each do |key, value|
-            applied_chip(t(".label_chip", key:, value:),
-                         t(".label", key:),
-                         metadata_path(labels: @metadata.labels.except(key)))
-          end
-
-          @metadata.unset.each do |key|
-            applied_chip(t(".label_chip_unset", key:),
-                         t(".label", key:),
-                         metadata_path(unset: @metadata.unset - [ key ]))
-          end
-        end
-
-        # One chip per tag, each removable on its own.
-        def tag_chips
-          @metadata.tags.each do |tag|
             FilterChip(text: t(".tag_chip", value: tag),
                        remove: metadata_path(tags: @metadata.tags - [ tag ]),
                        remove_label: t(".remove", label: t(".tag", value: tag)))
