@@ -34,6 +34,7 @@ require_relative 'support/shoulda'
 require_relative 'support/helpers/authentication_helper'
 require_relative 'support/helpers/system_authentication_helper'
 require_relative 'support/helpers/rich_select_system_helper'
+require_relative 'support/helpers/metadata_pane_system_helper'
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
@@ -92,8 +93,9 @@ RSpec.configure do |config|
   config.include AuthenticationHelper, type: :request
   config.include Junction::Engine.routes.url_helpers, type: :request
   config.include Junction::Engine.routes.url_helpers, type: :system
-  config.include SystemAuthenticationHelper, type: :system
+  config.include MetadataPaneSystemHelper, type: :system
   config.include RichSelectSystemHelper, type: :system
+  config.include SystemAuthenticationHelper, type: :system
 
   # Configure system tests.
   config.prepend_before(:each, :js, type: :system) do

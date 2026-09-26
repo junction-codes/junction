@@ -6,30 +6,43 @@ module Junction
       class UserForm < Base
         include Phlex::Rails::Helpers::FormWith
 
-        def initialize(entity:)
+        # Initializes the component.
+        #
+        # @param entity [Junction::User] The user being created or edited.
+        # @param can_manage [Boolean] Whether the user may be changed here.
+        def initialize(entity:, can_manage: true)
           @user = entity
+          @can_manage = can_manage
         end
 
         def view_template
-          form_with(model: @user, url: junction_catalog_form_url(@user), class: "space-y-8",
+          form_with(model: @user, url: junction_catalog_form_url(@user), class: "space-y-6",
                     data: { controller: "form", action: "submit->form#disable" }) do |f|
-            basic_settings(f)
-            metadata_settings(f)
-            annotations(f)
-            email_settings(f)
-            security_settings(f)
+            Entity::ExternalBanner(entity: @user)
 
-            div(class: "flex items-center justify-end gap-x-4 pt-4") do
-              Link(href: cancel_path, class: "text-sm font-semibold leading-6") { t(".cancel") }
-              Button(type: "submit", variant: :primary, data: { form_target: "submit" }) do
-                icon("save", class: "w-4 h-4 mr-2")
-                plain t(".save")
-              end
+            fieldset(disabled: !@can_manage, class: "space-y-8 min-w-0") do
+              basic_settings(f)
+              metadata_settings(f)
+              annotations(f)
+              email_settings(f)
+              security_settings(f)
             end
+
+            actions if @can_manage
           end
         end
 
         private
+
+        def actions
+          div(class: "flex items-center justify-end gap-x-4 pt-4") do
+            Link(href: cancel_path, class: "text-sm font-semibold leading-6") { t(".cancel") }
+            Button(type: "submit", variant: :primary, data: { form_target: "submit" }) do
+              icon("save", class: "w-4 h-4 mr-2")
+              plain t(".save")
+            end
+          end
+        end
 
         def cancel_path
           @user.id.nil? ? users_path : junction_catalog_path(@user)

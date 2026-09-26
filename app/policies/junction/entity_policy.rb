@@ -27,6 +27,16 @@ module Junction
       kind.context
     end
 
+    # Whether the entity may be changed here.
+    #
+    # An entity that came from a location or a plugin is maintained there, and a
+    # change made here would be overwritten by the next import.
+    #
+    # @return [Boolean]
+    def manage?
+      update? && !record.managed_externally?
+    end
+
     private
 
     # Registered kind for the record under authorization.

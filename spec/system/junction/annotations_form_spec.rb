@@ -55,6 +55,7 @@ RSpec.describe "Junction::Annotations forms", type: :system do
         junction.codes/components.all.write
       ])
       visit edit_component_path(component)
+      open_metadata_pane("Annotations")
 
       click_button "Add annotation"
       within all("#other-annotations [data-repeatable-rows-target='row']").last do
@@ -83,6 +84,7 @@ RSpec.describe "Junction::Annotations forms", type: :system do
         junction.codes/components.all.write
       ])
       visit edit_component_path(component)
+      open_metadata_pane("Annotations")
 
       # jsonb does not preserve key insertion order, so locate the row by its
       # rendered value instead of assuming a fixed position.
@@ -108,6 +110,7 @@ RSpec.describe "Junction::Annotations forms", type: :system do
         junction.codes/components.all.write
       ])
       visit edit_component_path(component)
+      open_metadata_pane("Annotations")
 
       all("#other-annotations [data-repeatable-rows-target='row']").each do |row|
         within(row) { click_button "Remove annotation" }

@@ -106,15 +106,15 @@ RSpec.describe "Junction::Entity metadata", type: :system do
     end
 
     it "labels the labels group with an element that exists" do
-      target = find("#label-rows-field[role='group']")["aria-labelledby"]
+      target = find("#label-rows-field[role='group']", visible: :all)["aria-labelledby"]
 
-      expect(page).to have_css("##{target}", text: "Labels")
+      expect(page).to have_css("##{target}", text: "Labels", visible: :all)
     end
 
     it "labels the links group with an element that exists" do
-      target = find("#links-field[role='group']")["aria-labelledby"]
+      target = find("#links-field[role='group']", visible: :all)["aria-labelledby"]
 
-      expect(page).to have_css("##{target}", text: "Links")
+      expect(page).to have_css("##{target}", text: "Links", visible: :all)
     end
 
     it "leaves Tab free to move focus out of the tag box" do
@@ -132,15 +132,38 @@ RSpec.describe "Junction::Entity metadata", type: :system do
   end
 
   describe "labels and links", :js do
+    # Metadata sits behind tabs on the edit form, so a pane has to be opened
+    # before its fields are there to fill in.
+    #
+    # The controller attaches its click handler on connect, and a click
+    # before that is simply lost, so this waits for it.
+    def open_pane(name)
+      Timeout.timeout(Capybara.default_max_wait_time) { sleep 0.05 until tabs_connected? }
+      click_button name
+      page.has_css?("[data-value='#{name.downcase}'][data-state='active']")
+    end
+
+    def tabs_connected?
+      page.evaluate_script(<<~JS)
+        (() => {
+          const root = document.querySelector("[data-controller='ruby-ui--tabs']");
+          return !!(window.Stimulus && root &&
+            window.Stimulus.getControllerForElementAndIdentifier(root, "ruby-ui--tabs"));
+        })()
+      JS
+    end
+
     before { visit edit_component_path(component) }
 
     context "when typed into the blank rows" do
       before do
+        open_pane("Labels")
         within("#label-rows-field") do
           fill_in "Key", with: "tier"
           fill_in "Value", with: "gold"
         end
 
+        open_pane("Links")
         within("#links-field") do
           fill_in "URL", with: "https://runbook.example.com"
           fill_in "Title", with: "Runbook"
@@ -162,6 +185,7 @@ RSpec.describe "Junction::Entity metadata", type: :system do
 
     context "when a link is saved without a url" do
       before do
+        open_pane("Links")
         within("#links-field") { fill_in "Title", with: "Runbook" }
         click_button "Save Changes"
       end
@@ -177,6 +201,7 @@ RSpec.describe "Junction::Entity metadata", type: :system do
 
     context "when a link url has no scheme" do
       before do
+        open_pane("Links")
         within("#links-field") do
           fill_in "URL", with: "runbook.example.com"
           fill_in "Title", with: "Runbook"
@@ -194,6 +219,7 @@ RSpec.describe "Junction::Entity metadata", type: :system do
       let(:component) { create(:component, labels: { "tier" => "gold" }) }
 
       before do
+        open_pane("Labels")
         within("#label-rows-field") do
           all("[data-repeatable-rows-target='row'] button").each(&:click)
         end

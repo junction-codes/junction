@@ -76,8 +76,28 @@ en:
           placeholder:
             title_or_description_cont: Name or description…
             title_or_email_cont: Name or email address…
+        external_banner:
+          title: Read-only — this %{kind_lower} comes from a %{source}
+          detail: >-
+            edit it there and re-import; a change made here would be
+            overwritten.
+          source:
+            location: Location
+            plugin: plugin
         entity_form:
           title: "%{kind} Details"
+          metadata_title: Metadata
+          metadata_description: >-
+            Tags and labels describe the %{kind_lower}. Annotations configure
+            the plugins that hang features off it.
+          pane_errors:
+            one: 1 problem
+            other: "%{count} problems"
+          pane:
+            tags: Tags
+            labels: Labels
+            links: Links
+            annotations: Annotations
           description: >-
             This information will be displayed on the %{kind_lower}'s main page.
           namespace_help: >-

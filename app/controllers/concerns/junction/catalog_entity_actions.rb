@@ -97,6 +97,7 @@ module Junction
         entity: @entity,
         breadcrumbs:,
         can_destroy: allowed_to?(:destroy?, @entity),
+        can_manage: allowed_to?(:manage?, @entity),
         **form_options(@entity)
       )
     end
@@ -119,7 +120,7 @@ module Junction
 
     # PATCH/PUT /<plural>/:namespace/:name
     def update
-      authorize! @entity
+      authorize! @entity, to: :manage?
 
       if @entity.update(update_params)
         redirect_to junction_catalog_path(@entity), status: :see_other,
@@ -130,6 +131,7 @@ module Junction
           entity: @entity,
           breadcrumbs:,
           can_destroy: allowed_to?(:destroy?, @entity),
+          can_manage: allowed_to?(:manage?, @entity),
           **form_options(@entity)
         ), status: :unprocessable_content
       end
