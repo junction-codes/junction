@@ -76,8 +76,28 @@ en:
           placeholder:
             title_or_description_cont: Name or description…
             title_or_email_cont: Name or email address…
+        external_banner:
+          title: Read-only — this %{kind_lower} comes from a %{source}
+          detail: >-
+            edit it there and re-import; a change made here would be
+            overwritten.
+          source:
+            location: Location
+            plugin: plugin
         entity_form:
           title: "%{kind} Details"
+          metadata_title: Metadata
+          metadata_description: >-
+            Tags and labels describe the %{kind_lower}. Annotations configure
+            the plugins that hang features off it.
+          pane_errors:
+            one: 1 problem
+            other: "%{count} problems"
+          pane:
+            tags: Tags
+            labels: Labels
+            links: Links
+            annotations: Annotations
           description: >-
             This information will be displayed on the %{kind_lower}'s main page.
           namespace_help: >-
@@ -102,9 +122,19 @@ en:
             Exact-match pairs for machines to select on, not free text.
           links_help: >-
             Pages outside Junction. Another entity belongs in a relation.
+          pronouns_placeholder: e.g., they/them, he/him, she/her
+          email_settings_title: Email Settings
+          email_new: Enter the user's email address.
+          email_self: Change your email address.
+          email_other: Update the user's email address.
+          security_settings_title: Security Settings
+          password_new: Set a password for the user.
+          password_self: Change your password.
+          password_other: Set a new password for the user.
           roles_title: Roles
           roles_description: >-
             Roles granted to this group. Members inherit them, along with the
             roles granted to any parent group.
           cancel: Cancel
+          back: Back to the %{kind_lower}
           save: Save Changes

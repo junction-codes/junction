@@ -16,7 +16,7 @@ module Junction
       @q.sorts = "name asc" if @q.sorts.empty?
       @pagy, members = paginate(@q.result)
 
-      can_edit = allowed_to?(:update?, @entity)
+      can_edit = allowed_to?(:manage?, @entity)
       render Views::Groups::Members.new(
         group: @entity,
         members:,
@@ -49,7 +49,7 @@ module Junction
 
     # POST /groups/:group_id/members
     def create
-      authorize! @entity, to: :update?
+      authorize! @entity, to: :manage?
 
       user = User.find(member_params[:user_id])
       membership = @entity.group_memberships.build(user:)
@@ -83,7 +83,7 @@ module Junction
 
     # DELETE /groups/:group_id/members/:id
     def destroy
-      authorize! @entity, to: :update?
+      authorize! @entity, to: :manage?
       @entity.group_memberships.find_by!(user_id: params.expect(:id)).destroy!
 
       redirect_back fallback_location: junction_group_members_path(@entity),
