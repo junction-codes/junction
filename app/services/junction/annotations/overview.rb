@@ -6,14 +6,13 @@ module Junction
     class Overview
       EntityType = Struct.new(:id, :model, keyword_init: true)
 
-      # Maximum number of distinct values charted for a single annotation key.
-      # Remaining values are aggregated into a single "other" bucket so that
-      # high-cardinality annotations can't produce an unbounded chart.
-      VALUE_CHART_LIMIT = 10
+      # Maximum number of values displayed for a single key.
+      VALUE_LIMIT = 25
 
       # Kinds that carry annotations, from the registry. Locations and
-      # templates are excluded until they are annotated in practice.
-      ANNOTATED_SCOPES = %i[api component domain group resource system user].freeze
+      # templates are excluded until they are annotated in practice. Ordered to
+      # match the sidebar for consistency.
+      ANNOTATED_SCOPES = %i[domain system component api resource group user].freeze
 
       # Entity types included in the overview.
       #
@@ -29,10 +28,17 @@ module Junction
       #
       # @return [Array<Hash>]
       def annotation_key_tabs
+        claimed = registered_keys
+
         annotation_keys.map do |key|
+          namespace, name = key.split("/", 2)
+
           {
             id: slug_for(key),
             label: key,
+            namespace: name ? namespace : nil,
+            name: name || key,
+            declared: claimed.include?(key),
             total_count: total_count_for_key(key)
           }
         end
@@ -51,10 +57,14 @@ module Junction
           rows = value_rows_for(entity_type.model, key)
           next if rows.empty?
 
+          count = rows.sum { |row| row[:count] }
+
           {
             type_id: entity_type.id,
+            label: entity_label(entity_type.id),
             known_for_type: known_for_model?(entity_type.model, key),
-            count: rows.sum { |row| row[:count] },
+            count:,
+            coverage: coverage_for(entity_type.model, count),
             top_value: rows.max_by { |row| row[:count] }&.fetch(:value)
           }
         end
@@ -65,11 +75,11 @@ module Junction
           known: known_for_any_type?(key),
           title: known_title_for(key),
           total_count: total_count_for_key(key),
-          entity_types: entity_rows,
-          charts: {
-            value_breakdown: value_breakdown_chart(key),
-            by_entity_type: entity_rows.to_h { |row| [ entity_label(row[:type_id]), row[:count] ] }
-          }
+          placeholder: placeholder_for(key),
+          declared_by: declaring_plugin_for(key),
+          values: value_rows_for_key(key).first(VALUE_LIMIT),
+          values_total: value_rows_for_key(key).size,
+          entity_types: entity_rows
         }
       end
 
@@ -82,7 +92,9 @@ module Junction
           count = annotated_record_count(entity_type.model)
           {
             id: entity_type.id,
+            kind: entity_type.model.sti_name,
             label: entity_label(entity_type.id),
+            icon: entity_type.model.default_icon,
             total_count: count
           }
         end
@@ -122,24 +134,19 @@ module Junction
 
         known_total = known_rows.sum { |row| row[:count] }
         other_total = other_rows.sum { |row| row[:count] }
-        top_keys = (known_rows + other_rows)
-                   .reject { |row| row[:count].zero? }
-                   .sort_by { |row| [ -row[:count], row[:key] ] }
-                   .first(5)
+        in_use = known_rows.count { |row| row[:count].positive? } + other_rows.size
 
         {
           id: entity_type.id,
           label: entity_label(entity_type.id),
+          icon: entity_type.model.default_icon,
+          record_count: record_count_for(entity_type.model),
           total_count: annotated_record_count(entity_type.model),
+          keys_in_use: in_use,
           known: known_rows,
+          known_total:,
           other: other_rows,
-          charts: {
-            known_vs_other: {
-              t(".known") => known_total,
-              t(".other") => other_total
-            },
-            top_keys: top_keys.to_h { |row| [ row[:key], row[:count] ] }
-          }
+          other_total:
         }
       end
 
@@ -330,23 +337,6 @@ module Junction
             .sort_by { |row| [ -row[:count], row[:value] ] }
       end
 
-      # Builds the value breakdown chart data for an annotation key.
-      #
-      # Only the most used values are charted, the rest are summed into a single
-      # bucket so that high-cardinality annotations stay renderable.
-      #
-      # @param key [String] Key for the annotation.
-      # @return [Hash<String, Integer>] Map of annotation value to record count.
-      def value_breakdown_chart(key)
-        rows = value_rows_for_key(key)
-        return rows.to_h { |row| [ row[:value], row[:count] ] } if rows.size <= VALUE_CHART_LIMIT
-
-        charted = rows.first(VALUE_CHART_LIMIT)
-        remainder = rows.drop(VALUE_CHART_LIMIT).sum { |row| row[:count] }
-        charted.to_h { |row| [ row[:value], row[:count] ] }
-               .merge(t(".other_values", count: rows.size - VALUE_CHART_LIMIT) => remainder)
-      end
-
       # Sums the total number of records annotated with a given key.
       #
       # @param key [String] Key for the annotation.
@@ -383,7 +373,8 @@ module Junction
       # @param model [Class] The model class for the entity type.
       # @return [Integer] Count of annotated records for the model.
       def annotated_record_count(model)
-        model.where("COALESCE(annotations, '{}'::jsonb) != '{}'::jsonb").count
+        model.where(kind: model.sti_name)
+             .where("COALESCE(annotations, '{}'::jsonb) != '{}'::jsonb").count
       end
 
       # Checks whether a key is a known annotation for a given model.
@@ -393,6 +384,57 @@ module Junction
       # @return [Boolean] Whether the key is registered as known for the model.
       def known_for_model?(model, key)
         PluginRegistry.annotations_for(model).key?(key)
+      end
+
+      # How much of a kind carries the key.
+      #
+      # @param model [Class] The model class for the entity type.
+      # @param count [Integer] Number of those entities that carry the key.
+      # @return [Integer] The share, rounded.
+      def coverage_for(model, count)
+        Junction::Percentage.of(count, record_count_for(model))
+      end
+
+      # Total number of records per kind.
+      #
+      # @return [Hash<String, Integer>] Total records by kind.
+      def record_counts
+        @record_counts ||= Junction::Entity.unscoped.group(:kind).count
+      end
+
+      # Total number of records for a specific kind.
+      #
+      # Extracted from the grouped record counts to avoid running one query for
+      # each kind.
+      #
+      # @param model [Class] The model class for the entity type.
+      # @return [Integer] The count.
+      def record_count_for(model)
+        record_counts.fetch(model.sti_name, 0)
+      end
+
+      # The example value a plugin registered for a key.
+      #
+      # @param key [String] Key for the annotation.
+      # @return [String, nil] The placeholder.
+      def placeholder_for(key)
+        self.class.entity_types.lazy.filter_map do |entity_type|
+          PluginRegistry.annotations_for(entity_type.model)[key]&.fetch(:placeholder, nil)
+        end.first
+      end
+
+      # Which plugin, if any, declared a key.
+      #
+      # @param key [String] Key for the annotation.
+      # @return [String, nil] The plugin's title.
+      def declaring_plugin_for(key)
+        plugin = PluginRegistry.plugins.values.find do |candidate|
+          candidate.registered_contexts.any? do |context|
+            candidate.annotations_for(context).key?(key)
+          end
+        end
+
+        plugin&.title.presence || plugin&.plugin_name
       end
 
       # Checks whether a key is known for any entity type.
@@ -422,15 +464,6 @@ module Junction
       def entity_label(id)
         entity_type = self.class.entity_types.find { |type| type.id == id }
         entity_type.model.model_name.human(count: 2)
-      end
-
-      # Translates a key scoped to the annotations overview view.
-      #
-      # @param key [String] Relative translation key.
-      # @param options [Hash] Additional I18n interpolation options.
-      # @return [String] Translated string.
-      def t(key, options = {})
-        I18n.t(key, **options.merge(scope: "junction.views.annotations.index"))
       end
     end
   end

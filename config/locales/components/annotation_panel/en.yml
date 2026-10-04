@@ -1,0 +1,11 @@
+en:
+  junction:
+    components:
+      annotation_panel:
+        more_values:
+          one: 1 more value, not listed
+          other: "%{count} more values, not listed"
+        values_in_use: Values in use
+        values_summary:
+          one: "%{values} distinct values across 1 entity"
+          other: "%{values} distinct values across %{count} entities"

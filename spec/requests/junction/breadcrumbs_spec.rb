@@ -186,4 +186,25 @@ RSpec.describe "Junction::Breadcrumbs concern", type: :request do
       end
     end
   end
+
+  describe "a trail with a crumb that is not a link" do
+    before do
+      sign_in_user_with_permissions(%w[junction.codes/annotations.all.read])
+      get annotations_path
+    end
+
+    let(:trail) { response.parsed_body.at_css("nav[aria-label='breadcrumb']") }
+
+    it "marks exactly one crumb as current" do
+      expect(trail.css("[aria-current]").size).to eq(1)
+    end
+
+    it "marks it with a value screen readers understand" do
+      expect(trail.at_css("[aria-current]")["aria-current"]).to eq("page")
+    end
+
+    it "does not link the crumb that has no page" do
+      expect(trail.css("a").map(&:text)).not_to include("Settings")
+    end
+  end
 end

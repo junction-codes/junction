@@ -90,13 +90,13 @@ module Junction
 
         {
           id: config.id.to_s,
+          section: config.section.to_s,
           label: field_label(config),
           known:,
           other:,
           known_total_count: known.sum { |row| row[:count] },
           other_total_count: other.sum { |row| row[:count] },
-          total_count: known.sum { |row| row[:count] } + other.sum { |row| row[:count] },
-          charts: chart_data(known, other)
+          total_count: known.sum { |row| row[:count] } + other.sum { |row| row[:count] }
         }
       end
 
@@ -124,25 +124,6 @@ module Junction
       # @return [String] The label for the field.
       def field_label(config)
         t(".field_labels.#{config.id}")
-      end
-
-      # Builds the chart data for a single option field.
-      #
-      # @param known [Array<Hash>] Known options.
-      # @param other [Array<Hash>] Observed options.
-      # @return [Hash] The chart data.
-      def chart_data(known, other)
-        value_breakdown = (known + other).sort_by do |row|
-          [ -row[:count], row[:name] ]
-        end.first(5)
-
-        {
-          known_vs_other: {
-            t(".known") => known.sum { |row| row[:count] },
-            t(".other") => other.sum { |row| row[:count] }
-          },
-          value_breakdown: value_breakdown.to_h { |row| [ row[:name], row[:count] ] }
-        }
       end
 
       def t(key, options = {})

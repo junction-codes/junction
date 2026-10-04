@@ -4,22 +4,20 @@ module Junction
   # Controller for viewing installed plugins.
   class PluginsController < ApplicationController
     before_action :set_breadcrumbs
-    before_action :set_plugins
 
     # GET /plugins
     def index
       authorize! :plugins
 
       render Views::Plugins::Index.new(
-        core_plugins:,
-        external_plugins:,
+        overview: Junction::Plugins::Overview.new,
         breadcrumbs:
       )
     end
 
     private
 
-    attr_reader :breadcrumbs, :core_plugins, :external_plugins
+    attr_reader :breadcrumbs
 
     # Builds the breadcrumb items for the page.
     #
@@ -29,14 +27,9 @@ module Junction
     def set_breadcrumbs
       @breadcrumbs ||= [
         { href: root_path, label: t("junction.breadcrumbs.home") },
+        { label: t("junction.breadcrumbs.settings") },
         { href: plugins_path, label: t("junction.views.plugins.index.title") }
       ]
-    end
-
-    def set_plugins
-      @core_plugins, @external_plugins = PluginRegistry.plugins.values.partition do |plugin|
-        plugin == Junction::CorePlugin
-      end
     end
   end
 end

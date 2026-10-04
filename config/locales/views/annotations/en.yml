@@ -3,20 +3,26 @@ en:
     views:
       annotations:
         index:
-          annotations_tab: Annotations
-          description: View known and custom annotation usage across the catalog.
-          entity_type_tab: Entity Types
-          known: Known annotations
-          other: Other annotations
-          other_values:
-            one: 1 other value
-            other: "%{count} other values"
+          description: >-
+            Every key attached to every entity, who declared it, and which
+            values are in use. Annotations are how plugins hang data off the
+            catalog.
           secret_warning: >-
             Annotation keys and values are listed here in plain text for every
             entity type. Never use annotations for secrets such as tokens,
             passwords, or API keys.
           title: Annotations
+        pane_switch:
+          by_key: By key
+          by_entity_type: By entity type
         keys:
           empty: No annotations are currently present.
+          filter:
+            one: Filter 1 key
+            other: Filter %{count} keys
+          no_namespace: Ungrouped
+          undeclared_legend: >-
+            A dot marks a key no plugin claims.
         entity_types:
+          counts_note: Counts are entities carrying at least one annotation.
           empty_entity_types: No entity types are configured.

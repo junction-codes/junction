@@ -58,6 +58,7 @@ module Junction
     def set_breadcrumbs
       @breadcrumbs ||= [
         { href: root_path, label: t("junction.breadcrumbs.home") },
+        { label: t("junction.breadcrumbs.settings") },
         { href: annotations_path, label: t("junction.views.annotations.index.title") }
       ]
     end

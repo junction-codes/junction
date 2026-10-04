@@ -30,21 +30,46 @@ RSpec.describe "Junction::PluginsController", type: :request do
 
       it "renders the empty message when no extra plugins exist" do
         get plugins_path
-        expect(response.body).to include("No plugins are currently installed.")
+        expect(response.body).to include("No plugins are currently installed beyond the built-in one")
       end
 
-      it "renders non-core plugin entries when they exist" do
-        plugin = class_double(
-          Junction::ApplicationPlugin,
-          icon: "plug",
-          title: "GitHub",
-          description: "GitHub integration"
-        )
-        allow(Junction::PluginRegistry).to receive(:plugins)
-          .and_return({ "junction" => Junction::CorePlugin, "github" => plugin })
+      context "when a plugin is installed beyond the built-in one" do
+        let(:plugin) do
+          Class.new(Junction::ApplicationPlugin) do
+            plugin_name "github"
+            title "GitHub"
+            description "GitHub integration"
+            icon "plug"
+            sidebar_link action: :pull_requests_path, title: "Pull requests"
+          end
+        end
 
-        get plugins_path
-        expect(response.body).to include("GitHub")
+        before do
+          stub_const("GitHubPlugin", plugin)
+          allow(Junction::PluginRegistry).to receive(:plugins)
+            .and_return({ "junction" => Junction::CorePlugin, "github" => plugin })
+
+          get plugins_path
+        end
+
+        it "lists it" do
+          expect(response.body).to include("GitHub")
+        end
+
+        it "says where it is declared" do
+          expect(response.body).to include("GitHubPlugin")
+        end
+
+        it "names where each sidebar link goes" do
+          expect(response.body).to include("pull_requests_path")
+        end
+
+        it "leaves out the domain it does not have" do
+          pane = response.parsed_body
+                         .at_css("[data-ruby-ui--tabs-target='content'][data-value='github']")
+
+          expect(pane.text).not_to include("domain:")
+        end
       end
 
       it "renders breadcrumb trail entries" do

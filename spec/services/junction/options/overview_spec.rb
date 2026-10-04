@@ -114,14 +114,12 @@ RSpec.describe Junction::Options::Overview do
       expect(stable[:count]).to eq(2)
     end
 
-    it "limits value breakdown charts to top five values" do
-      ("a".."f").each do |letter|
-        create(:api, type: letter * 3)
-      end
+    it "lists every observed value" do
+      ("a".."f").each { |letter| create(:api, type: letter * 3) }
 
       api_field = described_class.new.fields.find { |field| field[:id] == "api_type" }
 
-      expect(api_field.dig(:charts, :value_breakdown).size).to eq(5)
+      expect(api_field[:other].size).to be >= 6
     end
   end
 end

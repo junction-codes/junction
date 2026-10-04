@@ -23,37 +23,48 @@ module Junction
 
         def view_template
           div(**attrs) do
-            div(class: "flex flex-wrap items-center gap-2") do
-              h3(class: "text-lg font-semibold text-gray-900 dark:text-gray-100") do
-                panel.fetch(:label)
-              end
-              render_known_other_badge(panel.fetch(:known))
-            end
+            SettingsDetailHeader(title: panel.fetch(:label),
+                                 subtitle: panel[:title].presence,
+                                 badge: state_badge)
 
-            if panel[:title].present?
-              p(class: "text-sm text-gray-500 dark:text-gray-400") { panel.fetch(:title) }
-            end
-
-            p(class: "text-sm text-gray-500 dark:text-gray-400") do
-              t(".records_total", count: panel.fetch(:total_count))
-            end
+            meta_row
           end
         end
 
         private
 
         def default_attrs
+          { class: "space-y-3" }
+        end
+
+        # Renders either the "known" or "other" badge for an annotation.
+        #
+        # @return [Hash] The badge's label and variant.
+        def state_badge
+          known = panel.fetch(:known)
+
           {
-            class: "space-y-1"
+            label: known ? t(".known_badge") : t(".other_badge"),
+            variant: known ? :success : :outline
           }
         end
 
-        # Renders either the "known" or "other" badge for the annotations.
+        # Metadata about the annotation.
+        def meta_row
+          div(class: "flex flex-wrap items-center gap-2") do
+            meta_chip(t(".declared_by", plugin: panel[:declared_by])) if panel[:declared_by]
+            meta_chip(t(".placeholder", value: panel[:placeholder])) if panel[:placeholder]
+            meta_chip(t(".records_total", count: panel.fetch(:total_count)))
+          end
+        end
+
+        # Renders a chip for a piece of metadata.
         #
-        # @param known [Boolean] Whether the annotation is known.
-        def render_known_other_badge(known)
-          Badge(variant: known ? :primary : :secondary) do
-            known ? t(".known_badge") : t(".other_badge")
+        # @param text [String] What the chip says.
+        def meta_chip(text)
+          span(class: "inline-flex items-center rounded-md border border-border " \
+                      "bg-background px-2 py-1 text-[11.5px] text-text-tertiary") do
+            text
           end
         end
       end

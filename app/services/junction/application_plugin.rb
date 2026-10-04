@@ -297,7 +297,22 @@ module Junction
       (@entities || {}).transform_values(&:actions)
     end
 
-    # Retrieves all registered annotations for a given context.
+    # The kinds that the plugin is registered for.
+    #
+    # @return [Array<String>] The kind names.
+    def self.registered_contexts
+      (@entities || {}).keys
+    end
+
+    # Every UI component this plugin registers for a kind.
+    #
+    # @param context [String] Name of the kind.
+    # @return [Array<Hash>] The component registrations.
+    def self.components_for_context(context)
+      (@entities || {})[context.to_s]&.components&.values&.flatten || []
+    end
+
+    # Retrieves all registered annotations for a given kind.
     #
     # @param context [String] Name of the entity class.
     # @return [Hash<String, Hash>]

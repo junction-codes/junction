@@ -3,7 +3,7 @@
 module Junction
   # Plugin registration scope for a specific entity context.
   class EntityScope
-    attr_reader :actions, :annotations, :condition, :plugin, :tabs
+    attr_reader :actions, :annotations, :components, :condition, :plugin, :tabs
 
     # Initializes a new entity scope.
     #

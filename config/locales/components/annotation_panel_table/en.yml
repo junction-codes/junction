@@ -2,11 +2,9 @@ en:
   junction:
     components:
       annotation_panel_table:
-        entity_types: Entity types
-        empty: No annotations are currently present.
-        entity_type_tab: Entity Types
-        known_for_type: Known for type
-        records: Records
-        top_value: Top value
-        other_badge: Other
-        known_badge: Known
+        coverage: Coverage
+        empty: Nothing carries this key yet.
+        entity_type_tab: Entity type
+        entity_types: Where it is used
+        records: Annotated
+        top_value: Most common
