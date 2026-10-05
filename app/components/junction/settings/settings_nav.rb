@@ -12,6 +12,10 @@ module Junction
       class SettingsNav < Base
         include Junction::PluginDispatchHelper
 
+        def self.translation_path
+          "junction.components.settings_nav"
+        end
+
         ITEM = "-mb-px inline-flex items-center gap-2 pb-2 border-b-2 " \
                "border-transparent text-[13.5px] font-medium " \
                "text-text-tertiary hover:text-foreground hover:border-border"
@@ -22,7 +26,7 @@ module Junction
           items = plugin_settings_menu_items.sort_by { |item| item.fetch(:title) }
           return if items.empty?
 
-          nav(**attrs) do
+          nav(**attrs, aria_label: t(".label")) do
             items.each { |item| nav_item(item) }
           end
         end

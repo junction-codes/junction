@@ -209,6 +209,15 @@ module Junction
             )
 
             Table do |table|
+              # The table header is defined for screen readers only.
+              table.header do |header|
+                header.row(class: "sr-only") do |row|
+                  row.head { t(".option_value") }
+                  row.head { t(".fallback_heading") }
+                  row.head { t(".in_use") }
+                end
+              end
+
               table.body do |body|
                 other.each do |option|
                   body.row do |row|

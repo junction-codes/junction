@@ -27,7 +27,7 @@ module Junction
             icon("search", class: "absolute left-3 top-1/2 -translate-y-1/2 " \
                                   "w-[15px] h-[15px] text-text-tertiary")
 
-            input(type: "search", placeholder:,
+            input(type: "search", placeholder:, aria_label: placeholder,
                   data: { list_filter_target: "input",
                           action: "input->list-filter#filter" },
                   class: "w-full rounded-lg border border-border bg-background " \

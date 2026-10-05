@@ -423,18 +423,23 @@ module Junction
         end.first
       end
 
-      # Which plugin, if any, declared a key.
+      # Which plugins, if any, declared a key.
+      #
+      # In the event that an annotation key is declared by multiple plugins, all
+      # of them are listed.
       #
       # @param key [String] Key for the annotation.
-      # @return [String, nil] The plugin's title.
+      # @return [String, nil] The plugins' titles.
       def declaring_plugin_for(key)
-        plugin = PluginRegistry.plugins.values.find do |candidate|
-          candidate.registered_contexts.any? do |context|
-            candidate.annotations_for(context).key?(key)
+        names = PluginRegistry.plugins.values.filter_map do |plugin|
+          declares = plugin.registered_contexts.any? do |context|
+            plugin.annotations_for(context).key?(key)
           end
+
+          (plugin.title.presence || plugin.plugin_name) if declares
         end
 
-        plugin&.title.presence || plugin&.plugin_name
+        names.uniq.join(", ").presence
       end
 
       # Checks whether a key is known for any entity type.

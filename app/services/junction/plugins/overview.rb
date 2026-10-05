@@ -141,8 +141,30 @@ module Junction
         path = plugin.name && Object.const_source_location(plugin.name)&.first
         return if path.blank?
 
-        root = Rails.root.to_s
-        path.start_with?(root) ? path.delete_prefix("#{root}/") : path
+        within_app(path) || within_gem(path)
+      end
+
+      # Path relative to the application root, if the plugin is part of the app.
+      #
+      # @param path [String] An absolute path.
+      # @return [String, nil] The path relative to the application.
+      def within_app(path)
+        root = "#{Rails.root}/"
+
+        path.delete_prefix(root) if path.start_with?(root)
+      end
+
+      # Path relative to the gem, if the plugin is part of a gem.
+      #
+      # @param path [String] An absolute path.
+      # @return [String, nil] The gem and the path inside it.
+      def within_gem(path)
+        spec = Gem.loaded_specs.values.find do |candidate|
+          path.start_with?("#{candidate.full_gem_path}/")
+        end
+        return if spec.nil?
+
+        "#{spec.name}: #{path.delete_prefix("#{spec.full_gem_path}/")}"
       end
 
       # Human-readable label for a given context.

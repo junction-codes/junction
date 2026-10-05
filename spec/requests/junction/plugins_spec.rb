@@ -60,6 +60,12 @@ RSpec.describe "Junction::PluginsController", type: :request do
           expect(response.body).to include("GitHubPlugin")
         end
 
+        it "names paths relative to the app or the gem, never the server" do
+          paths = response.parsed_body.css("[class*='break-all']").map(&:text)
+
+          expect(paths).to all(satisfy { |path| !path.start_with?("/") })
+        end
+
         it "names where each sidebar link goes" do
           expect(response.body).to include("pull_requests_path")
         end

@@ -14,6 +14,7 @@ en:
             actually uses.
           empty: No option fields are configured.
           empty_known: No known options are defined for this field.
+          fallback_heading: Fallback
           fallback_note: >-
             Falls back to the model's default icon and a titleised label.
           field_labels:

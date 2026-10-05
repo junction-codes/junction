@@ -65,6 +65,17 @@ RSpec.describe "Junction::AnnotationsController", type: :request do
     end
   end
 
+  describe "the settings sub-nav" do
+    before do
+      sign_in_user_with_permissions(%w[junction.codes/annotations.all.read])
+      get annotations_path
+    end
+
+    it "is named" do
+      expect(response.parsed_body.at_css("nav[aria-label='Settings']")).to be_present
+    end
+  end
+
   describe "GET /annotations/keys with nothing to list" do
     before do
       overview = instance_double(Junction::Annotations::Overview,
