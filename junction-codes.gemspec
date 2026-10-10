@@ -54,7 +54,7 @@ Gem::Specification.new do |s|
   s.add_dependency "propshaft"
   s.add_dependency "rails", "~> 8.1"
   s.add_dependency "rails_icons", "~> 1.8"
-  s.add_dependency "ransack", "~> 4.4"
+  s.add_dependency "ransack", ">= 4.4", "< 6.0"
   s.add_dependency "solid_cable", ">= 3", "< 5"
   s.add_dependency "solid_cache", "~> 1.0"
   s.add_dependency "solid_queue", "~> 1.3"
