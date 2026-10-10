@@ -2,6 +2,10 @@ en:
   junction:
     components:
       annotation_panel_header:
-        other_badge: Other
-        known_badge: Known
-        records_total: "%{count} records"
+        declared_by: "declared by %{plugin}"
+        known_badge: Declared
+        other_badge: Undeclared
+        placeholder: "placeholder: %{value}"
+        records_total:
+          one: 1 entity
+          other: "%{count} entities"

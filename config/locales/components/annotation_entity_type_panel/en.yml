@@ -2,7 +2,39 @@ en:
   junction:
     components:
       annotation_entity_type_panel:
-        known: Known annotations
-        other: Other annotations
-        empty_known: No known annotations are defined for this entity type.
-        empty_other: No arbitrary annotations are currently present.
+        annotated:
+          one: 1 annotated
+          other: "%{count} annotated"
+        coverage: "%{percent}% of annotations use a declared key"
+        declared: Declared keys
+        declared_segment:
+          one: Declared · 1
+          other: Declared · %{count}
+        empty_known: No plugin declares an annotation key for this entity type.
+        keys_in_use:
+          one: 1 key in use
+          other: "%{count} keys in use"
+        nothing_declared: >-
+          The keys below are declared for this kind, but none are in use.
+        nothing_title: No %{kind} carry an annotation yet
+        nothing_undeclared: >-
+          No plugin declares a key for this kind, and none have been added by
+          hand.
+        other: In use, but not declared
+        other_segment:
+          one: Other · 1
+          other: Other · %{count}
+        other_keys:
+          one: 1 key
+          other: "%{count} keys"
+        other_uses:
+          one: 1 use
+          other: "%{count} uses"
+        records:
+          one: 1 record
+          other: "%{count} records"
+        registration_order: rendered in registration order
+        undeclared_note: >-
+          An undeclared key still works — nothing reads it, so it is only ever
+          as useful as the convention behind it. Declaring it in a plugin gives
+          it a title, a placeholder and a home.

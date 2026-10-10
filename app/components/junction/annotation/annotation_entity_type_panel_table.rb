@@ -3,9 +3,14 @@
 module Junction
   module Components
     module Annotation
-      # Renders the data table of an annotation panel.
+      # The annotation keys one kind of entity carries.
+      #
+      # Both halves of {AnnotationEntityTypePanel} are the same table. A
+      # declared key has a title a plugin gave it; an undeclared one has a dot
+      # and a sentence saying nobody claims it, in the same column, so the two
+      # lists line up and can be compared down the page.
       class AnnotationEntityTypePanelTable < Base
-        attr_reader :panel
+        attr_reader :items
 
         def self.translation_path
           "junction.components.annotation_entity_type_panel_table"
@@ -13,71 +18,73 @@ module Junction
 
         # Initializes a new component.
         #
-        # @param items [Array] Annotations items to display.
-        # @param title [String] The title of the table.
-        # @param empty_message [String] Message to display when there are no
-        #   items.
+        # @param items [Array<Hash>] The keys, with their counts and most used
+        #   value.
+        # @param highest [Integer] The most used key's count.
+        # @param declared [Boolean] Whether the annotations are declared by a
+        #   plugin.
         # @param user_attrs [Hash] Additional HTML attributes for the component.
-        def initialize(items:, title:, empty_message:, **user_attrs)
+        def initialize(items:, highest: 0, declared: true, **user_attrs)
           @items = items
-          @title = title
-          @empty_message = empty_message
+          @highest = highest
+          @declared = declared
 
           super(**user_attrs)
         end
 
         def view_template
-          section(**attrs) do
-            h3(class: "text-sm font-semibold text-gray-900 dark:text-gray-100") do
-              @title
-            end
-
-            if @items.empty?
-              p(class: "text-sm text-gray-500 dark:text-gray-400") { @empty_message }
-              return
-            end
-
-            div(class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
-              Table do |table|
-                table.header do |header|
-                  header.row do |row|
-                    row.head { t(".key") }
-                    row.head { t(".annotation_title") } if render_title?
-                    row.head(class: "text-right") { t(".records") }
-                    row.head { t(".top_value") }
-                  end
-                end
-
-                table.body do |body|
-                  @items.each do |row|
-                    body.row do |table_row|
-                      table_row.cell(class: "font-mono text-xs") { row.fetch(:key) }
-                      table_row.cell { row.fetch(:title) } if render_title?
-                      table_row.cell(class: "text-right") { row.fetch(:count) }
-                      table_row.cell(class: "font-mono text-xs") { row[:top_value].presence || "—" }
-                    end
-                  end
-                end
-              end
-            end
+          Table(**attrs) do |table|
+            table.header { |header| header.row { |row| heads(row) } }
+            table.body { |body| items.each { |item| key_row(body, item) } }
           end
         end
 
         private
 
-        def default_attrs
-          {
-            class: "space-y-3"
-          }
+        # Renders the Header row for the table.
+        #
+        # @param row [Table::TableRow] The header row.
+        def heads(row)
+          row.head(class: "w-6") { span(class: "sr-only") { t(".marker") } } unless @declared
+          row.head { t(".key") }
+          row.head { @declared ? t(".title") : t(".claim") }
+          row.head(class: "w-[140px]") { span(class: "sr-only") { t(".share") } }
+          row.head(class: "text-right") { t(".uses") }
+          row.head { t(".top_value") }
         end
 
-        # Determines whether the title column should be rendered.
+        # Renders a row for a single annotation key.
         #
-        # @return [Boolean] Whether the title should be rendered.
-        def render_title?
-          return @render_title if defined?(@render_title)
+        # @param body [Table::TableBody] The table's body.
+        # @param item [Hash] One key.
+        def key_row(body, item)
+          body.row do |row|
+            row.cell(class: "pr-0") { unclaimed_dot } unless @declared
 
-          @render_title ||= @items.any? { |item| item[:title].present? }
+            row.cell(class: "font-mono text-xs") { item.fetch(:key) }
+            row.cell(class: "text-[12px] text-text-tertiary") { claim(item) }
+            row.cell { Meter(value: item.fetch(:count), total: @highest, size: :xs) }
+            row.cell(class: "text-right tabular-nums") { item.fetch(:count) }
+            row.cell(class: "font-mono text-xs") do
+              item[:top_value].presence || "—"
+            end
+          end
+        end
+
+        # The title of the annotation key, if defined.
+        #
+        # @param item [Hash] One key.
+        # @return [String] The claim.
+        def claim(item)
+          return t(".unclaimed") unless @declared
+
+          item[:title].presence || t(".untitled")
+        end
+
+        # Marks a key nothing claims, as the index pane marks them.
+        def unclaimed_dot
+          span(class: "inline-block w-[5px] h-[5px] rounded-full bg-warning",
+               aria_hidden: "true")
         end
       end
     end

@@ -10,19 +10,31 @@ module Junction
     # @example
     #   KindChip(entity:, size: :lg)
     class KindChip < Base
-      # Chip tint per kind. Written out because Tailwind can't see a class name
-      # assembled from the kind at runtime.
-      TINTS = {
-        "Domain" => "bg-kind-domain text-kind-domain-fg",
-        "System" => "bg-kind-system text-kind-system-fg",
-        "Component" => "bg-kind-component text-kind-component-fg",
-        "Api" => "bg-kind-api text-kind-api-fg",
-        "Resource" => "bg-kind-resource text-kind-resource-fg",
-        "Group" => "bg-kind-group text-kind-group-fg",
-        "User" => "bg-kind-user text-kind-user-fg",
-        "Template" => "bg-kind-template text-kind-template-fg",
-        "Location" => "bg-kind-location text-kind-location-fg"
+      # The color for each kind, for a glyph that carries no fill of its own.
+      FOREGROUNDS = {
+        "Domain" => "text-kind-domain-fg",
+        "System" => "text-kind-system-fg",
+        "Component" => "text-kind-component-fg",
+        "Api" => "text-kind-api-fg",
+        "Resource" => "text-kind-resource-fg",
+        "Group" => "text-kind-group-fg",
+        "User" => "text-kind-user-fg",
+        "Template" => "text-kind-template-fg",
+        "Location" => "text-kind-location-fg"
       }.freeze
+
+      # Chip tint per kind.
+      TINTS = {
+        "Domain" => "bg-kind-domain",
+        "System" => "bg-kind-system",
+        "Component" => "bg-kind-component",
+        "Api" => "bg-kind-api",
+        "Resource" => "bg-kind-resource",
+        "Group" => "bg-kind-group",
+        "User" => "bg-kind-user",
+        "Template" => "bg-kind-template",
+        "Location" => "bg-kind-location"
+      }.to_h { |kind, fill| [ kind, "#{fill} #{FOREGROUNDS.fetch(kind)}" ] }.freeze
 
       NEUTRAL = "bg-subtle text-text-body"
 

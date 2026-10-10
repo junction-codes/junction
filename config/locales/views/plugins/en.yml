@@ -3,8 +3,35 @@ en:
     views:
       plugins:
         index:
-          core_plugins: Junction Core
-          empty_description: No description available.
-          empty_plugins: No plugins are currently installed.
-          external_plugins: Junction Plugins
+          and_more:
+            one: 1 more
+            other: "%{count} more"
+          core_plugins: Built in
+          description: >-
+            What is installed, what each one adds, and where it shows up.
+            Plugins are Rails engines shipped as gems — installing one is a
+            Gemfile change, not a click.
+          domain: "domain: %{domain}"
+          empty_description: This plugin says nothing about itself.
+          empty_plugins: No plugins are installed.
+          external_plugins: Installed gems
+          gemfile_note: >-
+            A plugin is installed by adding its gem to the host application.
+          groups:
+            annotation_keys: Annotation keys
+            components: UI components
+            entity_tabs: Entity tabs
+            permissions: Permissions
+            routes: Routes
+            sidebar_links: Sidebar links
+          installed: Installed
+          no_external: >-
+            No plugins are currently installed beyond the built-in one. A
+            plugin is installed by adding its gem to the host application.
+          none: None
+          registered_as: Registered as
+          registrations: What it adds
+          registrations_note: >-
+            Everything below is registered through the plugin base class —
+            nothing is patched into core.
           title: Plugins

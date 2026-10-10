@@ -25,10 +25,16 @@ RSpec.describe Junction::Annotations::Overview do
   end
 
   describe "#entity_type_tabs" do
-    it "includes all annotated entity types" do
+    it "lists the annotated kinds in the order the rail lists them" do
       ids = overview.entity_type_tabs.map { |tab| tab[:id] }
 
-      expect(ids).to eq(%w[apis components domains groups resources systems users])
+      expect(ids).to eq(%w[domains systems components apis resources groups users])
+    end
+
+    it "carries each kind's own icon" do
+      icons = overview.entity_type_tabs.map { |tab| tab[:icon] }
+
+      expect(icons).to all(be_present)
     end
   end
 
@@ -38,7 +44,7 @@ RSpec.describe Junction::Annotations::Overview do
     end
 
     it_behaves_like "an annotations overview panel",
-      %i[id label known title total_count entity_types charts]
+      %i[id label known title total_count values entity_types]
 
     context "with an arbitrary annotation key" do
       subject(:panel) do
@@ -49,32 +55,45 @@ RSpec.describe Junction::Annotations::Overview do
         expect(panel[:entity_types].first[:top_value]).to eq("org/repo")
       end
 
-      it "keys the value breakdown chart without JSON encoding" do
-        expect(panel.dig(:charts, :value_breakdown)).to eq({ "org/repo" => 1 })
+      it "lists the values in use without JSON encoding" do
+        expect(panel[:values]).to eq([ { value: "org/repo", count: 1 } ])
       end
     end
 
-    context "with more distinct values than the chart limit" do
-      subject(:chart) do
-        overview.annotation_key_detail(overview.slug_for("region"))
-                .dig(:charts, :value_breakdown)
+    context "with many distinct values" do
+      subject(:values) do
+        overview.annotation_key_detail(overview.slug_for("region"))[:values]
       end
 
-      let(:limit) { described_class::VALUE_CHART_LIMIT }
-
       before do
-        (limit + 2).times do |index|
+        12.times do |index|
           create(:component, annotations: { "region" => format("region-%02d", index) })
         end
       end
 
-      it "charts no more than the limit plus the aggregate bucket" do
-        expect(chart.size).to eq(limit + 1)
+      it "lists them all" do
+        expect(values.size).to eq(12)
       end
+    end
+  end
 
-      it "aggregates the remaining values into a single bucket" do
-        expect(chart["2 other values"]).to eq(2)
+  describe "a key with more values than the pane lists" do
+    subject(:panel) do
+      overview.annotation_key_detail(overview.slug_for("build.sha"))
+    end
+
+    before do
+      (described_class::VALUE_LIMIT + 5).times do |index|
+        create(:component, annotations: { "build.sha" => "sha-#{index}" })
       end
+    end
+
+    it "lists no more than the limit" do
+      expect(panel[:values].size).to eq(described_class::VALUE_LIMIT)
+    end
+
+    it "still counts them all" do
+      expect(panel[:values_total]).to eq(described_class::VALUE_LIMIT + 5)
     end
   end
 
@@ -82,10 +101,15 @@ RSpec.describe Junction::Annotations::Overview do
     subject(:panel) { overview.entity_type_detail("components") }
 
     it_behaves_like "an annotations overview panel",
-      %i[id label total_count known other charts]
+      %i[id label record_count total_count keys_in_use known known_total other
+         other_total]
 
-    it "charts the most used annotation keys" do
-      expect(panel.dig(:charts, :top_keys)).to eq({ "github.com/project-slug" => 1 })
+    it "counts every record of the kind, not only the annotated ones" do
+      expect(panel[:record_count]).to be >= panel[:total_count]
+    end
+
+    it "sums the uses of keys nothing declares" do
+      expect(panel[:other_total]).to eq(1)
     end
   end
 

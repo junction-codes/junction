@@ -3,10 +3,20 @@ en:
     views:
       options:
         index:
-          description: View known and custom option usage across the catalog.
+          configuration_note: >-
+            These are configuration, not records. Adding an option is a change
+            to the YAML the app ships with — there is nothing to create here,
+            and an import may still carry values nobody declared.
+          coverage: "%{percent}% of records use a declared value"
+          description: >-
+            The known values for every type and lifecycle field. They ship with
+            the app, and the database only ever stores the string an entity
+            actually uses.
           empty: No option fields are configured.
           empty_known: No known options are defined for this field.
-          empty_other: No arbitrary values are currently present.
+          fallback_heading: Fallback
+          fallback_note: >-
+            Falls back to the model's default icon and a titleised label.
           field_labels:
             api_type: API Type
             component_type: Component Type
@@ -15,13 +25,37 @@ en:
             lifecycle: Lifecycle
             resource_type: Resource Type
             system_type: System Type
+          fields: Fields
+          in_use: In use
           known: Known options
-          known_vs_other: Known vs Other Usage
-          option_description: Description
+          known_segment:
+            one: Known · 1
+            other: Known · %{count}
+          known_values:
+            one: 1 known value
+            other: "%{count} known values"
+          option_icon: Icon
           option_label: Label
           option_value: Value
-          other: Other options
-          records: Records
-          records_total: "%{count} records"
+          other: In use, but not declared
+          other_segment:
+            one: Other · 1
+            other: Other · %{count}
+          other_records:
+            one: 1 record
+            other: "%{count} records"
+          other_values_count:
+            one: 1 value
+            other: "%{count} values"
+          promote_note: >-
+            Promote a value by adding it to the YAML. Nothing migrates — the
+            stored string is already correct.
+          records_total:
+            one: 1 record
+            other: "%{count} records"
+          share: Share of use
           title: Catalog Options
-          value_breakdown: Top values
+          undeclared_values:
+            one: 1 value nobody declared
+            other: "%{count} values nobody declared"
+          yaml_order: rendered in YAML order

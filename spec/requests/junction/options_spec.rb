@@ -28,25 +28,41 @@ RSpec.describe "Junction::OptionsController", type: :request do
         expect(response.body).to include("Known options")
       end
 
-      it "renders the other options section" do
+      it "renders the undeclared options section" do
         get options_path
-        expect(response.body).to include("Other options")
+        expect(response.body).to include("In use, but not declared")
       end
 
-      it "renders chart titles" do
+      it "says how much of the field the YAML answers for" do
         get options_path
-        expect(response.body).to include("Known vs Other Usage")
+        expect(response.body).to match(/\d+% of records use a declared value/)
       end
 
-      it "renders the top values chart title" do
+      it "says where the options are declared" do
         get options_path
-        expect(response.body).to include("Top values")
+        expect(response.body).to include("config/catalog_options.yaml")
       end
 
       it "renders arbitrary option values in the response" do
         get options_path
         expect(response.body).to include("custom_api")
       end
+    end
+  end
+
+  describe "the YAML snippet for an undeclared value" do
+    before do
+      sign_in_user_with_permissions(%w[junction.codes/options.all.read])
+      create(:api, type: "custom_api")
+      get options_path
+    end
+
+    it "keys it by the section the file uses" do
+      expect(response.body).to include("apis:")
+    end
+
+    it "does not key it by the field name" do
+      expect(response.body).not_to include("api_type:\n")
     end
   end
 end

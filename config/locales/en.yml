@@ -13,3 +13,4 @@ en:
       edit: Edit
       home: Home
       new: New %{model}
+      settings: Settings

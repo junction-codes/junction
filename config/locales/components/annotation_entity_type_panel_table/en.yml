@@ -2,7 +2,12 @@ en:
   junction:
     components:
       annotation_entity_type_panel_table:
-        key: Annotation key
-        annotation_title: Title
-        records: Records
-        top_value: Top value
+        claim: Claimed by
+        key: Key
+        marker: Undeclared
+        share: Share of use
+        title: Title
+        top_value: Most common
+        unclaimed: no plugin claims this key
+        untitled: —
+        uses: Uses

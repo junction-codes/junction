@@ -3,7 +3,7 @@
 module Junction
   module Views
     module Annotations
-      # Index view for the annotations overview page shell.
+      # The annotations settings page.
       class Index < Views::Base
         # Initializes the view.
         #
@@ -14,49 +14,14 @@ module Junction
 
         def view_template
           render Junction::Layouts::Application.new(breadcrumbs: @breadcrumbs) do
-            div(class: "px-6 py-3 space-y-6") do
-              h1(class: "text-2xl font-semibold text-gray-800 dark:text-white") do
-                t(".title")
-              end
+            SettingsPage(title: t(".title"), description: t(".description")) do |page|
+              page.callout(variant: :warning) { t(".secret_warning") }
 
-              p(class: "text-sm text-gray-500 dark:text-gray-400") do
-                t(".description")
-              end
-
-              secret_warning
-
-              Tabs(default: "annotations") do |tabs|
-                tabs.list do |list|
-                  list.trigger(value: "annotations") { t(".annotations_tab") }
-                  list.trigger(value: "entity_types") { t(".entity_type_tab") }
-                end
-
-                tabs.content(value: "annotations") do
-                  turbo_frame_tag "annotations_keys",
-                                  src: annotation_keys_path,
-                                  loading: :lazy do
-                    div(class: "p-4") { Skeleton(class: "h-20") }
-                  end
-                end
-
-                tabs.content(value: "entity_types") do
-                  turbo_frame_tag "annotations_entity_types",
-                                  src: annotation_entity_types_path,
-                                  loading: :lazy do
-                    div(class: "p-4") { Skeleton(class: "h-20") }
-                  end
-                end
+              turbo_frame_tag "annotations_panes", src: annotation_keys_path,
+                                                   loading: :lazy do
+                Skeleton(class: "h-96")
               end
             end
-          end
-        end
-
-        private
-
-        # Warns that annotations are not a suitable place for secrets.
-        def secret_warning
-          Alert(variant: :warning, dismissible: false) do |alert|
-            alert.description { t(".secret_warning") }
           end
         end
       end

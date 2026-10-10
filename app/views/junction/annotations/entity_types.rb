@@ -3,8 +3,10 @@
 module Junction
   module Views
     module Annotations
-      # Lazy-loaded entity-type tab list.
+      # All annotations grouped by the kinds they're found on.
       class EntityTypes < Views::Base
+        include PaneSwitch
+
         # Initializes the view.
         #
         # @param entity_type_tabs [Array<Hash>] List of entity type tabs.
@@ -15,35 +17,60 @@ module Junction
         end
 
         def view_template
-          turbo_frame_tag "annotations_entity_types" do
+          turbo_frame_tag FRAME do
+            SettingsPanes(default: @entity_type_tabs.first&.fetch(:id)) do |panes|
+              index_pane(panes)
+              detail_panes(panes)
+            end
+          end
+        end
+
+        private
+
+        # Renders the index pane with a list of entity type tabs.
+        #
+        # @param panes [Components::Settings::SettingsPanes] Settings panes
+        #   component for the page.
+        def index_pane(panes)
+          panes.index do |index|
+            pane_switch(:entity_types)
+
             if @entity_type_tabs.empty?
-              p(class: "text-sm text-gray-500 dark:text-gray-400") { t(".empty_entity_types") }
+              index.footnote { t(".empty_entity_types") }
               next
             end
 
-            Tabs(
-              default: @entity_type_tabs.first.fetch(:id),
-              class: "grid grid-cols-1 lg:grid-cols-4 gap-6 items-start"
-            ) do |tabs|
-              tabs.list(class: "flex h-auto flex-col w-full items-stretch rounded-lg bg-muted p-2") do |list|
-                @entity_type_tabs.each do |tab|
-                  list.trigger(value: tab.fetch(:id), class: "w-full justify-between px-3 py-2") do
-                    span { tab.fetch(:label) }
-                    Badge(variant: :secondary, size: :sm) { tab.fetch(:total_count) }
-                  end
-                end
+            index.list do |list|
+              @entity_type_tabs.each do |tab|
+                list.item(value: tab.fetch(:id), label: tab.fetch(:label),
+                          count: tab.fetch(:total_count), icon: tab[:icon],
+                          icon_class: tint(tab))
               end
+            end
 
-              div(class: "lg:col-span-3") do
-                @entity_type_tabs.each do |tab|
-                  tabs.content(value: tab.fetch(:id), class: "mt-0") do
-                    turbo_frame_tag "annotation_entity_type_#{tab.fetch(:id)}",
-                                    src: annotation_entity_type_path(tab.fetch(:id)),
-                                    loading: :lazy do
-                      div(class: "p-4") { Skeleton(class: "h-20") }
-                    end
-                  end
-                end
+            index.footnote { t(".counts_note") }
+          end
+        end
+
+        # The classes for the tint of a kind's chip.
+        #
+        # @param tab [Hash] One entity type.
+        # @return [String, nil] The tint class.
+        def tint(tab)
+          Components::KindChip::FOREGROUNDS[tab[:kind]]
+        end
+
+        # Renders the detail panes for each kind's tab.
+        #
+        # @param panes [Components::Settings::SettingsPanes] Settings panes
+        #   component for the page.
+        def detail_panes(panes)
+          @entity_type_tabs.each do |tab|
+            panes.detail(value: tab.fetch(:id)) do
+              turbo_frame_tag "annotation_entity_type_#{tab.fetch(:id)}",
+                              src: annotation_entity_type_path(tab.fetch(:id)),
+                              loading: :lazy do
+                Skeleton(class: "h-20")
               end
             end
           end

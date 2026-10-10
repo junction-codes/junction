@@ -25,8 +25,8 @@ module Junction
                 last = index == @items.length - 1
 
                 render BreadcrumbItem.new do
-                  if last
-                    render Page.new { item[:label] }
+                  if last || item[:href].blank?
+                    render Page.new(current: last) { item[:label] }
                   else
                     render BreadcrumbLink.new(href: item[:href]) { item[:label] }
                   end
