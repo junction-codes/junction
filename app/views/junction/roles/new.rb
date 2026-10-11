@@ -3,15 +3,18 @@
 module Junction
   module Views
     module Roles
-      # Creation view for roles.
+      # Renders the form for a new role.
+      #
+      # The same editor as {Edit}, with nothing selected and no rail cards for
+      # reach or deletion.
       class New < Views::Base
-        attr_reader :available_permissions, :breadcrumbs, :role
+        attr_reader :breadcrumbs
 
-        # Initialize a new view.
+        # Initializes the view.
         #
         # @param role [Junction::Role] The role being created.
-        # @param available_permissions [Array<Junction::Permission>] Available
-        #   permissions to select from.
+        # @param available_permissions [Array<Junction::Permission>] Every
+        #   permission that may be granted.
         # @param breadcrumbs [Array<Hash>] Breadcrumb items from the controller.
         def initialize(role:, available_permissions:, breadcrumbs: [])
           @role = role
@@ -19,19 +22,10 @@ module Junction
           @breadcrumbs = breadcrumbs
         end
 
-        private
-
         def view_template
           render Junction::Layouts::Application.new(breadcrumbs:) do
-            div(class: "px-6 py-3") do
-              div(class: "max-w-2xl mx-auto") do
-                h1(class: "text-2xl font-semibold text-gray-800 dark:text-white") { t(".title") }
-                p(class: "mt-1 text-sm text-gray-600 dark:text-gray-400") { t(".description") }
-              end
-
-              div(class: "mt-6 max-w-2xl mx-auto") do
-                RoleForm(role:, available_permissions:)
-              end
+            SettingsPage(title: t(".title"), description: t(".description")) do
+              RoleForm(role: @role, available_permissions: @available_permissions)
             end
           end
         end

@@ -13,7 +13,7 @@ module Junction
               @form.text_area @method, placeholder:, **attrs
             end
 
-            p(class: "mt-2 text-sm text-gray-500") { @help_text } if @help_text
+            p(class: HELP_CLASSES) { @help_text } if @help_text
 
             if errors.any?
               div(class: "mt-2 text-sm text-red-600 dark:text-red-400", id: "#{@method}_errors") do

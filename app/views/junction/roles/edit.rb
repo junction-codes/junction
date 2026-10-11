@@ -3,48 +3,66 @@
 module Junction
   module Views
     module Roles
-      # Edit view for a role.
+      # Renders the permission editor for one role.
+      #
+      # The page keeps the settings sub-nav but drops the index-and-detail
+      # shape the other settings pages use.
       class Edit < Views::Base
-        attr_reader :available_permissions, :breadcrumbs, :can_destroy, :role
+        attr_reader :breadcrumbs
 
-        # Initialize a new view.
+        # Initializes the view.
         #
         # @param role [Junction::Role] The role being edited.
-        # @param available_permissions [Array<Junction::Permission>] Available
-        #   permissions to select from.
-        # @param can_destroy [Boolean] Whether the role can be destroyed.
+        # @param available_permissions [Array<Junction::Permission>] Every
+        #   permission that may be granted.
+        # @param reach [Hash] The number of entities that hold the role.
+        # @option reach [Integer] :groups The number of groups holding the role.
+        # @option reach [Integer] :people The number of people holding the role.
+        # @param can_destroy [Boolean] Whether the role may be deleted.
         # @param breadcrumbs [Array<Hash>] Breadcrumb items from the controller.
-        def initialize(role:, available_permissions:, can_destroy:,
-                       breadcrumbs: [])
+        def initialize(role:, available_permissions:, reach: {},
+                       can_destroy: false, breadcrumbs: [])
           @role = role
           @available_permissions = available_permissions
+          @reach = reach
           @can_destroy = can_destroy
           @breadcrumbs = breadcrumbs
         end
 
-        private
-
         def view_template
           render Junction::Layouts::Application.new(breadcrumbs:) do
-            div(class: "px-6 py-3 space-y-6") do
-              div do
-                h1(class: "text-2xl font-semibold text-gray-800 dark:text-white") { t(".title") }
-                p(class: "mt-1 text-sm text-gray-600 dark:text-gray-400") do
-                  plain t(".description", name: @role.title)
-                end
-              end
-
-              div(class: "grid grid-cols-1 lg:grid-cols-3 gap-8") do
-                div(class: "lg:col-span-2") do
-                  RoleForm(role:, available_permissions:)
-                end
-
-                aside(class: "space-y-6") do
-                  RoleEditSidebar(role:, can_destroy:)
-                end
-              end
+            SettingsPage(title: heading, chip:, description:) do
+              RoleForm(role: @role, available_permissions: @available_permissions,
+                       reach: @reach, can_destroy: @can_destroy)
             end
           end
+        end
+
+        private
+
+        # Returns the heading, naming the role as it's stored.
+        #
+        # A rejected save re-renders this page with what the user typed still
+        # in the record, so the title they cleared would leave the page with no
+        # heading at all.
+        #
+        # @return [String] The heading.
+        def heading
+          @role.title_was.presence || @role.title
+        end
+
+        # Returns the page description.
+        #
+        # @return [String] The description.
+        def description
+          t(@role.system? ? ".system_description" : ".description")
+        end
+
+        # Returns the label for the chip displayed beside the page title.
+        #
+        # @return [String] The label.
+        def chip
+          t(@role.system? ? ".system_role" : ".custom_role")
         end
       end
     end

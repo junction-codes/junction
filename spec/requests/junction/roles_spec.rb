@@ -271,4 +271,153 @@ RSpec.describe "Junction::RolesController", type: :request do
       end
     end
   end
+
+  describe "the permission editor" do
+    let(:role) { create(:role) }
+
+    before do
+      sign_in_user_with_permissions(%w[
+        junction.codes/roles.all.read junction.codes/roles.all.write
+      ])
+
+      role.role_permissions.create!(permission: "junction.codes/components.all.read")
+
+      get edit_role_path(namespace: role.namespace, name: role.name)
+    end
+
+    it "offers a checkbox for every registered permission" do
+      boxes = response.parsed_body.css("input[type='checkbox'][name*='permission_ids']")
+
+      expect(boxes.size).to eq(Junction::PluginRegistry.permissions.size)
+    end
+
+    it "records what each permission loaded as" do
+      box = response.parsed_body
+                    .at_css("input[value='junction.codes/components.all.read']")
+
+      expect(box["data-initial"]).to eq("true")
+    end
+
+    it "marks an access level nothing registers for a context" do
+      marks = response.parsed_body.css(".sr-only").map(&:text)
+
+      expect(marks).to include("Permission not registered")
+    end
+
+    it "says how much of what could be granted is" do
+      expect(response.body).to match(/of #{Junction::PluginRegistry.permissions.size} selected/)
+    end
+
+    it "lists the pending changes beside the form" do
+      expect(response.body).to include("Unsaved changes")
+    end
+
+    it "cannot be saved until something changes" do
+      save = response.parsed_body.at_css("button[type='submit']")
+
+      expect(save.attributes).to have_key("disabled")
+    end
+
+    it "says what each permission allows" do
+      described = Junction::PluginRegistry.permissions
+                                          .find { |permission| permission.description.present? }
+
+      expect(response.body).to include(described.description)
+    end
+  end
+
+  describe "the editor for a system role" do
+    let(:admin) do
+      Junction::Role.find_by(name: Junction::Role::ADMIN_NAME) ||
+        create(:role, :system, name: Junction::Role::ADMIN_NAME)
+    end
+
+    before do
+      sign_in_user_with_permissions(%w[
+        junction.codes/roles.all.read junction.codes/roles.all.write
+      ])
+
+      get edit_role_path(namespace: admin.namespace, name: admin.name)
+    end
+
+    it "ticks what the role resolves to" do
+      box = response.parsed_body
+                    .at_css("input[value='junction.codes/components.all.read']")
+
+      expect(box.attributes).to have_key("checked")
+    end
+
+    it "does not offer to change them" do
+      boxes = response.parsed_body.css("input[name*='permission_ids']")
+
+      expect(boxes).to all(have_attributes(attributes: hash_including("disabled")))
+    end
+
+    it "says why" do
+      expect(response.body).to include("cannot be edited")
+    end
+
+    it "does not invite an edit it would discard" do
+      expect(response.body).to include("What it grants is resolved")
+    end
+  end
+
+  describe "saving a role that holds an unregistered permission" do
+    let(:held) { create(:role) }
+    let(:stale) { "acme.io/widgets.all.read" }
+
+    before do
+      sign_in_user_with_permissions(%w[
+        junction.codes/roles.all.read junction.codes/roles.all.write
+      ])
+
+      held.role_permissions.create!(permission: stale)
+      held.role_permissions.create!(permission: "junction.codes/components.all.read")
+    end
+
+    it "keeps the permission the form never offered" do
+      patch role_url(held), params: { role: { permission_ids: [] } }
+
+      expect(held.role_permissions.pluck(:permission)).to eq([ stale ])
+    end
+
+    it "still removes the permissions that were cleared" do
+      patch role_url(held), params: { role: { permission_ids: [] } }
+
+      expect(held.role_permissions.pluck(:permission))
+        .not_to include("junction.codes/components.all.read")
+    end
+  end
+
+  describe "a save the role rejects" do
+    let(:granted) { create(:role, title: "Service Owner") }
+    let(:group) { create(:group) }
+
+    before do
+      sign_in_user_with_permissions(%w[
+        junction.codes/roles.all.read junction.codes/roles.all.write
+      ])
+
+      group.roles = [ granted ]
+      create(:group_membership, group:)
+
+      patch role_url(granted), params: { role: { title: "", description: "" } }
+    end
+
+    it "names the role as it is stored" do
+      expect(response.parsed_body.at_css("h1").text).to include("Service Owner")
+    end
+
+    it "still counts the groups holding it" do
+      groups = response.parsed_body.css("dt").find { |term| term.text == "Groups" }
+
+      expect(groups.next_element.text).to eq("1")
+    end
+
+    it "still counts the people it reaches" do
+      people = response.parsed_body.css("dt").find { |term| term.text == "People" }
+
+      expect(people.next_element.text).to eq("1")
+    end
+  end
 end

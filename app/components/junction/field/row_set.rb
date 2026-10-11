@@ -36,7 +36,7 @@ module Junction
             render_group_label
 
             if @help_text
-              p(class: "mt-1 text-sm text-gray-500 dark:text-gray-400") do
+              p(class: "mt-1 text-[12.5px] text-text-tertiary") do
                 @help_text
               end
             end
@@ -93,8 +93,7 @@ module Junction
           div(class: "mt-2 hidden items-start gap-2 md:flex") do
             div(class: "grid flex-1 gap-2 #{grid_columns}") do
               self.class.columns.each do |column|
-                span(class: "text-xs font-medium text-gray-500 " \
-                           "dark:text-gray-400") do
+                span(class: "text-xs font-medium text-text-tertiary") do
                   t(".#{column}")
                 end
               end

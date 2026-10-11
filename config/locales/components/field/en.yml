@@ -11,6 +11,8 @@ en:
           value_placeholder: atlas
           add_row: Add label
           remove_row: Remove label
+        permissions:
+          not_registered: Permission not registered
         links:
           url: URL
           title: Title

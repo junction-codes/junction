@@ -14,10 +14,8 @@ module Junction
         CODE_CLASSES = %w[
           font-mono
           text-sm
-          text-gray-700
-          dark:text-gray-300
-          bg-gray-100
-          dark:bg-gray-700
+          text-text-body
+          bg-subtle
           rounded
           px-2
           py-1
@@ -48,7 +46,7 @@ module Junction
               end
             end
 
-            p(class: "mt-1 text-xs text-gray-500") { @help_text } if @help_text && !persisted?
+            p(class: HELP_CLASSES) { @help_text } if @help_text && !persisted?
 
             if errors.any?
               div(class: "mt-2 text-sm text-red-600 dark:text-red-400", id: "#{@method}_errors") do

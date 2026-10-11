@@ -49,7 +49,7 @@ module Junction
           div(**attrs) do
             label(
               for: @input_id,
-              class: "block text-sm font-medium leading-6 text-gray-900 dark:text-white mb-1"
+              class: "#{FieldType::LABEL_CLASSES.join(' ')} mb-1"
             ) { @label }
 
             div(class: "relative") do
@@ -64,16 +64,13 @@ module Junction
                           "keydown.down->autocomplete#navigate " \
                           "keydown.escape->autocomplete#clearResults"
                 },
-                class: "block w-full rounded-md border-0 px-3 py-1.5 pr-8 text-gray-900 " \
-                       "shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 " \
-                       "focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 " \
-                       "dark:bg-gray-700 dark:text-white dark:ring-gray-600 dark:focus:ring-blue-500"
+                class: "#{FieldType::INPUT_CLASSES.join(' ')} pr-8"
               )
 
               button(
                 type: "button",
                 class: "absolute inset-y-0 right-0 hidden items-center pr-2 " \
-                       "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300",
+                       "text-text-tertiary hover:text-foreground",
                 data: {
                   autocomplete_target: "clearButton",
                   action: "click->autocomplete#clear"

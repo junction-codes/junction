@@ -2,15 +2,6 @@ en:
   junction:
     components:
       role:
-        role_edit_sidebar:
-          metadata: Metadata
-          danger_zone: Danger Zone
-          danger_zone_warning: These actions are irreversible. Please be certain.
-          delete: Delete Role
-          delete_confirm_title: Are you absolutely sure?
-          delete_confirm_body: This will permanently remove the Role.
-          cancel: Cancel
-          confirm_delete: Confirm Delete
         role_permission_matrix:
           all: all
           context: Domain / context
@@ -20,12 +11,52 @@ en:
           owned: owned
           read: Read
           write: Write
+        role_changes_card:
+          cancel: Cancel
+          empty: No permission changes yet.
+          save: Save changes
+          title: Unsaved changes
+        role_danger_card:
+          cancel: Cancel
+          confirm: Delete role
+          confirm_title: Delete this role?
+          delete: Delete role
+          system_note: >-
+            System roles have no editable permission list and cannot be
+            deleted.
+          title: Danger zone
+          warning:
+            one: >-
+              Deleting this role strips its permissions from 1 group
+              immediately. The grants go with it.
+            other: >-
+              Deleting this role strips its permissions from %{count} groups
+              immediately. The grants go with it.
+        role_metadata_card:
+          created: Created
+          groups: Groups
+          people: People
+          title: Metadata
+          updated: Updated
         role_form:
+          filter: Filter by domain or context
+          name_help: >-
+            Seed data grants roles to groups by this identifier, and the system
+            roles are recognized by it, so it cannot be changed once the role
+            exists.
+          selected: of %{total} selected
+          show_everything: Show everything ↓
+          plugin_contexts:
+            one: 1 plugin registers its own
+            other: "%{count} plugins register their own"
+          showing_after: of %{total} contexts
+          showing_before: Showing
+          system_note: >-
+            This role's permissions are resolved from what the engine and its
+            plugins register, so they are shown here but cannot be edited.
           title: Role Details
           description: >-
             This information will be displayed on the role's main page.
-          permissions_description: Select the permissions this role grants.
-          description_help: A brief summary of the role's goals.
           namespace_help: >-
             Namespaces allow the same identifier to exist in different contexts.
           cancel: Cancel
