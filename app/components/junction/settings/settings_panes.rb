@@ -28,6 +28,9 @@ module Junction
       class SettingsPanes < Base
         include Phlex::Rails::Helpers::TurboFrameTag
 
+        # Panel classes.
+        PANEL = "rounded-xl border border-border bg-surface p-6"
+
         # Initializes the component.
         #
         # @param default [String] The item opened when the page loads.
@@ -62,11 +65,11 @@ module Junction
         #   index row that opens it.
         # @param src [String] Path the pane's contents are loaded from.
         # @param frame [String] The frame's id, when it differs from the item.
-        def detail(value:, src: nil, frame: nil, &)
+        def detail(value:, src: nil, frame: nil, &block)
           @tabs.content(value:, class: "mt-0") do
-            next lazy_pane(frame || value, src) if src
-
-            div(class: "rounded-xl border border-border bg-surface p-6", &)
+            div(class: PANEL) do
+              src ? lazy_pane(frame || value, src) : block.call
+            end
           end
         end
 

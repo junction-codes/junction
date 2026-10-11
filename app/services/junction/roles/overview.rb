@@ -75,6 +75,7 @@ module Junction
       # @return [Hash] What the detail pane draws.
       def detail(role)
         granted = role.groups.to_a
+        members = membership_counts(granted.map(&:id))
         permissions = granted_permissions(role)
 
         {
@@ -83,7 +84,7 @@ module Junction
           permissions:,
           registered_total: registered_permissions.size,
           matrix: matrix_for(permissions),
-          groups: granted.map { |group| group_summary(group) },
+          groups: granted.map { |group| group_summary(group, members) },
           people: people_reached(granted)
         }
       end
@@ -176,7 +177,7 @@ module Junction
         registered_by_context.fetch(context, []).include?(access.to_s)
       end
 
-      # Returns the access levels registered for each context..
+      # Returns the access levels registered for each context.
       #
       # @return [Hash<String, Array<String>>] Access levels by context.
       def registered_by_context
@@ -188,9 +189,20 @@ module Junction
       # Summarizes a group that holds a role.
       #
       # @param group [Junction::Group] The group.
+      # @param members [Hash<Integer, Integer>] Membership counts by group id.
       # @return [Hash] The group and its membership count.
-      def group_summary(group)
-        { group:, members: group.members.size }
+      def group_summary(group, members)
+        { group:, members: members.fetch(group.id, 0) }
+      end
+
+      # Counts the members of every group holding the role, in one query.
+      #
+      # @param ids [Array<Integer>] The group ids.
+      # @return [Hash<Integer, Integer>] Membership counts by group id.
+      def membership_counts(ids)
+        return {} if ids.empty?
+
+        Junction::GroupMembership.where(group_id: ids).group(:group_id).count
       end
 
       # Counts the people a role reaches.
