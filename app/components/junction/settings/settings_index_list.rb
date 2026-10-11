@@ -53,8 +53,10 @@ module Junction
         # @param marker [Boolean] Whether or not to add the unclaimed marker.
         # @param icon [String] Optional icon to display at the start of the row.
         # @param icon_class [String] What to paint it, such as a kind's tint.
+        # @param mono [Boolean] Whether the sublabel is an identifier that
+        #   should be rendered in a monospace font.
         def item(value:, label:, sublabel: nil, count: nil, marker: false,
-                 icon: nil, icon_class: nil)
+                 icon: nil, icon_class: nil, mono: true)
           @list.trigger(value:, class: "group w-full") do
             span(class: "min-w-0 flex items-center gap-2") do
               unclaimed_dot if marker
@@ -64,9 +66,11 @@ module Junction
                 span(class: "truncate max-w-full") { label }
 
                 if sublabel
-                  span(class: "truncate max-w-full font-mono text-[11px] " \
-                              "font-normal text-text-tertiary " \
-                              "group-data-[state=active]:text-text-body") do
+                  span(class: [ "truncate max-w-full text-[11px] font-normal",
+                                ("font-mono" if mono),
+                                "text-text-tertiary",
+                                "group-data-[state=active]:text-text-body" ]
+                                .compact.join(" ")) do
                     sublabel
                   end
                 end

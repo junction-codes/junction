@@ -7,20 +7,13 @@ module Junction
     before_action :set_entity, only: %i[show edit update destroy]
 
     include Breadcrumbs
-    include Paginatable
 
     # GET /roles
     def index
       authorize! Role
-      @q = Role.ransack(params[:q])
-      @q.sorts = "title asc" if @q.sorts.empty?
-      @pagy, roles = paginate(@q.result)
 
       render Views::Roles::Index.new(
-        roles:,
-        pagy: @pagy,
-        query: @q,
-        query_params: params[:q]&.to_unsafe_h || {},
+        overview: Junction::Roles::Overview.new,
         breadcrumbs:,
         can_create: allowed_to?(:create?, Role)
       )
@@ -29,11 +22,13 @@ module Junction
     # GET /roles/:id
     def show
       authorize! @entity
-      render Views::Roles::Show.new(
-        role: @entity,
+      return render_role_pane if turbo_frame_request?
+
+      render Views::Roles::Index.new(
+        overview: Junction::Roles::Overview.new,
+        open: Junction::Roles::Overview.pane_id(@entity),
         breadcrumbs:,
-        can_edit: allowed_to?(:update?, @entity),
-        can_destroy: allowed_to?(:destroy?, @entity) && !@entity.system?
+        can_create: allowed_to?(:create?, Role)
       )
     end
 
@@ -107,6 +102,18 @@ module Junction
     end
 
     private
+
+    # Renders one role's detail pane, for the frame the roles page asks for.
+    def render_role_pane
+      render Views::Roles::Show.new(
+        detail: Junction::Roles::Overview.new.detail(@entity),
+        can_edit: allowed_to?(:update?, @entity)
+      )
+    end
+
+    def breadcrumb_section
+      [ { label: t("junction.breadcrumbs.settings") } ]
+    end
 
     def set_entity
       @entity = Role.includes(:role_permissions).find_by!(

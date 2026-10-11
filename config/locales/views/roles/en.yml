@@ -6,13 +6,53 @@ en:
           title: Edit Role
           description: Update the role '%{name}'.
         index:
-          new: New Role
-          permissions_all: All
-          permissions_all_read: All read
+          custom_roles: Custom roles
+          description: >-
+            A role is a bag of permissions. Groups are granted roles directly,
+            and people inherit them from every group they belong to — and from
+            those groups' ancestors.
+          empty: No roles are defined.
+          granting_note: >-
+            Granting a role is gated on write access to roles, not on editing
+            the group. Someone who can edit a group cannot hand it a permission
+            set it did not already have.
+          group_count:
+            one: 1 group
+            other: "%{count} groups"
+          new: New role
+          permission_count:
+            one: 1 permission
+            other: "%{count} permissions"
+          plugin_count:
+            one: 1 plugin
+            other: "%{count} plugins"
+          registered_by_engine: "%{permissions} registered by the engine"
+          registered_with_plugins: >-
+            %{permissions} registered by the engine and %{plugins}
+          role_count:
+            one: 1 role
+            other: "%{count} roles"
+          system_roles: System roles
+          title: Roles
         new:
           title: New Role
           description: Create a role and assign permissions.
         show:
-          edit: Edit
-          back_to_roles: Back to roles
-          permissions: Permissions (%{count})
+          custom: Custom
+          edit: Edit permissions
+          effective_people:
+            one: Effective for 1 person once group ancestry is resolved.
+            other: >-
+              Effective for %{count} people once group ancestry is resolved.
+          granted_directly: granted directly · junction_group_roles
+          granted_to: Groups granted this role
+          member_count:
+            one: 1 member
+            other: "%{count} members"
+          no_groups: No group has been granted this role.
+          no_permissions: This role grants nothing yet.
+          permissions: Permissions
+          permissions_summary: >-
+            %{count} of the %{total} permissions registered on this instance
+          system: System
+          timestamps: "Created %{created}  ·  updated %{updated} ago"

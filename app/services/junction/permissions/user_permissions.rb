@@ -7,11 +7,15 @@ module Junction
     class UserPermissions
       include InstrumentationHelper
 
-      ADMIN_ROLE_NAME = "admin"
-      READ_ALL_ROLE_NAME = "read-all"
+      # Aliased for callers that predate the model's own constants.
+      ADMIN_ROLE_NAME = Junction::Role::ADMIN_NAME
+      READ_ALL_ROLE_NAME = Junction::Role::READ_ALL_NAME
 
       attr_reader :user
 
+      # Initializes the resolver for one user.
+      #
+      # @param user [Junction::User] The user whose permissions are resolved.
       def initialize(user)
         @user = user
       end
@@ -75,24 +79,8 @@ module Junction
       # @param role [Role] Role to get permissions for.
       # @return [Set<String>] The role's permissions.
       #
-      # @todo Make this more robust for system roles, rather than relying on
-      #       hard-coded role names.
       def role_permissions(role)
-        return role.permission_strings.to_set unless role.system?
-
-        case role.name
-        when ADMIN_ROLE_NAME then all_registry_permissions
-        when READ_ALL_ROLE_NAME then read_only_registry_permissions
-        else role.permission_strings.to_set
-        end
-      end
-
-      def all_registry_permissions
-        Junction::PluginRegistry.permissions.map(&:to_s).to_set
-      end
-
-      def read_only_registry_permissions
-        Junction::PluginRegistry.permissions.select(&:read?).map(&:to_s).to_set
+        role.effective_permission_strings.to_set
       end
     end
   end

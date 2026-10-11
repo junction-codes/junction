@@ -2,7 +2,16 @@
 
 module Junction
   # Represents a role used for authorization.
+  #
+  # @todo System roles are recognized by name. A flag on the record, or a
+  #   declared capability, would be sturdier than a string.
   class Role < Entity
+    # The system role granting everything registered.
+    ADMIN_NAME = "admin"
+
+    # The system role granting everything readable.
+    READ_ALL_NAME = "read-all"
+
     self.default_icon = "shield-check"
 
     store_accessor :spec, :system_role
@@ -24,13 +33,31 @@ module Junction
       %w[description name title]
     end
 
-    # String representation of the permissions assigned to this role.
+    # String representation of the permissions stored against this role.
+    #
+    # A system role has none of its own; see {#effective_permission_strings}.
     #
     # @return [Array<String>] List of permission strings assigned to this role.
-    #
-    # @todo Include system-role expansion.
     def permission_strings
       role_permissions.order(:permission).pluck(:permission)
+    end
+
+    # Everything this role grants.
+    #
+    # A system role carries no rows of its own: Admin grants whatever the
+    # engine and its plugins have registered, and Read all grants the readable
+    # half of it. Those sets move as plugins come and go, which is why they
+    # are resolved here rather than stored.
+    #
+    # @return [Array<String>] Every permission the role grants.
+    def effective_permission_strings
+      return permission_strings unless system?
+
+      case name
+      when ADMIN_NAME then registered_permissions.map(&:to_s)
+      when READ_ALL_NAME then registered_permissions.select(&:read?).map(&:to_s)
+      else permission_strings
+      end.sort
     end
 
     # Whether this role is a system role.
@@ -41,6 +68,13 @@ module Junction
     end
 
     private
+
+    # All registered permissions.
+    #
+    # @return [Array<Junction::Permission>] Every registered permission.
+    def registered_permissions
+      Junction::PluginRegistry.permissions
+    end
 
     # Prevents the deletion of system roles.
     #
