@@ -26,6 +26,7 @@ module Junction
       action = normalized_action
 
       [ breadcrumb_home ].tap do |items|
+        items.concat(breadcrumb_section)
         items << breadcrumb_index
         items << breadcrumb_show if %i[show edit].include?(action)
 
@@ -53,6 +54,16 @@ module Junction
       Junction.const_get(controller_name.singularize.to_s.classify)
               .model_name
               .human(count:)
+    end
+
+    # Returns the crumbs between home and this controller's own index.
+    #
+    # A settings page names the section it sits in, which is a place rather
+    # than a page. The crumb has no href, so the trail renders it as a name.
+    #
+    # @return [Array<Hash>] The breadcrumb items.
+    def breadcrumb_section
+      []
     end
 
     # Build the breadcrumb item for the home page.

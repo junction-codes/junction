@@ -33,11 +33,18 @@ module Junction
         #   page.
         # @option doc [String] :label The label for the documentation link.
         # @option doc [String] :href The URL for the documentation link.
+        # @param action [Hash<Symbol, String>] Optional action for the button
+        #   in the header.
+        # @option action [String] :label Action label for the button text.
+        # @option action [String] :href URL for the action.
+        # @option action [String] :icon Icon for the action button.
         # @param user_attrs [Hash] Additional HTML attributes.
-        def initialize(title:, description: nil, doc: nil, **user_attrs)
+        def initialize(title:, description: nil, doc: nil, action: nil,
+                       **user_attrs)
           @title = title
           @description = description
           @doc = doc
+          @action = action
 
           super(**user_attrs)
         end
@@ -69,6 +76,9 @@ module Junction
           end
         end
 
+        # Renders the page's body.
+        #
+        # @see SettingsPanes
         def panes(...)
           render SettingsPanes.new(...)
         end
@@ -96,7 +106,21 @@ module Junction
               end
             end
 
-            doc_link
+            div(class: "flex shrink-0 items-center gap-3") do
+              doc_link
+              header_action
+            end
+          end
+        end
+
+        # Renders the optional action button for the page.
+        def header_action
+          return if @action.blank?
+
+          Link(href: @action.fetch(:href), variant: :primary,
+               class: "shrink-0 gap-2") do
+            icon(@action.fetch(:icon, "plus"), class: "w-4 h-4")
+            plain @action.fetch(:label)
           end
         end
 

@@ -60,13 +60,36 @@ RSpec.describe "Junction::RolesController", type: :request do
       it_behaves_like "an action that requires permission",
         :get, -> { roles_path }, %w[junction.codes/roles.all.read]
 
-      it_behaves_like "a paginated index",
-        -> { roles_url }, Junction::Role, :role
-
       it "renders a successful response" do
         get roles_url
 
         expect(response).to be_successful
+      end
+
+      it "groups the roles the engine ships separately from our own" do
+        get roles_url
+
+        expect(response.body).to include("System roles").and include("Custom roles")
+      end
+
+      it "says what each role reaches" do
+        get roles_url
+
+        expect(response.body).to match(/\d+ permissions\s+·\s+\d+ groups?/)
+      end
+
+      it "says where the permissions themselves come from" do
+        get roles_url
+
+        expect(response.body).to include('permissions registered by the engine')
+      end
+
+      it "sends the detail pane's links out of the frame" do
+        get roles_url
+
+        frame = response.parsed_body.at_css("turbo-frame[id^='role_']")
+
+        expect(frame["target"]).to eq("_top")
       end
     end
 
@@ -78,6 +101,40 @@ RSpec.describe "Junction::RolesController", type: :request do
         get role_url(role)
 
         expect(response).to be_successful
+      end
+
+      it "renders the whole page" do
+        get role_url(role)
+
+        expect(response.body).to include("<html")
+      end
+
+      it "opens the role that was asked for" do
+        get role_url(role)
+
+        tabs = response.parsed_body.at_css("[data-controller='ruby-ui--tabs']")
+
+        expect(tabs["data-ruby-ui--tabs-active-value"])
+          .to eq(Junction::Roles::Overview.pane_id(role))
+      end
+
+      context "when Turbo asks for the pane" do
+        before do
+          role.role_permissions.create!(permission: "junction.codes/annotations.all.read")
+
+          get role_url(role),
+              headers: { "Turbo-Frame" => "role_#{Junction::Roles::Overview.pane_id(role)}" }
+        end
+
+        it "renders the pane alone" do
+          expect(response.body).to start_with("<turbo-frame")
+        end
+
+        it "marks a permission nothing registers in the table itself" do
+          marks = response.parsed_body.css("tbody .sr-only").map(&:text)
+
+          expect(marks).to include("Permission not registered")
+        end
       end
     end
 

@@ -77,13 +77,9 @@ module Junction
         #   component for the page.
         def detail_panes(panes)
           @annotation_key_tabs.each do |tab|
-            panes.detail(value: tab.fetch(:id)) do
-              turbo_frame_tag "annotation_key_#{tab.fetch(:id)}",
-                              src: annotation_key_path(tab.fetch(:id)),
-                              loading: :lazy do
-                Skeleton(class: "h-20")
-              end
-            end
+            panes.detail(value: tab.fetch(:id),
+                         frame: "annotation_key_#{tab.fetch(:id)}",
+                         src: annotation_key_path(tab.fetch(:id)))
           end
         end
 

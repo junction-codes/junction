@@ -26,6 +26,11 @@ module Junction
       #     panes.detail(value: "on-call") { "What on-call holds" }
       #   end
       class SettingsPanes < Base
+        include Phlex::Rails::Helpers::TurboFrameTag
+
+        # Panel classes.
+        PANEL = "rounded-xl border border-border bg-surface p-6"
+
         # Initializes the component.
         #
         # @param default [String] The item opened when the page loads.
@@ -53,17 +58,32 @@ module Junction
         # A single item's details pane in the right column.
         #
         # Only the open one is visible to the user. Other tabs are rendered and
-        # hidden, so a pane holding a request of its own should lazy-load it.
+        # hidden, so passing `src` loads the pane's contents on demand rather
+        # than building every pane up front.
         #
         # @param value [String] The item this pane belongs to, matching the
         #   index row that opens it.
-        def detail(value:, &)
+        # @param src [String] Path the pane's contents are loaded from.
+        # @param frame [String] The frame's id, when it differs from the item.
+        def detail(value:, src: nil, frame: nil, &block)
           @tabs.content(value:, class: "mt-0") do
-            div(class: "rounded-xl border border-border bg-surface p-6", &)
+            div(class: PANEL) do
+              src ? lazy_pane(frame || value, src) : block.call
+            end
           end
         end
 
         private
+
+        # Renders the frame a pane's contents arrive in.
+        #
+        # @param id [String] The frame's id, which the response must match.
+        # @param src [String] Path the contents are loaded from.
+        def lazy_pane(id, src)
+          turbo_frame_tag(id, src:, target: "_top", loading: :lazy) do
+            Skeleton(class: "h-20")
+          end
+        end
 
         def default_attrs
           { class: "grid grid-cols-1 xl:grid-cols-[300px_minmax(0,1fr)] " \
