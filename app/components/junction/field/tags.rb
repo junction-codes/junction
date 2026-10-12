@@ -10,15 +10,16 @@ module Junction
       # split.
       class Tags < FieldType
         INPUT_CLASSES = <<~CSS
-          flex-1 border-0 bg-transparent p-0 text-sm focus:ring-0
-          dark:text-white
+          flex-1 border-0 bg-transparent p-0 text-sm text-foreground
+          placeholder:text-text-tertiary focus:ring-0
         CSS
 
+        # The chips and their input share one box, which takes the focus ring
+        # the fields beside it take.
         BOX_CLASSES = <<~CSS
-          mt-2 flex flex-wrap items-center gap-2 rounded-md px-3 py-2 shadow-sm
-          ring-1 ring-inset ring-gray-300 focus-within:ring-2
-          focus-within:ring-inset focus-within:ring-blue-600
-          dark:bg-gray-700 dark:ring-gray-600
+          mt-2 flex flex-wrap items-center gap-2 rounded-lg border
+          border-border bg-surface px-3 py-2 focus-within:border-ring
+          focus-within:ring-2 focus-within:ring-ring
         CSS
 
         def view_template
@@ -55,7 +56,7 @@ module Junction
               )
             end
 
-            p(class: "mt-2 text-sm text-gray-500") { @help_text } if @help_text
+            p(class: HELP_CLASSES) { @help_text } if @help_text
 
             render_errors
           end
@@ -76,9 +77,8 @@ module Junction
         def chip(tag = nil)
           span(
             data: { tags_field_target: "chip" },
-            class: "inline-flex items-center gap-1 rounded-md bg-gray-100 " \
-                   "px-2 py-1 text-xs font-medium text-gray-700 " \
-                   "dark:bg-gray-600 dark:text-gray-100"
+            class: "inline-flex items-center gap-1 rounded-md bg-subtle " \
+                   "px-2 py-1 text-xs font-medium text-text-body"
           ) do
             input(type: "hidden", name: field_name, value: tag)
             span(data: { tag_label: "" }) { tag }
@@ -87,7 +87,7 @@ module Junction
               type: "button",
               aria: { label: t(".remove", tag: tag.to_s) },
               data: { action: "click->tags-field#remove" },
-              class: "cursor-pointer text-gray-400 hover:text-gray-600 " \
+              class: "cursor-pointer text-text-tertiary hover:text-foreground " \
                      "dark:hover:text-white"
             ) { icon("x", class: "w-3 h-3") }
           end

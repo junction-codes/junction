@@ -64,9 +64,22 @@ module Junction
       #
       # @return [Integer] The number of plugins that register permissions.
       def plugins_registering
-        Junction::PluginRegistry.plugins.values.count do |plugin|
-          plugin != Junction::CorePlugin && plugin.permissions.any?
-        end
+        Junction::PluginRegistry.plugins_registering_permissions.size
+      end
+
+      # Counts what a role reaches, for the editor's metadata card.
+      #
+      # The editor needs the two totals and none of the matrix {#detail}
+      # builds, so this runs the group and membership queries on their own.
+      #
+      # @param role [Junction::Role] The role.
+      # @return [Hash] The counts.
+      # @option return [Integer] :groups The groups granted the role.
+      # @option return [Integer] :people The people those groups work out to.
+      def reach(role)
+        groups = role.groups.to_a
+
+        { groups: groups.size, people: people_reached(groups) }
       end
 
       # Builds everything the detail pane draws for one role.
@@ -143,8 +156,7 @@ module Junction
       def matrix_for(permissions)
         parsed = permissions.filter_map { |string| Permission.parse(string) }
 
-        parsed.group_by { |permission| "#{permission.domain}/#{permission.context}" }
-              .sort.map do |context, permissions|
+        parsed.group_by(&:context_path).sort.map do |context, permissions|
           { context: }.merge(
             Permission::Access::VALUES.to_h do |access|
               [ access.to_sym, cell_for(context, permissions, access) ]
@@ -182,7 +194,7 @@ module Junction
       # @return [Hash<String, Array<String>>] Access levels by context.
       def registered_by_context
         @registered_by_context ||=
-          registered_permissions.group_by { |permission| "#{permission.domain}/#{permission.context}" }
+          registered_permissions.group_by(&:context_path)
                                 .transform_values { |permissions| permissions.map { |p| p.access.to_s }.uniq }
       end
 

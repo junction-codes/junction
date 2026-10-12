@@ -12,9 +12,28 @@ module Junction
           text-sm
           font-medium
           leading-6
-          text-gray-900
-          dark:text-white
+          text-text-strong
         ].freeze
+
+        INPUT_CLASSES = %w[
+          block
+          w-full
+          rounded-lg
+          border
+          border-border
+          bg-surface
+          px-3
+          py-1.5
+          text-[14px]
+          text-foreground
+          placeholder:text-text-tertiary
+          focus:outline-none
+          focus:border-ring
+          focus:ring-2
+          focus:ring-ring
+        ].freeze
+
+        HELP_CLASSES = "mt-2 text-[12.5px] text-text-tertiary"
 
         attr_reader :help_text, :placeholder
 

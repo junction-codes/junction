@@ -20,8 +20,9 @@ module Junction
       # Delegate class methods to the singleton instance.
       delegate :actions, :annotations_for, :auth_providers, :components_for,
                :permissions, :plugin, :plugin_route_helper_entity_classes,
-               :plugins, :register_plugin, :reset!, :resolve,
-               :settings_menu_items, :sidebar_links, :tabs_for,
+               :plugins, :plugins_registering_permissions, :register_plugin,
+               :reset!, :resolve, :settings_menu_items, :sidebar_links,
+               :tabs_for,
                to: :instance
     end
 
@@ -151,6 +152,18 @@ module Junction
           seen = Set.new
           @plugins.values.flat_map(&:permissions).select { |p| seen.add?(p.to_s) }
         end
+      end
+    end
+
+    # Plugins registering permissions of their own.
+    #
+    # The engine's own plugin is left out.
+    #
+    # @return [Array<Class<ApplicationPlugin>>] The plugins.
+    def plugins_registering_permissions
+      memoize(:plugins_registering_permissions) do
+        @plugins.values.reject { |plugin| plugin == Junction::CorePlugin }
+                .select { |plugin| plugin.permissions.any? }
       end
     end
 

@@ -25,7 +25,8 @@ module Junction
 
         def default_attrs
           {
-            class: "rounded-xl border shadow bg-white dark:bg-gray-800 overflow-hidden"
+            class: "rounded-xl border border-border bg-surface shadow-sm " \
+                   "overflow-hidden"
           }
         end
       end

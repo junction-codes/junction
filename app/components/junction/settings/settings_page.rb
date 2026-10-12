@@ -33,6 +33,8 @@ module Junction
         #   page.
         # @option doc [String] :label The label for the documentation link.
         # @option doc [String] :href The URL for the documentation link.
+        # @param chip [String] Optional label to display as a chip beside the
+        #   title
         # @param action [Hash<Symbol, String>] Optional action for the button
         #   in the header.
         # @option action [String] :label Action label for the button text.
@@ -40,8 +42,9 @@ module Junction
         # @option action [String] :icon Icon for the action button.
         # @param user_attrs [Hash] Additional HTML attributes.
         def initialize(title:, description: nil, doc: nil, action: nil,
-                       **user_attrs)
+                       chip: nil, **user_attrs)
           @title = title
+          @chip = chip
           @description = description
           @doc = doc
           @action = action
@@ -96,8 +99,12 @@ module Junction
         def page_header
           div(class: "flex items-start justify-between gap-6") do
             div(class: "min-w-0") do
-              h1(class: "text-[28px] leading-tight font-bold tracking-tight " \
-                        "text-foreground") { @title }
+              div(class: "flex flex-wrap items-baseline gap-3") do
+                h1(class: "text-[28px] leading-tight font-bold tracking-tight " \
+                          "text-foreground") { @title }
+
+                title_chip
+              end
 
               if @description
                 p(class: "mt-1 max-w-3xl text-[14px] text-text-tertiary") do
@@ -110,6 +117,16 @@ module Junction
               doc_link
               header_action
             end
+          end
+        end
+
+        # Renders the label beside the page title, when the page has one.
+        def title_chip
+          return if @chip.blank?
+
+          span(class: "inline-flex items-center rounded-md border border-border " \
+                      "bg-background px-2 py-0.5 text-[12px] text-text-tertiary") do
+            @chip
           end
         end
 

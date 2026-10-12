@@ -3,8 +3,14 @@ en:
     views:
       roles:
         edit:
-          title: Edit Role
-          description: Update the role '%{name}'.
+          custom_role: Custom role
+          description: >-
+            Tick what this role can do. Saving changes the permission set for
+            every group pointing at it.
+          system_description: >-
+            Rename this role or reword what it is for. What it grants is
+            resolved from what the engine and its plugins register.
+          system_role: System role
         index:
           custom_roles: Custom roles
           description: >-
@@ -35,8 +41,10 @@ en:
           system_roles: System roles
           title: Roles
         new:
-          title: New Role
-          description: Create a role and assign permissions.
+          description: >-
+            Name the role, then tick what it can do. Groups are granted the
+            role afterwards, from the group's own page.
+          title: New role
         show:
           custom: Custom
           edit: Edit permissions

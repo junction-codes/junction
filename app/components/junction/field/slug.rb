@@ -53,7 +53,7 @@ module Junction
                 persisted? ? render_read_only : render_editable
               end
 
-              p(class: "mt-2 text-sm text-gray-500") { @help_text } if @help_text
+              p(class: HELP_CLASSES) { @help_text } if @help_text
 
               if errors.any?
                 div(class: "mt-2 text-sm text-red-600 dark:text-red-400", id: "#{@method}_errors") do
@@ -86,7 +86,7 @@ module Junction
         def render_editable
           div(data: { slug_field_target: "slugDisplayWrapper" }) do
             code(
-              class: "font-mono text-sm text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded px-2 py-1 inline-block min-w-16",
+              class: "font-mono text-sm text-text-body bg-subtle rounded px-2 py-1 inline-block min-w-16",
               data: { slug_field_target: "slugDisplay" }
             ) { @form.object.public_send(@method).presence || "auto-generated" }
             @form.hidden_field @method, data: { slug_field_target: "slugInput" }
@@ -111,7 +111,7 @@ module Junction
           div(class: "flex gap-2 text-xs") do
             a(
               href: "#",
-              class: "hidden text-blue-500 hover:underline",
+              class: "hidden text-accent-strong hover:underline",
               data: {
                 slug_field_target: "autoLink",
                 action: "click->slug-field#enableAutoMode"
@@ -120,7 +120,7 @@ module Junction
 
             a(
               href: "#",
-              class: "text-blue-500 hover:underline",
+              class: "text-accent-strong hover:underline",
               data: {
                 slug_field_target: "editLink",
                 action: "click->slug-field#enableEditMode"

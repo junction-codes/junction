@@ -29,7 +29,7 @@ module Junction
             render_label
 
             if @help_text
-              p(class: "mb-4 text-sm text-gray-500 dark:text-gray-400") { @help_text }
+              p(class: "mb-4 text-[12.5px] text-text-tertiary") { @help_text }
             end
 
             # Submitted even when every box is cleared, so removing the last
@@ -64,15 +64,15 @@ module Junction
               id: field_id,
               value: role.id,
               checked: selected_role_ids.include?(role.id),
-              class: "h-4 w-4 rounded border-gray-300"
+              class: "h-4 w-4 rounded border-border text-accent-solid focus:ring-ring"
             )
 
-            label(for: field_id, class: "text-sm text-gray-700 dark:text-gray-300") do
+            label(for: field_id, class: "text-sm text-text-body") do
               plain role.title
             end
 
             if role.description.present?
-              span(class: "text-xs text-gray-500 dark:text-gray-400") { role.description }
+              span(class: "text-xs text-text-tertiary") { role.description }
             end
           end
         end

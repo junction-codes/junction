@@ -13,7 +13,7 @@ module Junction
               @form.password_field @method, placeholder:, **attrs
             end
 
-            p(class: "mt-2 text-sm text-gray-500") { @help_text } if @help_text
+            p(class: HELP_CLASSES) { @help_text } if @help_text
 
             # If there are any validation errors, display them below the field
             if errors.any?

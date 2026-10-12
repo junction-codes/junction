@@ -37,11 +37,7 @@ module Junction
       authorize! Role
       @entity = Role.new
 
-      render Views::Roles::New.new(
-        role: @entity,
-        breadcrumbs:,
-        available_permissions: PluginRegistry.permissions
-      )
+      render new_view
     end
 
     # POST /roles
@@ -52,23 +48,15 @@ module Junction
         sync_role_permissions
         redirect_to junction_catalog_path(@entity), success: "Role was successfully created."
       else
-        render Views::Roles::New.new(
-          role: @entity,
-          breadcrumbs:,
-          available_permissions: PluginRegistry.permissions
-        ), status: :unprocessable_content
+        render new_view(submitted: submitted_permissions), status: :unprocessable_content
       end
     end
 
     # GET /roles/:id/edit
     def edit
       authorize! @entity
-      render Views::Roles::Edit.new(
-        role: @entity,
-        breadcrumbs:,
-        can_destroy: allowed_to?(:destroy?, @entity) && !@entity.system?,
-        available_permissions: PluginRegistry.permissions
-      )
+
+      render edit_view
     end
 
     # PATCH/PUT /roles/:id
@@ -78,12 +66,7 @@ module Junction
         sync_role_permissions unless @entity.system?
         redirect_to junction_catalog_path(@entity), success: "Role was successfully updated."
       else
-        render Views::Roles::Edit.new(
-          role: @entity,
-          breadcrumbs:,
-          can_destroy: allowed_to?(:destroy?, @entity) && !@entity.system?,
-          available_permissions: PluginRegistry.permissions
-        ), status: :unprocessable_content
+        render edit_view(submitted: submitted_permissions), status: :unprocessable_content
       end
     end
 
@@ -102,6 +85,51 @@ module Junction
     end
 
     private
+
+    # Builds the create page, for a first visit and for a rejected save alike.
+    #
+    # @param submitted [Array<String>] The permissions a rejected save sent.
+    # @return [Views::Roles::New] The view.
+    def new_view(submitted: nil)
+      Views::Roles::New.new(
+        role: @entity,
+        breadcrumbs:,
+        submitted:,
+        available_permissions: PluginRegistry.permissions
+      )
+    end
+
+    # Builds the edit page, for a first visit and for a rejected save alike.
+    #
+    # The rail tells the user what a save is about to affect, so a failed
+    # update has to rebuild it: rendered without the counts, the metadata card
+    # would report no groups and no people exactly when the user is deciding
+    # whether to retry.
+    #
+    # @param submitted [Array<String>] The permissions a rejected save sent.
+    # @return [Views::Roles::Edit] The view.
+    def edit_view(submitted: nil)
+      Views::Roles::Edit.new(
+        role: @entity,
+        breadcrumbs:,
+        submitted:,
+        reach: Junction::Roles::Overview.new.reach(@entity),
+        can_destroy: allowed_to?(:destroy?, @entity) && !@entity.system?,
+        available_permissions: PluginRegistry.permissions
+      )
+    end
+
+    # Returns the permissions a rejected save sent.
+    #
+    # The role's permissions are written only once the role itself validates,
+    # so after a rejection they exist nowhere but in the params. An empty array
+    # is a real answer, the user cleared every box, so we don't fall back to
+    # what's stored for the role.
+    #
+    # @return [Array<String>] The permission strings.
+    def submitted_permissions
+      Array(role_params[:permission_ids]).reject(&:blank?)
+    end
 
     # Renders one role's detail pane, for the frame the roles page asks for.
     def render_role_pane
@@ -135,22 +163,31 @@ module Junction
     # - Remove permissions currently assigned to the role but not present in
     #   params.
     #
+    # Only permissions the form offered are removed. A stored permission
+    # outlives the plugin that registered it, and one nothing registers any
+    # more has no checkbox, so it was never a box the user cleared. Dropping
+    # it here would delete a grant the editor never showed them, and reinstall
+    # the plugin to find it gone.
+    #
+    # Additions similarly only affect permissions the form offered. If the form
+    # was submitted with permissions not in the registry, those permissions are
+    # ignored.
+    #
     # The role is locked to prevent race conditions when multiple requests are
     # updating the role's permissions at the same time.
-    #
-    # This ensures the role's permissions exactly match those submitted.
     def sync_role_permissions
       return if @entity.system?
 
       @entity.with_lock do
+        offered = PluginRegistry.permissions.map(&:to_s)
         updated = Array(role_params[:permission_ids]).reject(&:blank?)
         current = @entity.role_permissions.pluck(:permission)
 
-        (updated - current).each do |permission|
+        ((updated & offered) - current).each do |permission|
           @entity.role_permissions.find_or_create_by!(permission:)
         end
 
-        @entity.role_permissions.where(permission: (current - updated)).destroy_all
+        @entity.role_permissions.where(permission: (current - updated) & offered).destroy_all
       end
     end
   end

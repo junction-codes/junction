@@ -51,6 +51,8 @@
 }
 
 :root {
+  color-scheme: light;
+
   --radius: 12px;
 
   --background: #f7f9fc;
@@ -152,6 +154,8 @@
 }
 
 .dark {
+  color-scheme: dark;
+
   --background: #0a0d14;
   --foreground: #e8ecf4;
   --card: #111621;
@@ -243,6 +247,11 @@
   --kind-template-fg: #e890b4;
   --kind-location: #18211f;
   --kind-location-fg: #8fb3a9;
+}
+
+.dark [type="checkbox"]:not(:checked),
+.dark [type="radio"]:not(:checked) {
+  background-color: var(--background);
 }
 
 @theme inline {

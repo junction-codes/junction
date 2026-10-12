@@ -67,6 +67,16 @@ module Junction
     end
     alias_method :id, :to_s
 
+    # Returns the domain and context, without the ownership or access.
+    #
+    # This is what the role editor and the permission matrix group by, since
+    # a reader picks the context first and the access within it second.
+    #
+    # @return [String] The domain and context, separated by a slash.
+    def context_path
+      "#{domain}/#{context}"
+    end
+
     # Whether the permission grants read access.
     #
     # @return [Boolean] Whether the permission grants read access.
