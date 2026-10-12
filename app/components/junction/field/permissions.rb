@@ -26,6 +26,8 @@ module Junction
         #   permission that may be granted.
         # @param selected [Enumerable<String>] The permissions to tick.
         #   Defaults to the rows the record stores.
+        # @param initial [Enumerable<String>] The permissions the record
+        #   loaded with; defaults to the permissions ticked.
         # @param disabled [Boolean] Whether the grid is read-only, for a role
         #   whose permissions are resolved rather than stored.
         # @param label [String] Human-readable label for the field; set to an
@@ -34,10 +36,11 @@ module Junction
         # @param required [Boolean] Whether the field is required.
         # @param user_attrs [Hash] Additional HTML attributes.
         def initialize(form, method, available_permissions:, selected: nil,
-                       disabled: false, label: nil, help_text: nil,
-                       required: false, **user_attrs)
+                       initial: nil, disabled: false, label: nil,
+                       help_text: nil, required: false, **user_attrs)
           @available_permissions = available_permissions
           @selected = selected
+          @initial = initial
           @disabled = disabled
 
           super(form, method, label:, help_text:, required:, **user_attrs)
@@ -129,21 +132,24 @@ module Junction
 
         # Renders the checkbox itself.
         #
-        # The box carries the state it loaded with, which is what the editor
-        # compares against to work out what's being added and removed.
+        # The box carries the state the record loaded with, which is what the
+        # editor compares against to work out what's being added and removed.
+        # That's not always the state it's drawn in, since a rejected save ticks
+        # what was submitted rather than what's stored.
         #
         # @param permission [Junction::Permission] The permission.
         def checkbox_input(permission)
           string = permission.to_s
-          checked = selected_permissions.include?(string)
 
           input(type: "checkbox", name: "#{entity_type}[#{@method}][]",
                 id: "role_permission_#{string.parameterize}",
-                value: string, checked:, disabled: @disabled,
+                value: string, disabled: @disabled,
+                checked: selected_permissions.include?(string),
                 aria_label: string,
                 data: { role_permissions_target: "checkbox",
                         action: "role-permissions#toggle",
-                        permission: string, initial: checked.to_s },
+                        permission: string,
+                        initial: initial_permissions.include?(string).to_s },
                 class: "h-[17px] w-[17px] rounded border-border " \
                        "text-accent-solid focus:ring-ring " \
                        "disabled:cursor-default disabled:opacity-70")
@@ -174,8 +180,21 @@ module Junction
         #
         # @return [Set<String>] The permission strings.
         def selected_permissions
-          @selected_permissions ||=
-            (@selected || entity.role_permissions.map { |held| held.permission.to_s }).to_set
+          @selected_permissions ||= (@selected || stored_permissions).to_set
+        end
+
+        # Returns the permissions each box records as the state it loaded in.
+        #
+        # @return [Set<String>] The permission strings.
+        def initial_permissions
+          @initial_permissions ||= (@initial || selected_permissions).to_set
+        end
+
+        # Returns the permissions the record stores.
+        #
+        # @return [Array<String>] The permission strings.
+        def stored_permissions
+          @stored_permissions ||= entity.role_permissions.map { |held| held.permission.to_s }
         end
       end
     end

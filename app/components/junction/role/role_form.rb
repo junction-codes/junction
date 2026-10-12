@@ -20,13 +20,16 @@ module Junction
         # @param reach [Hash] The number of entities that hold the role.
         # @option reach [Integer] :groups The number of groups holding the role.
         # @option reach [Integer] :people The number of people holding the role.
+        # @param submitted [Array<String>] The permissions a rejected save
+        #   sent, which are ticked in place of the ones the role holds.
         # @param can_destroy [Boolean] Whether the role may be deleted.
         # @param user_attrs [Hash] Additional HTML attributes.
         def initialize(role:, available_permissions:, reach: {},
-                       can_destroy: false, **user_attrs)
+                       submitted: nil, can_destroy: false, **user_attrs)
           @role = role
           @available_permissions = available_permissions
           @reach = reach
+          @submitted = submitted
           @can_destroy = can_destroy
 
           super(**user_attrs)
@@ -104,8 +107,9 @@ module Junction
               system_note if role.system?
 
               Permissions(form, :permission_ids, available_permissions:,
-                          selected: selected_permissions, disabled: role.system?,
-                          label: "")
+                          selected: ticked_permissions,
+                          initial: stored_permissions,
+                          disabled: role.system?, label: "")
               contexts_footer
             end
           end
@@ -187,13 +191,25 @@ module Junction
 
         # Returns the permissions the grid ticks.
         #
+        # The role's own permissions are written only once the role itself
+        # validates, so a rejected save leaves what the user selected nowhere
+        # but in the params. They're added back here, or the correction of an
+        # unrelated field would cost them every permission change they made.
+        #
+        # @return [Array<String>] The permission strings.
+        def ticked_permissions
+          @ticked_permissions ||= @submitted || stored_permissions
+        end
+
+        # Returns the permissions the role holds.
+        #
         # A system role stores no rows of its own. What it grants is resolved
         # from what the engine and its plugins register, so the grid reads that
         # rather than an empty list.
         #
         # @return [Array<String>] The permission strings.
-        def selected_permissions
-          @selected_permissions ||=
+        def stored_permissions
+          @stored_permissions ||=
             if role.system?
               role.effective_permission_strings
             else
@@ -201,14 +217,14 @@ module Junction
             end
         end
 
-        # Counts the registered permissions the role holds.
+        # Counts the registered permissions that should be selected.
         #
         # A stored permission outlives the plugin that registered it, and one
         # with no checkbox is not part of what this count describes.
         #
         # @return [Integer] The count.
         def selected_now
-          @selected_now ||= (selected_permissions & registered_strings).size
+          @selected_now ||= (ticked_permissions & registered_strings).size
         end
 
         # Returns every permission that may be granted, as a string.

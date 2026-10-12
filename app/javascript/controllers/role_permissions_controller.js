@@ -144,6 +144,6 @@ export default class extends Controller {
   }
 
   boxesIn(block) {
-    return this.checkboxTargets.filter((box) => block.contains(box))
+    return [...block.querySelectorAll("[data-role-permissions-target='checkbox']")]
   }
 }

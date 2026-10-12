@@ -3,7 +3,7 @@
 module Junction
   module Components
     module Role
-      # Renders the pending changes to a role's permission set, and the sav
+      # Renders the pending changes to a role's permission set, and the save
       # button.
       #
       # Saving a role changes what every group holding it can do, so the

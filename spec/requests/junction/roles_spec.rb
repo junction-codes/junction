@@ -387,6 +387,23 @@ RSpec.describe "Junction::RolesController", type: :request do
       expect(held.role_permissions.pluck(:permission))
         .not_to include("junction.codes/components.all.read")
     end
+
+    it "refuses a permission nothing registers" do
+      patch role_url(held), params: { role: { permission_ids: [ "acme.io/secrets.all.destroy" ] } }
+
+      expect(held.role_permissions.pluck(:permission))
+        .not_to include("acme.io/secrets.all.destroy")
+    end
+
+    it "still grants the registered permissions sent with it" do
+      patch role_url(held), params: {
+        role: { permission_ids: [ "acme.io/secrets.all.destroy",
+                                  "junction.codes/apis.all.read" ] }
+      }
+
+      expect(held.role_permissions.pluck(:permission))
+        .to include("junction.codes/apis.all.read")
+    end
   end
 
   describe "a save the role rejects" do
@@ -418,6 +435,65 @@ RSpec.describe "Junction::RolesController", type: :request do
       people = response.parsed_body.css("dt").find { |term| term.text == "People" }
 
       expect(people.next_element.text).to eq("1")
+    end
+  end
+
+  describe "the permissions a rejected save sent" do
+    let(:edited) { create(:role, title: "Service Owner") }
+    let(:added) { "junction.codes/apis.all.read" }
+
+    before do
+      sign_in_user_with_permissions(%w[
+        junction.codes/roles.all.read junction.codes/roles.all.write
+      ])
+    end
+
+    def box(permission)
+      response.parsed_body.at_css("input[value='#{permission}']")
+    end
+
+    context "when the role already exists" do
+      before do
+        patch role_url(edited), params: {
+          role: { title: "", description: "", permission_ids: [ added ] }
+        }
+      end
+
+      it "ticks them again" do
+        expect(box(added).attributes).to have_key("checked")
+      end
+
+      it "still counts them as pending" do
+        expect(box(added)["data-initial"]).to eq("false")
+      end
+    end
+
+    context "when the role is being created" do
+      before do
+        post roles_url, params: {
+          role: { title: "", description: "", permission_ids: [ added ] }
+        }
+      end
+
+      it "ticks them again" do
+        expect(box(added).attributes).to have_key("checked")
+      end
+    end
+
+    context "when every permission was cleared" do
+      before do
+        edited.role_permissions.create!(permission: added)
+
+        patch role_url(edited), params: { role: { title: "", description: "" } }
+      end
+
+      it "leaves them cleared" do
+        expect(box(added).attributes).not_to have_key("checked")
+      end
+
+      it "counts the removal as pending" do
+        expect(box(added)["data-initial"]).to eq("true")
+      end
     end
   end
 end

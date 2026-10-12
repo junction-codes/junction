@@ -74,6 +74,29 @@ RSpec.describe "The role permission editor", :js, type: :system do
     expect(page).to have_button("Save changes", disabled: false)
   end
 
+  context "when a rejected save is corrected through the identifier switcher" do
+    before do
+      create(:role, name: "steward")
+
+      visit new_role_path
+      fill_in "Role name", with: "Service Steward"
+      fill_in "Description", with: "Owns and ships services."
+      click_link "Edit"
+      fill_in "role_name", with: "steward"
+      click_button "Save changes"
+
+      click_link "Auto"
+    end
+
+    it "restores the generated identifier" do
+      expect(page).to have_text("service-steward")
+    end
+
+    it "can be saved again" do
+      expect(page).to have_button("Save changes", disabled: false)
+    end
+  end
+
   context "when Enter is pressed in the filter" do
     before do
       box("junction.codes/components.owned.write").click

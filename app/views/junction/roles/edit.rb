@@ -18,13 +18,16 @@ module Junction
         # @param reach [Hash] The number of entities that hold the role.
         # @option reach [Integer] :groups The number of groups holding the role.
         # @option reach [Integer] :people The number of people holding the role.
+        # @param submitted [Array<String>] The permissions a rejected save
+        #   sent, which are selected in place of the ones the role holds.
         # @param can_destroy [Boolean] Whether the role may be deleted.
         # @param breadcrumbs [Array<Hash>] Breadcrumb items from the controller.
         def initialize(role:, available_permissions:, reach: {},
-                       can_destroy: false, breadcrumbs: [])
+                       submitted: nil, can_destroy: false, breadcrumbs: [])
           @role = role
           @available_permissions = available_permissions
           @reach = reach
+          @submitted = submitted
           @can_destroy = can_destroy
           @breadcrumbs = breadcrumbs
         end
@@ -33,7 +36,8 @@ module Junction
           render Junction::Layouts::Application.new(breadcrumbs:) do
             SettingsPage(title: heading, chip:, description:) do
               RoleForm(role: @role, available_permissions: @available_permissions,
-                       reach: @reach, can_destroy: @can_destroy)
+                       reach: @reach, submitted: @submitted,
+                       can_destroy: @can_destroy)
             end
           end
         end

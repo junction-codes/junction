@@ -48,7 +48,7 @@ export default class extends Controller {
     if (!this.#autoMode) return
     const slug = this.#slugify(this.#sourceInput?.value ?? "")
     this.slugDisplayTarget.textContent = slug || "auto-generated"
-    this.slugInputTarget.value = slug
+    this.#writeSlug(slug)
   }
 
   // Called when the user clicks "Edit".
@@ -62,7 +62,7 @@ export default class extends Controller {
     event.preventDefault()
     this.#autoMode = true
     const slug = this.#slugify(this.#sourceInput?.value ?? "")
-    this.slugInputTarget.value = slug
+    this.#writeSlug(slug)
     this.slugDisplayTarget.textContent = slug || "auto-generated"
     this.#showAutoModeUI()
   }
@@ -76,7 +76,13 @@ export default class extends Controller {
 
   // Called on keystroke in manual slug input.
   onManualSlugInput() {
-    this.slugInputTarget.value = this.slugManualInputTarget.value
+    this.#writeSlug(this.slugManualInputTarget.value)
+  }
+
+  // Writes the hidden input the form actually submits.
+  #writeSlug(value) {
+    this.slugInputTarget.value = value
+    this.slugInputTarget.dispatchEvent(new Event("input", { bubbles: true }))
   }
 
 
