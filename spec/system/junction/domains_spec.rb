@@ -28,9 +28,9 @@ RSpec.describe "Junction::Domains", type: :system do
 
   def sign_in_existing_user(user)
     visit new_session_path
-    fill_in "Your email", with: user.email
+    fill_in "Email", with: user.email
     fill_in "Password", with: "Password1!"
-    click_button "Submit"
+    click_button "Sign in"
   end
 
   def fill_required_domain_fields(title:, description: "A domain description",

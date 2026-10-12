@@ -60,8 +60,7 @@ module Junction
             span(class: "w-[30px] h-[30px] shrink-0 rounded-[9px] " \
                         "bg-accent-muted text-primary-foreground " \
                         "flex items-center justify-center") do
-              icon(Junction.config.icon, fallback: Junction::CorePlugin.icon,
-                   class: "w-[18px] h-[18px]")
+              Logo(class: "w-[18px] h-[18px]")
             end
 
             span(data_sidebar_target: "linkText",

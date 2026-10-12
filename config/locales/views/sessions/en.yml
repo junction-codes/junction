@@ -3,10 +3,14 @@ en:
     views:
       sessions:
         new:
-          sign_in_heading: Sign in to your account
-          email: Your email
-          email_placeholder: example@example.com
-          password: Password
+          continue_with: or continue with
+          continue_with_provider: Continue with %{provider}
+          email: Email
+          email_placeholder: you@example.com
           forgot: Forgot password?
-          submit: Submit
-          continue_with: Or continue with
+          no_signup: >-
+            Accounts are created by an admin — there is no sign-up.
+          password: Password
+          sign_in_heading: Sign in
+          submit: Sign in
+          submitting: Signing in…

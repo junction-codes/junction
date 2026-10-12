@@ -3,50 +3,72 @@
 module Junction
   module Views
     module Passwords
-      # New password view.
+      # Renders the forgotten password page.
+      #
+      # This same page is used both for the request form and the confirmation.
       class New < Views::Base
+        # Initializes the view.
+        #
+        # @param sent_to [String] Email address a link was just requested for,
+        #   if one has been requested.
+        def initialize(sent_to: nil)
+          @sent_to = sent_to
+        end
+
         def view_template
           render Layouts::Unauthenticated.new do
-            template
+            @sent_to.present? ? confirmation : request_form
           end
         end
 
-        def template
-          section(class: "bg-gray-50 dark:bg-gray-900") do
-            div(class: "flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0") do
-              a(href: "#", class: "flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white") do
-                icon("square-dashed-bottom-code", class: "w-8 h-8 mr-2")
-                plain t("app.title")
+        private
+
+        # Renders the password reset request form.
+        def request_form
+          AuthCard(heading: t(".request"), description: t(".expires")) do
+            AuthNotice(variant: :alert, message: flash[:alert]) if flash[:alert].present?
+
+            form_with(url: passwords_path, class: "space-y-5") do |form|
+              Text(form, :email, label: t(".email"), type: "email",
+                                 placeholder: t(".email_placeholder"),
+                                 autofocus: true, autocomplete: "username",
+                                 class: "h-11")
+
+              Button(type: "submit", variant: :primary,
+                     class: "h-11 w-full justify-center",
+                     data: { turbo_submits_with: t(".submitting") }) { t(".submit") }
+            end
+
+            p(class: "mt-6 text-center") { back_link }
+          end
+        end
+
+        # Renders the confirmation message given after the form is submitted.
+        def confirmation
+          AuthCard do
+            div(class: "flex flex-col items-center text-center") do
+              div(class: "mb-5 flex h-11 w-11 items-center justify-center " \
+                         "rounded-xl bg-success-subtle") do
+                icon("shield-check", class: "h-[22px] w-[22px] text-success")
               end
 
-              div(class: "w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700") do
-                div(class: "p-6 space-y-4 md:space-y-6 sm:p-8") do
-                  h1(class: "text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white") do
-                    plain t(".request")
-                  end
-
-                  form_with(url: passwords_path, class: "space-y-4 md:space-y-6") do |form|
-                    Text(form, :email, label: t(".email"), type: "email", placeholder: t(".email_placeholder"), autofocus: true, autocomplete: "username")
-
-                    div(class: "flex items-center justify-between") do
-                      a(href: new_session_path, class: "text-sm font-medium text-primary-600 hover:underline dark:text-primary-500") { plain t(".back") }
-                    end
-                    if flash[:alert].present?
-                      div(class: "mt-2 text-sm text-red-600 dark:text-red-400", id: "password_errors") do
-                          p { flash[:alert] }
-                      end
-                    end
-
-                    div(class: "flex justify-between items-center") do
-                      Button(type: "submit", variant: :primary, data: { form_target: "submit" }, class: "w-full") do
-                        plain t(".submit")
-                      end
-                    end
-                  end
-                end
+              h1(class: "text-[17px] font-semibold text-foreground") do
+                t(".sent_heading")
               end
+
+              p(class: "mt-3 text-[13px] leading-6 text-text-tertiary") do
+                t(".sent_body", email: @sent_to)
+              end
+
+              Link(href: new_session_path, variant: :outline,
+                   class: "mt-6 w-full justify-center") { t(".back") }
             end
           end
+        end
+
+        # Renders the back link.
+        def back_link
+          AuthLink(href: new_session_path) { t(".back") }
         end
       end
     end

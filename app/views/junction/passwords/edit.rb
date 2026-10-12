@@ -3,53 +3,43 @@
 module Junction
   module Views
     module Passwords
-      # Edit view for passwords.
+      # Renders the reset password page.
+      #
+      # This page must be accessed via the link sent in the password reset
+      # email. To change the password for a signed-in user, see {User::Edit}.
       class Edit < Views::Base
+        # Initializes the view.
+        #
+        # @param token [String] The single-use token from the emailed link.
         def initialize(token:)
           @token = token
         end
 
         def view_template
           render Layouts::Unauthenticated.new do
-            template
-          end
-        end
+            AuthCard(heading: t(".reset"), description: t(".description")) do
+              AuthNotice(variant: :alert, message: flash[:alert]) if flash[:alert].present?
 
-        def template
-          section(class: "bg-gray-50 dark:bg-gray-900") do
-            div(class: "flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0") do
-              a(href: "#", class: "flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white") do
-                icon("square-dashed-bottom-code", class: "w-8 h-8 mr-2")
-                plain t("app.title")
+              form_with(url: password_path(@token), method: :put,
+                        class: "space-y-5") do |form|
+                Password(form, :password, label: t(".password"),
+                                          placeholder: "••••••••",
+                                          required: true, autofocus: true,
+                                          autocomplete: "new-password",
+                                          class: "h-11")
+
+                Password(form, :password_confirmation,
+                         label: t(".password_confirmation"),
+                         placeholder: "••••••••", required: true,
+                         autocomplete: "new-password", class: "h-11")
+
+                Button(type: "submit", variant: :primary,
+                       class: "h-11 w-full justify-center",
+                       data: { turbo_submits_with: t(".submitting") }) { t(".submit") }
               end
 
-              div(class: "w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700") do
-                div(class: "px-6 py-3 space-y-4 md:space-y-6 sm:p-8") do
-                  h1(class: "text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white") do
-                    plain t(".reset")
-                  end
-
-                  form_with(url: password_path(@token), class: "space-y-4 md:space-y-6", method: :put) do |form|
-                    Password(form, :password, label: t(".password"), placeholder: "••••••••", required: true, autofocus: true, autocomplete: "new-password")
-                    Password(form, :password_confirmation, label: t(".password_confirmation"), placeholder: "••••••••", required: true, autofocus: true, autocomplete: "new-password")
-
-                    div(class: "flex items-center justify-between") do
-                      a(href: new_session_path, class: "text-sm font-medium text-primary-600 hover:underline dark:text-primary-500") { plain t(".back") }
-                    end
-
-                    if flash[:alert].present?
-                      div(class: "mt-2 text-sm text-red-600 dark:text-red-400", id: "password_errors") do
-                          p { flash[:alert] }
-                      end
-                    end
-
-                    div(class: "flex justify-between items-center") do
-                      Button(type: "submit", variant: :primary, data: { form_target: "submit" }, class: "w-full") do
-                        plain t(".submit")
-                      end
-                    end
-                  end
-                end
+              p(class: "mt-6 text-center") do
+                AuthLink(href: new_session_path) { t(".back") }
               end
             end
           end

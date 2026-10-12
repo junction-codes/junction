@@ -6,7 +6,7 @@ module Junction
       def view_template(&block)
         doctype
 
-        html do
+        html(lang: I18n.locale) do
           head do
             meta_tags
             link_tags
@@ -14,15 +14,13 @@ module Junction
             javascript_importmap_tags
           end
 
-          body(class: "bg-gray-50 dark:bg-gray-900") do
-            main(class: "flex-1 overflow-y-auto transition-all duration-300 md:mx-10") do
-              yield
-            end
+          body(class: "bg-auth-backdrop") do
+            main { yield }
 
-            div(
-              style: "position: fixed; bottom: 2rem; right: 2rem; z-index: 50;",
-              class: "rounded-full bg-white dark:bg-gray-800 shadow-lg p-3 flex items-center justify-center"
-            ) do
+            aside(aria_label: t("junction.components.theme_toggle.theme_toggle.label"),
+                  class: "fixed bottom-8 right-8 z-50 flex items-center " \
+                         "justify-center rounded-full border border-border " \
+                         "bg-surface p-3 shadow-lg") do
               ThemeToggle()
             end
           end

@@ -8,6 +8,65 @@ RSpec.describe "/sessions", type: :request do
       get new_session_path
       expect(response).to be_successful
     end
+
+    it "says where accounts come from" do
+      get new_session_path
+
+      expect(response.body).to include("Accounts are created by an admin")
+    end
+
+    it "offers the way out of a forgotten password" do
+      get new_session_path
+
+      expect(response.body).to include(new_password_path)
+    end
+
+    it "shows the Junction mark" do
+      get new_session_path
+
+      expect(response.body).to include("M6.7 19.5h10.6")
+    end
+
+    context "when the installation configured an icon of its own" do
+      before { allow(Junction.config).to receive(:icon).and_return("train-track") }
+
+      it "shows that icon in place of the mark" do
+        get new_session_path
+
+        expect(response.body).not_to include("M6.7 19.5h10.6")
+      end
+    end
+
+    context "when demo mode is configured" do
+      before { allow(Junction.config).to receive(:allow_demo_mode).and_return(true) }
+
+      it "says the catalog can be read without an account" do
+        get new_session_path
+
+        expect(response.body).to include("Demo mode is on")
+      end
+    end
+
+    context "without demo mode" do
+      it "says nothing about it" do
+        get new_session_path
+
+        expect(response.body).not_to include("Demo mode is on")
+      end
+    end
+
+    context "when a password was just reset" do
+      let(:user) { create(:user) }
+
+      it "carries the confirmation onto the page" do
+        password = random_password
+        patch password_url(user.password_reset_token),
+              params: { password:, password_confirmation: password }
+        get new_session_path
+
+        expect(response.body).to include("Password has been reset.")
+      end
+    end
   end
 
   describe "POST /create" do
@@ -21,19 +80,20 @@ RSpec.describe "/sessions", type: :request do
     end
 
     context "with invalid credentials" do
-      it "redirects to the new session path" do
+      before do
         post session_url, params: { email: user.email, password: "wrong_password" }
-        expect(response.location).to eq(new_session_url)
       end
 
-      it "sets the forbidden status code" do
-        post session_url, params: { email: user.email, password: "wrong_password" }
-        expect(response).to have_http_status(:forbidden)
+      it "renders the sign-in page again" do
+        expect(response.body).to include("Sign in")
       end
 
-      it "sets an alert message" do
-        post session_url, params: { email: user.email, password: "wrong_password" }
-        expect(flash[:alert]).to eq("Try another email address or password.")
+      it "sets the unprocessable status code" do
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+
+      it "shows the alert without naming which half failed" do
+        expect(response.body).to include("Try another email address or password.")
       end
     end
   end

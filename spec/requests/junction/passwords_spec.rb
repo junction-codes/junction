@@ -20,14 +20,16 @@ RSpec.describe "/passwords", type: :request do
         }.to have_enqueued_mail(Junction::PasswordsMailer, :reset).with(user)
       end
 
-      it "redirects to the new session path" do
+      it "returns to the reset page" do
         post passwords_url, params: { email: user.email }
-        expect(response).to redirect_to(new_session_url)
+        expect(response).to redirect_to(new_password_url)
       end
 
-      it "sets a success notice" do
+      it "confirms a link is on its way" do
         post passwords_url, params: { email: user.email }
-        expect(flash[:success]).to eq("Password reset instructions sent (if user with that email address exists).")
+        follow_redirect!
+
+        expect(response.body).to include("Check your email")
       end
     end
 
@@ -38,14 +40,44 @@ RSpec.describe "/passwords", type: :request do
         }.not_to have_enqueued_mail(Junction::PasswordsMailer, :reset)
       end
 
-      it "redirects to the new session path" do
+      it "returns to the reset page" do
         post passwords_url, params: { email: "nonexistent@example.com" }
-        expect(response).to redirect_to(new_session_url)
+        expect(response).to redirect_to(new_password_url)
       end
 
-      it "sets the same success notice to prevent email enumeration" do
+      it "gives the same confirmation, to prevent email enumeration" do
         post passwords_url, params: { email: "nonexistent@example.com" }
-        expect(flash[:success]).to eq("Password reset instructions sent (if user with that email address exists).")
+        follow_redirect!
+
+        expect(response.body).to include("Check your email")
+      end
+
+      it "names the address back without claiming it exists" do
+        post passwords_url, params: { email: "nonexistent@example.com" }
+        follow_redirect!
+
+        expect(response.body).to include("If nonexistent@example.com has an account")
+      end
+    end
+
+    context "with a value no address could be" do
+      it "survives one longer than the cookie would hold" do
+        post passwords_url, params: { email: "a" * 8_000 }
+
+        expect(response).to redirect_to(new_password_url)
+      end
+
+      it "keeps only an address's worth of it" do
+        post passwords_url, params: { email: "a" * 8_000 }
+        follow_redirect!
+
+        expect(response.body).to include("If #{'a' * 254} has an account")
+      end
+
+      it "does not widen the lookup to several addresses" do
+        expect {
+          post passwords_url, params: { email: [ user.email, "other@example.com" ] }
+        }.not_to have_enqueued_mail(Junction::PasswordsMailer, :reset)
       end
     end
   end

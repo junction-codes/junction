@@ -3,14 +3,23 @@ en:
     views:
       passwords:
         edit:
-          back: Back to log in
-          submit: Reset password
-          reset: Reset your password
-          password: Enter new password
+          back: Back to sign in
+          description: >-
+            Choose something you are not using anywhere else.
+          password: New password
           password_confirmation: Repeat new password
+          reset: Set a new password
+          submit: Save password
+          submitting: Saving…
         new:
-          back: Back to log in
-          submit: Submit
-          request: Request password reset
-          email: Your email
-          email_placeholder: example@example.com
+          back: Back to sign in
+          email: Email
+          email_placeholder: you@example.com
+          expires: >-
+            We send a single-use link. It expires in 15 minutes.
+          request: Reset your password
+          sent_body: >-
+            If %{email} has an account, a reset link is on its way.
+          sent_heading: Check your email
+          submit: Send reset link
+          submitting: Sending…
