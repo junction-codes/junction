@@ -67,11 +67,22 @@ RSpec.describe "/passwords", type: :request do
         expect(response).to redirect_to(new_password_url)
       end
 
-      it "keeps only an address's worth of it" do
+      it "does not take it for an address" do
         post passwords_url, params: { email: "a" * 8_000 }
         follow_redirect!
 
-        expect(response.body).to include("If #{'a' * 254} has an account")
+        expect(response.body).not_to include("Check your email")
+      end
+
+      it "does not reach the account its first 254 characters name" do
+        # The longest an address can be: a 64-character local part, and a
+        # domain whose labels stay inside the 63 DNS allows.
+        long = "#{'a' * 64}@#{([ 'b' * 61 ] * 3).join('.')}.com"
+        create(:user, email: long)
+
+        expect {
+          post passwords_url, params: { email: "#{long}-and-then-some" }
+        }.not_to have_enqueued_mail(Junction::PasswordsMailer, :reset)
       end
 
       it "does not widen the lookup to several addresses" do

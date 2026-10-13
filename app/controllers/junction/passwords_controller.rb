@@ -3,6 +3,10 @@
 module Junction
   # Controller for managing user password resets.
   class PasswordsController < ApplicationController
+    # The longest an email address can be. RFC 5321 caps a path at 256 octets
+    # including the angle brackets around it.
+    MAX_EMAIL_LENGTH = 254
+
     allow_unauthenticated_access
     skip_verify_authorized
 
@@ -43,13 +47,16 @@ module Junction
 
     # Returns the address a reset was asked for.
     #
-    # The email address is accepted only as a string with at most 254
-    # characters (the maximum length as defined by RFC 5321).
+    # The email address is accepted only as a string of at most
+    # {MAX_EMAIL_LENGTH} characters. Anything else is dropped.
     #
     # @return [String] The address, or an empty string.
     def submitted_email
-      @submitted_email ||=
-        params[:email].is_a?(String) ? params[:email].truncate(254, omission: "") : ""
+      @submitted_email ||= begin
+        email = params[:email]
+
+        email.is_a?(String) && email.length <= MAX_EMAIL_LENGTH ? email : ""
+      end
     end
 
     def set_user_by_token

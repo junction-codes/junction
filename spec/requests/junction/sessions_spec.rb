@@ -96,6 +96,26 @@ RSpec.describe "/sessions", type: :request do
         expect(response.body).to include("Try another email address or password.")
       end
     end
+
+    context "when attempts are made too often" do
+      before do
+        allow(Rails.cache).to receive(:increment).and_return(11)
+
+        post session_url, params: { email: user.email, password: user.password }
+      end
+
+      it "refuses the request" do
+        expect(response).to have_http_status(:too_many_requests)
+      end
+
+      it "says why, on the page" do
+        expect(response.body).to include("Too many attempts.")
+      end
+
+      it "does not sign the user in" do
+        expect(response.body).to include("Sign in")
+      end
+    end
   end
 
   describe "DELETE /destroy" do

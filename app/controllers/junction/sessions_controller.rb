@@ -32,7 +32,7 @@ module Junction
 
     private
 
-    # Answers an rate limited request.
+    # Answers a rate-limited request.
     def too_many_attempts
       flash.now[:alert] = "Too many attempts. Try again in a few minutes."
       render Views::Sessions::New, status: :too_many_requests
