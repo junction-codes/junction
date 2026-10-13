@@ -1,0 +1,8 @@
+en:
+  junction:
+    components:
+      auth_card:
+        auth_card:
+          demo: >-
+            Demo mode is on — browse the catalog read-only without signing in.
+          help: Trouble signing in? Ask a Junction admin.

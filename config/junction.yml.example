@@ -10,8 +10,9 @@
 #   Junction.config.allow_demo_mode
 
 default: &default
-  # Icon used in UI components (must be a valid rails_icons icon name)
-  icon: train-track
+  # Icon shown in place of the Junction icon. Must be a valid rails_icons icon
+  # name. Leave unset to keep the Junction logo.
+  # icon: train-track
 
   # Application title shown in navigation
   title: Junction

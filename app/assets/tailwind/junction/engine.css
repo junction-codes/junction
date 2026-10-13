@@ -151,6 +151,14 @@
   --kind-template-fg: #a8386b;
   --kind-location: #eef2f1;
   --kind-location-fg: #4a6b63;
+
+  /* The sign-in backdrop. These three are declared once and never redefined
+     under .dark: the page behind the card is a brand surface that stays dark
+     in both themes, while the card on top of it follows the theme like
+     everything else. */
+  --auth-backdrop: #0f172a;
+  --auth-glow: #6e56cf;
+  --auth-glow-deep: #4a3796;
 }
 
 .dark {
@@ -279,6 +287,10 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+
+  --color-auth-backdrop: var(--auth-backdrop);
+  --color-auth-glow: var(--auth-glow);
+  --color-auth-glow-deep: var(--auth-glow-deep);
 
   --color-surface: var(--surface);
   --color-subtle: var(--subtle);

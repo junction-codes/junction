@@ -47,15 +47,19 @@ module Junction
         # @param help_text [String] Optional help text for the field.
         # @param placeholder [String] Optional placeholder text for the field.
         # @param required [Boolean] Whether the field is required.
+        # @param label_action [Proc] Optional content rendered at the end of
+        #   the label's line.
         # @param user_attrs [Hash] Additional HTML attributes for the component.
         def initialize(form, method, label: nil, help_text: nil,
-                       placeholder: nil, required: false, **user_attrs)
+                       placeholder: nil, required: false, label_action: nil,
+                       **user_attrs)
           @form = form
           @method = method
           @label = label
           @help_text = help_text
           @placeholder = placeholder
           @required = required
+          @label_action = label_action
 
           super(**user_attrs)
         end
@@ -123,9 +127,23 @@ module Junction
         end
 
         # Renders the label for a field component.
+        #
+        # A field given a `label_action` puts it at the end of the same line,
+        # which is where a reader looks for something about the field they're
+        # standing in rather than about the form.
         def render_label
           return if label_text.blank?
 
+          return label_element if @label_action.nil?
+
+          div(class: "flex items-baseline justify-between gap-3") do
+            label_element
+            @label_action.call
+          end
+        end
+
+        # Renders the label itself.
+        def label_element
           @form.label @method, id: label_id, class: LABEL_CLASSES do
             plain label_text
             span(class: "text-red-500 ml-1") { " *" } if @required
