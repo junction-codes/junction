@@ -24,8 +24,8 @@ group :development, :test do
   gem "rubocop-rails-accessibility", "~> 1.0"
   gem "rubocop-rails-omakase", "~> 1.1"
   gem "rubocop-rspec", "~> 3.10"
-  gem "rubocop-rspec_rails", "~> 2.32"
-  gem "simplecov", "~> 1.1"
+  gem "rubocop-rspec_rails", "~> 2.33"
+  gem "simplecov", "~> 1.3"
   gem "shoulda-matchers", "~> 8.0"
   gem "vcr", "~> 6.3"
 end
@@ -40,6 +40,6 @@ end
 group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara", "~> 3.4"
-  gem "cuprite", "~> 0.17"
+  gem "cuprite", "~> 0.18"
   gem "simplecov-cobertura", "~> 4.0"
 end
