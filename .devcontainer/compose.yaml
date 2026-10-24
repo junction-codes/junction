@@ -18,12 +18,19 @@ services:
     # Use "forwardPorts" in **devcontainer.json** to forward an app port locally.
     # (Adding the "ports" property to this file will not forward from a Codespace.)
     depends_on:
-    - selenium
+    - chrome
     - postgres
 
-  selenium:
-    image: selenium/standalone-chromium
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  chrome:
+    build:
+      context: .
+      dockerfile: chrome.Dockerfile
     restart: unless-stopped
+    # Chrome crashes rendering large pages in the default 64MB of /dev/shm.
+    shm_size: 1gb
 
   postgres:
     image: postgres:18

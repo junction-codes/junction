@@ -8,8 +8,10 @@ module Junction
     def dependency_graph
       authorize! @entity, to: :show?
 
-      graph_data = DependencyGraphService.new(model: @entity).build
-      render json: graph_data
+      render Views::Entities::DependencyGraph.new(
+        entity: @entity,
+        graph: DependencyGraphService.new(model: @entity).build
+      )
     end
   end
 end

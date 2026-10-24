@@ -9,7 +9,7 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = [
     "sidebar", "row", "linkText", "sectionRule", "searchBox", "searchButton",
-    "toggle"
+    "scroller", "toggle"
   ]
   static values = { collapsed: Boolean }
 
@@ -39,6 +39,12 @@ export default class extends Controller {
 
     this.linkTextTargets.forEach((el) => {
       el.classList.toggle("sr-only", this.collapsedValue)
+    })
+
+    // Collapsed, the rail is only as wide as a row, so a scrollbar would
+    // take the space the rows are centred in. The section remains scrollable.
+    this.scrollerTargets.forEach((el) => {
+      el.classList.toggle("scrollbar-hidden", this.collapsedValue)
     })
 
     // The section headings become short rules, so the grouping survives.

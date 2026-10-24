@@ -360,6 +360,14 @@
   --color-kind-location-fg: var(--kind-location-fg);
 }
 
+@utility scrollbar-hidden {
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 /* Container settings */
 @utility container {
   margin-inline: auto;

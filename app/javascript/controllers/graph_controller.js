@@ -1,103 +1,203 @@
 import { Controller } from "@hotwired/stimulus"
-import cytoscape from "cytoscape"
+import dagre from "@dagrejs/dagre"
 
+// Lays out the dependency graph.
+//
+// The nodes and edges are already on the page, drawn server-side as links and
+// empty paths. All that happens here is arithmetic: measure each node, ask
+// dagre where it goes, and move it there. Theming is handled entirely by CSS.
+//
+// Connects to `data-controller="graph"`
 export default class extends Controller {
-  static targets = [ "container" ]
-  static values = { url: String }
+  static targets = ["canvas", "nodes", "edges", "node"]
+  static values = { edges: Array }
+
+  // Room around the drawing, and between ranks and nodes.
+  static PADDING = 28
+  static RANK_SEPARATION = 110
+  static NODE_SEPARATION = 24
 
   connect() {
-    this.fetchDataAndRenderGraph()
+    // Observing calls back immediately, so this is the first layout and all
+    // subsequent ones. The canvas has no width until its tab opens.
+    this.observer = new ResizeObserver(() => this.layout())
+    this.observer.observe(this.canvasTarget)
+
+    // A node is as wide as its text, and its text changes width when the
+    // fonts arrive.
+    document.fonts?.ready?.then(() => this.layout())
   }
 
-  async fetchDataAndRenderGraph() {
-    try {
-      const response = await fetch(this.urlValue)
-      if (!response.ok) throw new Error('Network response was not ok');
-      const graphData = await response.json()
-      this.render(graphData)
-    } catch (error) {
-      console.error("Could not fetch or render graph:", error)
-      this.containerTarget.innerHTML = '<p class="text-red-500">Could not load dependency graph.</p>'
+  disconnect() {
+    this.observer?.disconnect()
+  }
+
+  layout() {
+    if (this.canvasTarget.clientWidth === 0) return
+
+    const placed = this.place()
+    if (!placed) return
+
+    this.drawNodes(placed)
+    this.drawEdges(placed)
+    this.element.dataset.graphLaidOut = "true"
+  }
+
+  // Works out where every node goes.
+  //
+  // Dependencies rank left to right, so what uses this entity sits to its
+  // left and what it uses sits to its right. The server marks the nodes that
+  // are context rather than a step in that chain -- the system an entity
+  // belongs to -- and those are left out of the ranking and put in a row
+  // underneath, where they cannot distort it.
+  place() {
+    const graph = new dagre.graphlib.Graph()
+    graph.setGraph({
+      rankdir: "LR",
+      ranksep: this.constructor.RANK_SEPARATION,
+      nodesep: this.constructor.NODE_SEPARATION,
+      marginx: this.constructor.PADDING,
+      marginy: this.constructor.PADDING
+    })
+    graph.setDefaultEdgeLabel(() => ({}))
+
+    const ranked = this.nodeTargets.filter((node) => node.dataset.aside !== "true")
+    if (ranked.length === 0) return null
+
+    ranked.forEach((node) => {
+      graph.setNode(node.dataset.id, {
+        width: node.offsetWidth,
+        height: node.offsetHeight
+      })
+    })
+
+    this.edgesValue.forEach((edge) => {
+      if (graph.hasNode(edge.source) && graph.hasNode(edge.target)) {
+        graph.setEdge(edge.source, edge.target)
+      }
+    })
+
+    dagre.layout(graph)
+
+    // Dagre routes each edge around the nodes between its ends, and gives
+    // the two edges of a reciprocal pair routes of their own.
+    this.routes = {}
+    graph.edges().forEach((edge) => {
+      this.routes[`${edge.v}\u0000${edge.w}`] = graph.edge(edge).points
+    })
+
+    const placed = {}
+    ranked.forEach((node) => {
+      const { x, y } = graph.node(node.dataset.id)
+
+      placed[node.dataset.id] = { node, x, y }
+    })
+
+    return this.placeAsides(placed, graph.graph())
+  }
+
+  // Puts the context nodes in a row under everything else.
+  //
+  // Spaced by what they measure rather than by an even share of the width
+  // above them, which two cards wider than that share would overlap in.
+  placeAsides(placed, size) {
+    const asides = this.nodeTargets.filter((node) => node.dataset.aside === "true")
+    if (asides.length === 0) return placed
+
+    const gap = this.constructor.NODE_SEPARATION
+    const row = asides.reduce((total, node) => total + node.offsetWidth, 0) +
+      gap * (asides.length - 1)
+    const tallest = Math.max(...asides.map((node) => node.offsetHeight))
+
+    let x = (size.width || this.canvasTarget.clientWidth) / 2 - row / 2
+
+    asides.forEach((node) => {
+      placed[node.dataset.id] = {
+        node,
+        x: x + node.offsetWidth / 2,
+        y: (size.height || 0) + this.constructor.PADDING + tallest
+      }
+
+      x += node.offsetWidth + gap
+    })
+
+    return placed
+  }
+
+  // Moves each node to its place.
+  //
+  // A graph too big for the canvas is scaled by transforming the layers the
+  // nodes and edges sit in, so that the nodes shrink with the distances
+  // between them. Scaling the positions alone would slide the nodes together
+  // until they overlapped, and push the outermost ones off the canvas.
+  drawNodes(placed) {
+    const entries = Object.values(placed)
+    const bounds = this.boundsOf(entries)
+    const scale = Math.min(
+      1,
+      (this.canvasTarget.clientWidth - this.constructor.PADDING) / bounds.width,
+      (this.canvasTarget.clientHeight - this.constructor.PADDING) / bounds.height
+    )
+
+    const transform = [
+      `translate(${(this.canvasTarget.clientWidth - bounds.width * scale) / 2}px,`,
+      `${(this.canvasTarget.clientHeight - bounds.height * scale) / 2}px)`,
+      `scale(${scale})`,
+      `translate(${-bounds.left}px, ${-bounds.top}px)`
+    ].join(" ")
+
+    ;[ this.nodesTarget, this.edgesTarget ].forEach((layer) => {
+      layer.style.transformOrigin = "0 0"
+      layer.style.transform = transform
+    })
+
+    entries.forEach(({ node, x, y }) => {
+      node.style.transform =
+        `translate(${x - node.offsetWidth / 2}px, ${y - node.offsetHeight / 2}px)`
+    })
+  }
+
+  // Joins each edge's two nodes.
+  drawEdges(placed) {
+    this.edgesTarget.querySelectorAll("path").forEach((path) => {
+      const from = placed[path.dataset.source]
+      const to = placed[path.dataset.target]
+
+      if (!from || !to) return path.removeAttribute("d")
+
+      path.setAttribute("d", this.shapeOf(path, from, to))
+    })
+  }
+
+  // The line an edge takes.
+  //
+  // Dagre's own route where it has one, so that an edge bends around what
+  // is between its ends instead of crossing it. The context nodes are laid
+  // out here rather than by dagre, so their edges are drawn as a curve.
+  shapeOf(path, from, to) {
+    const route = this.routes?.[`${path.dataset.source}\u0000${path.dataset.target}`]
+
+    if (route?.length) {
+      return route.map((point, index) => `${index === 0 ? "M" : "L"}${point.x},${point.y}`).join(" ")
     }
+
+    const bend = (from.x + to.x) / 2
+
+    return `M${from.x},${from.y} C${bend},${from.y} ${bend},${to.y} ${to.x},${to.y}`
   }
 
-  render(data) {
-    // Convert the data from our controller's format to the expected format.
-    const elements = [
-      ...data.nodes.map(node => ({ data: { id: node.id, label: node.label, type: node.type } })),
-      ...data.edges.map(edge => ({ data: { source: edge.source, target: edge.target } }))
-    ];
+  // The box every node sits inside, in the layout's own coordinates.
+  boundsOf(entries) {
+    const xs = entries.flatMap(({ node, x }) => [ x - node.offsetWidth / 2, x + node.offsetWidth / 2 ])
+    const ys = entries.flatMap(({ node, y }) => [ y - node.offsetHeight / 2, y + node.offsetHeight / 2 ])
+    const left = Math.min(...xs)
+    const top = Math.min(...ys)
 
-    cytoscape({
-      container: this.containerTarget,
-      elements: elements,
-      style: [
-        {
-          // Default styles for all nodes.
-          selector: 'node',
-          style: {
-            'label': 'data(label)',
-            'color': document.body.classList.contains('dark') ? '#ffffff' : '#1f2937',
-            // Text styling.
-            'font-size': '10px',
-            'text-wrap': 'wrap',
-            'text-max-width': '80px',
-            'text-valign': 'center',
-            'text-halign': 'center',
-            // Label background styles.
-            'text-background-color': document.body.classList.contains('dark') ? '#1f2937' : '#ffffff',
-            'text-background-opacity': 0.8,
-            'text-background-padding': '2px'
-          }
-        },
-        {
-          // Styles for services.
-          selector: 'node[type="service"]',
-          style: {
-            'background-color': '#3b82f6',
-            'shape': 'ellipse'
-          }
-        },
-        {
-          // Styles for projects.
-          selector: 'node[type="project"]',
-          style: {
-            'background-color': '#10b981',
-            'shape': 'round-rectangle'
-          }
-        },
-        {
-          // Highlight the current node.
-          selector: `node[id = "${data.current_node_id}"]`,
-          style: {
-            'border-width': 4,
-            'border-color': '#f59e0b'
-          }
-        },
-        {
-          // Default styles for edges.
-          selector: 'edge',
-          style: {
-            'width': 2,
-            'line-color': '#9ca3af',
-            'target-arrow-color': '#9ca3af',
-            'target-arrow-shape': 'triangle',
-            'curve-style': 'bezier'
-          }
-        }
-      ],
-      layout: {
-        name: 'cose',
-        fit: true,
-        padding: 30,
-        animate: false,
-        nodeRepulsion: 40000,
-        idealEdgeLength: 100
-      },
-      zoomingEnabled: true,
-      userZoomingEnabled: true,
-      panningEnabled: true,
-      userPanningEnabled: true
-    });
+    return {
+      left,
+      top,
+      width: Math.max(...xs) - left || 1,
+      height: Math.max(...ys) - top || 1
+    }
   }
 }

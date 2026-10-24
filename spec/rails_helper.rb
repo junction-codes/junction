@@ -13,16 +13,11 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 # return unless Rails.env.test?
 require 'rspec/rails'
 require 'faker'
-require 'capybara/cuprite'
-
-# Let fill_in/find_field match on aria-label, matching how assistive tech
-# computes accessible names for inputs that rely on aria-label instead of a
-# visible <label>.
-Capybara.enable_aria_label = true
 
 # Include additional support.
 require "junction/testing"
 require_relative 'support/axe'
+require_relative 'support/browser'
 require_relative 'support/db_query_matchers'
 require_relative 'support/entity_fixtures'
 require_relative 'support/sample_annotation'
@@ -61,28 +56,6 @@ rescue ActiveRecord::PendingMigrationError => e
   abort e.to_s.strip
 end
 
-Capybara.register_driver :cuprite do |app|
-  Capybara::Cuprite::Driver.new(
-    app,
-    window_size: [ 1400, 900 ],
-    process_timeout: 30,
-    # Keep CI/container runs stable; opt in when actively debugging.
-    inspector: false,
-    # Set to false for debugging
-    headless: true,
-    browser_options: {
-      # Required for Docker/CI environments.
-      'no-sandbox': nil,
-      # Helpful in CI environments to avoid limited resource problems.
-      'disable-gpu': nil,
-      'disable-dev-shm-usage': nil
-    }
-  )
-end
-
-# Set Cuprite as the JavaScript driver
-Capybara.javascript_driver = :cuprite
-
 RSpec.configure do |config|
   # `Junction::Current` is reset per request in production. Reset it per
   # example too, so that a memoized `ReadableEntities` cannot leak a user from
@@ -96,26 +69,6 @@ RSpec.configure do |config|
   config.include MetadataPaneSystemHelper, type: :system
   config.include RichSelectSystemHelper, type: :system
   config.include SystemAuthenticationHelper, type: :system
-
-  # Configure system tests.
-  config.prepend_before(:each, :js, type: :system) do
-    driven_by :cuprite,
-      screen_size: [ 1400, 900 ],
-      options: {
-        process_timeout: 30,
-        # Keep CI/container runs stable; opt in when actively debugging.
-        inspector: false,
-        # Set to false for debugging
-        headless: true,
-        browser_options: {
-          # Required for Docker/CI environments.
-          'no-sandbox': nil,
-          # Helpful in CI environments to avoid limited resource problems.
-          'disable-gpu': nil,
-          'disable-dev-shm-usage': nil
-        }
-      }
-  end
 
   # Start from an empty database. Fixture rows are committed before the
   # per-example transaction opens, so without this they outlive the run and can

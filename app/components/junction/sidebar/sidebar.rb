@@ -33,7 +33,8 @@ module Junction
             render_masthead
             SidebarSearch()
 
-            div(class: "flex-1 overflow-y-auto px-4 pb-4") do
+            div(class: "flex-1 overflow-y-auto px-4 pb-4",
+                data_sidebar_target: "scroller") do
               home_item
               NAV_SECTIONS.each { |name, scopes| kind_section(name, scopes) }
               explore_section

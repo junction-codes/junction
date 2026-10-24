@@ -4,6 +4,16 @@ en:
       entities:
         # Copy shared by every catalog kind. See Junction::EntityCopy for the
         # `%{kind}` interpolations.
+        dependency_graph:
+          graph_beyond:
+            one: 1 more entity sits beyond %{depth} steps
+            other: "%{count} more entities sit beyond %{depth} steps"
+          graph_depends_on: depends on
+          graph_empty: >-
+            Nothing depends on this %{kind_lower}, and it depends on nothing.
+          graph_empty_hint: >-
+            Declare a dependency on this page and it appears here.
+          graph_part_of: part of
         edit:
           title: Edit %{title}
           description: >-

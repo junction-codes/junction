@@ -36,7 +36,21 @@ module Junction
         "Location" => "bg-kind-location"
       }.to_h { |kind, fill| [ kind, "#{fill} #{FOREGROUNDS.fetch(kind)}" ] }.freeze
 
+      # The ring border around the chip.
+      RINGS = {
+        "Domain" => "ring-1 ring-kind-domain-fg",
+        "System" => "ring-1 ring-kind-system-fg",
+        "Component" => "ring-1 ring-kind-component-fg",
+        "Api" => "ring-1 ring-kind-api-fg",
+        "Resource" => "ring-1 ring-kind-resource-fg",
+        "Group" => "ring-1 ring-kind-group-fg",
+        "User" => "ring-1 ring-kind-user-fg",
+        "Template" => "ring-1 ring-kind-template-fg",
+        "Location" => "ring-1 ring-kind-location-fg"
+      }.freeze
+
       NEUTRAL = "bg-subtle text-text-body"
+      NEUTRAL_RING = "ring-1 ring-border-strong"
 
       # Box and glyph classes per size.
       SIZES = {
@@ -49,10 +63,12 @@ module Junction
       #
       # @param entity [Junction::Entity] The entity.
       # @param size [Symbol] One of {SIZES}.
+      # @param ring [Boolean] Whether to add a ring border around the chip.
       # @param user_attrs [Hash] Additional HTML attributes.
-      def initialize(entity:, size: :md, **user_attrs)
+      def initialize(entity:, size: :md, ring: false, **user_attrs)
         @entity = entity
         @box, @glyph = SIZES.fetch(size)
+        @ring = ring
 
         super(**user_attrs)
       end
@@ -79,10 +95,19 @@ module Junction
       end
 
       def default_attrs
-        return { class: "#{@box} object-cover shrink-0" } if image?
+        return { class: "#{@box} object-cover shrink-0 #{ring_classes}" } if image?
 
         { class: "#{@box} shrink-0 flex items-center justify-center " \
-                 "#{TINTS.fetch(@entity.kind, NEUTRAL)}" }
+                 "#{TINTS.fetch(@entity.kind, NEUTRAL)} #{ring_classes}" }
+      end
+
+      # The ring around the chip.
+      #
+      # @return [String] The classes.
+      def ring_classes
+        return "" unless @ring
+
+        RINGS.fetch(@entity.kind, NEUTRAL_RING)
       end
     end
   end
