@@ -6,7 +6,7 @@ module Junction
     # Declared before Breadcrumbs so the entity is set before any breadcrumb
     # helper runs.
     include CatalogEntityActions
-    before_action :eager_load_dependencies, only: %i[dependency_graph]
+    load_entity_for :dependency_graph
 
     include Breadcrumbs
     include CatalogOptionSets
@@ -71,12 +71,6 @@ module Junction
         Junction::CatalogOptions.lifecycles,
         [ Junction::Api, :lifecycle ],
         [ Junction::Component, :lifecycle ]
-      )
-    end
-
-    def eager_load_dependencies
-      @entity = Component.includes(:dependencies, :dependents).find_by!(
-        namespace: params.expect(:namespace), name: params.expect(:name)
       )
     end
   end

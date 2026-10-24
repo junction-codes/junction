@@ -13,11 +13,11 @@ and are checked in CI by `license_finder`.
 
 | Package              | Version | License | Vendored path                                   |
 | -------------------- | ------- | ------- | ----------------------------------------------- |
+| `@dagrejs/dagre`     | 3.1.1   | MIT     | `vendor/javascript/@dagrejs--dagre.js`          |
 | `@floating-ui/core`  | 1.8.0   | MIT     | `vendor/javascript/@floating-ui--core.js`       |
 | `@floating-ui/dom`   | 1.8.0   | MIT     | `vendor/javascript/@floating-ui--dom.js`        |
 | `@floating-ui/utils` | 0.2.12  | MIT     | `vendor/javascript/@floating-ui--utils.js`      |
 | `@floating-ui/utils` | 0.2.12  | MIT     | `vendor/javascript/@floating-ui--utils--dom.js` |
-| `cytoscape`          | 3.34.1  | MIT     | `vendor/javascript/cytoscape.js`                |
 | `tw-animate-css`     | 1.4.0   | MIT     | `vendor/stylesheets/tw-animate-css.css`         |
 
 The two `@floating-ui/utils` entries are separate subpath exports of the same
@@ -33,9 +33,9 @@ The following copyright notices are preserved as that license requires.
 
     Copyright (c) 2021-present Floating UI contributors
 
-- [cytoscape]:
+- [@dagrejs/dagre]:
 
-    Copyright (c) 2016-2026, The Cytoscape Consortium.
+    Copyright (c) 2012-2014 Chris Pettitt
 
 - [tw-animate-css]:
 
@@ -70,7 +70,7 @@ rewrites both the vendored file and its version comment in
 `config/importmap.rb`:
 
 ```bash
-bin/importmap pin cytoscape
+bin/importmap pin @dagrejs/dagre
 bin/importmap outdated
 ```
 

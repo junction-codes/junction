@@ -447,12 +447,15 @@ module Junction
           end
         end
 
+        # Renders the dependency graph for the current entity.
+        #
+        # The actual graph is lazy-loaded; this renders the turbo frame and
+        # placeholder content until a user decides to open the tab.
         def dependency_graph
-          div(class: "rounded-xl border border-border bg-surface overflow-hidden p-5") do
-            div(data_controller: "graph",
-                data_graph_url_value: junction_dependency_graph_path(@entity)) do
-              div(data_graph_target: "container", class: "w-full h-60")
-            end
+          turbo_frame_tag "dependency_graph",
+                          src: junction_dependency_graph_path(@entity),
+                          loading: :lazy, target: "_top" do
+            div(class: "p-4") { Skeleton(class: "h-20") }
           end
         end
       end

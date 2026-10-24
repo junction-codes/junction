@@ -89,6 +89,34 @@ RSpec.describe "Junction shell", :js, type: :system do
       expect(page).to have_css("#{rail} a[title='Components']")
     end
 
+    context "when the rows outgrow the window" do
+      before { page.current_window.resize_to(1400, 300) }
+
+      it "leaves the rail's whole width to the rows" do
+        gutter = page.evaluate_script(<<~JS)
+          (() => {
+            const nav = document.querySelector("#{rail} .overflow-y-auto");
+            return Math.round(nav.getBoundingClientRect().width - nav.clientWidth);
+          })()
+        JS
+
+        expect(gutter).to eq(0)
+      end
+
+      it "centres the row behind the current page on its icon" do
+        offset = page.evaluate_script(<<~JS)
+          (() => {
+            const row = document.querySelector("#{rail} a[aria-current='page']");
+            const icon = row.querySelector("svg");
+            const centre = (el) => { const r = el.getBoundingClientRect(); return r.left + r.width / 2 };
+            return Math.abs(Math.round(centre(row) - centre(icon)));
+          })()
+        JS
+
+        expect(offset).to be <= 1
+      end
+    end
+
     it "stays collapsed across a navigation" do
       visit dashboard_path
       wait_for_sidebar
