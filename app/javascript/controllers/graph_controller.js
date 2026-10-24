@@ -79,6 +79,13 @@ export default class extends Controller {
 
     dagre.layout(graph)
 
+    // Dagre routes each edge around the nodes between its ends, and gives
+    // the two edges of a reciprocal pair routes of their own.
+    this.routes = {}
+    graph.edges().forEach((edge) => {
+      this.routes[`${edge.v}\u0000${edge.w}`] = graph.edge(edge).points
+    })
+
     const placed = {}
     ranked.forEach((node) => {
       const { x, y } = graph.node(node.dataset.id)
@@ -90,17 +97,28 @@ export default class extends Controller {
   }
 
   // Puts the context nodes in a row under everything else.
+  //
+  // Spaced by what they measure rather than by an even share of the width
+  // above them, which two cards wider than that share would overlap in.
   placeAsides(placed, size) {
     const asides = this.nodeTargets.filter((node) => node.dataset.aside === "true")
-    const width = size.width || this.canvasTarget.clientWidth
-    const step = width / (asides.length + 1)
+    if (asides.length === 0) return placed
 
-    asides.forEach((node, index) => {
+    const gap = this.constructor.NODE_SEPARATION
+    const row = asides.reduce((total, node) => total + node.offsetWidth, 0) +
+      gap * (asides.length - 1)
+    const tallest = Math.max(...asides.map((node) => node.offsetHeight))
+
+    let x = (size.width || this.canvasTarget.clientWidth) / 2 - row / 2
+
+    asides.forEach((node) => {
       placed[node.dataset.id] = {
         node,
-        x: step * (index + 1),
-        y: (size.height || 0) + this.constructor.PADDING + node.offsetHeight
+        x: x + node.offsetWidth / 2,
+        y: (size.height || 0) + this.constructor.PADDING + tallest
       }
+
+      x += node.offsetWidth + gap
     })
 
     return placed
@@ -139,7 +157,7 @@ export default class extends Controller {
     })
   }
 
-  // Joins each edge's two nodes with a curve.
+  // Joins each edge's two nodes.
   drawEdges(placed) {
     this.edgesTarget.querySelectorAll("path").forEach((path) => {
       const from = placed[path.dataset.source]
@@ -147,13 +165,25 @@ export default class extends Controller {
 
       if (!from || !to) return path.removeAttribute("d")
 
-      const bend = (from.x + to.x) / 2
-
-      path.setAttribute(
-        "d",
-        `M${from.x},${from.y} C${bend},${from.y} ${bend},${to.y} ${to.x},${to.y}`
-      )
+      path.setAttribute("d", this.shapeOf(path, from, to))
     })
+  }
+
+  // The line an edge takes.
+  //
+  // Dagre's own route where it has one, so that an edge bends around what
+  // is between its ends instead of crossing it. The context nodes are laid
+  // out here rather than by dagre, so their edges are drawn as a curve.
+  shapeOf(path, from, to) {
+    const route = this.routes?.[`${path.dataset.source}\u0000${path.dataset.target}`]
+
+    if (route?.length) {
+      return route.map((point, index) => `${index === 0 ? "M" : "L"}${point.x},${point.y}`).join(" ")
+    }
+
+    const bend = (from.x + to.x) / 2
+
+    return `M${from.x},${from.y} C${bend},${from.y} ${bend},${to.y} ${to.x},${to.y}`
   }
 
   // The box every node sits inside, in the layout's own coordinates.

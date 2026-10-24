@@ -110,6 +110,63 @@ RSpec.describe "Junction::DependencyGraph", :js, type: :system do
     end
   end
 
+  context "when several systems are drawn" do
+    let(:component) { create(:component, title: "Checkout Service", system: create(:system)) }
+
+    before do
+      3.times do |index|
+        neighbour = create(:component, title: "Neighbour #{index}",
+                                       system: create(:system, title: "Platform #{index}"))
+        create(:relation, source: component, target: neighbour)
+      end
+
+      open_graph
+    end
+
+    it "keeps every node clear of the others" do
+      overlaps = page.evaluate_script(<<~JS)
+        (() => {
+          const boxes = [...document.querySelectorAll("[data-graph-target='node']")]
+            .map((n) => n.getBoundingClientRect());
+          let hits = 0;
+          boxes.forEach((a, i) => boxes.slice(i + 1).forEach((b) => {
+            const over = a.left < b.right && b.left < a.right &&
+                         a.top < b.bottom && b.top < a.bottom;
+            if (over) hits += 1;
+          }));
+          return hits;
+        })()
+      JS
+
+      expect(overlaps).to eq(0)
+    end
+  end
+
+  context "when two entities depend on each other" do
+    before do
+      create(:relation, source: component, target: api)
+      create(:relation, source: api, target: component)
+      open_graph
+    end
+
+    it "draws a line for each direction" do
+      curves = page.evaluate_script(<<~JS)
+        (() => {
+          return [...document.querySelectorAll("[data-graph-target='edges'] path[d]")]
+            .map((path) => {
+              const length = path.getTotalLength();
+              return [ 0.25, 0.5, 0.75 ].map((along) => {
+                const at = path.getPointAtLength(length * along);
+                return `${Math.round(at.x)},${Math.round(at.y)}`;
+              }).sort().join(" ");
+            });
+        })()
+      JS
+
+      expect(curves.uniq.size).to eq(curves.size)
+    end
+  end
+
   context "when nothing is joined to the entity" do
     before { open_graph }
 

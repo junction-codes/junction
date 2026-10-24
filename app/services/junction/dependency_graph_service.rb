@@ -9,6 +9,17 @@ module Junction
     # but the graph draws it and has to name it like the rest.
     PART_OF = Junction::Relation::PART_OF
 
+    # The relation types the graph draws.
+    #
+    # A line means one of two things here, and the legend names both: one
+    # entity depends on another, or belongs to it. The other types a
+    # {Junction::Relation} may carry -- providing and consuming an API --
+    # would be drawn as dependencies and read as dependencies, which is not
+    # what they say, so they are left out until the design has a line for
+    # them. Nothing creates them today: the dependency association is scoped
+    # to `depends_on`.
+    DRAWN_TYPES = [ Junction::Relation::DEPENDS_ON, PART_OF ].freeze
+
     # How many steps out from the entity the graph reaches, in each direction.
     #
     # Dependencies are transitive, so an unbounded walk ends up drawing most
@@ -81,8 +92,10 @@ module Junction
     # @param entity [ApplicationRecord] Starting entity.
     # @return [Array<ApplicationRecord>] The entity's immediate neighbors.
     def neighbors(entities)
-      deps = Junction::Relation.where(source: entities)
-                      .or(Junction::Relation.where(target: entities))
+      deps = Junction::Relation.where(relation_type: DRAWN_TYPES)
+                      .where(source: entities)
+                      .or(Junction::Relation.where(relation_type: DRAWN_TYPES)
+                                            .where(target: entities))
                       .includes(:source, :target)
       @dependencies.merge(deps)
 
