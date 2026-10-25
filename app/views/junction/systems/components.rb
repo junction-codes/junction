@@ -48,7 +48,7 @@ module Junction
                   body.row do |row|
                     row.cell { EntityLink(entity: component) }
                     row.cell do
-                      Badge(variant: component.lifecycle&.to_sym) { component.lifecycle&.titleize }
+                      LifecyclePill(lifecycle: component.lifecycle)
                     end
                   end
                 end

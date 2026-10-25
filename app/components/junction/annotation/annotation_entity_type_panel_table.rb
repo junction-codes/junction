@@ -83,7 +83,7 @@ module Junction
 
         # Marks a key nothing claims, as the index pane marks them.
         def unclaimed_dot
-          span(class: "inline-block w-[5px] h-[5px] rounded-full bg-warning",
+          span(class: Junction::Components::Settings::SettingsIndexList::MARKER,
                aria_hidden: "true")
         end
       end

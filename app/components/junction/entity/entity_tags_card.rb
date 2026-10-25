@@ -44,9 +44,9 @@ module Junction
         def half(caption, note, side:)
           div(class: EntityCard::SIDES.fetch(side)) do
             p(class: "text-[11px] font-semibold uppercase tracking-[0.06em] " \
-                     "text-muted-foreground mb-2.5") { caption }
+                     "text-text-tertiary mb-2.5") { caption }
             yield
-            p(class: "text-[11px] text-muted-foreground") { note }
+            p(class: "text-[11px] text-text-tertiary") { note }
           end
         end
 
@@ -70,7 +70,7 @@ module Junction
                 span(class: "rounded-[5px] bg-subtle px-2 py-0.5 font-mono " \
                             "font-medium text-text-body") { key }
                 whitespace
-                span(class: "text-muted-foreground") { "=" }
+                span(class: "text-text-tertiary") { "=" }
                 whitespace
                 span(class: "font-mono text-text-body") { value.to_s }
               end
@@ -85,7 +85,7 @@ module Junction
         end
 
         def none(text)
-          p(class: "text-[12px] text-muted-foreground mb-3") { text }
+          p(class: "text-[12px] text-text-tertiary mb-3") { text }
         end
 
         def edit_action

@@ -20,7 +20,7 @@ module Junction
             Badge(variant: :primary) { @entity.model_name.human }
 
             if @entity.respond_to?(:lifecycle) && @entity.lifecycle.present?
-              Badge(variant: @entity.lifecycle) { @entity.lifecycle.titleize }
+              LifecyclePill(lifecycle: @entity.lifecycle)
             end
           end
 
@@ -51,7 +51,7 @@ module Junction
         def association_link(association, label)
           return unless @entity.respond_to?(association) && @entity.public_send(association).present?
 
-          div(class: "text-sm text-gray-600 dark:text-gray-400 flex items-center gap-1 min-w-[15em]") do
+          div(class: "text-sm text-text-tertiary flex items-center gap-1 min-w-[15em]") do
             span(class: "shrink-0") { label }
             EntityLink(entity: @entity.public_send(association))
           end

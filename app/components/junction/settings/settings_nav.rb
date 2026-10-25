@@ -46,9 +46,9 @@ module Junction
           href = item.fetch(:href)
 
           current = current?(href)
+          classes = TAILWIND_MERGER.merge([ ITEM, (CURRENT if current) ].compact.join(" "))
 
-          a(href:, class: [ ITEM, (CURRENT if current) ].compact.join(" "),
-            aria_current: ("page" if current)) do
+          a(href:, class: classes, aria_current: ("page" if current)) do
             plain item.fetch(:title)
           end
         end

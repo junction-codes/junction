@@ -56,33 +56,21 @@
   --radius: 12px;
 
   --background: #f7f9fc;
-  --foreground: #0f172a;
-  --card: #ffffff;
-  --card-foreground: #0f172a;
-  --popover: #ffffff;
-  --popover-foreground: #0f172a;
   --primary: #6e56cf;
   --primary-foreground: #ffffff;
-  --secondary: #f1f5f9;
-  --secondary-foreground: #334155;
-  --muted: #f1f5f9;
-  --muted-foreground: #5b6b80;
   --accent: #f3f0ff;
   --accent-foreground: #4a3796;
   --destructive: #b91c1c;
-  --destructive-foreground: #b91c1c;
   --border: #e4e9f1;
-  --input: #e4e9f1;
   --ring: #b4a3f7;
   --surface: #ffffff;
   --subtle: #f1f5f9;
   --inset: #fbfcfe;
   --border-strong: #cbd5e1;
-  --overlay: #0f172a;
   --code: #0a0d14;
 
   /* Text ramp. */
-  --text-strong: #1e293b;
+  --foreground: #0f172a;
   --text-body: #334155;
   --text-tertiary: #5b6b80;
 
@@ -104,15 +92,6 @@
   --chart-3: #2f6f5a;
   --chart-4: #b45309;
   --chart-5: #a2542a;
-
-  --sidebar: #ffffff;
-  --sidebar-foreground: #0f172a;
-  --sidebar-primary: #6e56cf;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f3f0ff;
-  --sidebar-accent-foreground: #4a3796;
-  --sidebar-border: #e4e9f1;
-  --sidebar-ring: #b4a3f7;
 
   /* Status. */
   --alert: #b91c1c;
@@ -165,33 +144,21 @@
   color-scheme: dark;
 
   --background: #0a0d14;
-  --foreground: #e8ecf4;
-  --card: #111621;
-  --card-foreground: #e8ecf4;
-  --popover: #111621;
-  --popover-foreground: #e8ecf4;
   --primary: #8f79ef;
   --primary-foreground: #0a0d14;
-  --secondary: #181e2b;
-  --secondary-foreground: #c3ccda;
-  --muted: #181e2b;
-  --muted-foreground: #98a4b8;
   --accent: #221c3b;
   --accent-foreground: #a48cf5;
   --destructive: #f87171;
-  --destructive-foreground: #f87171;
   --border: #252d3d;
-  --input: #252d3d;
   --ring: #5b45b8;
 
   --surface: #111621;
   --subtle: #181e2b;
   --inset: #0e131c;
   --border-strong: #34405a;
-  --overlay: #000000;
   --code: #05080e;
 
-  --text-strong: #dce3ee;
+  --foreground: #e8ecf4;
   --text-body: #c3ccda;
   --text-tertiary: #98a4b8;
 
@@ -210,15 +177,6 @@
   --chart-3: #63c6a2;
   --chart-4: #fbbf24;
   --chart-5: #e0a377;
-
-  --sidebar: #111621;
-  --sidebar-foreground: #e8ecf4;
-  --sidebar-primary: #8f79ef;
-  --sidebar-primary-foreground: #0a0d14;
-  --sidebar-accent: #221c3b;
-  --sidebar-accent-foreground: #a48cf5;
-  --sidebar-border: #252d3d;
-  --sidebar-ring: #5b45b8;
 
   --alert: #f87171;
   --alert-foreground: #ffffff;
@@ -264,23 +222,12 @@
 
 @theme inline {
   --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
-  --color-input: var(--input);
   --color-ring: var(--ring);
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
@@ -296,10 +243,9 @@
   --color-subtle: var(--subtle);
   --color-inset: var(--inset);
   --color-line-strong: var(--border-strong);
-  --color-overlay: var(--overlay);
   --color-code: var(--code);
 
-  --color-text-strong: var(--text-strong);
+  --color-foreground: var(--foreground);
   --color-text-body: var(--text-body);
   --color-text-tertiary: var(--text-tertiary);
 
@@ -312,15 +258,6 @@
 
   --color-control-track: var(--control-track);
   --color-control-thumb: var(--control-thumb);
-
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
 
   /* ruby_ui specific */
   --color-alert: var(--alert);

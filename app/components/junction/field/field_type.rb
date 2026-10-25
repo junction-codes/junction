@@ -12,7 +12,7 @@ module Junction
           text-sm
           font-medium
           leading-6
-          text-text-strong
+          text-foreground
         ].freeze
 
         INPUT_CLASSES = %w[
@@ -146,7 +146,7 @@ module Junction
         def label_element
           @form.label @method, id: label_id, class: LABEL_CLASSES do
             plain label_text
-            span(class: "text-red-500 ml-1") { " *" } if @required
+            span(class: "text-destructive ml-1") { " *" } if @required
           end
         end
 
@@ -160,7 +160,7 @@ module Junction
 
           span(id: label_id, class: LABEL_CLASSES) do
             plain label_text
-            span(class: "text-red-500 ml-1") { " *" } if @required
+            span(class: "text-destructive ml-1") { " *" } if @required
           end
         end
 
@@ -185,7 +185,7 @@ module Junction
         def render_errors
           return if errors.empty?
 
-          div(class: "mt-2 text-sm text-red-600 dark:text-red-400",
+          div(class: "mt-2 text-sm text-destructive",
               id: "#{@method}_errors") do
             errors.each { |error| p { "#{label_text} #{error}" } }
           end

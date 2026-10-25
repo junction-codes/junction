@@ -5,8 +5,8 @@ module Junction
     module RichSelect
       # Renders the content for a single rich select option.
       class RichSelectOptionContent < Base
-        ICON_WRAPPER_CLASS = "h-6 w-6 rounded-md bg-gray-200 " \
-          "dark:bg-gray-700 flex items-center justify-center flex-shrink-0"
+        ICON_WRAPPER_CLASS = "h-6 w-6 rounded-md bg-subtle " \
+          "flex items-center justify-center flex-shrink-0"
 
         # Initializes a new component.
         #
@@ -31,11 +31,11 @@ module Junction
           div(**attrs) do
             div(class: ICON_WRAPPER_CLASS) do
               icon(@icon, fallback: Junction::Kind::DEFAULT_ICON,
-                   class: "h-6 w-6 text-gray-500")
+                   class: "h-6 w-6 text-text-tertiary")
             end
 
             div do
-              div(class: "text-sm font-medium text-gray-900 dark:text-white") do
+              div(class: "text-sm font-medium text-foreground") do
                 plain @name
               end
 
@@ -58,7 +58,7 @@ module Junction
         end
 
         def description_class
-          classes = "text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs"
+          classes = "text-sm text-text-tertiary truncate max-w-xs"
           classes += " italic" if @description_italic
           classes
         end

@@ -50,7 +50,7 @@ module Junction
 
             # If there are any validation errors, display them below the field
             if errors.any?
-              div(class: "mt-2 text-sm text-red-600 dark:text-red-400", id: "#{@method}_errors") do
+              div(class: "mt-2 text-sm text-destructive", id: "#{@method}_errors") do
                 errors.each do |error|
                   p { "#{label_text} #{error}" }
                 end
@@ -106,7 +106,7 @@ module Junction
             end
 
             div do
-              div(class: "text-sm font-medium text-text-strong") { t(".blank", label: label_text) }
+              div(class: "text-sm font-medium text-foreground") { t(".blank", label: label_text) }
               div(class: "text-sm text-text-tertiary truncate max-w-xs italic") { placeholder }
             end
           end
@@ -125,7 +125,7 @@ module Junction
 
             div(class: "flex-1 min-w-0") do
               div(class: "flex items-center justify-between gap-2 w-full min-w-0") do
-                span(class: "text-sm font-medium text-text-strong truncate min-w-0") do
+                span(class: "text-sm font-medium text-foreground truncate min-w-0") do
                   record.title
                 end
 

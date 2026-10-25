@@ -11,7 +11,7 @@ module Junction
                        "[&>svg]:start-4 [&>svg]:top-4 [&>svg~*]:ps-8"
         COLORS = {
           alert: "ring-destructive/20 bg-destructive/10 text-destructive [&>svg]:text-destructive/80",
-          default: "ring-blue-900/20 bg-blue-900/20 text-foreground [&>svg]:opacity-80",
+          default: "ring-info/20 bg-info-subtle text-info [&>svg]:text-info/80",
           success: "ring-success/20 bg-success/30 text-success [&>svg]:text-success/80",
           warning: "ring-warning/20 bg-warning/5 text-warning [&>svg]:text-warning/80"
         }.freeze

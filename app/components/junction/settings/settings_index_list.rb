@@ -8,6 +8,9 @@ module Junction
       # Each row is rendered as a tab that triggers a corresponding detail pane.
       # Optionally, items can be grouped.
       class SettingsIndexList < Base
+        # Classes for the undeclared marker.
+        MARKER = "shrink-0 w-[5px] h-[5px] rounded-full bg-line-strong"
+
         # Initializes the component.
         #
         # @param tabs [Tabs::Tabs] The tab set both panes belong to.
@@ -69,7 +72,7 @@ module Junction
                   span(class: [ "truncate max-w-full text-[11px] font-normal",
                                 ("font-mono" if mono),
                                 "text-text-tertiary",
-                                "group-data-[state=active]:text-text-body" ]
+                                "group-data-[state=active]:text-accent-strong" ]
                                 .compact.join(" ")) do
                     sublabel
                   end
@@ -80,7 +83,7 @@ module Junction
             if count
               span(class: "shrink-0 tabular-nums text-[11.5px] " \
                           "text-text-tertiary " \
-                          "group-data-[state=active]:text-text-body") do
+                          "group-data-[state=active]:text-accent-strong") do
                 count.to_s
               end
             end
@@ -109,8 +112,7 @@ module Junction
         # Used to indicated items that exist in the catalog data, but haven't
         # been defined by a plugin or other configuration.
         def unclaimed_dot
-          span(class: "shrink-0 w-[5px] h-[5px] rounded-full bg-warning",
-               aria_hidden: "true")
+          span(class: MARKER, aria_hidden: "true")
         end
 
         # Rows of a group sit in their own element so the group heading is not

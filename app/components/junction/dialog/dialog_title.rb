@@ -13,7 +13,7 @@ module Junction
 
         def default_attrs
           {
-            class: "text-lg font-semibold leading-none text-gray-900 dark:text-white tracking-tight"
+            class: "text-lg font-semibold leading-none text-foreground tracking-tight"
           }
         end
       end

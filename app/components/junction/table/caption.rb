@@ -12,7 +12,7 @@ module Junction
 
         def default_attrs
           {
-            class: "mt-4 text-sm text-muted-foreground"
+            class: "mt-4 text-sm text-text-tertiary"
           }
         end
       end

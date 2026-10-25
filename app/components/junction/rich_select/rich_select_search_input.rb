@@ -16,7 +16,7 @@ module Junction
         end
 
         def view_template
-          div(class: "p-2 border-b border-gray-200 dark:border-gray-700") do
+          div(class: "p-2 border-b border-border") do
             input(**attrs)
           end
         end
@@ -30,8 +30,7 @@ module Junction
             aria: {
               label: @placeholder
             },
-            class: "w-full rounded-md border border-input bg-white " \
-              "dark:bg-gray-900 px-2 py-1 text-sm",
+            class: "w-full rounded-md border border-border bg-surface px-2 py-1 text-sm",
             data: {
               ruby_ui__select_target: "filterInput",
               action: "input->ruby-ui--select#filterItems " \

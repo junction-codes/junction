@@ -61,7 +61,7 @@ module Junction
 
           Link(href: junction_edit_catalog_path(@role), variant: :outline,
                class: "shrink-0 border-border bg-surface shadow-none " \
-                      "text-[13.5px] text-text-strong gap-2") do
+                      "text-[13.5px] text-foreground gap-2") do
             icon("pencil", class: "w-4 h-4")
             plain t(".edit")
           end
@@ -159,7 +159,7 @@ module Junction
                  class: "shrink-0 w-4 h-4 text-kind-group-fg")
 
             span(class: "min-w-0 flex flex-col") do
-              span(class: "truncate text-[13px] font-medium text-text-strong " \
+              span(class: "truncate text-[13px] font-medium text-foreground " \
                           "underline-offset-2 group-hover:underline") do
                 group.title
               end

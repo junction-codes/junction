@@ -36,7 +36,7 @@ module Junction
       def subtitle
         return if @entity.preview_subtitle.blank?
 
-        div(class: "text-[11.5px] text-muted-foreground truncate") do
+        div(class: "text-[11.5px] text-text-tertiary truncate") do
           plain @entity.preview_subtitle
         end
       end

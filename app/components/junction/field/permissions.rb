@@ -76,7 +76,7 @@ module Junction
                      "p-4 space-y-3",
               data: { role_permissions_target: "block", context: context.downcase },
               hidden: true) do
-            span(class: "block truncate font-mono text-[12.5px] text-text-strong") do
+            span(class: "block truncate font-mono text-[12.5px] text-foreground") do
               context
             end
 

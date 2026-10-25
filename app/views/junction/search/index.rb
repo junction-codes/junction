@@ -44,13 +44,13 @@ module Junction
         # Renders a page header for the search results.
         def page_header
           div do
-            h1(class: "text-2xl font-semibold text-gray-800 dark:text-white") do
+            h1(class: "text-2xl font-semibold text-foreground") do
               t(".title")
             end
 
             next unless @query.present?
 
-            p(class: "mt-1 text-sm text-gray-500 dark:text-gray-400") do
+            p(class: "mt-1 text-sm text-text-tertiary") do
               t(".result_count", count: @pagy.count, query: @query)
             end
           end
@@ -61,7 +61,7 @@ module Junction
           return empty_state(t(".empty_query")) if @query.blank?
           return empty_state(t(".no_results", query: @query)) if @results.empty?
 
-          div(class: "bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden") do
+          div(class: "bg-surface rounded-lg shadow overflow-hidden") do
             Table do |table|
               table.header do |header|
                 header.row do |row|
@@ -114,8 +114,8 @@ module Junction
         # Renders an empty state for the search results.
         def empty_state(message)
           div(class: "py-12 text-center") do
-            icon("search", class: "mx-auto h-12 w-12 text-gray-300 dark:text-gray-600")
-            p(class: "mt-4 text-sm text-gray-500 dark:text-gray-400") { message }
+            icon("search", class: "mx-auto h-12 w-12 text-line-strong")
+            p(class: "mt-4 text-sm text-text-tertiary") { message }
           end
         end
 

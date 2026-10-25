@@ -22,7 +22,7 @@ module Junction
                   "focus:outline-none focus:ring-2 focus:ring-ring " \
                   "focus:ring-offset-2 disabled:pointer-events-none " \
                   "data-[state=open]:bg-accent " \
-                  "data-[state=open]:text-muted-foreground",
+                  "data-[state=open]:text-text-tertiary",
             icon: true,
             size: :sm,
             variant: :ghost

@@ -63,7 +63,7 @@ module Junction
         # Zero is considered a count. Use `nil` when the row shouldn't carry a
         # count.
         def count_badge
-          color = @current ? "text-accent-muted" : "text-muted-foreground"
+          color = @current ? "text-accent-muted" : "text-text-tertiary"
 
           span(data_sidebar_target: "linkText",
                class: "ml-auto text-[11.5px] font-medium tabular-nums #{color}") do

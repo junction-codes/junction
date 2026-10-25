@@ -12,6 +12,23 @@ module Junction
 
         share_translations
 
+        # Classes for elements with different states.
+        SOURCE_STATES = {
+          chosen: {
+            box: "border-2 border-accent-muted bg-accent",
+            title: "text-accent-stronger",
+            detail: "text-accent-strong"
+          },
+          waiting: {
+            box: "border border-border bg-background",
+            title: "text-text-tertiary",
+            detail: "text-text-tertiary/60"
+          }
+        }.freeze
+
+        # Classes for a column in the layout.
+        COLUMN = "max-w-[788px]"
+
         attr_reader :breadcrumbs
 
         # Initializes the view.
@@ -30,9 +47,9 @@ module Junction
           render Junction::Layouts::Application.new(breadcrumbs:) do
             div(class: "px-6 py-6 space-y-6") do
               page_header
-              source_picker
 
-              div(class: "max-w-4xl") do
+              div(class: "#{COLUMN} space-y-6") do
+                source_picker
                 render form_component.new(entity: @entity, **@options)
               end
             end
@@ -58,7 +75,7 @@ module Junction
         def source_picker
           div do
             p(class: "text-[10.5px] font-semibold uppercase tracking-[0.08em] " \
-                     "text-muted-foreground mb-2") { t(".source") }
+                     "text-text-tertiary mb-2") { t(".source") }
 
             div(class: "grid grid-cols-1 md:grid-cols-3 gap-3") do
               source_card(:manual, "pencil-line", chosen: true)
@@ -74,33 +91,29 @@ module Junction
         # @param glyph [String] Its icon.
         # @param chosen [Boolean] Whether it's been selected.
         def source_card(name, glyph, chosen: false)
-          div(aria_disabled: (!chosen).to_s, class: source_classes(chosen)) do
-            div(class: "flex items-center gap-2") do
+          state = SOURCE_STATES.fetch(chosen ? :chosen : :waiting)
+
+          div(aria_disabled: (!chosen).to_s,
+              class: "rounded-xl p-4 min-w-0 #{state[:box]}") do
+            div(class: "flex items-center gap-2 #{state[:detail]}") do
               icon(glyph, class: "w-4 h-4 shrink-0")
-              span(class: "text-[13.5px] font-semibold") { t(".source_#{name}") }
-              unless chosen
-                span(class: "ml-auto text-[11px] text-muted-foreground") do
+              span(class: "text-[13.5px] font-semibold #{state[:title]}") do
+                t(".source_#{name}")
+              end
+
+              if chosen
+                icon("check", class: "ml-auto w-4 h-4")
+              else
+                span(class: "ml-auto text-[11px] text-line-strong") do
                   t(".soon")
                 end
               end
-              if chosen
-                icon("check", class: "ml-auto w-4 h-4 text-accent-strong")
-              end
             end
 
-            p(class: "mt-1 text-[12px] text-text-tertiary") do
+            p(class: "mt-1 text-[12px] #{state[:detail]}") do
               t(".source_#{name}_detail")
             end
           end
-        end
-
-        # @param chosen [Boolean] Whether it is the one in use.
-        # @return [String] The classes.
-        def source_classes(chosen)
-          base = "rounded-xl border p-4 min-w-0"
-          return "#{base} border-accent-soft-border bg-accent" if chosen
-
-          "#{base} border-border bg-surface opacity-60"
         end
 
         # @return [Class] The entity class.

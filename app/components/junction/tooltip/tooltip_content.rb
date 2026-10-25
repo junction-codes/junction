@@ -11,8 +11,8 @@ module Junction
         BASE_CLASSES = [
           "invisible pointer-events-none w-fit max-w-[calc(100vw-2rem)] " \
           "text-balance break-words absolute top-0 left-0 z-50 " \
-          "overflow-hidden rounded-md border bg-popover px-3 py-1.5 " \
-          "text-sm text-popover-foreground shadow-md",
+          "overflow-hidden rounded-md border bg-surface px-3 py-1.5 " \
+          "text-sm text-foreground shadow-md",
           "data-[placement=bottom]:slide-in-from-top-2",
           "data-[placement=left]:slide-in-from-right-2",
           "data-[placement=right]:slide-in-from-left-2",

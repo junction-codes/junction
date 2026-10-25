@@ -27,7 +27,7 @@ module Junction
           Head(**attrs) do
             a(
               href: @sort_url.call(@field, next_direction),
-              class: "inline-flex items-center gap-2 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer"
+              class: "inline-flex items-center gap-2 hover:text-accent-strong cursor-pointer"
             ) do
               span(&block)
               next unless @sorted

@@ -33,7 +33,7 @@ module Junction
           Card do |card|
             card.header { card.title { t(".metadata") } }
             card.content do
-              dl(class: "divide-y divide-gray-200 dark:divide-gray-700") do
+              dl(class: "divide-y divide-border") do
                 metadata_row(@entity.class.human_attribute_name(:created_at),
                              @entity.created_at.strftime("%b %d, %Y"))
                 metadata_row(@entity.class.human_attribute_name(:updated_at),
@@ -45,13 +45,13 @@ module Junction
 
         # Renders the destructive actions card.
         def danger_zone
-          Card(class: "border-red-500/50 dark:border-red-500/30") do |card|
+          Card(class: "border-destructive/50 dark:border-destructive/30") do |card|
             card.header do
-              card.title(class: "text-red-700 dark:text-red-400") { t(".danger_zone") }
+              card.title(class: "text-destructive") { t(".danger_zone") }
             end
 
             card.content(class: "space-y-4") do
-              p(class: "text-sm text-gray-600 dark:text-gray-400") { t(".danger_zone_warning") }
+              p(class: "text-sm text-text-tertiary") { t(".danger_zone_warning") }
 
               delete_dialog
             end
@@ -91,8 +91,8 @@ module Junction
         # @param value [String] The row's value.
         def metadata_row(label, value)
           div(class: "py-3 flex justify-between text-sm") do
-            dt(class: "font-medium text-gray-600 dark:text-gray-400") { label }
-            dd(class: "text-gray-900 dark:text-white") { value }
+            dt(class: "font-medium text-text-tertiary") { label }
+            dd(class: "text-foreground") { value }
           end
         end
       end

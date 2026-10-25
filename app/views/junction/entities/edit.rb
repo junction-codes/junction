@@ -37,7 +37,7 @@ module Junction
             div(class: "px-6 py-6 space-y-6") do
               page_header
 
-              div(class: "grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_20rem] " \
+              div(class: "grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_300px] " \
                          "gap-6 items-start") do
                 render form_component.new(entity: @entity, can_manage: @can_manage,
                                           **@options)

@@ -16,7 +16,7 @@ module Junction
             p(class: HELP_CLASSES) { @help_text } if @help_text
 
             if errors.any?
-              div(class: "mt-2 text-sm text-red-600 dark:text-red-400", id: "#{@method}_errors") do
+              div(class: "mt-2 text-sm text-destructive", id: "#{@method}_errors") do
                 errors.each do |error|
                   p { "#{label_text} #{error}" }
                 end

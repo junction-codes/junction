@@ -13,4 +13,10 @@ export PORT="${PORT:-3000}"
 export RUBY_DEBUG_OPEN="true"
 export RUBY_DEBUG_LAZY="true"
 
+# Remove precompiled assets to avoid freezing CSS and JS in development. We want
+# the live reload to pick up changes on these files and reflect them in the
+# browser.
+APP_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+rm -rf "$APP_ROOT/public/assets"
+
 exec foreman start -f Procfile.dev "$@"

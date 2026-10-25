@@ -5,6 +5,14 @@ module Junction
     module Settings
       # Header for a settings detail pane.
       class SettingsDetailHeader < Base
+        # Fill and dot classes for each state a badge can carry.
+        STATE_STYLES = {
+          success: [ "bg-success-subtle text-success", "bg-success" ],
+          accent: [ "bg-accent text-accent-stronger", "bg-accent-stronger" ],
+          outline: [ "bg-subtle text-text-tertiary", "bg-line-strong" ],
+          secondary: [ "bg-subtle text-text-tertiary", "bg-line-strong" ]
+        }.freeze
+
         # Initializes the component.
         #
         # @param title [String] Machine-readable name of the item being
@@ -16,6 +24,8 @@ module Junction
         #   beside the title.
         # @option badge [String] :label Label for the badge.
         # @option badge [String] :variant Badge variant.
+        # @option badge [Boolean] :dot Whether to precede the label with a
+        #   status dot.
         # @param mono [Boolean] Whether the title is a machine's name for the
         #   thing, such as an annotation key, rather than a product's.
         # @param user_attrs [Hash] Additional HTML attributes.
@@ -35,23 +45,22 @@ module Junction
           div(**attrs) do
             div(class: "flex items-start justify-between gap-4") do
               div(class: "min-w-0") do
-                div(class: "flex items-baseline gap-3 min-w-0") do
+                div(class: "flex items-center flex-wrap gap-x-3 gap-y-2 min-w-0") do
                   h2(class: [ "text-[20px] font-semibold text-foreground truncate",
                               ("font-mono text-[17px]" if @mono) ].compact.join(" ")) do
                     @title
                   end
 
                   name_chip
+                  state_badge
                 end
 
                 if @subtitle
-                  p(class: "mt-1 text-[14px] font-medium text-text-strong") do
+                  p(class: "mt-1 text-[14px] font-medium text-foreground") do
                     @subtitle
                   end
                 end
               end
-
-              state_badge
             end
 
             if @description
@@ -83,8 +92,14 @@ module Junction
         def state_badge
           return if @badge.blank?
 
-          Badge(variant: @badge.fetch(:variant, :secondary), size: :sm,
-                class: "shrink-0") { @badge.fetch(:label) }
+          fill, dot = STATE_STYLES.fetch(@badge.fetch(:variant, :secondary).to_sym,
+                                         STATE_STYLES.fetch(:secondary))
+
+          span(class: "shrink-0 inline-flex items-center gap-1.5 rounded-full " \
+                      "px-2.5 py-1 text-[11.5px] font-medium #{fill}") do
+            span(class: "w-1.5 h-1.5 rounded-full shrink-0 #{dot}") if @badge[:dot]
+            plain @badge.fetch(:label)
+          end
         end
       end
     end

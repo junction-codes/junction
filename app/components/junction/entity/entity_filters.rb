@@ -100,7 +100,7 @@ module Junction
             hidden_fields(except: attribute)
 
             span(class: "absolute left-3 top-1/2 -translate-y-1/2 " \
-                        "text-muted-foreground pointer-events-none") do
+                        "text-text-tertiary pointer-events-none") do
               icon("search", class: "w-4 h-4")
             end
 
@@ -110,7 +110,7 @@ module Junction
                   aria_label: t(".search"), autocomplete: "off",
                   class: "w-[360px] max-w-full h-9 pl-9 pr-3 rounded-lg " \
                          "border border-border bg-surface text-[13px] " \
-                         "text-foreground placeholder:text-muted-foreground " \
+                         "text-foreground placeholder:text-text-tertiary " \
                          "focus:outline-none focus:ring-1 focus:ring-ring")
           end
         end

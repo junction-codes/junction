@@ -17,7 +17,7 @@ module Junction
               ruby_ui__avatar_target: "fallback"
             },
             class: "absolute inset-0 flex items-center justify-center " \
-                   "rounded-full bg-muted"
+                   "rounded-full bg-subtle"
           }
         end
       end

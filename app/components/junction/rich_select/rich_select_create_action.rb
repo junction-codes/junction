@@ -5,8 +5,8 @@ module Junction
     module RichSelect
       # Renders the create-new-option action row for rich select menus.
       class RichSelectCreateAction < Base
-        ICON_WRAPPER_CLASS = "h-6 w-6 rounded-md bg-gray-200 " \
-          "dark:bg-gray-700 flex items-center justify-center flex-shrink-0"
+        ICON_WRAPPER_CLASS = "h-6 w-6 rounded-md bg-subtle " \
+          "flex items-center justify-center flex-shrink-0"
 
         # Initializes a new component.
         #
@@ -31,15 +31,15 @@ module Junction
               div(class: "flex items-center space-x-4",
                   data_ruby_ui__select_target: "itemContent") do
                 div(class: ICON_WRAPPER_CLASS) do
-                  icon("plus", class: "h-6 w-6 text-gray-500")
+                  icon("plus", class: "h-6 w-6 text-text-tertiary")
                 end
 
                 div do
-                  div(class: "text-sm font-medium text-gray-900 dark:text-white") do
+                  div(class: "text-sm font-medium text-foreground") do
                     span(data_create_action_label: true) { @default_label }
                   end
 
-                  div(class: "text-sm text-gray-500 dark:text-gray-400",
+                  div(class: "text-sm text-text-tertiary",
                       data_create_action_description: true) do
                     @default_description
                   end

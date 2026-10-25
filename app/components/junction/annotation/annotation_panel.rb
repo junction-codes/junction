@@ -24,7 +24,13 @@ module Junction
         def view_template
           section(**attrs) do
             AnnotationPanelHeader(panel:)
-            values_in_use
+
+            if panel.fetch(:values, []).any?
+              rule
+              values_in_use
+            end
+
+            rule
             AnnotationPanelTable(panel:)
           end
         end
@@ -33,6 +39,11 @@ module Junction
 
         def default_attrs
           { class: "space-y-6" }
+        end
+
+        # Separates one section of the pane from the next.
+        def rule
+          div(class: "border-t border-border", aria_hidden: "true")
         end
 
         # Every value the key carries, sorted most used to least.

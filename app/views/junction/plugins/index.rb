@@ -128,7 +128,7 @@ module Junction
           div(class: "rounded-lg border border-border bg-background p-3 " \
                      "space-y-2 min-w-0") do
             div(class: "flex items-center justify-between gap-2") do
-              span(class: "text-[12.5px] font-medium text-text-strong") do
+              span(class: "text-[12.5px] font-medium text-foreground") do
                 t(".groups.#{group.fetch(:id)}")
               end
               TabCount(value: items.size)
