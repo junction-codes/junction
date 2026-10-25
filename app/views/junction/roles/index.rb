@@ -30,7 +30,7 @@ module Junction
           render Junction::Layouts::Application.new(breadcrumbs:) do
             SettingsPage(title: t(".title"), description: t(".description"),
                          action: new_role_action) do |page|
-              page.callout(variant: :info) { t(".granting_note") }
+              page.callout(variant: :warning) { t(".granting_note") }
 
               roles = @overview.roles
               next empty_state if roles.empty?
@@ -90,7 +90,8 @@ module Junction
           list.group(label) do |group|
             roles.each do |role|
               group.item(value: role.id, label: role.title, mono: false,
-                         sublabel: reach(role))
+                         sublabel: reach(role),
+                         badge_icon: ("lock" if role.system))
             end
           end
         end
@@ -102,7 +103,7 @@ module Junction
         # @return [String] The summary of the role.
         def reach(role)
           [ t(".permission_count", count: role.permissions),
-            t(".group_count", count: role.groups) ].join("  ·  ")
+            t(".group_count", count: role.groups) ].join(" · ")
         end
 
         # Returns the footnote.

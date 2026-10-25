@@ -171,7 +171,7 @@ module Junction
                      "px-2 py-1.5") do
             button(type: "button", aria_label: t(".back"),
                    data: { action: "click->filter-menu#back" },
-                   class: "rounded-sm p-1 text-muted-foreground cursor-pointer " \
+                   class: "rounded-sm p-1 text-text-tertiary cursor-pointer " \
                           "hover:bg-subtle hover:text-foreground") do
               icon("chevron-left", class: "w-3.5 h-3.5")
             end
@@ -185,7 +185,7 @@ module Junction
         # @param text [String] The note.
         def pane_note(text)
           p(class: "border-t border-border px-3 py-2 text-[11px] " \
-                   "text-muted-foreground") { text }
+                   "text-text-tertiary") { text }
         end
 
         # The keys, of which one is always chosen.
@@ -252,7 +252,7 @@ module Junction
         # @param text [String] The heading.
         def caption(text)
           p(class: "px-2 pb-1 text-[10.5px] font-semibold uppercase " \
-                   "tracking-[0.08em] text-muted-foreground") { text }
+                   "tracking-[0.08em] text-text-tertiary") { text }
         end
 
         # What the chip will read once a value is chosen.

@@ -14,7 +14,7 @@ module Junction
           {
             scope: "col",
             class: "h-11 px-4 text-left align-middle text-[10.5px] font-semibold " \
-                   "uppercase tracking-[0.06em] text-muted-foreground " \
+                   "uppercase tracking-[0.06em] text-text-tertiary " \
                    "[&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
           }
         end

@@ -52,7 +52,7 @@ en:
             one: Effective for 1 person once group ancestry is resolved.
             other: >-
               Effective for %{count} people once group ancestry is resolved.
-          granted_directly: granted directly · junction_group_roles
+          granted_directly: Granted directly, not inherited
           granted_to: Groups granted this role
           member_count:
             one: 1 member
@@ -63,4 +63,7 @@ en:
           permissions_summary: >-
             %{count} of the %{total} permissions registered on this instance
           system: System
-          timestamps: "Created %{created}  ·  updated %{updated} ago"
+          permission_count:
+            one: 1 permission
+            other: "%{count} permissions"
+          timestamps: "Created %{created} · updated %{updated} ago"

@@ -8,6 +8,9 @@ module Junction
       # Each row is rendered as a tab that triggers a corresponding detail pane.
       # Optionally, items can be grouped.
       class SettingsIndexList < Base
+        # Classes for the undeclared marker.
+        MARKER = "shrink-0 w-[5px] h-[5px] rounded-full bg-line-strong"
+
         # Initializes the component.
         #
         # @param tabs [Tabs::Tabs] The tab set both panes belong to.
@@ -53,10 +56,11 @@ module Junction
         # @param marker [Boolean] Whether or not to add the unclaimed marker.
         # @param icon [String] Optional icon to display at the start of the row.
         # @param icon_class [String] What to paint it, such as a kind's tint.
+        # @param badge_icon [String] Optional icon at the end of the row.
         # @param mono [Boolean] Whether the sublabel is an identifier that
         #   should be rendered in a monospace font.
         def item(value:, label:, sublabel: nil, count: nil, marker: false,
-                 icon: nil, icon_class: nil, mono: true)
+                 icon: nil, icon_class: nil, badge_icon: nil, mono: true)
           @list.trigger(value:, class: "group w-full") do
             span(class: "min-w-0 flex items-center gap-2") do
               unclaimed_dot if marker
@@ -69,7 +73,7 @@ module Junction
                   span(class: [ "truncate max-w-full text-[11px] font-normal",
                                 ("font-mono" if mono),
                                 "text-text-tertiary",
-                                "group-data-[state=active]:text-text-body" ]
+                                "group-data-[state=active]:text-accent-strong" ]
                                 .compact.join(" ")) do
                     sublabel
                   end
@@ -80,10 +84,12 @@ module Junction
             if count
               span(class: "shrink-0 tabular-nums text-[11.5px] " \
                           "text-text-tertiary " \
-                          "group-data-[state=active]:text-text-body") do
+                          "group-data-[state=active]:text-accent-strong") do
                 count.to_s
               end
             end
+
+            row_badge(badge_icon)
           end
         end
 
@@ -104,13 +110,22 @@ module Junction
                class: "shrink-0 w-4 h-4 #{classes || 'text-text-tertiary'}")
         end
 
+        # Marks a row's state with an icon.
+        #
+        # @param name [String] The icon's name.
+        def row_badge(name)
+          return if name.blank?
+
+          icon(name, fallback: Junction::Kind::DEFAULT_ICON, aria_hidden: "true",
+               class: "shrink-0 w-3.5 h-3.5 text-text-tertiary")
+        end
+
         # Renders the unclaimed marker for an item.
         #
         # Used to indicated items that exist in the catalog data, but haven't
         # been defined by a plugin or other configuration.
         def unclaimed_dot
-          span(class: "shrink-0 w-[5px] h-[5px] rounded-full bg-warning",
-               aria_hidden: "true")
+          span(class: MARKER, aria_hidden: "true")
         end
 
         # Rows of a group sit in their own element so the group heading is not

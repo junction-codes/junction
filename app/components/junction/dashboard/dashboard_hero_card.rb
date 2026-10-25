@@ -19,11 +19,11 @@ module Junction
           Card(**attrs) do |card|
             card.header do |header|
               header.title(level: 1,
-                           class: "text-2xl font-bold text-gray-900 dark:text-white") do
+                           class: "text-2xl font-bold text-foreground") do
                 t(".welcome_title", name: @user.title)
               end
 
-              header.description(class: "text-gray-600 dark:text-gray-400") do
+              header.description(class: "text-text-tertiary") do
                 t(".welcome_description", name: @user.title)
               end
             end
@@ -45,8 +45,8 @@ module Junction
             UserAvatar(user: @user, size: :xl)
 
             div do
-              h2(class: "text-lg font-semibold text-gray-900 dark:text-white") { @user.title }
-              p(class: "text-sm text-gray-600 dark:text-gray-400") { @user.pronouns } if @user.pronouns.present?
+              h2(class: "text-lg font-semibold text-foreground") { @user.title }
+              p(class: "text-sm text-text-tertiary") { @user.pronouns } if @user.pronouns.present?
               Link(href: "mailto:#{@user.email}", class: "p-0 ") do
                 @user.email
               end

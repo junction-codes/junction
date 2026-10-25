@@ -25,9 +25,8 @@ module Junction
         def default_attrs
           {
             role: "listbox",
-            class: "border border-gray-200 dark:border-gray-600 rounded-md " \
-                   "overflow-hidden divide-y divide-gray-100 " \
-                   "dark:divide-gray-700"
+            class: "border border-border rounded-md overflow-hidden " \
+                   "divide-y divide-border"
           }
         end
       end

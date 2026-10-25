@@ -8,6 +8,16 @@ module Junction
         # How many registrations a card lists before it cuts off.
         ITEM_LIMIT = 6
 
+        # The icon heading each group of registrations.
+        GROUP_ICONS = {
+          sidebar_links: "link",
+          routes: "code",
+          entity_tabs: "layout-grid",
+          components: "activity",
+          annotation_keys: "file-text",
+          permissions: "shield-check"
+        }.freeze
+
         # Initializes the view.
         #
         # @param overview [Junction::Plugins::Overview] Overview of all plugins.
@@ -66,7 +76,7 @@ module Junction
           list.group(label) do |group|
             plugins.each do |plugin|
               group.item(value: plugin.id, label: plugin.title,
-                         sublabel: plugin.id)
+                         sublabel: plugin.id, icon: plugin.icon)
             end
           end
         end
@@ -80,12 +90,16 @@ module Junction
           panes.detail(value: plugin.id) do
             div(class: "space-y-6") do
               SettingsDetailHeader(
-                title: plugin.title, mono: false, subtitle: meta(plugin),
+                title: plugin.title, mono: false, icon: plugin.icon,
+                meta: meta(plugin),
                 description: plugin.description.presence || t(".empty_description"),
                 badge: { label: t(".installed"), variant: :outline }
               )
 
+              SettingsRule()
               registrations(plugin)
+
+              SettingsRule()
               provenance(plugin)
             end
           end
@@ -94,11 +108,11 @@ module Junction
         # Renders the meta information for a plugin.
         #
         # @param plugin [Junction::Plugins::Overview::Summary] The plugin.
-        # @return [String] Plugin metadata.
+        # @return [Array<String>] Plugin metadata.
         def meta(plugin)
           domain = t(".domain", domain: plugin.domain) if plugin.domain.present?
 
-          [ plugin.id, domain ].compact.join("  ·  ")
+          [ plugin.id, domain ].compact
         end
 
         # Renders the groups of registrations for a plugin.
@@ -128,9 +142,17 @@ module Junction
           div(class: "rounded-lg border border-border bg-background p-3 " \
                      "space-y-2 min-w-0") do
             div(class: "flex items-center justify-between gap-2") do
-              span(class: "text-[12.5px] font-medium text-text-strong") do
-                t(".groups.#{group.fetch(:id)}")
+              span(class: "min-w-0 flex items-center gap-2") do
+                icon(GROUP_ICONS.fetch(group.fetch(:id),
+                                       Junction::ApplicationPlugin::DEFAULT_ICON),
+                     fallback: Junction::ApplicationPlugin::DEFAULT_ICON,
+                     class: "shrink-0 w-4 h-4 text-text-tertiary")
+
+                span(class: "truncate text-[12.5px] font-medium text-foreground") do
+                  t(".groups.#{group.fetch(:id)}")
+                end
               end
+
               TabCount(value: items.size)
             end
 
@@ -159,12 +181,15 @@ module Junction
         #
         # @param plugin [Junction::Plugins::Overview::Summary] The plugin.
         def provenance(plugin)
-          section(class: "space-y-1 border-t border-border pt-4") do
-            h3(class: "text-[14px] font-semibold text-foreground") do
+          section(class: "space-y-1") do
+            h3(class: "text-[10.5px] font-semibold uppercase " \
+                      "tracking-[0.08em] text-text-tertiary") do
               t(".registered_as")
             end
 
-            p(class: "font-mono text-[13px] text-text-body") { plugin.class_name }
+            p(class: "font-mono text-[13px] font-medium text-foreground") do
+              plugin.class_name
+            end
 
             if plugin.source_path
               p(class: "font-mono text-[11.5px] text-text-tertiary break-all") do

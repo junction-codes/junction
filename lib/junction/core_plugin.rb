@@ -10,7 +10,7 @@ module Junction
 
     domain DOMAIN
     description "Junction Core plugin"
-    icon "train-track"
+    icon "waypoints"
     title "Junction Core"
     plugin_name "junction"
 

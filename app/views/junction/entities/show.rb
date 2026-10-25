@@ -61,7 +61,7 @@ module Junction
 
               div(class: "min-w-0") do
                 title_row
-                p(class: "mt-1.5 font-mono text-[12.5px] text-muted-foreground " \
+                p(class: "mt-1.5 font-mono text-[12.5px] text-text-tertiary " \
                          "break-all") { @entity.entity_ref }
                 description
                 meta
@@ -176,7 +176,7 @@ module Junction
             # The kind's icon rather than the type's, since what is being said
             # is which kind of thing this belongs to.
             icon(related.default_icon, fallback: Junction::Kind::DEFAULT_ICON,
-                 class: "w-[15px] h-[15px] shrink-0 text-muted-foreground")
+                 class: "w-[15px] h-[15px] shrink-0 text-text-tertiary")
             span(class: "sr-only") { "#{label}: " }
             EntityLink(entity: related)
           end
@@ -186,7 +186,7 @@ module Junction
           return if @entity.email.blank?
 
           span(class: "inline-flex items-center gap-1.5 min-w-0") do
-            icon("mail", class: "w-[15px] h-[15px] shrink-0 text-muted-foreground")
+            icon("mail", class: "w-[15px] h-[15px] shrink-0 text-text-tertiary")
             span(class: "sr-only") { "#{@entity.class.human_attribute_name(:email)}: " }
             Link(href: "mailto:#{@entity.email}", variant: :text) { @entity.email }
           end
@@ -194,7 +194,7 @@ module Junction
 
         def updated_item
           span(class: "inline-flex items-center gap-1.5") do
-            icon("clock", class: "w-[15px] h-[15px] shrink-0 text-muted-foreground")
+            icon("clock", class: "w-[15px] h-[15px] shrink-0 text-text-tertiary")
             span(class: "inline-flex items-baseline gap-1") do
               plain t(".updated")
               whitespace
@@ -215,7 +215,7 @@ module Junction
           Link(href: @entity.source_location, variant: :outline,
                target: "_blank", rel: "noopener noreferrer",
                class: "border-border bg-surface shadow-none text-[13.5px] " \
-                      "text-text-strong gap-2") do
+                      "text-foreground gap-2") do
             icon("external-link", class: "w-4 h-4")
             plain t(".open_repo")
           end
@@ -230,7 +230,7 @@ module Junction
               trigger.button(variant: :outline, size: :md, icon: true,
                              aria_label: t(".more_actions"),
                              class: "border-border bg-surface shadow-none " \
-                                    "text-muted-foreground") do
+                                    "text-text-tertiary") do
                 icon("ellipsis", class: "w-4 h-4")
               end
             end
@@ -412,7 +412,7 @@ module Junction
           EntityCard(title: t(".annotations"), action: annotations_edit_action,
                      data: { controller: "overflow-title" }) do
             if annotations.empty?
-              p(class: "text-[12px] text-muted-foreground") { t(".no_annotations") }
+              p(class: "text-[12px] text-text-tertiary") { t(".no_annotations") }
             else
               EntityAnnotationList(annotations:)
             end

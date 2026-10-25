@@ -24,7 +24,13 @@ module Junction
         def view_template
           section(**attrs) do
             AnnotationPanelHeader(panel:)
-            values_in_use
+
+            if panel.fetch(:values, []).any?
+              SettingsRule()
+              values_in_use
+            end
+
+            SettingsRule()
             AnnotationPanelTable(panel:)
           end
         end

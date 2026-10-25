@@ -88,7 +88,7 @@ module Junction
         # @return [String] The legend HTML.
         def undeclared_legend
           div(class: "flex items-center gap-1.5") do
-            span(class: "shrink-0 w-[5px] h-[5px] rounded-full bg-warning",
+            span(class: Junction::Components::Settings::SettingsIndexList::MARKER,
                  aria_hidden: "true")
             span { t(".undeclared_legend") }
           end

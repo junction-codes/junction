@@ -86,7 +86,19 @@ RSpec.describe "Junction shell", :js, type: :system do
     end
 
     it "names the rows for the pointer instead" do
-      expect(page).to have_css("#{rail} a[title='Components']")
+      find("#{rail} [data-sidebar-label]", text: "Components", visible: :all)
+        .hover
+
+      expect(page).to have_css("[data-state='open']", text: "Components")
+    end
+
+    it "drops the tooltips once the rail is open again" do
+      find(toggle).click
+      wait_for_rail_width(expanded_width)
+
+      expect(page).to have_no_css(
+        "#{rail} [data-sidebar-target='rowTooltip'][data-controller]"
+      )
     end
 
     context "when the rows outgrow the window" do

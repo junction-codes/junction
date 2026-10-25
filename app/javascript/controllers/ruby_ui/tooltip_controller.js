@@ -4,7 +4,10 @@ import { computePosition, autoUpdate, offset, shift } from "@floating-ui/dom";
 export default class extends Controller {
   static targets = ["trigger", "content"];
 
-  static values = { placement: "top" };
+  // Positioning options for the tooltip relative to the trigger.
+  // - placement: The placement of the tooltip relative to the trigger.
+  // - offset: Gap from the trigger, in pixels.
+  static values = { placement: "top", offset: { type: Number, default: 4 } };
 
   mount() {
     if (this.mounted) return;
@@ -87,7 +90,7 @@ export default class extends Controller {
 
     const position = {
       placement: this.placementValue,
-      middleware: [offset(4), shift()],
+      middleware: [offset(this.offsetValue), shift()],
     };
 
     computePosition(this.triggerTarget, this.mounted.element, position).then(

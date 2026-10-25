@@ -18,7 +18,7 @@ module Junction
           turbo_frame_tag "global-search-results" do
             next if @results.empty?
 
-            div(class: "absolute left-0 right-0 z-50 mt-1 shadow-lg bg-white dark:bg-gray-800 rounded-md") do
+            div(class: "absolute left-0 right-0 z-50 mt-1 shadow-lg bg-surface rounded-md") do
               ResultList do
                 @results.each { |entity| result_link(entity) }
 
@@ -38,12 +38,10 @@ module Junction
             href: junction_catalog_path(entity),
             data: { turbo_frame: "_top" },
             class: "flex items-center justify-between px-3 py-2 cursor-pointer " \
-                   "hover:bg-gray-100 dark:hover:bg-gray-700 " \
-                   "focus:bg-gray-100 dark:focus:bg-gray-700 " \
-                   "focus:outline-none"
+                   "hover:bg-accent focus:bg-accent focus:outline-none"
           ) do
-            span(class: "text-sm font-medium text-gray-900 dark:text-white") { entity.title }
-            span(class: "text-xs text-gray-500 dark:text-gray-400") do
+            span(class: "text-sm font-medium text-foreground") { entity.title }
+            span(class: "text-xs text-text-tertiary") do
               plain entity.class.model_name.human
               if entity.respond_to?(:type) && entity.type.present?
                 plain " · #{entity.type.to_s.humanize}"
@@ -57,9 +55,8 @@ module Junction
           a(
             href: search_path(q: @query),
             data: { turbo_frame: "_top" },
-            class: "flex items-center justify-center px-3 py-2 text-xs text-blue-600 " \
-                   "dark:text-blue-400 hover:underline border-t " \
-                   "border-gray-100 dark:border-gray-700"
+            class: "flex items-center justify-center px-3 py-2 text-xs " \
+                   "text-accent-strong hover:underline border-t border-border"
           ) do
             t(".see_all", query: @query)
           end

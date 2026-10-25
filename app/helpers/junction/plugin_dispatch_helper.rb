@@ -55,7 +55,7 @@ module Junction
     def render_plugin_tab_content(context, tabs_component)
       visible_tabs(context).each do |tab|
         tabs_component.content(value: tab[:title].parameterize) do
-          h3(class: "text-xl font-semibold text-gray-800 dark:text-white mb-4") { tab[:title] }
+          h3(class: "text-xl font-semibold text-foreground mb-4") { tab[:title] }
 
           turbo_frame_tag(tab[:target], src: resolve_plugin_route(tab[:action], context), loading: :lazy) do
             div(class: "p-4") { render Components::Skeleton(class: "h-20") }

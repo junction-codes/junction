@@ -27,11 +27,11 @@ module Junction
           EntityCard(title: @entity.class.human_attribute_name(:definition)) do
             if @entity.definition.present?
               pre(class: "rounded-lg bg-inset p-4 overflow-x-auto font-mono " \
-                         "text-[12.5px] text-text-strong") do
+                         "text-[12.5px] text-foreground") do
                 code(class: "language-yaml") { plain @entity.definition }
               end
             else
-              p(class: "text-[12px] text-muted-foreground") { t(".no_definition") }
+              p(class: "text-[12px] text-text-tertiary") { t(".no_definition") }
             end
           end
         end

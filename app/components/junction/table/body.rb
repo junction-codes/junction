@@ -16,7 +16,7 @@ module Junction
 
         def default_attrs
           {
-            class: "bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700 [&_tr:last-child]:border-0"
+            class: "bg-surface divide-y divide-border [&_tr:last-child]:border-0"
           }
         end
       end

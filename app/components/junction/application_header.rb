@@ -34,7 +34,7 @@ module Junction
                aria_controls: "junction-sidebar",
                aria_expanded: "true",
                aria_label: t(".toggle_sidebar"),
-               class: "shrink-0 cursor-pointer text-muted-foreground " \
+               class: "shrink-0 cursor-pointer text-text-tertiary " \
                       "hover:text-foreground focus-visible:outline-none " \
                       "focus-visible:ring-1 focus-visible:ring-ring " \
                       "rounded-md p-0.5") do

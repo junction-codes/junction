@@ -32,7 +32,7 @@ module Junction
                    action: "click->ruby-ui--theme-toggle#select"
                  },
                  class: "w-[26px] h-6 flex items-center justify-center " \
-                        "rounded-md text-muted-foreground cursor-pointer " \
+                        "rounded-md text-text-tertiary cursor-pointer " \
                         "transition-colors hover:text-foreground " \
                         "aria-checked:bg-control-thumb " \
                         "aria-checked:text-foreground aria-checked:shadow-sm") do

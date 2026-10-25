@@ -71,7 +71,7 @@ module Junction
             )
 
             p(
-              class: "hidden px-2 py-1.5 text-sm text-gray-500 dark:text-gray-400",
+              class: "hidden px-2 py-1.5 text-sm text-text-tertiary",
               data_ruby_ui__select_target: "emptyState"
             ) { @no_results_text }
           end

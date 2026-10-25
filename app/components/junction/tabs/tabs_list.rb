@@ -6,7 +6,7 @@ module Junction
       class TabsList < Base
         VARIANTS = {
           pill: "inline-flex h-9 items-center justify-center rounded-lg " \
-                "bg-background p-1 text-muted-foreground gap-2",
+                "bg-background p-1 text-text-tertiary gap-2",
           underline: "flex items-center gap-8 border-b border-border",
           index: "flex flex-col items-stretch gap-0.5"
         }.freeze

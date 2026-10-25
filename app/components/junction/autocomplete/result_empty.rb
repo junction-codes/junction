@@ -12,7 +12,7 @@ module Junction
       class ResultEmpty < Base
         def view_template
           div(**attrs) do
-            p(class: "px-3 py-4 text-sm text-gray-500 dark:text-gray-400 text-center") do
+            p(class: "px-3 py-4 text-sm text-text-tertiary text-center") do
               yield
             end
           end
@@ -22,7 +22,7 @@ module Junction
 
         def default_attrs
           {
-            class: "border border-gray-200 dark:border-gray-600 rounded-md"
+            class: "border border-border rounded-md"
           }
         end
       end

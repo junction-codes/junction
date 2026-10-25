@@ -20,7 +20,7 @@ module Junction
           dl(**attrs) do
             @annotations.each do |key, value|
               div(class: "min-w-0") do
-                dt(class: "font-mono text-[11px] text-muted-foreground truncate") { key }
+                dt(class: "font-mono text-[11px] text-text-tertiary truncate") { key }
                 dd(class: "font-mono text-[12px] font-medium text-accent-stronger " \
                           "truncate") { value.to_s }
               end

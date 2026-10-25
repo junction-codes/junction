@@ -106,8 +106,8 @@ module Junction
         #
         # @param scope [String] The ownership scope.
         def granted(scope)
-          span(class: "inline-flex items-center rounded-md border px-2 py-0.5 " \
-                      "text-[11.5px] font-medium #{scope_classes(scope)}") do
+          span(class: "inline-flex items-center rounded-full px-2.5 py-0.5 " \
+                      "text-[11px] font-semibold #{scope_classes(scope)}") do
             t(".#{scope}")
           end
         end
@@ -137,9 +137,9 @@ module Junction
         # @return [String] Its classes.
         def scope_classes(scope)
           if scope == Junction::Permission::Ownership::ALL
-            "border-accent-soft-border bg-accent-subtle text-accent-strong"
+            "bg-accent text-accent-stronger"
           else
-            "border-border bg-background text-text-body"
+            "bg-subtle text-text-tertiary"
           end
         end
       end

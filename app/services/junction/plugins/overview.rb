@@ -10,7 +10,7 @@ module Junction
     class Overview
       # One plugin, as the settings screen lists it.
       Summary = Struct.new(:id, :title, :description, :domain, :core,
-                           :class_name, :source_path, :groups,
+                           :class_name, :icon, :source_path, :groups,
                            keyword_init: true)
 
       # Every installed plugin, with built-in ones first.
@@ -49,6 +49,7 @@ module Junction
           domain: plugin.domain,
           core: plugin == Junction::CorePlugin,
           class_name: plugin.name,
+          icon: plugin.icon,
           source_path: source_path(plugin),
           groups: groups(plugin)
         )

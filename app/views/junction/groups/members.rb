@@ -77,7 +77,7 @@ module Junction
                           Tooltip do |tooltip|
                             tooltip.trigger do
                               Button(variant: :ghost, size: :sm) do
-                                icon("trash", class: "w-4 h-4 text-destructive-foreground")
+                                icon("trash", class: "w-4 h-4 text-destructive")
                                 span(class: "sr-only") { t(".remove", name: user.title) }
                               end
                             end

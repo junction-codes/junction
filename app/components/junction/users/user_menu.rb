@@ -18,7 +18,7 @@ module Junction
                   UserAvatar(user: @user)
                 end
 
-                span(class: "text-gray-800 dark:text-white") { @user.title }
+                span(class: "text-foreground") { @user.title }
               end
             end
 

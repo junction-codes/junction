@@ -117,7 +117,7 @@ module Junction
                 end
 
                 span(class: "text-[15px] font-medium tabular-nums " \
-                            "text-muted-foreground") { tabs.counts["all"].to_s }
+                            "text-text-tertiary") { tabs.counts["all"].to_s }
               end
 
               p(class: "mt-1 max-w-[700px] text-sm text-text-tertiary") do

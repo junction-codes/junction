@@ -87,8 +87,7 @@ module Junction
               type: "button",
               aria: { label: t(".remove", tag: tag.to_s) },
               data: { action: "click->tags-field#remove" },
-              class: "cursor-pointer text-text-tertiary hover:text-foreground " \
-                     "dark:hover:text-white"
+              class: "cursor-pointer text-text-tertiary hover:text-foreground"
             ) { icon("x", class: "w-3 h-3") }
           end
         end

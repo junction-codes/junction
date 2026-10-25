@@ -9,10 +9,12 @@ module Junction
         #
         # @param placement [String] The placement of the tooltip in relation to
         #   the trigger.
+        # @param offset [Integer] Optional gap from the trigger, in pixels.
         # @param user_attrs [Hash] Additional attributes to pass to the
         #   component.
-        def initialize(placement: "top", **user_attrs)
+        def initialize(placement: "top", offset: nil, **user_attrs)
           @placement = placement
+          @offset = offset
           super(**user_attrs)
         end
 
@@ -31,13 +33,13 @@ module Junction
         private
 
         def default_attrs
-          {
-            data: {
-              controller: "ruby-ui--tooltip",
-              ruby_ui__tooltip_placement_value: @placement
-            },
-            class: "group"
+          data = {
+            controller: "ruby-ui--tooltip",
+            ruby_ui__tooltip_placement_value: @placement
           }
+          data[:ruby_ui__tooltip_offset_value] = @offset if @offset
+
+          { data:, class: "group" }
         end
       end
     end

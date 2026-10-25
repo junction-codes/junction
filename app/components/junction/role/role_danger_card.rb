@@ -56,9 +56,9 @@ module Junction
         # Renders the delete button and the confirmation it opens.
         def delete_dialog
           Dialog do |dialog|
-            dialog.trigger do
+            dialog.trigger(class: "w-full") do
               Button(variant: :outline, type: "button",
-                     class: "w-full justify-center border-destructive/40 " \
+                     class: "w-full justify-center bg-surface " \
                             "text-destructive") do
                 icon("trash", class: "w-4 h-4 mr-2")
                 plain t(".delete")

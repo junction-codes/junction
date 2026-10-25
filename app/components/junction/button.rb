@@ -69,8 +69,8 @@ module Junction
         [
           BASE_CLASSES,
           size_classes,
-          "bg-secondary text-secondary-foreground",
-          "hover:bg-opacity-80"
+          "bg-subtle text-text-body",
+          "hover:bg-subtle/80"
         ]
       end
 
@@ -88,7 +88,7 @@ module Junction
         [
           BASE_CLASSES,
           size_classes,
-          "border border-input bg-background shadow-sm",
+          "border border-border bg-background shadow-sm",
           "hover:bg-accent hover:text-accent-foreground"
         ]
       end

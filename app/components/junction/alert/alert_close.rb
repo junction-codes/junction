@@ -20,7 +20,7 @@ module Junction
             class: "absolute end-4 top-4 hover:opacity-70 focus:outline-none " \
               "focus:ring-2 focus:ring-ring focus:ring-offset-2 " \
               "disabled:pointer-events-none data-[state=open]:bg-accent " \
-              "data-[state=open]:text-muted-foreground px-1.5!",
+              "data-[state=open]:text-text-tertiary px-1.5!",
             icon: true,
             size: :sm,
             variant: :ghost

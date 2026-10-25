@@ -17,16 +17,17 @@ module Junction
         VARIANTS = {
           pill: [
             "justify-center rounded-md px-3 py-1 text-sm font-medium",
-            "data-[state=active]:bg-muted data-[state=active]:text-foreground",
+            "data-[state=active]:bg-subtle data-[state=active]:text-foreground",
             "data-[state=active]:shadow",
-            "dark:data-[state=inactive]:hover:bg-gray-700/50"
+            "data-[state=inactive]:hover:bg-subtle"
           ],
           index: [
             "w-full justify-between gap-2 rounded-lg px-2 py-1.5 text-left",
-            "text-[13px] font-medium text-text-body",
+            "text-[13px] font-medium text-foreground",
             "hover:bg-subtle",
             "data-[state=active]:bg-accent-subtle",
-            "data-[state=active]:font-semibold data-[state=active]:text-foreground"
+            "data-[state=active]:font-semibold",
+            "data-[state=active]:text-accent-stronger"
           ],
           underline: [
             "items-baseline -mb-px pb-2 border-b-2 border-transparent text-[13.5px]",
