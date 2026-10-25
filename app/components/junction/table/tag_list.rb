@@ -62,7 +62,7 @@ module Junction
         def overflow_marker(count)
           span(tabindex: 0,
                aria_label: t(".more", count:),
-               class: "text-[11px] font-medium text-muted-foreground " \
+               class: "text-[11px] font-medium text-text-tertiary " \
                       "rounded cursor-default focus-visible:outline-none " \
                       "focus-visible:ring-1 focus-visible:ring-ring") do
             "+#{count}"
@@ -70,7 +70,7 @@ module Junction
         end
 
         def empty
-          span(class: "text-[11px] text-muted-foreground") { t(".none") }
+          span(class: "text-[11px] text-text-tertiary") { t(".none") }
         end
 
         def default_attrs

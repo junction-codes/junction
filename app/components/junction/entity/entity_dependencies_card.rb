@@ -49,10 +49,10 @@ module Junction
 
           div(class: EntityCard::SIDES.fetch(side)) do
             p(class: "text-[11px] font-semibold uppercase tracking-[0.06em] " \
-                     "text-muted-foreground mb-3") { t(".#{key}", count: total) }
+                     "text-text-tertiary mb-3") { t(".#{key}", count: total) }
 
             if total.zero?
-              p(class: "text-[12px] text-muted-foreground") { t(".#{key}_none") }
+              p(class: "text-[12px] text-text-tertiary") { t(".#{key}_none") }
             else
               ul(class: "space-y-2.5") do
                 relation.order(:title).limit(SHOWN).each { |entity| row(entity) }
@@ -69,11 +69,11 @@ module Junction
         def row(entity)
           li(class: "flex items-center gap-2.5 min-w-0") do
             icon(entity.icon, fallback: Junction::Kind::DEFAULT_ICON,
-                 class: "w-[15px] h-[15px] shrink-0 text-muted-foreground")
+                 class: "w-[15px] h-[15px] shrink-0 text-text-tertiary")
             EntityLink(entity:, class: "font-mono text-[12.5px] font-medium " \
-                                       "text-text-strong truncate min-w-0")
+                                       "text-foreground truncate min-w-0")
             span(class: "ml-auto pl-3 shrink-0 text-[11px] " \
-                        "text-muted-foreground") { entity.type_name }
+                        "text-text-tertiary") { entity.type_name }
           end
         end
 

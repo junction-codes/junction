@@ -11,7 +11,11 @@ module Junction
         ITEM = "flex-1 rounded-md px-3 py-1 text-center text-[12.5px] " \
                "font-medium text-text-tertiary hover:text-foreground"
 
-        CURRENT = "bg-surface shadow text-foreground"
+        # The track and thumb are their own tokens rather than the surface
+        # ramp, so the thumb stays lighter than what it sits on. A switch
+        # inside a card drew its thumb in the card's own colour otherwise,
+        # leaving the shadow to carry the whole selection.
+        CURRENT = "bg-control-thumb shadow text-foreground"
 
         # Initializes the component.
         #
@@ -34,10 +38,12 @@ module Junction
           div(**attrs) do
             @items.each do |item|
               current = item[:current]
+              classes = TAILWIND_MERGER.merge(
+                [ ITEM, (CURRENT if current) ].compact.join(" ")
+              )
 
               a(href: item.fetch(:href), data: { turbo_frame: @frame },
-                aria_current: ("page" if current),
-                class: [ ITEM, (CURRENT if current) ].compact.join(" ")) do
+                aria_current: ("page" if current), class: classes) do
                 plain item.fetch(:label)
               end
             end
@@ -47,7 +53,7 @@ module Junction
         private
 
         def default_attrs
-          { class: "flex items-center gap-1 rounded-lg bg-background p-1" }
+          { class: "flex items-center gap-1 rounded-lg bg-control-track p-1" }
         end
       end
     end

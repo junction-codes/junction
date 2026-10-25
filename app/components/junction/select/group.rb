@@ -6,7 +6,7 @@ module Junction
       # Renders a grouped section of select options.
       class Group < Base
         LABEL_CLASS = "px-2 pt-2 pb-1 text-xs font-semibold uppercase " \
-          "tracking-wide text-gray-500 dark:text-gray-400"
+          "tracking-wide text-text-tertiary"
 
         # Initializes a new component.
         #

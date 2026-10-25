@@ -19,9 +19,19 @@ module Junction
           Text(
             @annotations_form,
             @annotation[:key],
-            label: "#{@annotation[:title]} (#{@annotation[:key]})",
+            label: @annotation[:title],
+            label_action: method(:annotation_key),
             placeholder: @annotation[:placeholder]
           )
+        end
+
+        private
+
+        # Renders the annotation's key.
+        def annotation_key
+          span(class: "font-mono text-[11.5px] text-text-tertiary") do
+            @annotation[:key]
+          end
         end
       end
     end

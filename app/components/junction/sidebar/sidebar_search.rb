@@ -11,7 +11,7 @@ module Junction
               render SearchBar.new(
                 input_class: "w-full h-9 pl-9 pr-3 rounded-lg border " \
                              "border-border bg-background text-sm " \
-                             "text-foreground placeholder:text-muted-foreground " \
+                             "text-foreground placeholder:text-text-tertiary " \
                              "focus:outline-none focus:ring-1 focus:ring-ring"
               )
             end
@@ -22,7 +22,7 @@ module Junction
                    aria_label: t(".expand"),
                    class: "hidden w-10 h-9 items-center justify-center " \
                           "rounded-lg border border-border bg-background " \
-                          "text-muted-foreground hover:text-foreground") do
+                          "text-text-tertiary hover:text-foreground") do
               icon("search", class: "w-4 h-4")
             end
           end

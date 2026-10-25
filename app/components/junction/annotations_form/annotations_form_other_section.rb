@@ -20,11 +20,11 @@ module Junction
             class: "space-y-4",
             data: { controller: "repeatable-rows" }
           ) do
-            h3(class: "text-sm font-semibold text-gray-900 dark:text-gray-100") do
+            h3(class: "text-sm font-semibold text-foreground") do
               t(".other")
             end
 
-            p(class: "text-sm text-gray-500 dark:text-gray-400") do
+            p(class: "text-sm text-text-tertiary") do
               t(".other_help")
             end
 
@@ -54,7 +54,8 @@ module Junction
 
             Button(
               type: "button",
-              variant: :secondary,
+              variant: :outline,
+              class: "bg-surface text-accent-strong text-[12.5px]",
               data: { action: "click->repeatable-rows#add" }
             ) do
               icon("plus", class: "w-4 h-4 mr-2")
@@ -89,7 +90,7 @@ module Junction
               aria: { label: t(".remove_row") },
               data: { action: "click->repeatable-rows#remove" }
             ) do
-              icon("trash", class: "w-4 h-4")
+              icon("x", class: "w-4 h-4")
             end
           end
         end

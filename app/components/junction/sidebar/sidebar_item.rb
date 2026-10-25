@@ -28,18 +28,40 @@ module Junction
         end
 
         def view_template
-          render Link.new(variant: link_variant, **attrs) do
-            span(class: "shrink-0 w-[18px] flex justify-center") do
-              icon(@icon, fallback: Junction::Kind::DEFAULT_ICON,
-                   class: "w-[18px] h-[18px]")
+          Tooltip(placement: "right", offset: 25, class: "w-full",
+                  data: { sidebar_target: "rowTooltip" }) do |tooltip|
+            tooltip.trigger(class: "w-full") do
+              render Link.new(variant: link_variant, **attrs) do
+                span(class: "shrink-0 w-[18px] flex justify-center") do
+                  icon(@icon, fallback: Junction::Kind::DEFAULT_ICON,
+                       class: "w-[18px] h-[18px]")
+                end
+                span(data_sidebar_target: "linkText", data_sidebar_label: "",
+                     class: "ml-2.5 whitespace-nowrap") { @title }
+                trailing
+              end
             end
-            span(data_sidebar_target: "linkText", data_sidebar_label: "",
-                 class: "ml-2.5 whitespace-nowrap") { @title }
-            trailing
+
+            tooltip.content { tip }
           end
         end
 
         private
+
+        # Tooltip text displayed when the sidebar is collapsed.
+        #
+        # The sidebar controller controls the visibility of the tooltip based on
+        # the sidebar's state.
+        def tip
+          span(class: "text-[12.5px] font-medium") { @title }
+
+          note = @count&.to_s || @badge
+          return if note.blank?
+
+          span(class: "ml-2 text-[11.5px] tabular-nums text-tooltip-muted") do
+            note
+          end
+        end
 
         def link_variant
           return :disabled if @disabled
@@ -63,7 +85,7 @@ module Junction
         # Zero is considered a count. Use `nil` when the row shouldn't carry a
         # count.
         def count_badge
-          color = @current ? "text-accent-muted" : "text-muted-foreground"
+          color = @current ? "text-accent-muted" : "text-text-tertiary"
 
           span(data_sidebar_target: "linkText",
                class: "ml-auto text-[11.5px] font-medium tabular-nums #{color}") do
@@ -73,7 +95,6 @@ module Junction
 
         def default_attrs
           attrs = {
-            data: { sidebar_target: "row" },
             class: "w-full justify-start h-[34px] px-[11px] rounded-lg"
           }
           attrs[:aria] = { current: "page" } if @current && !@disabled

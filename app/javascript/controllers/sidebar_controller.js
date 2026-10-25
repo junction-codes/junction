@@ -8,8 +8,8 @@ import { Controller } from "@hotwired/stimulus"
 // under the pointer.
 export default class extends Controller {
   static targets = [
-    "sidebar", "row", "linkText", "sectionRule", "searchBox", "searchButton",
-    "scroller", "toggle"
+    "sidebar", "rowTooltip", "linkText", "sectionRule", "searchBox",
+    "searchButton", "scroller", "toggle"
   ]
   static values = { collapsed: Boolean }
 
@@ -68,22 +68,17 @@ export default class extends Controller {
       el.setAttribute("aria-expanded", String(!this.collapsedValue))
     })
 
-    this.#setRowTitles()
+    this.#setRowTooltips()
   }
 
-  // A collapsed row shows no text, so the mouse needs a tooltip to read it by.
-  // Expanded, the label is right there and a tooltip would only repeat it.
-  #setRowTitles() {
-    this.rowTargets.forEach((row) => {
-      if (!this.collapsedValue) {
-        row.removeAttribute("title")
-        return
+  // Show and hide tooltips based on the sidebar's collapsed state.
+  #setRowTooltips() {
+    this.rowTooltipTargets.forEach((el) => {
+      if (this.collapsedValue) {
+        el.setAttribute("data-controller", "ruby-ui--tooltip")
+      } else {
+        el.removeAttribute("data-controller")
       }
-
-      // The row's own text would pick up the count as well, so the tooltip is
-      // taken from the label alone.
-      const label = row.querySelector("[data-sidebar-label]")
-      if (label) row.setAttribute("title", label.textContent.trim())
     })
   }
 }

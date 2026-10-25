@@ -27,6 +27,8 @@ module Junction
             div(class: "space-y-6") do
               header
               permissions
+
+              SettingsRule()
               granted_to
             end
           end
@@ -38,7 +40,7 @@ module Junction
         def header
           div(class: "flex items-start justify-between gap-4") do
             SettingsDetailHeader(title: @role.title, mono: false,
-                                 badge: kind_badge,
+                                 badge: [ kind_badge, permissions_badge ],
                                  description: @role.description) do
               timestamps
             end
@@ -55,13 +57,21 @@ module Junction
           { label: t(@role.system? ? ".system" : ".custom"), variant: :outline }
         end
 
+        # Builds the badge indicating the number of held permissions.
+        #
+        # @return [Hash] How many permissions the role holds.
+        def permissions_badge
+          { label: t(".permission_count", count: @detail.fetch(:permissions).size),
+            variant: :accent }
+        end
+
         # Renders the edit button, unless the role is a system role.
         def edit_action
           return unless @can_edit && !@role.system?
 
           Link(href: junction_edit_catalog_path(@role), variant: :outline,
                class: "shrink-0 border-border bg-surface shadow-none " \
-                      "text-[13.5px] text-text-strong gap-2") do
+                      "text-[13.5px] text-foreground gap-2") do
             icon("pencil", class: "w-4 h-4")
             plain t(".edit")
           end
@@ -69,7 +79,7 @@ module Junction
 
         # Renders when the role was created and when it last changed.
         def timestamps
-          p(class: "mt-2 text-[12px] text-text-tertiary") do
+          p(class: "mt-3 text-[11.5px] text-text-tertiary") do
             t(".timestamps",
               created: @role.created_at.to_date.to_formatted_s(:long),
               updated: time_ago_in_words(@role.updated_at))
@@ -116,12 +126,12 @@ module Junction
         def granted_to
           groups = @detail.fetch(:groups)
 
-          section(class: "space-y-3 border-t border-border pt-5") do
+          section(class: "space-y-3") do
             div do
               h3(class: "text-[14px] font-semibold text-foreground") do
                 t(".granted_to")
               end
-              p(class: "font-mono text-[11.5px] text-text-tertiary") do
+              p(class: "text-[12.5px] text-text-tertiary") do
                 t(".granted_directly")
               end
             end
@@ -130,7 +140,7 @@ module Junction
 
             group_cards(groups)
 
-            p(class: "text-[12.5px] text-text-tertiary") do
+            p(class: "pt-1 text-[11.5px] text-text-tertiary") do
               t(".effective_people", count: @detail.fetch(:people))
             end
           end
@@ -140,7 +150,7 @@ module Junction
         #
         # @param groups [Array<Hash>] The groups and their member counts.
         def group_cards(groups)
-          div(class: "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3") do
+          div(class: "flex flex-wrap gap-3") do
             groups.each { |granted| group_card(granted) }
           end
         end
@@ -152,18 +162,23 @@ module Junction
           group = granted.fetch(:group)
 
           Link(href: junction_catalog_path(group),
-               class: "group flex items-center gap-3 rounded-lg border " \
-                      "border-border bg-background px-3.5 py-3 no-underline " \
+               class: "group flex h-auto w-[220px] max-w-full items-center " \
+                      "justify-start gap-2.5 rounded-lg border border-border " \
+                      "bg-background px-2.5 py-1.5 no-underline " \
                       "hover:no-underline hover:border-line-strong") do
-            icon(group.icon, fallback: Junction::Kind::DEFAULT_ICON,
-                 class: "shrink-0 w-4 h-4 text-kind-group-fg")
+            div(class: "shrink-0 flex items-center justify-center w-6 h-6 " \
+                       "rounded-md bg-kind-group") do
+              icon(group.icon, fallback: Junction::Kind::DEFAULT_ICON,
+                   class: "w-3.5 h-3.5 text-kind-group-fg")
+            end
 
-            span(class: "min-w-0 flex flex-col") do
-              span(class: "truncate text-[13px] font-medium text-text-strong " \
-                          "underline-offset-2 group-hover:underline") do
+            span(class: "min-w-0 flex flex-col gap-0.5") do
+              span(class: "truncate text-[12.5px] font-medium leading-tight " \
+                          "text-foreground underline-offset-2 " \
+                          "group-hover:underline") do
                 group.title
               end
-              span(class: "text-[11.5px] text-text-tertiary") do
+              span(class: "text-[11px] leading-tight text-text-tertiary") do
                 t(".member_count", count: granted.fetch(:members))
               end
             end

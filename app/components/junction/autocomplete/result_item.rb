@@ -23,8 +23,8 @@ module Junction
 
         def view_template
           li(**attrs) do
-            span(class: "text-sm font-medium text-gray-900 dark:text-white") { @name }
-            span(class: "text-xs text-gray-500 dark:text-gray-400") { yield }
+            span(class: "text-sm font-medium text-foreground") { @name }
+            span(class: "text-xs text-text-tertiary") { yield }
           end
         end
 
@@ -43,8 +43,7 @@ module Junction
               }
             },
             class: "flex items-center justify-between px-3 py-2 cursor-pointer " \
-                   "hover:bg-gray-100 dark:hover:bg-gray-700 " \
-                   "aria-selected:bg-gray-100 dark:aria-selected:bg-gray-700"
+                   "hover:bg-accent aria-selected:bg-accent"
           }
         end
       end

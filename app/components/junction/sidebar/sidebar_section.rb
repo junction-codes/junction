@@ -34,7 +34,7 @@ module Junction
           div(class: "h-4 flex items-center px-3") do
             span(data_sidebar_target: "linkText",
                  class: "text-[10.5px] font-semibold uppercase " \
-                        "tracking-[0.08em] text-muted-foreground") do
+                        "tracking-[0.08em] text-text-tertiary") do
               @title
             end
 

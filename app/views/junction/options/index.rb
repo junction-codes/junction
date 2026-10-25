@@ -76,8 +76,14 @@ module Junction
                                    chip: field.fetch(:id),
                                    description: summary(field))
               declared_split(field)
+
+              SettingsRule()
               known_options(field)
-              undeclared_options(field)
+
+              if field.fetch(:other).any?
+                SettingsRule()
+                undeclared_options(field)
+              end
             end
           end
         end
@@ -164,7 +170,7 @@ module Junction
 
             row.cell(class: "font-mono text-xs align-top") { option.fetch(:value) }
 
-            row.cell do
+            row.cell(class: "text-text-body") do
               span { option.fetch(:name) }
 
               if option.fetch(:description).present?
@@ -178,7 +184,7 @@ module Junction
               usage_bar(option.fetch(:count), highest)
             end
 
-            row.cell(class: "text-right tabular-nums align-top") do
+            row.cell(class: "text-right tabular-nums align-top text-text-tertiary") do
               option.fetch(:count)
             end
           end
@@ -212,6 +218,7 @@ module Junction
               # The table header is defined for screen readers only.
               table.header do |header|
                 header.row(class: "sr-only") do |row|
+                  row.head { t(".option_icon") }
                   row.head { t(".option_value") }
                   row.head { t(".fallback_heading") }
                   row.head { t(".in_use") }
@@ -221,11 +228,17 @@ module Junction
               table.body do |body|
                 other.each do |option|
                   body.row do |row|
+                    row.cell(class: "w-8 pr-0") do
+                      icon(Junction::Kind::DEFAULT_ICON,
+                           class: "h-4 w-4 text-text-tertiary")
+                    end
                     row.cell(class: "font-mono text-xs") { option.fetch(:value) }
                     row.cell(class: "text-[12px] text-text-tertiary") do
                       t(".fallback_note")
                     end
-                    row.cell(class: "text-right tabular-nums") { option.fetch(:count) }
+                    row.cell(class: "text-right tabular-nums text-text-tertiary") do
+                      option.fetch(:count)
+                    end
                   end
                 end
               end
@@ -287,9 +300,6 @@ module Junction
             span(class: "text-[11.5px] text-text-tertiary") { hint }
           end
         end
-
-        # Calculates the percentage share of a count against a total.
-        #
       end
     end
   end

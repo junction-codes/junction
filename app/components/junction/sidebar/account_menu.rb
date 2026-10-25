@@ -38,16 +38,16 @@ module Junction
 
             span(data_sidebar_target: "linkText",
                  class: "ml-2.5 min-w-0 flex flex-col items-start") do
-              span(class: "text-[13px] font-medium text-text-strong truncate") do
+              span(class: "text-[13px] font-medium text-foreground truncate") do
                 @user.title
               end
-              span(class: "text-[11px] text-muted-foreground truncate") do
+              span(class: "text-[11px] text-text-tertiary truncate") do
                 @user.email
               end
             end
 
             span(data_sidebar_target: "linkText", class: "ml-auto") do
-              icon("chevron-up", class: "w-4 h-4 text-muted-foreground")
+              icon("chevron-up", class: "w-4 h-4 text-text-tertiary")
             end
           end
         end
@@ -84,7 +84,7 @@ module Junction
               p(class: "text-[13.5px] font-medium text-foreground truncate") do
                 @user.title
               end
-              p(class: "text-[11.5px] text-muted-foreground truncate") do
+              p(class: "text-[11.5px] text-text-tertiary truncate") do
                 @user.email
               end
             end
@@ -130,7 +130,7 @@ module Junction
         # Renders the number beside a menu row.
         def menu_meta(value)
           span(class: "ml-auto text-[11px] tabular-nums " \
-                      "text-muted-foreground") { value.to_s }
+                      "text-text-tertiary") { value.to_s }
         end
 
         def default_attrs

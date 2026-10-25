@@ -19,11 +19,11 @@ module Junction
         def view_template(&)
           Card(**attrs) do |card|
             card.header do |header|
-              header.title(class: "text-lg font-semibold text-gray-900 dark:text-white") do
+              header.title(class: "text-lg font-semibold text-foreground") do
                 t(".title")
               end
 
-              header.description(class: "text-gray-600 dark:text-gray-400") do
+              header.description(class: "text-text-tertiary") do
                 t(".description")
               end
             end
@@ -42,14 +42,14 @@ module Junction
         def entities_list
           return empty_list if @entities.empty?
 
-          ul(class: "divide-y divide-gray-200 dark:divide-gray-700") do
+          ul(class: "divide-y divide-border") do
             @entities.each do |entity|
               li(class: "py-4") do
                 div(class: "flex items-start justify-between gap-3") do
                   div(class: "flex-1") do
                     div(class: "flex items-center gap-2") do
                       icon(entity.icon, fallback: Junction::Kind::DEFAULT_ICON,
-                           class: "h-4 w-4 text-gray-500")
+                           class: "h-4 w-4 text-text-tertiary")
                       EntityLink(entity:)
                     end
 
@@ -65,7 +65,7 @@ module Junction
 
         # Renders an appropriate message when the user has no owned entities.
         def empty_list
-          p(class: "text-sm text-gray-500 dark:text-gray-400 py-2") do
+          p(class: "text-sm text-text-tertiary py-2") do
             t(".empty")
           end
         end

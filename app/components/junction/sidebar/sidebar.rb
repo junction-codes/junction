@@ -71,7 +71,7 @@ module Junction
               end
 
               if organization_name.present?
-                span(class: "text-[11.5px] leading-4 text-muted-foreground " \
+                span(class: "text-[11.5px] leading-4 text-text-tertiary " \
                             "truncate") { organization_name }
               end
             end

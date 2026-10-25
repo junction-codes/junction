@@ -22,7 +22,7 @@ module Junction
         def view_template
           EntityCard(title: t(".title"), **attrs) do
             if links.empty?
-              p(class: "text-[12px] text-muted-foreground") { t(".none") }
+              p(class: "text-[12px] text-text-tertiary") { t(".none") }
             else
               ul(class: "space-y-3") { links.each { |link| row(link) } }
             end
@@ -44,12 +44,12 @@ module Junction
             a(href: url, target: "_blank", rel: "noopener noreferrer",
               class: "group flex items-center gap-2.5 min-w-0") do
               icon(link["icon"].presence || LINK_ICON, fallback: LINK_ICON,
-                   class: "w-[15px] h-[15px] shrink-0 text-muted-foreground")
-              span(class: "text-[12.5px] font-medium text-text-strong " \
+                   class: "w-[15px] h-[15px] shrink-0 text-text-tertiary")
+              span(class: "text-[12.5px] font-medium text-foreground " \
                           "truncate group-hover:underline") do
                 link["title"].presence || url
               end
-              span(class: "ml-auto pl-3 text-[11px] text-muted-foreground " \
+              span(class: "ml-auto pl-3 text-[11px] text-text-tertiary " \
                           "truncate") { host(url) }
             end
           end

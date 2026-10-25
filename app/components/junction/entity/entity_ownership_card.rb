@@ -46,7 +46,7 @@ module Junction
           text = owner.is_a?(Junction::User) ? owner.email : group_detail
           return if text.blank?
 
-          div(class: "text-[11.5px] text-muted-foreground truncate") { text }
+          div(class: "text-[11.5px] text-text-tertiary truncate") { text }
         end
 
         # Details about the group that owns the entity.

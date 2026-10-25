@@ -31,9 +31,9 @@ module Junction
         # Renders the read-only metadata card.
         def metadata_card
           Card do |card|
-            card.header { card.title { t(".metadata") } }
+            card.header { |header| header.title(class: "text-[15px]") { t(".metadata") } }
             card.content do
-              dl(class: "divide-y divide-gray-200 dark:divide-gray-700") do
+              dl(class: "divide-y divide-border") do
                 metadata_row(@entity.class.human_attribute_name(:created_at),
                              @entity.created_at.strftime("%b %d, %Y"))
                 metadata_row(@entity.class.human_attribute_name(:updated_at),
@@ -45,13 +45,17 @@ module Junction
 
         # Renders the destructive actions card.
         def danger_zone
-          Card(class: "border-red-500/50 dark:border-red-500/30") do |card|
-            card.header do
-              card.title(class: "text-red-700 dark:text-red-400") { t(".danger_zone") }
+          Card(class: "border-destructive/30") do |card|
+            card.header do |header|
+              header.title(class: "text-[15px] text-destructive") do
+                t(".danger_zone")
+              end
             end
 
             card.content(class: "space-y-4") do
-              p(class: "text-sm text-gray-600 dark:text-gray-400") { t(".danger_zone_warning") }
+              p(class: "text-[12.5px] leading-5 text-text-tertiary") do
+                t(".danger_zone_warning")
+              end
 
               delete_dialog
             end
@@ -61,8 +65,9 @@ module Junction
         # Renders the delete button and its confirmation dialog.
         def delete_dialog
           Dialog do |dialog|
-            dialog.trigger do
-              Button(variant: :destructive, class: "w-full justify-center") do
+            dialog.trigger(class: "w-full") do
+              Button(variant: :outline,
+                     class: "w-full justify-center bg-surface text-destructive") do
                 icon("trash", class: "w-4 h-4 mr-2")
                 plain t(".delete")
               end
@@ -91,8 +96,8 @@ module Junction
         # @param value [String] The row's value.
         def metadata_row(label, value)
           div(class: "py-3 flex justify-between text-sm") do
-            dt(class: "font-medium text-gray-600 dark:text-gray-400") { label }
-            dd(class: "text-gray-900 dark:text-white") { value }
+            dt(class: "font-medium text-text-tertiary") { label }
+            dd(class: "text-foreground") { value }
           end
         end
       end

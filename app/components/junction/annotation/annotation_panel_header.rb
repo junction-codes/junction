@@ -45,16 +45,27 @@ module Junction
 
           {
             label: known ? t(".known_badge") : t(".other_badge"),
-            variant: known ? :success : :outline
+            variant: known ? :success : :outline,
+            dot: true
           }
         end
 
         # Metadata about the annotation.
         def meta_row
           div(class: "flex flex-wrap items-center gap-2") do
-            meta_chip(t(".declared_by", plugin: panel[:declared_by])) if panel[:declared_by]
+            who_chip(t(".declared_by", plugin: panel[:declared_by])) if panel[:declared_by]
             meta_chip(t(".placeholder", value: panel[:placeholder])) if panel[:placeholder]
             meta_chip(t(".records_total", count: panel.fetch(:total_count)))
+          end
+        end
+
+        # Renders a chip that indicates which plugin declared the annotation.
+        #
+        # @param text [String] Name of the declaring plugin.
+        def who_chip(text)
+          span(class: "inline-flex items-center rounded-full bg-subtle " \
+                      "px-2.5 py-1 text-[11.5px] font-medium text-text-tertiary") do
+            text
           end
         end
 

@@ -24,8 +24,7 @@ module Junction
                 "focusin->ruby-ui--tooltip#show",
                 "focusout->ruby-ui--tooltip#hide"
               ]
-            },
-            variant: :outline
+            }
           }
         end
       end

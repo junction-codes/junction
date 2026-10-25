@@ -36,7 +36,7 @@ module Junction
         div(class: "rounded-xl border border-border bg-surface p-5 " \
                    "flex items-start justify-between gap-4") do
           div(class: "min-w-0") do
-            p(class: "text-[12.5px] font-medium text-muted-foreground") { @title }
+            p(class: "text-[12.5px] font-medium text-text-tertiary") { @title }
             p(class: "mt-1 text-[24px] font-semibold tabular-nums " \
                      "#{@value_classes}") { @value.to_s }
           end

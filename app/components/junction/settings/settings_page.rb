@@ -148,7 +148,7 @@ module Junction
           Link(href: @doc.fetch(:href), variant: :outline, target: "_blank",
                rel: "noopener noreferrer",
                class: "shrink-0 border-border bg-surface shadow-none " \
-                      "text-[13.5px] text-text-strong gap-2") do
+                      "text-[13.5px] text-foreground gap-2") do
             icon("book-open", class: "w-4 h-4")
             plain @doc.fetch(:label)
           end

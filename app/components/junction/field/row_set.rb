@@ -136,13 +136,14 @@ module Junction
             Button(type: "button", variant: :ghost, size: :sm, icon: true,
                    aria: { label: t(".remove_row") },
                    data: { action: "click->repeatable-rows#remove" }) do
-              icon("trash", class: "w-4 h-4")
+              icon("x", class: "w-4 h-4")
             end
           end
         end
 
         def add_button
-          Button(type: "button", variant: :secondary, class: "mt-2",
+          Button(type: "button", variant: :outline,
+                 class: "mt-2 bg-surface text-accent-strong text-[12.5px]",
                  data: { action: "click->repeatable-rows#add" }) do
             icon("plus", class: "w-4 h-4 mr-2")
             plain t(".add_row")
