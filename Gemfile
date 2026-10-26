@@ -12,20 +12,20 @@ group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
 
-  gem "axe-core-rspec", "~> 4.13"
+  gem "axe-core-rspec", "~> 4.14"
   gem "brakeman", "~> 8.0"
   gem "db-query-matchers", "~> 0.15"
   gem "factory_bot_rails", "~> 6.5"
   gem "faker", "~> 3.8"
   gem "license_finder", "~> 7.2"
   gem "rspec-rails", "~> 8.0"
-  gem "rubocop-capybara", "~> 3.0"
+  gem "rubocop-capybara", "~> 3.1"
   gem "rubocop-factory_bot", "~> 2.27"
   gem "rubocop-rails-accessibility", "~> 1.0"
   gem "rubocop-rails-omakase", "~> 1.1"
   gem "rubocop-rspec", "~> 3.10"
-  gem "rubocop-rspec_rails", "~> 2.32"
-  gem "simplecov", "~> 1.1"
+  gem "rubocop-rspec_rails", "~> 2.33"
+  gem "simplecov", "~> 1.3"
   gem "shoulda-matchers", "~> 8.0"
   gem "vcr", "~> 6.3"
 end
@@ -40,6 +40,6 @@ end
 group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara", "~> 3.4"
-  gem "cuprite", "~> 0.17"
+  gem "cuprite", "~> 0.19"
   gem "simplecov-cobertura", "~> 4.0"
 end
